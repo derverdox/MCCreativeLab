@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.debug.vanilla;
 
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.random.VanillaRandomSource;
 import org.bukkit.block.Block;
@@ -21,7 +22,7 @@ public class VanillaSaplingBlockBehaviour extends VanillaCropRandomTickBehaviour
                 handleBlockGrowEvent(block, sapling);
             }
             else {
-                block.getWorld().growTreeIfSapling(block.getLocation());
+                MCCUtil.getInstance().growTreeIfSapling(block.getLocation());
             }
         }
         return voidResult();

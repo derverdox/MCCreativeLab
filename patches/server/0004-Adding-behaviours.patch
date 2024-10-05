@@ -2486,7 +2486,7 @@ index 03eb35d5c67f125c44cf46595c93d124ac7892b8..2a021773c48887e3fc94c40890906588
          LevelChunkSection section = this.sections[offset];
          if (create && section == null) {
 -            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, offset + (this.minHeight >> 4)); // Paper - Anti-Xray - Add parameters
-+            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, ((org.bukkit.craftbukkit.CraftWorld;) world).getHandle().getSectionYFromSectionIndex(offset)); // MCCLab - Add BlockBehaviour // Paper - Anti-Xray - Add parameters
++            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, ((org.bukkit.craftbukkit.CraftWorld) world).getHandle().getSectionYFromSectionIndex(offset)); // MCCLab - Add BlockBehaviour // Paper - Anti-Xray - Add parameters
          }
          return section;
      }

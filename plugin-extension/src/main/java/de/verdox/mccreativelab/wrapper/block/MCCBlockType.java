@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.wrapper.block;
 
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.serialization.NBTSerializer;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
@@ -71,7 +72,7 @@ public interface MCCBlockType extends MCCWrapped {
         @Override
         public List<MCCBlockData> getAllBlockStates() {
             if(MCCreativeLabExtension.isServerSoftware())
-                return Bukkit.getAllBlockDataVariants(getHandle()).stream().map(MCCBlockData::wrap).toList();
+                return MCCUtil.getInstance().streamAllBlockDataVariants(getHandle()).map(MCCBlockData::wrap).toList();
             return List.of();
         }
 

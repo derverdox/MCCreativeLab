@@ -35,7 +35,7 @@ index 287c9fd46016a33379acae37c842b638bf06ce94..628b2ce2b803fe23b3b33fd62a77866d
  public final class CreativeLabImpl implements CreativeLab {
  
      private final de.verdox.mccreativelab.data.DataPackInterceptor dataPackInterceptor = new CraftDataPackInterceptor();
-@@ -31,4 +50,50 @@ public final class CreativeLabImpl implements CreativeLab {
+@@ -31,4 +50,20 @@ public final class CreativeLabImpl implements CreativeLab {
      public de.verdox.mccreativelab.advancement.AdvancementBuilder createAdvancement() {
          return new de.verdox.mccreativelab.advancement.CraftAdvancementBuilder();
      }
@@ -43,36 +43,6 @@ index 287c9fd46016a33379acae37c842b638bf06ce94..628b2ce2b803fe23b3b33fd62a77866d
 +    @Override
 +    public org.bukkit.inventory.Inventory openCustomContainerMenu(@NotNull de.verdox.mccreativelab.container.CustomInventory customInventory, @NotNull org.bukkit.entity.Player player, @NotNull net.kyori.adventure.text.Component title) {
 +        return de.verdox.mccreativelab.container.CustomContainerMenu.openToPlayer(customInventory, player, title);
-+    }
-+
-+    @Override
-+    public java.util.stream.Stream<org.bukkit.block.data.BlockData> streamAllBlockDataVariants(org.bukkit.Material blockMaterial) {
-+        if(!blockMaterial.isBlock())
-+            throw new IllegalArgumentException("Please provide a valid block. "+blockMaterial.getKey().asString()+" is not a valid block type.");
-+        net.minecraft.world.level.block.Block vanillaBlockType = org.bukkit.craftbukkit.block.data.CraftBlockData.newData(org.bukkit.craftbukkit.block.CraftBlockType.minecraftToBukkitNew(org.bukkit.craftbukkit.block.CraftBlockType.bukkitToMinecraft(blockMaterial)), null).getState().getBlock();
-+        return vanillaBlockType.getStateDefinition().getPossibleStates().stream().map(org.bukkit.craftbukkit.block.data.CraftBlockData::createData);
-+    }
-+
-+    @Override
-+    public java.util.Iterator<org.bukkit.block.data.BlockData> iterateThroughAllBlockDataVariants(org.bukkit.Material blockMaterial) {
-+        if(!blockMaterial.isBlock())
-+            throw new IllegalArgumentException("Please provide a valid block. "+blockMaterial.getKey().asString()+" is not a valid block type.");
-+
-+        net.minecraft.world.level.block.Block vanillaBlockType = org.bukkit.craftbukkit.block.data.CraftBlockData.newData(org.bukkit.craftbukkit.block.CraftBlockType.minecraftToBukkitNew(org.bukkit.craftbukkit.block.CraftBlockType.bukkitToMinecraft(blockMaterial)), null).getState().getBlock();
-+        java.util.Iterator<net.minecraft.world.level.block.state.BlockState> iter = vanillaBlockType.getStateDefinition().getPossibleStates().iterator();
-+
-+        return new java.util.Iterator<>() {
-+
-+            @Override
-+            public boolean hasNext() {
-+                return iter.hasNext();
-+            }
-+
-+            @Override
-+            public org.bukkit.block.data.BlockData next() {
-+                return org.bukkit.craftbukkit.block.data.CraftBlockData.createData(iter.next());
-+            }
-+        };
 +    }
 +
 +    @Override

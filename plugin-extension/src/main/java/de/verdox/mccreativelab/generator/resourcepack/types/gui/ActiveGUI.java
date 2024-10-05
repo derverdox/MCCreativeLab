@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.OnlyServerSoftware;
 import de.verdox.mccreativelab.event.GUICloseEvent;
@@ -295,7 +296,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
                     Component rendering = render();
                     // If we don't use the MCCLab Server Software we need to recreate the inventory every time.
                     Inventory newInventory = null;
-                    if (ActiveGUI.this.inventory.get() == null || !MCCreativeLabExtension.isServerSoftware()) {
+                    if (ActiveGUI.this.inventory.get() == null) {
                         newInventory = createInventory(rendering);
 
                         if (ActiveGUI.this.inventory.get() != null)
@@ -356,10 +357,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         synchronized (inventoryUpdateWhitelist) {
             inventoryUpdateWhitelist.add(player);
 
-
-            if (MCCreativeLabExtension.isServerSoftware())
-                view = player.openInventory(this.inventory.get(), render());
-            else view = player.openInventory(this.inventory.get());
+            view = MCCUtil.getInstance().openInventory(player, this.inventory.get(), render());
             if (itemAtCursor != null) {
                 if (view != null && !itemAtCursor.getType().isAir() && !getComponentRendered().isUsePlayerSlots()) {
                     player.getInventory().removeItem(itemAtCursor);

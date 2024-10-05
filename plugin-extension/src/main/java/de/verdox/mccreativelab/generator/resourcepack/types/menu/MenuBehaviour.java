@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuCloseEvent;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuOpenEvent;
@@ -75,18 +76,10 @@ public class MenuBehaviour implements Listener {
 
         Location locationOnOpen = getLocationOnOpen();
 
-        if (!MCCreativeLabExtension.isServerSoftware()) {
-            FakeInventory.setFakeInventoryOfPlayer(player);
-
-        }
-
         this.posUpdaterTask = Bukkit.getScheduler().runTaskTimer(platformPlugin, () -> {
             player.getInventory().setHeldItemSlot(4);
             fakeContents[45] = activeMenu.getActiveBackgroundPicture();
-            if (MCCreativeLabExtension.isServerSoftware())
-                player.sendFakeInventoryContents(fakeContents);
-            else
-                player.getInventory().setItem(EquipmentSlot.OFF_HAND, activeMenu.getActiveBackgroundPicture());
+            MCCUtil.getInstance().sendFakeInventoryContents(player, fakeContents);
 
             if (!activeMenu.getCustomMenu().doYawPitchLock && !activeMenu.getCustomMenu().doPositionLoc)
                 return;

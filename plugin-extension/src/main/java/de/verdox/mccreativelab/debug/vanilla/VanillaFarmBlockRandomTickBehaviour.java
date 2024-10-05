@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.debug.vanilla;
 
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.behaviour.BlockBehaviour;
 import de.verdox.mccreativelab.random.VanillaRandomSource;
@@ -30,8 +31,7 @@ public class VanillaFarmBlockRandomTickBehaviour implements BlockBehaviour {
         Farmland farmlandData = (Farmland) block.getBlockData();
         int moisture = farmlandData.getMoisture();
 
-        if (isNearWater(block, farmlandWaterRadius) || block.getWorld()
-                                                              .isRainingAt(above(block).getLocation())) {
+        if (isNearWater(block, farmlandWaterRadius) || MCCUtil.getInstance().isRainingAt(above(block).getLocation())) {
             if (moisture >= 7)
                 return voidResult();
             handleMoistureChangeEvent(block, 7);
