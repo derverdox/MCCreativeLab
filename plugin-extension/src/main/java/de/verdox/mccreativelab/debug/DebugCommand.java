@@ -51,7 +51,7 @@ public class DebugCommand extends Command {
             } 
             else if(argument1.equals("customInv")){
                 if (sender instanceof Player player) {
-                    MCCreativeLab.openCustomContainerMenu(new CustomInventory() {
+/*                    MCCreativeLab.openCustomContainerMenu(new CustomInventory() {
                         @Override
                         public Slot[] getSlots() {
                             return new Slot[]{
@@ -79,7 +79,7 @@ public class DebugCommand extends Command {
                             System.out.println("QUICK MOVE STACK "+slot);
                             return new ItemStack(Material.STONE);
                         }
-                    }, player, Component.empty());
+                    }, player, Component.empty());*/
                 }
             }
             else if (argument1.equals("testTPAsync")) {
