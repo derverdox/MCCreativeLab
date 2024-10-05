@@ -118,7 +118,7 @@ index 0000000000000000000000000000000000000000..70b04d5ec9e5052b02df4e508886aed0
 +            VillagerProfession villagerProfession = new VillagerProfession(namespacedKey.getKey(), heldWorkstationNms, acquirableWorkstationNms, items, jobBlocks, soundEvent);
 +            Registry.register(BuiltInRegistries.VILLAGER_PROFESSION, CraftNamespacedKey.toMinecraft(namespacedKey), villagerProfession);
 +        });
-+        return new RegistryEntryReference<>(namespacedKey, () -> Villager.Profession.getProfession(namespacedKey));
++        return new RegistryEntryReference<>(namespacedKey, () -> org.bukkit.Registry.VILLAGER_PROFESSION.get(namespacedKey));
 +    }
 +}
 diff --git a/src/main/java/net/minecraft/core/registries/BuiltInRegistries.java b/src/main/java/net/minecraft/core/registries/BuiltInRegistries.java

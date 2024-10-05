@@ -8,7 +8,7 @@ diff --git a/src/main/java/de/verdox/mccreativelab/CreativeLab.java b/src/main/j
 index a7992255aaed5beb35736447d56b7b2735ed02cb..ff923d3329b5807a767c902b6ebf8891ec7c61a1 100644
 --- a/src/main/java/de/verdox/mccreativelab/CreativeLab.java
 +++ b/src/main/java/de/verdox/mccreativelab/CreativeLab.java
-@@ -1,7 +1,81 @@
+@@ -1,7 +1,40 @@
  package de.verdox.mccreativelab;
  
 +import de.verdox.mccreativelab.container.CustomInventory;
@@ -24,55 +24,19 @@ index a7992255aaed5beb35736447d56b7b2735ed02cb..ff923d3329b5807a767c902b6ebf8891
 +
 +    Inventory openCustomContainerMenu(@NotNull CustomInventory customInventory, @NotNull org.bukkit.entity.Player player, @NotNull net.kyori.adventure.text.Component title);
 +
++    /**
++     * Sets the world hook of a particular world
++     * @param world the world
++     * @param mccWorldHook the world hook
++     */
 +    void setWorldHook(@NotNull org.bukkit.World world, @NotNull de.verdox.mccreativelab.behaviour.MCCWorldHook mccWorldHook);
 +
++    /**
++     * Gets the world hook of a particular world
++     * @param world the world
++     * @return the world hook of the world if available else null
++     */
 +    @NotNull de.verdox.mccreativelab.behaviour.MCCWorldHook getWorldHook(@NotNull org.bukkit.World world);
-+    /**
-+     * Creates a world mostly async. Most of the calculations needed to create a world are done asynchronously. However, some still occur on the main thread.
-+     * Those can be manually turned off when they are not needed.
-+     * @param plugin The plugin to create the map for.
-+     * @param worldCreator The WorldCreator
-+     * @param useVanillaSpawnCalculation
-+     * <p>
-+     *                                   Whether to use vanilla spawn calculations. This is used to find a safe spawn point for players.
-+     * <p>
-+     *                                   If you do not need this, the standard spawn point 0,128,0 is chosen. This also skips the generation of the bonus loot chest!
-+     * @return the future
-+     */
-+    java.util.concurrent.CompletableFuture<org.bukkit.World> createWorldAsync(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull org.bukkit.WorldCreator worldCreator, boolean useVanillaSpawnCalculation);
-+
-+    /**
-+     * Creates a world mostly async. Most of the calculations needed to create a world are done asynchronously. However, some still occur on the main thread.
-+     * Those can be manually turned off when they are not needed.
-+     * @param plugin The plugin to create the map for.
-+     * @return the future
-+     */
-+    java.util.concurrent.CompletableFuture<PersistentDataContainer> readFromWorldPDCWithoutLoadingAsync(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull WorldCreator worldCreator);
-+
-+    /**
-+     * Creates a world mostly async. Most of the calculations needed to create a world are done asynchronously. However, some still occur on the main thread.
-+     * Those can be manually turned off when they are not needed.
-+     * @param plugin The plugin to create the map for.
-+     * @return the pdc
-+     */
-+    PersistentDataContainer readFromWorldPDCWithoutLoading(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull WorldCreator worldCreator);
-+
-+
-+    /**
-+     * Returns a stream of all possible {@link org.bukkit.block.data.BlockData} definitions of a valid block {@link org.bukkit.Material}
-+     *
-+     * @param blockMaterial - The material of the block
-+     * @return - the stream
-+     */
-+    java.util.stream.Stream<org.bukkit.block.data.BlockData> streamAllBlockDataVariants(org.bukkit.Material blockMaterial);
-+
-+    /**
-+     * Returns an iterator that iterates through all possible {@link org.bukkit.block.data.BlockData} definitions of a valid block {@link org.bukkit.Material}
-+     *
-+     * @param blockMaterial - The material of the block
-+     * @return - the iterator
-+     */
-+    java.util.Iterator<org.bukkit.block.data.BlockData> iterateThroughAllBlockDataVariants(org.bukkit.Material blockMaterial);
 +
 +    /**
 +     * Places a block from a specified {@link org.bukkit.inventory.ItemStack} at {@link org.bukkit.Location}.
@@ -84,11 +48,6 @@ index a7992255aaed5beb35736447d56b7b2735ed02cb..ff923d3329b5807a767c902b6ebf8891
 +     */
 +    InteractionResult placeBlockFromItemWithoutPlayer(org.bukkit.inventory.ItemStack stack, org.bukkit.Location location);
 +
-+    /**
-+     * Sets the world hook of a particular world
-+     * @param world the world
-+     * @param mccWorldHook the world hook
-+     */
  }
 diff --git a/src/main/java/de/verdox/mccreativelab/MCCreativeLab.java b/src/main/java/de/verdox/mccreativelab/MCCreativeLab.java
 index 1e301142a2e6341cef550cfd1e4ed1c5e5cd7e40..a67f18dc308ab465761d2f762e6ecf7f85afb514 100644
@@ -106,7 +65,7 @@ index 1e301142a2e6341cef550cfd1e4ed1c5e5cd7e40..a67f18dc308ab465761d2f762e6ecf7f
  public final class MCCreativeLab{
      private static CreativeLab creativeLab;
      public static void setCreativeLab(CreativeLab creativeLab) {
-@@ -19,4 +25,54 @@ public final class MCCreativeLab{
+@@ -19,4 +25,17 @@ public final class MCCreativeLab{
      public static de.verdox.mccreativelab.advancement.AdvancementBuilder createAdvancement(){
          return creativeLab.createAdvancement();
      }
@@ -118,43 +77,6 @@ index 1e301142a2e6341cef550cfd1e4ed1c5e5cd7e40..a67f18dc308ab465761d2f762e6ecf7f
 +    @NotNull
 +    public static de.verdox.mccreativelab.behaviour.MCCWorldHook getWorldHook(@NotNull org.bukkit.World world){
 +        return creativeLab.getWorldHook(world);
-+    }
-+
-+    public static org.bukkit.inventory.Inventory openCustomContainerMenu(@NotNull CustomInventory customInventory, @NotNull org.bukkit.entity.Player player, @NotNull net.kyori.adventure.text.Component title) {
-+        return creativeLab.openCustomContainerMenu(customInventory, player, title);
-+    }
-+
-+    public static java.util.concurrent.CompletableFuture<org.bukkit.World> createWorldAsync(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull org.bukkit.WorldCreator worldCreator, boolean useVanillaSpawnCalculation){
-+        return creativeLab.createWorldAsync(plugin, worldCreator, useVanillaSpawnCalculation);
-+    }
-+
-+    public static java.util.concurrent.CompletableFuture<PersistentDataContainer> readFromWorldPDCWithoutLoadingAsync(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull WorldCreator worldCreator){
-+        return creativeLab.readFromWorldPDCWithoutLoadingAsync(plugin, worldCreator);
-+    }
-+
-+    public static PersistentDataContainer readFromWorldPDCWithoutLoading(@NotNull org.bukkit.plugin.Plugin plugin, @NotNull WorldCreator worldCreator){
-+        return creativeLab.readFromWorldPDCWithoutLoading(plugin, worldCreator);
-+    }
-+
-+
-+    /**
-+     * Returns a stream of all possible {@link org.bukkit.block.data.BlockData} definitions of a valid block {@link org.bukkit.Material}
-+     *
-+     * @param blockMaterial - The material of the block
-+     * @return - the stream
-+     */
-+    public static java.util.stream.Stream<BlockData> streamAllBlockDataVariants(org.bukkit.Material blockMaterial) {
-+        return creativeLab.streamAllBlockDataVariants(blockMaterial);
-+    }
-+
-+    /**
-+     * Returns an iterator that iterates through all possible {@link org.bukkit.block.data.BlockData} definitions of a valid block {@link org.bukkit.Material}
-+     *
-+     * @param blockMaterial - The material of the block
-+     * @return - the iterator
-+     */
-+    public static java.util.Iterator<BlockData> iterateThroughAllBlockDataVariants(org.bukkit.Material blockMaterial) {
-+        return creativeLab.iterateThroughAllBlockDataVariants(blockMaterial);
 +    }
 +
 +    public static InteractionResult placeBlockFromItemWithoutPlayer(org.bukkit.inventory.ItemStack stack, org.bukkit.Location location){

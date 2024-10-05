@@ -81,7 +81,7 @@ index 0000000000000000000000000000000000000000..f8dcc2863b242dcb58869bfbab4914f5
 +        String assetTypeName = resourceLocation.toString().split("/")[0];
 +        int indexOfStartKey = assetTypeName.indexOf(":");
 +        assetTypeName = assetTypeName.substring(indexOfStartKey + 1);
-+        PackAssetType packAssetType = PackAssetType.getByParentFolder(assetTypeName);
++        PackAssetType packAssetType = new PackAssetType(assetTypeName);
 +        Key key = Key.key(resourceLocation.getNamespace(), FilenameUtils.removeExtension(resourceLocation.getPath().replace(assetTypeName + "/", "")));
 +        if (packAssetType == null) {
 +            LOGGER.error("Could not determine PackAssetType " + assetTypeName + " from " + resourceLocation);
@@ -89,7 +89,7 @@ index 0000000000000000000000000000000000000000..f8dcc2863b242dcb58869bfbab4914f5
 +        }
 +
 +        if (excludedTypes.contains(packAssetType) || stringPatternExcludes.stream().anyMatch(s -> resourceLocation.toString().contains(s)) || (exclusions.containsKey(packAssetType) && exclusions.get(packAssetType).contains(key))) {
-+            LOGGER.info("Removing " + packAssetType.name() + ": " + key);
++            LOGGER.info("Removing " + packAssetType.parentFolder() + ": " + key);
 +            return null;
 +        }
 +
@@ -126,7 +126,7 @@ index 0000000000000000000000000000000000000000..f8dcc2863b242dcb58869bfbab4914f5
 +                Map<Key, List<Function<DataPackAsset, Boolean>>> map = modifies.get(packAssetType);
 +                if (map.containsKey(key)) {
 +                    List<Function<DataPackAsset, Boolean>> modifiers = map.get(key);
-+                    LOGGER.info("Patching " + packAssetType.name() + ": " + key);
++                    LOGGER.info("Patching " + packAssetType.parentFolder() + ": " + key);
 +
 +                    for (Function<DataPackAsset, Boolean> modifier : modifiers) {
 +                        if (!modifier.apply(dataPackAsset)) shouldLoad = false;

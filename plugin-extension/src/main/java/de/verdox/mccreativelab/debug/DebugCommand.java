@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.debug;
 
+import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.MCCreativeLab;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.container.CustomInventory;
@@ -45,8 +46,7 @@ public class DebugCommand extends Command {
 
                     contents[36] = new ItemStack(Material.STONE);
 
-                    player.doInventorySynchronization(false);
-                    player.sendFakeInventoryContents(contents);
+                    MCCUtil.getInstance().sendFakeInventoryContents(player, contents);
                 }
             } 
             else if(argument1.equals("customInv")){
