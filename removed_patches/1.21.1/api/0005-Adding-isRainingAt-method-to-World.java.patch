@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: derverdox <lukasjonsson@outlook.de>
+Date: Fri, 17 Nov 2023 17:05:04 +0100
+Subject: [PATCH] Adding isRainingAt method to World.java
+
+
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index f7cfefb81f9c6e686a8c10dba401cf0690d5f7c2..b4b2db9e699ffa28c5fe85ff19abca1d6f5c566f 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -101,6 +101,14 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
+     // Paper end - void damage configuration
+ 
+     // MCCLab - start
++
++    /**
++     * Checks if it is raining at a specific location
++     * @param location The location to check
++     * @return true if it is raining at the block location
++     */
++    boolean isRainingAt(Location location);
++
+     /**
+      * Creates a tree at the given {@link Location} if the {@link BlockData} of the {@link Block} is of type {@link org.bukkit.block.data.type.Sapling}
+      *

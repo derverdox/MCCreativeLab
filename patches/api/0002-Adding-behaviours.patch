@@ -1403,11 +1403,17 @@ index 0000000000000000000000000000000000000000..0582bc507241e76964573502b880d164
 +
 +    int nextInt(int min, int max);
 +}
+diff --git a/src/main/java/io/papermc/paper/event/player/PlayerNameEntityEvent.java b/src/main/java/io/papermc/paper/event/player/PlayerNameEntityEvent.java
+old mode 100755
+new mode 100644
+diff --git a/src/main/java/io/papermc/paper/event/player/PlayerTradeEvent.java b/src/main/java/io/papermc/paper/event/player/PlayerTradeEvent.java
+old mode 100755
+new mode 100644
 diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
-index 62e3793903905b94eb1a120345015149abb33713..be92b48f06d8a15d01ee43100e5a6601087a4fe1 100644
+index d0ae8a94db20281d3664d74718c65234eb2e5f83..09dc6e36d4142743bbcce5b911a0318ad03bab81 100644
 --- a/src/main/java/org/bukkit/entity/Entity.java
 +++ b/src/main/java/org/bukkit/entity/Entity.java
-@@ -764,6 +764,35 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
+@@ -768,6 +768,35 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      @NotNull
      Set<String> getScoreboardTags();
  
@@ -1444,10 +1450,10 @@ index 62e3793903905b94eb1a120345015149abb33713..be92b48f06d8a15d01ee43100e5a6601
       * Add a tag to this entity.
       * <br>
 diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
-index c64413a6740b604282984dea2a8430a6e7478d68..ee36c0dbcc4222f475cc9764a9a75e98ea6be97c 100644
+index b59222b8c262545d100a9fd28b3bf1d2a4cf4eb0..25f7eee19da7369642e5d01b73d9de14200aa25a 100644
 --- a/src/main/java/org/bukkit/inventory/ItemStack.java
 +++ b/src/main/java/org/bukkit/inventory/ItemStack.java
-@@ -94,6 +94,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+@@ -143,6 +143,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
          if (data != null) {
              createData(data);
          }
@@ -1455,42 +1461,34 @@ index c64413a6740b604282984dea2a8430a6e7478d68..ee36c0dbcc4222f475cc9764a9a75e98
      }
  
      /**
-@@ -113,6 +114,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
-         if (stack.hasItemMeta()) {
-             setItemMeta0(stack.getItemMeta(), type);
+@@ -161,6 +162,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+         if (stack.getType().isLegacy()) {
+             this.data = stack.getData();
          }
 +        de.verdox.itemformat.BasicItemFormat.applyItemFormatAndReturn(this);
      }
  
      /**
-@@ -867,6 +869,30 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
-         return this;
+@@ -1137,4 +1139,22 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+         return Bukkit.getUnsafe().computeTooltipLines(this, tooltipContext, player);
      }
- 
+     // Paper end - expose itemstack tooltip lines
++
 +    // MCCLab start - Add ItemBehaviour as instance to this specific Item Stack
-+    @Nullable private de.verdox.mccreativelab.behaviour.ItemBehaviour itemBehaviour;
 +    public void setItemBehaviour(@Nullable de.verdox.mccreativelab.behaviour.ItemBehaviour itemBehaviour){
-+        this.itemBehaviour = itemBehaviour;
++        this.craftDelegate.setItemBehaviour(itemBehaviour);
 +    }
 +
 +    public boolean hasCustomItemBehaviour(){
-+        return this.itemBehaviour != null;
++        return this.craftDelegate.hasCustomItemBehaviour();
 +    }
 +
 +    public @Nullable de.verdox.mccreativelab.behaviour.ItemBehaviour getDefinedItemBehaviour(){
-+        return this.itemBehaviour;
++        return this.craftDelegate.getDefinedItemBehaviour();
 +    }
 +
 +    public @Nullable de.verdox.mccreativelab.behaviour.ItemBehaviour getItemBehaviour(){
-+        if(this.itemBehaviour != null)
-+            return this.itemBehaviour;
-+        else
-+            return de.verdox.mccreativelab.behaviour.ItemBehaviour.ITEM_BEHAVIOUR.getBehaviour(de.verdox.mccreativelab.recipe.CustomItemData.fromItemStack(this));
++        return this.craftDelegate.getItemBehaviour();
 +    }
-+
-+
 +    // MCCLab end - Add ItemBehaviour as instance to this specific Item Stack
-+
-     /**
-      * If the item has lore, returns it, else it will return null
-      * @return The lore, or null
+ }

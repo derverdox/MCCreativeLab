@@ -1,14 +1,15 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
-import de.verdox.mccreativelab.recipe.CustomItemData;
+import de.verdox.mccreativelab.MCCreativeLabExtension;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ClickableItem {
     private final ItemStack stack;
@@ -21,7 +22,7 @@ public class ClickableItem {
         this.builder = builder;
     }
 
-    Builder getBuilder() {
+    public Builder getBuilder() {
         return builder;
     }
 
@@ -34,8 +35,9 @@ public class ClickableItem {
     }
 
     public static class Builder {
-        private BiConsumer<InventoryClickEvent, ActiveGUI> onClick = (inventoryClickEvent, activeGUI) -> {};
-        private ItemStack item = new ItemStack(Material.STICK);
+        private BiConsumer<InventoryClickEvent, ActiveGUI> onClick = (inventoryClickEvent, activeGUI) -> {
+        };
+        private ItemStack item = MCCreativeLabExtension.getCustomResourcePack().getEmptyItem().createItem();
         public boolean popGUIStack = false;
         public boolean clearGUIStackAndClose = false;
         Consumer<ItemMeta> metaSetup = meta -> {
@@ -49,18 +51,15 @@ public class ClickableItem {
             this.item = new ItemStack(material);
         }
 
-        public Builder(CustomItemData customItemData){
-            this(customItemData.createStack());
+        public Builder() {
         }
-
-        public Builder(){}
 
         public Builder withClick(BiConsumer<InventoryClickEvent, ActiveGUI> onClick) {
             this.onClick = onClick;
             return this;
         }
 
-        public Builder withItem(ItemStack stack){
+        public Builder withItem(ItemStack stack) {
             this.item = stack;
             return this;
         }
@@ -72,16 +71,31 @@ public class ClickableItem {
 
         public Builder createCopy() {
             var copy = new Builder();
+            copy.onClick = this.onClick;
+            copy.item = this.item.clone();
+            copy.popGUIStack = this.popGUIStack;
+            copy.clearGUIStackAndClose = this.clearGUIStackAndClose;
             copy.metaSetup = this.metaSetup;
             return copy;
         }
 
-        public Builder backToLastScreenOnClick(){
+        public Builder backToLastScreenOnClick() {
             popGUIStack = true;
             return this;
         }
 
-        public Builder closeGUI(){
+        public Builder openGUI(Supplier<CustomGUIBuilder> supplyGUI){
+            return withClick((inventoryClickEvent, activeGUI) -> {
+                CustomGUIBuilder customGUIBuilder = supplyGUI.get();
+                customGUIBuilder.asNestedGUI((Player) inventoryClickEvent.getWhoClicked(), activeGUI, activeGUI::copyTemporaryDataFromGUI);
+            });
+        }
+
+        public Builder openGUI(CustomGUIBuilder customGUIBuilder){
+            return openGUI(() -> customGUIBuilder);
+        }
+
+        public Builder closeGUI() {
             clearGUIStackAndClose = true;
             return this;
         }

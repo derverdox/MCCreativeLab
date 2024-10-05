@@ -108,7 +108,7 @@ index 0000000000000000000000000000000000000000..1015ecfbbefdd8f3cbd09749a8318251
 +        final net.minecraft.advancements.AdvancementTree tree = MinecraftServer.getServer().getAdvancements().tree();
 +        tree.addAll(List.of(holder));
 +
-+        if(craftAdvancementDisplayBuilder.customCoordinates){
++        if(!craftAdvancementDisplayBuilder.customCoordinates){
 +            final net.minecraft.advancements.AdvancementNode node = tree.get(minecraftkey);
 +            if (node != null) {
 +                final net.minecraft.advancements.AdvancementNode root = node.root();
@@ -136,7 +136,7 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..d3f6890d1f2da9a790ab14cae299958bdd413ef4
 --- /dev/null
 +++ b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementDisplayBuilder.java
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,117 @@
 +package de.verdox.mccreativelab.advancement;
 +
 +import io.papermc.paper.advancement.AdvancementDisplay;
@@ -220,12 +220,14 @@ index 0000000000000000000000000000000000000000..d3f6890d1f2da9a790ab14cae299958b
 +    @Override
 +    public AdvancementDisplayBuilder setX(float x) {
 +        this.x = x;
++        this.customCoordinates = true;
 +        return this;
 +    }
 +
 +    @Override
 +    public AdvancementDisplayBuilder setY(float y) {
 +        this.y = y;
++        this.customCoordinates = true;
 +        return this;
 +    }
 +
