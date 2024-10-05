@@ -53,7 +53,7 @@ public class ServerSoftwareExclusives implements Listener {
                 if(args.length == 1){
                     String worldName = args[0];
                     sender.sendMessage("Creating world "+worldName+" async");
-                    MCCreativeLab.createWorldAsync(MCCreativeLabExtension.getInstance(), new WorldCreator(new NamespacedKey("mccreativelab", worldName)), false)
+                    MCCUtil.getInstance().createWorldAsync(MCCreativeLabExtension.getInstance(), new WorldCreator(new NamespacedKey("mccreativelab", worldName)), false)
                         .whenComplete((world, throwable) -> {
                             sender.sendMessage("World "+worldName+" was created ["+world+"]");
                             if(world != null && sender instanceof Player player){
