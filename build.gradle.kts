@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 
     // Nothing special about this, just keep it up to date
-    //id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 
     // In general, keep this version in sync with upstream. Sometimes a newer version than upstream might work, but an older version is extremely likely to break.
     id("io.papermc.paperweight.patcher") version "1.7.3"
