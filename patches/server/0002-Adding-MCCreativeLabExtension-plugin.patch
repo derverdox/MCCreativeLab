@@ -8,11 +8,12 @@ diff --git a/build.gradle.kts b/build.gradle.kts
 index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8c37ccdfd 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -193,37 +193,51 @@ tasks.registerRunTask("runServer") {
+@@ -193,37 +193,58 @@ tasks.registerRunTask("runServer") {
      description = "Spin up a test server from the Mojang mapped server jar"
      classpath(tasks.includeMappings.flatMap { it.outputJar })
      classpath(runtimeClasspathWithoutVanillaServer)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  
@@ -21,6 +22,7 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(tasks.reobfJar.flatMap { it.outputJar })
      classpath(runtimeClasspathWithoutVanillaServer)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  
@@ -29,6 +31,7 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(sourceSets.main.map { it.runtimeClasspath })
      jvmArgs("-DPaper.pushPaperAssetsRoot=true")
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  
@@ -37,6 +40,7 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(rootProject.tasks.named<io.papermc.paperweight.tasks.CreateBundlerJar>("createMojmapBundlerJar").flatMap { it.outputZip })
      mainClass.set(null as String?)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  tasks.registerRunTask("runReobfBundler") {
@@ -44,6 +48,7 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(rootProject.tasks.named<io.papermc.paperweight.tasks.CreateBundlerJar>("createReobfBundlerJar").flatMap { it.outputZip })
      mainClass.set(null as String?)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  tasks.registerRunTask("runPaperclip") {
@@ -51,6 +56,7 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(rootProject.tasks.named<io.papermc.paperweight.tasks.CreatePaperclipJar>("createMojmapPaperclipJar").flatMap { it.outputZip })
      mainClass.set(null as String?)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }
  tasks.registerRunTask("runReobfPaperclip") {
@@ -58,5 +64,6 @@ index 763e13b1b1306ecbfb58b600463b2ca900ecef9b..fac324c3864e62fc1bd476e74acd2ed8
      classpath(rootProject.tasks.named<io.papermc.paperweight.tasks.CreatePaperclipJar>("createReobfPaperclipJar").flatMap { it.outputZip })
      mainClass.set(null as String?)
 +    dependsOn(":plugin-extension:build")
++    dependsOn(":plugin-extension:shadowJar")
 +    jvmArgs("-Dpaper.debug-sync-loads=true", "-Dfile.encoding=UTF-8")
  }

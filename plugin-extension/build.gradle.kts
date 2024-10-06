@@ -59,8 +59,9 @@ allprojects {
         }
 
         val copyTask = register<Copy>("copyToTestServer") {
-            println("Copying plugin jar to testserver")
-            from(jar)
+            val jarPath = "../plugin-extension/build/libs/plugin-extension-$version-all.jar";
+            println("Copying $jarPath to testserver")
+            from(jarPath)
             into(file("../run/plugins"))
         }
 
