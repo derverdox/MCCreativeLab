@@ -9,6 +9,7 @@ version = "1.0"
 
 allprojects {
     apply(plugin = "java")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
 
     java {
