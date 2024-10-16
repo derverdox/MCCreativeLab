@@ -89,7 +89,7 @@ public class HerobrineModel extends ResourcePackResource {
     private ItemTextureData createItem(ModelPart modelPart, NamespacedKey herobrineSkinTexture) {
         ItemTextureData.ModelType modelType = createModel(modelPart, herobrineSkinTexture);
 
-        return new ItemTextureData(new NamespacedKey("mccreativelab", "herobrine/default/" + modelPart.name()
+        return new ItemTextureData(new NamespacedKey("mccreativelab", "assets/herobrine/default/" + modelPart.name()
                                                                                                       .toLowerCase()), Material.DISC_FRAGMENT_5, CustomModelDataProvider.drawCustomModelData(Material.DISC_FRAGMENT_5), null, modelType);
     }
 

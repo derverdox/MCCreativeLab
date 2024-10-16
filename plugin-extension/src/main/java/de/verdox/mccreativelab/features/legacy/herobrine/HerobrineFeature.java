@@ -13,7 +13,7 @@ public class HerobrineFeature extends LegacyFeature {
     private HerobrineModel herobrineModel;
     @Override
     protected void onEnable() {
-        herobrineModel = new HerobrineModel(new NamespacedKey("mccreativelab", "herobrine"), new Asset<>("/herobrine/texture/herobrine.png"));
+        herobrineModel = new HerobrineModel(new NamespacedKey("mccreativelab", "assets/herobrine"), new Asset<>("/assets/herobrine/texture/herobrine.png"));
         MCCreativeLabExtension.getCustomResourcePack().register(herobrineModel);
         addModelFiles();
     }
@@ -37,8 +37,8 @@ public class HerobrineFeature extends LegacyFeature {
     }
 
     private void addModelFile(String key) {
-        Asset<CustomResourcePack> modelAsset = new Asset<>("/herobrine/model/" + key + ".json");
-        AssetBasedResourcePackResource assetBasedResourcePackResource = new AssetBasedResourcePackResource(new NamespacedKey("mccreativelab", "herobrine/" + key), modelAsset, ResourcePackAssetTypes.MODELS, "json");
+        Asset<CustomResourcePack> modelAsset = new Asset<>("/assets/herobrine/model/" + key + ".json");
+        AssetBasedResourcePackResource assetBasedResourcePackResource = new AssetBasedResourcePackResource(new NamespacedKey("mccreativelab", "assets/herobrine/" + key), modelAsset, ResourcePackAssetTypes.MODELS, "json");
         MCCreativeLabExtension.getCustomResourcePack().register(assetBasedResourcePackResource);
     }
 }

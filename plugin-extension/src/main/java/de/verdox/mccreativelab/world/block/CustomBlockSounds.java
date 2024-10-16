@@ -2,13 +2,14 @@ package de.verdox.mccreativelab.world.block;
 
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.Wrappers;
-import de.verdox.mccreativelab.util.PlayerUtil;
-import de.verdox.mccreativelab.world.block.customhardness.BlockBreakSpeedModifier;
+import de.verdox.mccreativelab.util.EntityMetadataPredicate;
+import de.verdox.mccreativelab.util.PlayerAsyncRayTracer;
 import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import io.papermc.paper.event.world.WorldEffectEvent;
 import io.papermc.paper.event.world.WorldSoundEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,9 +20,42 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.GenericGameEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.RayTraceResult;
 
 public class CustomBlockSounds implements Listener {
+    public static final EntityMetadataPredicate.TickDelay DIGGING_SOUND_DELAY = new EntityMetadataPredicate.TickDelay("DiggingSoundDelay", 4);
+
+
+    public static void simulateDiggingSound(Player player, Block block, FakeBlock.FakeBlockState fakeBlockState) {
+        if (!DIGGING_SOUND_DELAY.isAllowed(player))
+            return;
+        if(!FakeBlockSoundManager.isBlockWithoutStandardSound(block) && fakeBlockState == null)
+            return;
+        Wrappers.SoundGroup soundGroup = FakeBlockSoundManager.getSoundGroup(block, fakeBlockState);
+        net.kyori.adventure.sound.Sound sound = soundGroup.getStepSound().asSound(net.kyori.adventure.sound.Sound.Source.BLOCK, 0.15f, soundGroup.getPitch() * 0.3F);
+        player.playSound(sound, block.getX(), block.getY(), block.getZ());
+        DIGGING_SOUND_DELAY.reset(player);
+    }
+
+    public static void simulateBreakSound(Block block, FakeBlock.FakeBlockState fakeBlockState) {
+        Wrappers.SoundGroup soundGroup = FakeBlockSoundManager.getSoundGroup(block, fakeBlockState);
+        net.kyori.adventure.sound.Sound sound = soundGroup.getBreakSound()
+            .asSound(net.kyori.adventure.sound.Sound.Source.BLOCK, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
+        block.getWorld().playSound(sound, block.getX(), block.getY(), block.getZ());
+    }
+
+    public static void simulateBreakSound(BlockState blockState, FakeBlock.FakeBlockState fakeBlockState) {
+        Wrappers.SoundGroup soundGroup = FakeBlockSoundManager.getSoundGroup(blockState.getBlockData(), fakeBlockState);
+        net.kyori.adventure.sound.Sound sound = soundGroup.getBreakSound()
+            .asSound(net.kyori.adventure.sound.Sound.Source.BLOCK, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
+        blockState.getBlock().getWorld().playSound(sound, blockState.getBlock().getX(), blockState.getBlock().getY(), blockState.getBlock().getZ());
+    }
+
+    public static void simulateBlockPlaceSound(Block block, FakeBlock.FakeBlockState fakeBlockState) {
+        Wrappers.SoundGroup soundGroup = FakeBlockSoundManager.getSoundGroup(block, fakeBlockState);
+        net.kyori.adventure.sound.Sound sound = soundGroup.getPlaceSound().asSound(net.kyori.adventure.sound.Sound.Source.BLOCK, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
+        block.getWorld().playSound(sound, block.getX(), block.getY(), block.getZ());
+    }
+
     @EventHandler
     public void gameEvent(GenericGameEvent genericGameEvent) {
         if (!(genericGameEvent.getEntity() instanceof Player))
@@ -32,10 +66,15 @@ public class CustomBlockSounds implements Listener {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (genericGameEvent.getEvent().equals(GameEvent.BLOCK_PLACE))
-            FakeBlockSoundManager.simulateBlockPlaceSound(block, fakeBlockState);
+            simulateBlockPlaceSound(block, fakeBlockState);
 
         if (genericGameEvent.getEvent().equals(GameEvent.BLOCK_DESTROY))
-            FakeBlockSoundManager.simulateBreakSound(block, fakeBlockState);
+            simulateBreakSound(block, fakeBlockState);
+    }
+
+    @EventHandler
+    public void resetDiggingDelayOnBlockBreak(BlockBreakEvent e) {
+        DIGGING_SOUND_DELAY.reset(e.getPlayer());
     }
 
 
@@ -47,7 +86,7 @@ public class CustomBlockSounds implements Listener {
         if (!FakeBlockSoundManager.isBlockWithoutStandardSound(e.getBrokenState().getBlockData()))
             return;
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(e.getBlock().getLocation(), false);
-        FakeBlockSoundManager.simulateBreakSound(e.getBrokenState(), fakeBlockState);
+        simulateBreakSound(e.getBrokenState(), fakeBlockState);
     }
 
     @EventHandler
@@ -68,13 +107,13 @@ public class CustomBlockSounds implements Listener {
 
         }
 
-        Block rayTracedBlock = PlayerUtil.getTargetBlock(e.getPlayer());
+        Block rayTracedBlock = PlayerAsyncRayTracer.getTargetBlock(e.getPlayer());
         if (rayTracedBlock == null)
             return;
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(rayTracedBlock.getLocation(), false);
         if (!FakeBlockSoundManager.isBlockWithoutStandardSound(rayTracedBlock))
             return;
-        FakeBlockSoundManager.simulateDiggingSound(player, rayTracedBlock, fakeBlockState);
+        simulateDiggingSound(player, rayTracedBlock, fakeBlockState);
     }
 
     @EventHandler

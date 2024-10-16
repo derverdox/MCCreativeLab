@@ -3,7 +3,6 @@ package de.verdox.mccreativelab.debug;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.FakeBlockStorage;
-import de.verdox.mccreativelab.registry.exception.PaletteValueUnknownException;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntityStorage;
 import de.verdox.mccreativelab.world.block.replaced.ReplacedBlocks;
 import de.verdox.mccreativelab.world.item.FakeItem;

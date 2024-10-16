@@ -10,7 +10,9 @@ import java.util.Objects;
 public interface MCCWrapped extends Keyed {
     Object getHandle();
 
-    boolean matches(MCCWrapped mccWrapped);
+    default boolean matches(MCCWrapped mccWrapped){
+        return equals(mccWrapped);
+    }
 
     abstract class Impl<T> implements MCCWrapped {
         private final T handle;

@@ -123,7 +123,7 @@ public class DebugCommand extends Command {
                 System.out.println("Before: " + stack);
                 ItemDataContainer.from(stack);
                 System.out.println("After: " + stack);
-            } else if (argument1.equals("herobrine") && sender instanceof Player player) {
+            } else if (argument1.equals("assets/herobrine") && sender instanceof Player player) {
                 Location summonLocation = player.getLocation();
                 //MCCreativeLabExtension.getLegacyFeatures().herobrineFeature.testSpawnHerobrineModel(summonLocation);
             } else if (argument1.equals("printhud") && sender instanceof Player player) {

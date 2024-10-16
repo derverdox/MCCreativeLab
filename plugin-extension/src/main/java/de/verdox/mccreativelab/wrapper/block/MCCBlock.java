@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public interface MCCBlock extends MCCWrapped {
-
     static MCCBlock getFromBlock(Block block) {
         return new Vanilla(block);
     }

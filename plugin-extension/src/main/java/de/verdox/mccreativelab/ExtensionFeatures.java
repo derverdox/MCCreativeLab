@@ -3,9 +3,11 @@ package de.verdox.mccreativelab;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import de.verdox.mccreativelab.event.MCCreativeLabReloadEvent;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackMapper;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIUtil;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRendererImpl;
 import de.verdox.mccreativelab.serialization.MCCSerializer;
+import de.verdox.mccreativelab.util.ComponentUtil;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCacheStrategy;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCachedData;
 import org.bukkit.Bukkit;
@@ -26,6 +28,8 @@ public class ExtensionFeatures implements Listener {
         MCCreativeLabExtension.registerRegistryLookupCommand("hud", resourcePackMapper.getHudsRegistry(), hudRenderer::getOrStartActiveHud);
         MCCreativeLabExtension.registerRegistryLookupCommand("gui", resourcePackMapper.getGuiRegistry(), (player, customGUIBuilder) -> customGUIBuilder.createMenuForPlayer(player));
         MCCreativeLabExtension.registerRegistryLookupCommand("menu", resourcePackMapper.getMenuRegistry(), (player, customMenu) -> customMenu.createMenuForPlayer(player));
+        ComponentUtil.install();
+        GUIUtil.install();
 
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryCachedData.Listener(), MCCreativeLabExtension.getInstance());
         PlayerInventoryCachedData.register(PlayerInventoryCacheStrategy.CachedAmounts.class, PlayerInventoryCacheStrategy.CachedAmounts::new);

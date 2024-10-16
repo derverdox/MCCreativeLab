@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 
@@ -23,22 +24,27 @@ public class FFMPEGDownloader {
             return locator;
         String os = System.getProperty("os.name").toLowerCase();
         File extractedArchiveWithBinaries;
-        if(os.contains("linux")){
+        Logger.getGlobal().info("Could not find ffmpeg encoder. Downloading...");
+
+        File downloadedArchive = downloadFFMPEG();
+        if (downloadedArchive == null)
+            return null;
+        extractedArchiveWithBinaries = FileExtractor.extractFiles(downloadedArchive);
+        if (extractedArchiveWithBinaries == null)
+            return null;
+
+
+/*        if(os.contains("linux")){
+            File downloadedArchive = downloadFFMPEG();
             extractedArchiveWithBinaries = ZipUtil.extractFilesFromZipFileResource("/ffmpeg/linux/ffmpeg.zip", "ffmpeg");
         }
         else {
-            File downloadedArchive = downloadFFMPEG();
-            if (downloadedArchive == null)
-                return null;
-            extractedArchiveWithBinaries = FileExtractor.extractFiles(downloadedArchive);
-            if (extractedArchiveWithBinaries == null)
-                return null;
-        }
+
+        }*/
         Optional<Path> ffmpegBinaryPath = findFFmpegBinary(extractedArchiveWithBinaries);
         if (ffmpegBinaryPath.isEmpty())
             return null;
         File file = ffmpegBinaryPath.get().toFile();
-        System.out.println("FFMPEG installed to: " + file.getAbsolutePath());
         locator = createCustomFFmpegLocator(file);
         return locator;
     }
@@ -71,11 +77,12 @@ public class FFMPEGDownloader {
         } else if (os.contains("linux")) {
             ffmpegUrl = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"; // URL für Linux
         } else {
-            System.out.println("Unsupported operating system.");
+            Logger.getGlobal().info("Unsupported operating system.");
             return null;
         }
 
         try {
+            Logger.getGlobal().info("Downloading ffmpeg from: " + ffmpegUrl);
             return downloadFFmpeg(ffmpegUrl);
         } catch (IOException e) {
             System.out.println("Failed to download ffmpeg: " + e.getMessage());
@@ -93,7 +100,7 @@ public class FFMPEGDownloader {
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
-            System.out.println("Download completed: " + Paths.get(fileName).toAbsolutePath());
+            Logger.getGlobal().info("ffmpeg installed to: " + Paths.get(fileName).toAbsolutePath());
             return new File(Paths.get(fileName).toAbsolutePath().toUri());
         }
     }

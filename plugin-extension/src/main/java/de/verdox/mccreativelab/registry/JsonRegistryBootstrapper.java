@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.registry;
 
 import com.google.gson.JsonObject;
 import de.verdox.mccreativelab.util.gson.JsonUtil;
-import de.verdox.mccreativelab.wrapper.JsonSerializer;
+import de.verdox.mccreativelab.serialization.JsonSerializer;
 import org.bukkit.Keyed;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -23,9 +23,11 @@ public class JsonRegistryBootstrapper<T extends Keyed> {
         this.serializer = serializer;
     }
 
-    public void bootstrap(T exampleValue) throws IOException {
-        File file = new File(registryFolder + "/example.json");
-        JsonUtil.writeJsonObjectToFile(serializer.toJson(exampleValue).getAsJsonObject(), file);
+    public void bootstrap(T... exampleValues) throws IOException {
+        for (T exampleValue : exampleValues) {
+            File file = new File(registryFolder + "/" + exampleValue.getKey().namespace() + "_" + exampleValue.getKey().value() + ".json");
+            JsonUtil.writeJsonObjectToFile(serializer.toJson(exampleValue).getAsJsonObject(), file);
+        }
 
         try (Stream<Path> stream = Files.walk(registryFolder.toPath(), 1).skip(1)) {
             stream.filter(path -> FileUtils.extension(path.toFile().getName()).equals("json"))
@@ -33,7 +35,7 @@ public class JsonRegistryBootstrapper<T extends Keyed> {
                     try {
                         JsonObject jsonObject = JsonUtil.readJsonFromFile(path.toFile());
                         T deserialized = serializer.fromJson(jsonObject);
-                        if(deserialized == null)
+                        if (deserialized == null)
                             return;
                         registry.register(deserialized.getKey(), deserialized);
                     } catch (IOException e) {

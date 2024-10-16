@@ -1,26 +1,19 @@
 package de.verdox.mccreativelab.wrapper;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import de.verdox.mccreativelab.MCCreativeLab;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.registry.Reference;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.world.block.behaviour.FakeBlockBehaviour;
 import de.verdox.mccreativelab.world.item.FakeItem;
 import de.verdox.mccreativelab.world.item.FakeItemRegistry;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockData;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
+import de.verdox.mccreativelab.serialization.WrapperSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockDataMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

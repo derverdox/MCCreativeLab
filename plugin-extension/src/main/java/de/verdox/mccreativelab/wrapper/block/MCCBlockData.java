@@ -16,9 +16,6 @@ import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
 
 public interface MCCBlockData extends MCCWrapped {
-
-    //TODO: applyPhysics is being used for update block data in FakeBlockStorage. This is kinda weird.
-
     static MCCBlockData getFromBlock(Block block){
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
         if(fakeBlockState != null)

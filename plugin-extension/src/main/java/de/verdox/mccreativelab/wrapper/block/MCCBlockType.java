@@ -6,12 +6,11 @@ import de.verdox.mccreativelab.serialization.NBTSerializer;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.FakeBlockStorage;
+import de.verdox.mccreativelab.wrapper.MCCBlockSoundGroup;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -20,11 +19,14 @@ import java.util.List;
 public interface MCCBlockType extends MCCWrapped {
 
     void setBlock(Location location);
+
     List<MCCBlockData> getAllBlockStates();
 
-    static MCCBlockType getFromBlock(Block block){
+    MCCBlockSoundGroup getSoundGroup();
+
+    static MCCBlockType getFromBlock(Block block) {
         FakeBlock fakeBlock = FakeBlockStorage.getFakeBlock(block.getLocation(), false);
-        if(fakeBlock != null)
+        if (fakeBlock != null)
             return MCCBlockType.wrap(fakeBlock);
         else
             return MCCBlockType.wrap(block.getType());
@@ -55,8 +57,11 @@ public interface MCCBlockType extends MCCWrapped {
             }
         };
 
+        private final BlockData blockData;
+
         protected Vanilla(Material handle) {
             super(handle);
+            this.blockData = Bukkit.createBlockData(getHandle());
         }
 
         @Override
@@ -71,14 +76,19 @@ public interface MCCBlockType extends MCCWrapped {
 
         @Override
         public List<MCCBlockData> getAllBlockStates() {
-            if(MCCreativeLabExtension.isServerSoftware())
+            if (MCCreativeLabExtension.isServerSoftware())
                 return MCCUtil.getInstance().streamAllBlockDataVariants(getHandle()).map(MCCBlockData::wrap).toList();
             return List.of();
         }
 
         @Override
+        public MCCBlockSoundGroup getSoundGroup() {
+            return MCCBlockSoundGroup.of(blockData.getSoundGroup());
+        }
+
+        @Override
         public boolean matches(MCCWrapped mccWrapped) {
-            if(mccWrapped instanceof Vanilla vanilla)
+            if (mccWrapped instanceof Vanilla vanilla)
                 return vanilla.getHandle().equals(getHandle());
             return false;
         }
@@ -94,7 +104,7 @@ public interface MCCBlockType extends MCCWrapped {
 
             @Override
             public FakeBlockType deserialize(NBTContainer nbtContainer) {
-                if(!nbtContainer.has("block_type"))
+                if (!nbtContainer.has("block_type"))
                     return null;
                 NamespacedKey namespacedKey = NamespacedKey.fromString(nbtContainer.getString("block_type"));
                 return new FakeBlockType(MCCreativeLabExtension.getFakeBlockRegistry().get(namespacedKey));
@@ -121,8 +131,13 @@ public interface MCCBlockType extends MCCWrapped {
         }
 
         @Override
+        public MCCBlockSoundGroup getSoundGroup() {
+            return MCCBlockSoundGroup.of(getHandle().getDefaultBlockState().getFakeBlockSoundGroup());
+        }
+
+        @Override
         public boolean matches(MCCWrapped mccWrapped) {
-            if(mccWrapped instanceof FakeBlockType fakeBlock)
+            if (mccWrapped instanceof FakeBlockType fakeBlock)
                 return fakeBlock.getHandle().equals(getHandle());
             return false;
         }

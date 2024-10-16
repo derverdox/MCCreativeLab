@@ -2,31 +2,22 @@ package de.verdox.mccreativelab;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+import de.verdox.mccreativelab.util.AsyncWorldCreation;
 import de.verdox.mccreativelab.worldgen.WorldGenData;
 import de.verdox.mccreativelab.worldgen.impl.CraftWorldGenData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.PlaceOnWaterBlockItem;
-import net.minecraft.world.item.SolidBucketItem;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -304,6 +295,16 @@ public class MCCUtilImpl implements MCCUtil {
     @Override
     public WorldGenData getWorldGenData(@NotNull World world) {
         return new CraftWorldGenData(((CraftWorld) world).getHandle());
+    }
+
+    @Override
+    public boolean isMCCreativeLabServerSoftware() {
+        try {
+            Class.forName("de.verdox.mccreativelab.MCCreativeLab");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 
     private static void openCustomInventory(Inventory inventory, ServerPlayer player, MenuType<?> windowType, net.kyori.adventure.text.Component title) {

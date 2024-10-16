@@ -119,4 +119,6 @@ public interface MCCUtil {
     @org.jetbrains.annotations.Nullable InventoryView openInventory(@NotNull Player player, @NotNull Inventory inventory, net.kyori.adventure.text.Component title);
 
     WorldGenData getWorldGenData(@NotNull World world);
+
+    boolean isMCCreativeLabServerSoftware();
 }

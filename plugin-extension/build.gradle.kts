@@ -59,6 +59,7 @@ allprojects {
         }
 
         val copyTask = register<Copy>("copyToTestServer") {
+            dependsOn(":plugin-extension:shadowJar")
             val jarPath = "../plugin-extension/build/libs/plugin-extension-$version-all.jar";
             println("Copying $jarPath to testserver")
             from(jarPath)

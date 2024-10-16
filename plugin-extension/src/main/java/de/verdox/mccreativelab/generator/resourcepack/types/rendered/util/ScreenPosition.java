@@ -53,6 +53,22 @@ public record ScreenPosition(int x, int y, float xOffset, float yOffset, int lay
         return new ScreenPosition(x(), y(), xOffset(), val, layer(), textType());
     }
 
+    public ScreenPosition up(float val){
+        return addToYOffset(val);
+    }
+
+    public ScreenPosition down(float val){
+        return addToYOffset(-val);
+    }
+
+    public ScreenPosition right(float val){
+        return addToXOffset(val);
+    }
+
+    public ScreenPosition left(float val){
+        return addToXOffset(-val);
+    }
+
     public static ScreenPosition calculateTopLeftCornerOfInventorySlotIndex(int index, TextType textType) {
         var indexZeroPos = TextType.getTopLeftCorner(textType)
                                    .addToXOffset(8)

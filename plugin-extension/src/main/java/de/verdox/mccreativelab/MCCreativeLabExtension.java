@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab;
 
-import com.google.gson.JsonElement;
 import de.verdox.mccreativelab.debug.*;
 import de.verdox.mccreativelab.event.MCCreativeLabReloadEvent;
 import de.verdox.mccreativelab.features.Feature;
@@ -12,8 +11,8 @@ import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackScanner;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.registry.CustomRegistry;
-import de.verdox.mccreativelab.util.PlayerUtil;
-import de.verdox.mccreativelab.util.gson.JsonUtil;
+import de.verdox.mccreativelab.registry.RegistryLookUpCommand;
+import de.verdox.mccreativelab.util.PlayerAsyncRayTracer;
 import de.verdox.mccreativelab.util.nbt.PersistentDataSaver;
 import de.verdox.mccreativelab.util.player.fakeinv.FakeInventory;
 import de.verdox.mccreativelab.world.CustomEventsCaller;
@@ -25,27 +24,17 @@ import de.verdox.mccreativelab.world.item.FakeItemListener;
 import de.verdox.mccreativelab.world.item.FakeItemRegistry;
 import de.verdox.mccreativelab.world.item.fuel.FuelSettings;
 import de.verdox.mccreativelab.world.sound.ReplacedSoundGroups;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.JukeboxSong;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.inventory.ItemRarity;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.components.FoodComponent;
-import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
-import org.bukkit.inventory.meta.components.ToolComponent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -68,14 +57,9 @@ public class MCCreativeLabExtension extends JavaPlugin {
             throw new IllegalStateException("This feature is not available without the MCCreativeLab Paper Fork. You are running " + Bukkit.getServer().getName());
     }
 
+    @Deprecated
     public static boolean isServerSoftware() {
-        try {
-            Class.forName("de.verdox.mccreativelab.MCCreativeLab");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
-        //return Bukkit.getServer().getName().equals("MCCreativeLab");
+        return MCCUtil.getInstance().isMCCreativeLabServerSoftware();
     }
 
     @Override
@@ -100,7 +84,7 @@ public class MCCreativeLabExtension extends JavaPlugin {
             Bukkit.getLogger().warning("§cConsider running MCCreativeLab Server Software");
         if (isServerSoftware()) {
             fuelSettings = new FuelSettings();
-            Debug.init();
+            //Debug.init();
             ReplacedBlocks.init();
         }
     }
@@ -116,7 +100,7 @@ public class MCCreativeLabExtension extends JavaPlugin {
             serverSoftwareExclusives.onEnable();
         }
 
-        PlayerUtil.startAsyncRaytracer();
+        PlayerAsyncRayTracer.startAsyncRaytracer(this);
 
 
         if (isServerSoftware()) {
@@ -125,7 +109,6 @@ public class MCCreativeLabExtension extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new FakeBlockListener(), this);
             Bukkit.getCommandMap().register("fakeblock", "mccreativelab", new FakeBlockCommand());
             Bukkit.getCommandMap().register("fakeitem", "mccreativelab", new FakeItemCommand());
-            Bukkit.getPluginManager().registerEvents(new FakeBlockSoundManager(), this);
             Bukkit.getPluginManager().registerEvents(new CustomBlockSounds(), this);
             Bukkit.getPluginManager().registerEvents(new FakeItemListener(), this);
             Bukkit.getPluginManager().registerEvents(fuelSettings, this);

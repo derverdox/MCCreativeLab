@@ -1,18 +1,15 @@
 package de.verdox.mccreativelab.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import de.verdox.mccreativelab.util.ffmpeg.FFMPEGDownloader;
 import org.bukkit.Bukkit;
-import org.codehaus.plexus.util.FileUtils;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.encode.AudioAttributes;
 import ws.schild.jave.encode.EncodingAttributes;
 import ws.schild.jave.process.ProcessLocator;
-import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class AudioConverter {
     // variables

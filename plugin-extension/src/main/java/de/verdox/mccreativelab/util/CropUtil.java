@@ -14,17 +14,4 @@ public class CropUtil {
             result = 1;
         return result;
     }
-
-    public static void main(String[] args) {
-        var result = möp(4137, 0.0000151f);
-
-        System.out.println(TimeUnit.SECONDS.toMinutes((long) (result[0] / 20)) + " | " + TimeUnit.SECONDS.toMinutes((long) (result[1] / 20)));
-    }
-
-
-    public static float[] möp(float expectedValue, float probability) {
-        var b = 3 * Math.sqrt(expectedValue * (1 - probability));
-        System.out.println(b);
-        return new float[]{(float) (expectedValue + b), (float) (expectedValue - b)};
-    }
 }

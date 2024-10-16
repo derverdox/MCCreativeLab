@@ -52,6 +52,10 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
         forEachElementBehavior((activeHudRenderedHudElementBehavior, rendered) -> activeHudRenderedHudElementBehavior.onOpen((T) this, rendered), true);
     }
 
+    public Component getLastRendered() {
+        return lastRendered;
+    }
+
     public <R> ActiveComponentRendered<T, C> addTemporaryData(String key, @Nullable R value) {
         if (value == null)
             tempData.remove(key);

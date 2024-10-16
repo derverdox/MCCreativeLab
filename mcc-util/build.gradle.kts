@@ -17,6 +17,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+publishing {
+    publications.create<MavenPublication>("maven").from(components["java"]);
+    publications {
+        create<MavenPublication>("lib") {
+            artifact(tasks.jar)
+        }
+    }
+    repositories.maven(repositories.mavenLocal())
+}
+
 tasks.test {
     useJUnitPlatform()
 }

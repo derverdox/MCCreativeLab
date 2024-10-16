@@ -381,6 +381,26 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
                 ", fallSound=" + fallSound +
                 '}';
         }
+
+        public SoundData getHitSound() {
+            return hitSound;
+        }
+
+        public SoundData getStepSound() {
+            return stepSound;
+        }
+
+        public SoundData getBreakSound() {
+            return breakSound;
+        }
+
+        public SoundData getPlaceSound() {
+            return placeSound;
+        }
+
+        public SoundData getFallSound() {
+            return fallSound;
+        }
     }
 
     public static class FakeBlockHitbox {
