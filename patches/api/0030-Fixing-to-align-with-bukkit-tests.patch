@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: verdox <mail.ysp@web.de>
+Date: Sun, 20 Oct 2024 23:08:49 +0000
+Subject: [PATCH] Fixing to align with bukkit tests
+
+
+diff --git a/src/main/java/de/verdox/itemformat/BasicItemFormat.java b/src/main/java/de/verdox/itemformat/BasicItemFormat.java
+index 9eff8786195ff9543397f5261c2a0091e40646c9..4eeb17b1560e0c3a7add03270b2d5371ef22c1c3 100644
+--- a/src/main/java/de/verdox/itemformat/BasicItemFormat.java
++++ b/src/main/java/de/verdox/itemformat/BasicItemFormat.java
+@@ -3,6 +3,7 @@ package de.verdox.itemformat;
+ import de.verdox.mccreativelab.CustomBehaviour;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.meta.ItemMeta;
+ import org.bukkit.persistence.PersistentDataType;
+ import org.jetbrains.annotations.NotNull;
+ import java.util.Objects;
+@@ -50,4 +51,12 @@ public interface BasicItemFormat {
+     static void applyConversionTag(ItemStack stack){
+         stack.editMeta(meta -> meta.getPersistentDataContainer().set(sessionIDKey, PersistentDataType.STRING, randomSessionID));
+     }
++
++    static void removeConversionTag(ItemStack stack){
++        stack.editMeta(meta -> meta.getPersistentDataContainer().remove(sessionIDKey));
++    }
++
++    static void removeConversionTag(ItemMeta meta){
++        meta.getPersistentDataContainer().remove(sessionIDKey);
++    }
+ }
+diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
+index 25f7eee19da7369642e5d01b73d9de14200aa25a..e1901b52e7236f6cc648da48ecc44d25c394f6d4 100644
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
+ import java.util.LinkedHashMap;
+ import java.util.Locale;
+ import java.util.Map;
++
++import de.verdox.itemformat.BasicItemFormat;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Material;
+ import org.bukkit.NamespacedKey;
+@@ -489,6 +491,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable, Translat
+ 
+         ItemMeta meta = getItemMeta();
+         if (!Bukkit.getItemFactory().equals(meta, null)) {
++            BasicItemFormat.removeConversionTag(meta);
+             result.put("meta", meta);
+         }
+ 
