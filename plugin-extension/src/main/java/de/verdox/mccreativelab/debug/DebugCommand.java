@@ -103,16 +103,7 @@ public class DebugCommand extends Command {
                 Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
                 villager.getBrain(Villager.class)
                     .addActivity(VillagerAI.workPackageBuilder(Villager.Profession.FARMER, 0.5f), true);
-
-
-                Bukkit.getScheduler().runTaskLater(MCCreativeLabExtension.getInstance(), () -> {
-                    Entity breedTarget = villager.getMemory(MemoryKey.BREED_TARGET);
-                    List<Entity> nearestVisibleEntities = villager.getMemory(MemoryKey.NEAREST_VISIBLE_LIVING_ENTITIES);
-                    if (nearestVisibleEntities != null)
-                        System.out.println(nearestVisibleEntities);
-                    if (breedTarget != null)
-                        System.out.println(breedTarget);
-                }, 20L * 3);
+                
             } else if (argument1.equals("menu") && sender instanceof Player player) {
                 if (ActiveMenu.hasActiveMenu(player))
                     ActiveMenu.closeActiveMenu(player);

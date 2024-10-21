@@ -49,7 +49,7 @@ public final class VillagerAI {
                          behaviorFactory.runOne(builder -> builder
                              .withBehaviour(2, behaviorFactory.strollAroundPoi(MemoryKey.JOB_SITE, speed, 4))
                              .withBehaviour(5, behaviorFactory.strollToPoi(MemoryKey.JOB_SITE, speed, 1, 10))
-                             .withBehaviour(5, behaviorFactory.strollToPoiList(MemoryKey.SECONDARY_JOB_SITE, speed, 1, 10, MemoryKey.JOB_SITE))
+                             //.withBehaviour(5, behaviorFactory.strollToPoiList(MemoryKey.SECONDARY_JOB_SITE, speed, 1, 10, MemoryKey.JOB_SITE))
                              .withBehaviour(profession.getKey()
                                                       .equals(Villager.Profession.FARMER.getKey()) ? 2 : 5, behaviorFactory.harvestFarmland())
                              .withBehaviour(profession.getKey()
@@ -69,11 +69,11 @@ public final class VillagerAI {
                      .withBehaviour(5, fullLookBehaviour())
                      .withBehaviour(5, BehaviorFactory::playTagWithOtherKids)
                      .withBehaviour(5, behaviorFactory -> behaviorFactory.runOne(activityBuilder -> activityBuilder
-                         .withRequiredMemory(MemoryKey.VISIBLE_VILLAGER_BABIES, MemoryStatus.VALUE_ABSENT)
+                         //.withRequiredMemory(MemoryKey.VISIBLE_VILLAGER_BABIES, MemoryStatus.VALUE_ABSENT)
                          .withBehaviour(2, behaviorFactory1 -> behaviorFactory1.jumpOnBed(speed))
                          .withBehaviour(2, behaviorFactory1 -> behaviorFactory1.doNothing(20, 40))
-                         .withBehaviour(2, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
-                         .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.CAT, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
+                         //.withBehaviour(2, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
+                         //.withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.CAT, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
                          .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.villageBoundRandomStroll(speed))
                          .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.setWalkTargetFromLookTarget(speed, 2))
 
@@ -108,7 +108,7 @@ public final class VillagerAI {
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.giveGiftToHero(100))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.validateNearbyPoi(poiType -> is(poiType, PoiType.MEETING), MemoryKey.MEETING_POINT))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.gateBehaviour(activityBuilder -> activityBuilder
-                         .withForgettingMemoriesWhenStopped(MemoryKey.INTERACTION_TARGET)
+                         //.withForgettingMemoriesWhenStopped(MemoryKey.INTERACTION_TARGET)
                          .withBehaviour(1, BehaviorFactory::tradeWithVillager), BehaviorFactory.GateOrderPolicy.ORDERED, BehaviorFactory.GateRunningPolicy.RUN_ONE))
                      .withBehaviour(5, fullLookBehaviour())
                      .withBehaviour(99, BehaviorFactory::updateActivityFromSchedule);
@@ -117,9 +117,9 @@ public final class VillagerAI {
     public static ActivityBuilder<Villager> idlePackageBuilder(float speed) {
         return Bukkit.getAIFactory().createActivityBuilder(Villager.class, EntityActivity.IDLE)
                      .withBehaviour(2, behaviorFactory -> behaviorFactory.runOne(activityBuilder -> activityBuilder
-                         .withBehaviour(2, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
-                         .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, livingEntity -> livingEntity instanceof Breedable breedable && breedable.canBreed(), entity -> entity instanceof Breedable breedable && breedable.canBreed(), MemoryKey.BREED_TARGET, speed, 2))
-                         .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.CAT, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
+                         //.withBehaviour(2, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
+                         //.withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.VILLAGER, 8, livingEntity -> livingEntity instanceof Breedable breedable && breedable.canBreed(), entity -> entity instanceof Breedable breedable && breedable.canBreed(), MemoryKey.BREED_TARGET, speed, 2))
+                         //.withBehaviour(1, behaviorFactory1 -> behaviorFactory1.interactWith(EntityType.CAT, 8, MemoryKey.INTERACTION_TARGET, speed, 2))
                          .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.villageBoundRandomStroll(speed))
                          .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.setWalkTargetFromLookTarget(speed, 2))
                          .withBehaviour(1, behaviorFactory1 -> behaviorFactory1.jumpOnBed(speed))
@@ -129,10 +129,10 @@ public final class VillagerAI {
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.setLookAndInteract(EntityType.PLAYER, 4))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.showTradesToPlayer(400, 1600))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.gateBehaviour(activityBuilder -> activityBuilder
-                         .withForgettingMemoriesWhenStopped(MemoryKey.INTERACTION_TARGET)
+                         //.withForgettingMemoriesWhenStopped(MemoryKey.INTERACTION_TARGET)
                          .withBehaviour(1, BehaviorFactory::tradeWithVillager), BehaviorFactory.GateOrderPolicy.ORDERED, BehaviorFactory.GateRunningPolicy.RUN_ONE))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.gateBehaviour(activityBuilder -> activityBuilder
-                         .withForgettingMemoriesWhenStopped(MemoryKey.BREED_TARGET)
+                         //.withForgettingMemoriesWhenStopped(MemoryKey.BREED_TARGET)
                          .withBehaviour(1, BehaviorFactory::villagerMakeLove), BehaviorFactory.GateOrderPolicy.ORDERED, BehaviorFactory.GateRunningPolicy.RUN_ONE))
                      .withBehaviour(5, fullLookBehaviour())
                      .withBehaviour(99, BehaviorFactory::updateActivityFromSchedule)
@@ -142,8 +142,8 @@ public final class VillagerAI {
     public static ActivityBuilder<Villager> panicPackageBuilder(float speed) {
         return Bukkit.getAIFactory().createActivityBuilder(Villager.class, EntityActivity.PANIC)
                      .withBehaviour(0, BehaviorFactory::villagerCalmDown)
-                     .withBehaviour(1, behaviorFactory -> behaviorFactory.setWalkTargetAwayFromEntity(MemoryKey.NEAREST_HOSTILE, speed * 1.5f, 6, false))
-                     .withBehaviour(1, behaviorFactory -> behaviorFactory.setWalkTargetAwayFromEntity(MemoryKey.HURT_BY_ENTITY, speed * 1.5f, 6, false))
+                     //.withBehaviour(1, behaviorFactory -> behaviorFactory.setWalkTargetAwayFromEntity(MemoryKey.NEAREST_HOSTILE, speed * 1.5f, 6, false))
+                     //.withBehaviour(1, behaviorFactory -> behaviorFactory.setWalkTargetAwayFromEntity(MemoryKey.HURT_BY_ENTITY, speed * 1.5f, 6, false))
                      .withBehaviour(3, behaviorFactory -> behaviorFactory.villageBoundRandomStroll(speed * 1.5f, 2, 2))
                      .withBehaviour(5, fullLookBehaviour())
             ;
