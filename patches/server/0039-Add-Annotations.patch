@@ -1,0 +1,1436 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: verdox <mail.ysp@web.de>
+Date: Mon, 21 Oct 2024 19:36:35 +0000
+Subject: [PATCH] Add Annotations
+
+
+diff --git a/src/main/java/de/verdox/mccreativelab/CreativeLabImpl.java b/src/main/java/de/verdox/mccreativelab/CreativeLabImpl.java
+index 4d714e0b4d414b8a190c2202e6c26ee807053479..619791a9804d7b1fc2e2d30f2c8cbdfce0711e6a 100644
+--- a/src/main/java/de/verdox/mccreativelab/CreativeLabImpl.java
++++ b/src/main/java/de/verdox/mccreativelab/CreativeLabImpl.java
+@@ -25,18 +25,18 @@ public final class CreativeLabImpl implements CreativeLab {
+ 
+     private final de.verdox.mccreativelab.data.DataPackInterceptor dataPackInterceptor = new CraftDataPackInterceptor();
+     @Override
+-    public de.verdox.mccreativelab.data.DataPackInterceptor getDataPackInterceptor() {
++    public de.verdox.mccreativelab.data.@NotNull DataPackInterceptor getDataPackInterceptor() {
+         return dataPackInterceptor;
+     }
+ 
+     private final de.verdox.mccreativelab.data.VanillaRegistryManipulator vanillaRegistryManipulator = new de.verdox.mccreativelab.data.CraftVanillaRegistryManipulator();
+     @Override
+-    public de.verdox.mccreativelab.data.VanillaRegistryManipulator getRegistryManipulator() {
++    public de.verdox.mccreativelab.data.@NotNull VanillaRegistryManipulator getRegistryManipulator() {
+         return vanillaRegistryManipulator;
+     }
+ 
+     @Override
+-    public void setWorldHook(org.bukkit.World world, @NotNull de.verdox.mccreativelab.behaviour.MCCWorldHook mccWorldHook) {
++    public void setWorldHook(org.bukkit.@NotNull World world, @NotNull de.verdox.mccreativelab.behaviour.MCCWorldHook mccWorldHook) {
+         Objects.requireNonNull(mccWorldHook, "mccWorldHook cannot be null");
+         ((org.bukkit.craftbukkit.CraftWorld) world).getHandle().mccWorldHook = mccWorldHook;
+     }
+@@ -47,17 +47,17 @@ public final class CreativeLabImpl implements CreativeLab {
+     }
+ 
+     @Override
+-    public de.verdox.mccreativelab.advancement.AdvancementBuilder createAdvancement() {
++    public de.verdox.mccreativelab.advancement.@NotNull AdvancementBuilder createAdvancement() {
+         return new de.verdox.mccreativelab.advancement.CraftAdvancementBuilder();
+     }
+ 
+     @Override
+-    public org.bukkit.inventory.Inventory openCustomContainerMenu(@NotNull de.verdox.mccreativelab.container.CustomInventory customInventory, @NotNull org.bukkit.entity.Player player, @NotNull net.kyori.adventure.text.Component title) {
++    public org.bukkit.inventory.@NotNull Inventory openCustomContainerMenu(@NotNull de.verdox.mccreativelab.container.CustomInventory customInventory, @NotNull org.bukkit.entity.Player player, @NotNull net.kyori.adventure.text.Component title) {
+         return de.verdox.mccreativelab.container.CustomContainerMenu.openToPlayer(customInventory, player, title);
+     }
+ 
+     @Override
+-    public InteractionResult placeBlockFromItemWithoutPlayer(ItemStack stack, Location location) {
++    public @NotNull InteractionResult placeBlockFromItemWithoutPlayer(@NotNull ItemStack stack, @NotNull Location location) {
+         if (!(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(stack).getItem() instanceof net.minecraft.world.item.BlockItem blockItem))
+             throw new IllegalArgumentException();
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementBuilder.java b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementBuilder.java
+index c5aa73f5c34dfd49f913bdc7e053f3cbe376fb29..25928d56095adf9134d57219ec754e8c4269e66f 100644
+--- a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementBuilder.java
+@@ -10,6 +10,7 @@ import org.bukkit.NamespacedKey;
+ import org.bukkit.advancement.Advancement;
+ import org.bukkit.craftbukkit.advancement.CraftAdvancement;
+ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
+ import java.util.Iterator;
+@@ -29,31 +30,31 @@ public class CraftAdvancementBuilder implements AdvancementBuilder {
+     Component name;
+ 
+     @Override
+-    public AdvancementBuilder withParent(NamespacedKey namespacedKey) {
++    public @NotNull AdvancementBuilder withParent(@NotNull NamespacedKey namespacedKey) {
+         parent = namespacedKey;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementBuilder withDisplay(Consumer<AdvancementDisplayBuilder> builder) {
++    public @NotNull AdvancementBuilder withDisplay(@NotNull Consumer<AdvancementDisplayBuilder> builder) {
+         builder.accept(craftAdvancementDisplayBuilder);
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementBuilder withRewards(Consumer<AdvancementRewardBuilder> builder) {
++    public @NotNull AdvancementBuilder withRewards(@NotNull Consumer<AdvancementRewardBuilder> builder) {
+         builder.accept(craftAdvancementRewardBuilder);
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementBuilder withRequirements(Consumer<AdvancementRequirementsBuilder> builder) {
++    public @NotNull AdvancementBuilder withRequirements(@NotNull Consumer<AdvancementRequirementsBuilder> builder) {
+         builder.accept(craftAdvancementRequirementsBuilder);
+         return this;
+     }
+ 
+     @Override
+-    public Advancement addToBukkit(NamespacedKey namespacedKey) {
++    public @NotNull Advancement addToBukkit(@NotNull NamespacedKey namespacedKey) {
+         Optional<ResourceLocation> parent = this.parent == null ? Optional.empty() : Optional.of(CraftNamespacedKey.toMinecraft(this.parent));
+         Optional<net.minecraft.network.chat.Component> name = this.name == null ? Optional.empty() : Optional.of(PaperAdventure.asVanilla(this.name));
+         DisplayInfo displayInfo = craftAdvancementDisplayBuilder.buildNMS();
+diff --git a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementDisplayBuilder.java b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementDisplayBuilder.java
+index d3f6890d1f2da9a790ab14cae299958bdd413ef4..7557a97c6f5c6444184880fed8edf67df4ee9985 100644
+--- a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementDisplayBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementDisplayBuilder.java
+@@ -31,61 +31,61 @@ public class CraftAdvancementDisplayBuilder implements AdvancementDisplayBuilder
+ 
+ 
+     @Override
+-    public AdvancementDisplayBuilder setFrame(AdvancementDisplay.Frame frame) {
++    public @NotNull AdvancementDisplayBuilder setFrame(AdvancementDisplay.@NotNull Frame frame) {
+         this.frame = frame;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setTitle(Component title) {
++    public @NotNull AdvancementDisplayBuilder setTitle(@NotNull Component title) {
+         this.title = title;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setDescription(Component description) {
++    public @NotNull AdvancementDisplayBuilder setDescription(@NotNull Component description) {
+         this.description = description;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setIcon(ItemStack icon) {
++    public @NotNull AdvancementDisplayBuilder setIcon(@NotNull ItemStack icon) {
+         this.icon = icon;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setShowToast(boolean showToast) {
++    public @NotNull AdvancementDisplayBuilder setShowToast(boolean showToast) {
+         this.showToast = showToast;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setAnnounceToChat(boolean announceToChat) {
++    public @NotNull AdvancementDisplayBuilder setAnnounceToChat(boolean announceToChat) {
+         this.announceToChat = announceToChat;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setHidden(boolean hidden) {
++    public @NotNull AdvancementDisplayBuilder setHidden(boolean hidden) {
+         isHidden = hidden;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setBackground(NamespacedKey background) {
++    public @NotNull AdvancementDisplayBuilder setBackground(@NotNull NamespacedKey background) {
+         this.background = background;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setX(float x) {
++    public @NotNull AdvancementDisplayBuilder setX(float x) {
+         this.x = x;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementDisplayBuilder setY(float y) {
++    public @NotNull AdvancementDisplayBuilder setY(float y) {
+         this.y = y;
+         return this;
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRequirementsBuilder.java b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRequirementsBuilder.java
+index 085e8bcfaebc245983e7ec1262634fe187b54df4..811d20b04169cf2ea94a123ce544d35158b3f76d 100644
+--- a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRequirementsBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRequirementsBuilder.java
+@@ -4,6 +4,7 @@ import net.minecraft.advancements.AdvancementRequirements;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.advancements.Criterion;
+ import net.minecraft.advancements.critereon.ImpossibleTrigger;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.HashMap;
+ import java.util.LinkedList;
+@@ -15,13 +16,13 @@ public class CraftAdvancementRequirementsBuilder implements AdvancementRequireme
+     Strategy strategy = Strategy.OR;
+ 
+     @Override
+-    public AdvancementRequirementsBuilder withStrategy(Strategy strategy) {
++    public @NotNull AdvancementRequirementsBuilder withStrategy(@NotNull Strategy strategy) {
+         this.strategy = strategy;
+         return this;
+     }
+ 
+     @Override
+-    public AdvancementRequirementsBuilder addCriterion(String name) {
++    public @NotNull AdvancementRequirementsBuilder addCriterion(@NotNull String name) {
+         this.criteria.put(name, CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()));
+         return this;
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRewardBuilder.java b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRewardBuilder.java
+index fa21f5f565b4cf6c5d89851e77dc380edd436a59..1449ae51da516bcc10ad67db992ca43340bf4eec 100644
+--- a/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRewardBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/advancement/CraftAdvancementRewardBuilder.java
+@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
+ import net.minecraft.resources.ResourceKey;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -15,17 +16,17 @@ public class CraftAdvancementRewardBuilder implements AdvancementRewardBuilder{
+     final List<NamespacedKey> lootTables = new ArrayList<>();
+     final List<NamespacedKey> recipes = new ArrayList<>();
+ 
+-    public CraftAdvancementRewardBuilder setExperience(int experience) {
++    public @NotNull CraftAdvancementRewardBuilder setExperience(int experience) {
+         this.experience = experience;
+         return this;
+     }
+ 
+-    public CraftAdvancementRewardBuilder withLootTable(NamespacedKey namespacedKey){
++    public @NotNull CraftAdvancementRewardBuilder withLootTable(@NotNull NamespacedKey namespacedKey){
+         this.lootTables.add(namespacedKey);
+         return this;
+     }
+ 
+-    public CraftAdvancementRewardBuilder withRecipe(NamespacedKey namespacedKey){
++    public @NotNull CraftAdvancementRewardBuilder withRecipe(@NotNull NamespacedKey namespacedKey){
+         this.recipes.add(namespacedKey);
+         return this;
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/CraftEntityBrain.java b/src/main/java/de/verdox/mccreativelab/ai/CraftEntityBrain.java
+index c39b86bba2455a2f3c93ec035655694412725171..3cc4f0e2d8f7710d6839e1266ab0c9f35c48e3d3 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/CraftEntityBrain.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/CraftEntityBrain.java
+@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.entity.memory.CraftMemoryKey;
+ import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.memory.MemoryKey;
++import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
+ import java.util.*;
+@@ -32,32 +33,32 @@ public class CraftEntityBrain<E extends LivingEntity> implements EntityBrain<E>
+     }
+ 
+     @Override
+-    public BehaviorFactory getBehaviorFactory() {
++    public @NotNull BehaviorFactory getBehaviorFactory() {
+         return behaviorFactory;
+     }
+ 
+     @Override
+-    public <U> void addMemoryToBrain(MemoryKey<U> memoryKey) {
++    public <U> void addMemoryToBrain(@NotNull MemoryKey<U> memoryKey) {
+         this.entityBrain.addMemoryToBrain(CraftMemoryKey.bukkitToMinecraft(memoryKey));
+     }
+ 
+     @Override
+-    public <U> void eraseMemory(MemoryKey<U> memoryKey) {
++    public <U> void eraseMemory(@NotNull MemoryKey<U> memoryKey) {
+         this.entityBrain.eraseMemory(CraftMemoryKey.bukkitToMinecraft(memoryKey));
+     }
+ 
+     @Override
+-    public <U> void setMemory(MemoryKey<U> type, @Nullable U value) {
++    public <U> void setMemory(@NotNull MemoryKey<U> type, @Nullable U value) {
+         this.entityBrain.setMemory(CraftMemoryKey.bukkitToMinecraft(type), CraftMemoryMapper.toNms(value));
+     }
+ 
+     @Override
+-    public <U> void setMemoryWithExpiry(MemoryKey<U> type, U value, long expiry) {
++    public <U> void setMemoryWithExpiry(@NotNull MemoryKey<U> type, U value, long expiry) {
+         this.entityBrain.setMemoryWithExpiry(CraftMemoryKey.bukkitToMinecraft(type), CraftMemoryMapper.toNms(value), expiry);
+     }
+ 
+     @Override
+-    public <U> Optional<U> getMemory(MemoryKey<U> type) {
++    public <U> @NotNull Optional<U> getMemory(@NotNull MemoryKey<U> type) {
+         var nmsOptional = this.entityBrain.getMemory(CraftMemoryKey.bukkitToMinecraft(type));
+         if (nmsOptional.isEmpty())
+             return Optional.empty();
+@@ -66,32 +67,32 @@ public class CraftEntityBrain<E extends LivingEntity> implements EntityBrain<E>
+     }
+ 
+     @Override
+-    public <U> long getTimeUntilExpiry(MemoryKey<U> type) {
++    public <U> long getTimeUntilExpiry(@NotNull MemoryKey<U> type) {
+         return this.entityBrain.getTimeUntilExpiry(CraftMemoryKey.bukkitToMinecraft(type));
+     }
+ 
+     @Override
+-    public <U> boolean isMemoryValue(MemoryKey<U> type, U value) {
++    public <U> boolean isMemoryValue(@NotNull MemoryKey<U> type, @NotNull U value) {
+         return this.entityBrain.isMemoryValue(CraftMemoryKey.bukkitToMinecraft(type), CraftMemoryMapper.toNms(value));
+     }
+ 
+     @Override
+-    public boolean checkMemory(MemoryKey<?> type, MemoryStatus state) {
++    public boolean checkMemory(@NotNull MemoryKey<?> type, @NotNull MemoryStatus state) {
+         return this.entityBrain.checkMemory(CraftMemoryKey.bukkitToMinecraft(type), toNMS(state));
+     }
+ 
+     @Override
+-    public EntitySchedule getSchedule() {
++    public @NotNull EntitySchedule getSchedule() {
+         return CraftEntitySchedule.minecraftToBukkit(this.entityBrain.getSchedule(), Registries.SCHEDULE, Registry.ENTITY_SCHEDULE);
+     }
+ 
+     @Override
+-    public void setSchedule(EntitySchedule schedule) {
++    public void setSchedule(@NotNull EntitySchedule schedule) {
+         this.entityBrain.setSchedule(CraftEntitySchedule.bukkitToMinecraft(schedule, Registries.SCHEDULE));
+     }
+ 
+     @Override
+-    public void setCoreActivities(Set<EntityActivity> coreActivities) {
++    public void setCoreActivities(@NotNull Set<EntityActivity> coreActivities) {
+         this.entityBrain.setCoreActivities(coreActivities.stream()
+                                                          .map(entityActivity -> CraftEntityActivity.bukkitToMinecraft(entityActivity, Registries.ACTIVITY))
+                                                          .collect(Collectors.toSet()));
+@@ -103,14 +104,14 @@ public class CraftEntityBrain<E extends LivingEntity> implements EntityBrain<E>
+     }
+ 
+     @Override
+-    public Optional<EntityActivity> getActiveNonCoreActivity() {
++    public @NotNull Optional<EntityActivity> getActiveNonCoreActivity() {
+         Optional<Activity> nmsActivityOptional = this.entityBrain.getActiveNonCoreActivity();
+         return nmsActivityOptional.map(activity -> CraftEntityActivity.minecraftToBukkit(activity, Registries.ACTIVITY, Registry.ENTITY_ACTIVITY));
+ 
+     }
+ 
+     @Override
+-    public void setActiveActivityIfPossible(EntityActivity activity) {
++    public void setActiveActivityIfPossible(@NotNull EntityActivity activity) {
+         this.entityBrain.setActiveActivityIfPossible(CraftEntityActivity.bukkitToMinecraft(activity, Registries.ACTIVITY));
+     }
+ 
+@@ -120,7 +121,7 @@ public class CraftEntityBrain<E extends LivingEntity> implements EntityBrain<E>
+     }
+ 
+     @Override
+-    public void setActiveActivityToFirstValid(List<EntityActivity> activities) {
++    public void setActiveActivityToFirstValid(@NotNull List<EntityActivity> activities) {
+         List<Activity> nmsActivities = activities.stream()
+                                                  .map(entityActivity -> CraftEntityActivity.bukkitToMinecraft(entityActivity, Registries.ACTIVITY))
+                                                  .collect(Collectors.toList());
+@@ -128,45 +129,45 @@ public class CraftEntityBrain<E extends LivingEntity> implements EntityBrain<E>
+     }
+ 
+     @Override
+-    public void setDefaultActivity(EntityActivity activity) {
++    public void setDefaultActivity(@NotNull EntityActivity activity) {
+         this.entityBrain.setDefaultActivity(CraftEntityActivity.bukkitToMinecraft(activity, Registries.ACTIVITY));
+     }
+ 
+     @Override
+-    public void addActivity(ActivityBuilder<E> activityBuilder, boolean replaceCompleteActivity, boolean replaceActivityRequirements, boolean replaceForgettingMemories) {
++    public void addActivity(@NotNull ActivityBuilder<E> activityBuilder, boolean replaceCompleteActivity, boolean replaceActivityRequirements, boolean replaceForgettingMemories) {
+         if (activityBuilder instanceof CraftActivityBuilder<E> craftActivityBuilder)
+             craftActivityBuilder.addToBrain(this.entityBrain, replaceCompleteActivity, replaceActivityRequirements, replaceForgettingMemories);
+     }
+ 
+     @Override
+-    public void addActivity(EntityActivity activity, Consumer<ActivityBuilder<E>> activityBuilder, boolean replaceCompleteActivity, boolean replaceActivityRequirements, boolean replaceForgettingMemories) {
++    public void addActivity(@NotNull EntityActivity activity, @NotNull Consumer<ActivityBuilder<E>> activityBuilder, boolean replaceCompleteActivity, boolean replaceActivityRequirements, boolean replaceForgettingMemories) {
+         CraftActivityBuilder<E> craftActivityBuilder1 = new CraftActivityBuilder<>(activity);
+         activityBuilder.accept(craftActivityBuilder1);
+         addActivity(craftActivityBuilder1, replaceCompleteActivity, replaceActivityRequirements, replaceForgettingMemories);
+     }
+ 
+     @Override
+-    public boolean isActive(EntityActivity activity) {
++    public boolean isActive(@NotNull EntityActivity activity) {
+         return this.entityBrain.isActive(CraftEntityActivity.bukkitToMinecraft(activity, Registries.ACTIVITY));
+     }
+ 
+     @Override
+-    public EntityBrain<E> copyWithoutBehaviours() {
++    public @NotNull EntityBrain<E> copyWithoutBehaviours() {
+         return new CraftEntityBrain<>(this.entityBrain.copyWithoutBehaviors());
+     }
+ 
+     @Override
+-    public void stopAll(World world, E entity) {
++    public void stopAll(@NotNull World world, @NotNull E entity) {
+         this.entityBrain.stopAll(((CraftWorld) world).getHandle(), ((CraftLivingEntity) entity).getHandle());
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> createActivityBuilder(EntityActivity entityActivity) {
++    public @NotNull ActivityBuilder<E> createActivityBuilder(@NotNull EntityActivity entityActivity) {
+         return new CraftActivityBuilder<>(entityActivity);
+     }
+ 
+     @Override
+-    public void tick(World world, E entity) {
++    public void tick(@NotNull World world, @NotNull E entity) {
+         this.entityBrain.tick(((CraftWorld) world).getHandle(), ((CraftLivingEntity) entity).getHandle());
+     }
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/behavior/CraftAIBehavior.java b/src/main/java/de/verdox/mccreativelab/ai/behavior/CraftAIBehavior.java
+index ffb72702030a7f06f9a1fcadb5390f800171ec22..af8f8b496101fdaf1ea4391ae9098f095212b676 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/behavior/CraftAIBehavior.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/behavior/CraftAIBehavior.java
+@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import org.bukkit.craftbukkit.entity.memory.CraftMemoryKey;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.memory.MemoryKey;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+@@ -26,7 +27,7 @@ public class CraftAIBehavior<E extends LivingEntity> extends CraftControlledBeha
+     }
+ 
+     @Override
+-    public Map<MemoryKey<?>, MemoryStatus> getRequiredMemoryStates() {
++    public @NotNull Map<MemoryKey<?>, MemoryStatus> getRequiredMemoryStates() {
+         return getBukkitRequiredMemoryKeys(getHandle().getEntryCondition());
+     }
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftAIFactory.java b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftAIFactory.java
+index 57dc5479ed49bce74f4c556eb1aadf529049c040..e1dac7bb9cc2677018da6316765af59550946ad3 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftAIFactory.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftAIFactory.java
+@@ -2,28 +2,29 @@ package de.verdox.mccreativelab.ai.builder;
+ 
+ import org.bukkit.EntityActivity;
+ import org.bukkit.entity.LivingEntity;
++import org.jetbrains.annotations.NotNull;
+ 
+ public class CraftAIFactory implements AIFactory {
+ 
+     private static final BehaviorFactory BEHAVIOR_FACTORY = new CraftBehaviorFactory();
+     private static final GoalFactory GOAL_FACTORY = new CraftGoalFactory();
+     @Override
+-    public BehaviorFactory getBehaviorFactory() {
++    public @NotNull BehaviorFactory getBehaviorFactory() {
+         return BEHAVIOR_FACTORY;
+     }
+ 
+     @Override
+-    public GoalFactory getGoalFactory() {
++    public @NotNull GoalFactory getGoalFactory() {
+         return GOAL_FACTORY;
+     }
+ 
+     @Override
+-    public <E extends LivingEntity> ActivityBuilder<E> createActivityBuilder(Class<? extends E> type, EntityActivity entityActivity) {
++    public <E extends LivingEntity> @NotNull ActivityBuilder<E> createActivityBuilder(@NotNull Class<? extends E> type, @NotNull EntityActivity entityActivity) {
+         return new CraftActivityBuilder<>(entityActivity);
+     }
+ 
+     @Override
+-    public <E extends LivingEntity> WeightedBehaviorsBuilder<E> createWeightedBehaviorsBuilder(Class<? extends E> type) {
++    public <E extends LivingEntity> @NotNull WeightedBehaviorsBuilder<E> createWeightedBehaviorsBuilder(@NotNull Class<? extends E> type) {
+         return new CraftWeightedBehaviorsBuilder<>();
+     }
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftActivityBuilder.java b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftActivityBuilder.java
+index e16263942a7691d9a755f5f61d7f77747128998d..90d881cb7a95cc4694fcaf370d69f2015a9fdd05 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftActivityBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftActivityBuilder.java
+@@ -16,6 +16,7 @@ import org.bukkit.craftbukkit.CraftEntityActivity;
+ import org.bukkit.craftbukkit.entity.memory.CraftMemoryKey;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.memory.MemoryKey;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.HashSet;
+ import java.util.LinkedList;
+@@ -35,43 +36,43 @@ public class CraftActivityBuilder<E extends LivingEntity> implements ActivityBui
+     }
+ 
+     @Override
+-    public CraftActivityBuilder<E> withRequiredMemory(MemoryKey<?> requiredMemoryKey, de.verdox.mccreativelab.ai.MemoryStatus memoryStatus) {
++    public @NotNull CraftActivityBuilder<E> withRequiredMemory(@NotNull MemoryKey<?> requiredMemoryKey, de.verdox.mccreativelab.ai.@NotNull MemoryStatus memoryStatus) {
+         requiredMemories.add(Pair.of(CraftMemoryKey.bukkitToMinecraft(requiredMemoryKey), CraftEntityBrain.toNMS(memoryStatus)));
+         return this;
+     }
+ 
+     @Override
+-    public CraftActivityBuilder<E> withForgettingMemoriesWhenStopped(MemoryKey<?> forgettingMemoryKey) {
++    public @NotNull CraftActivityBuilder<E> withForgettingMemoriesWhenStopped(@NotNull MemoryKey<?> forgettingMemoryKey) {
+         forgettingMemories.add(CraftMemoryKey.bukkitToMinecraft(forgettingMemoryKey));
+         return this;
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> withBehaviour(int priority, ControlledBehavior<? super E> controlledBehavior) {
++    public @NotNull ActivityBuilder<E> withBehaviour(int priority, @NotNull ControlledBehavior<? super E> controlledBehavior) {
+         craftWeightedBehaviorsBuilder.withBehaviour(priority, controlledBehavior);
+         return this;
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> withBehaviour(int priority, AIBehavior<? super E> aiBehavior) {
++    public @NotNull ActivityBuilder<E> withBehaviour(int priority, @NotNull AIBehavior<? super E> aiBehavior) {
+         craftWeightedBehaviorsBuilder.withBehaviour(priority, aiBehavior);
+         return this;
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> withBehaviour(int priority, CustomAIBehavior<? super E> customAIBehavior) {
++    public @NotNull ActivityBuilder<E> withBehaviour(int priority, @NotNull CustomAIBehavior<? super E> customAIBehavior) {
+         craftWeightedBehaviorsBuilder.withBehaviour(priority, customAIBehavior);
+         return this;
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> withBehaviour(int priority, OneShotBehavior<? super E> oneShotBehavior) {
++    public @NotNull ActivityBuilder<E> withBehaviour(int priority, @NotNull OneShotBehavior<? super E> oneShotBehavior) {
+         craftWeightedBehaviorsBuilder.withBehaviour(priority, oneShotBehavior);
+         return this;
+     }
+ 
+     @Override
+-    public ActivityBuilder<E> withBehaviour(int priority, Function<BehaviorFactory, ControlledBehavior<? super E>> behaviourCreator) {
++    public @NotNull ActivityBuilder<E> withBehaviour(int priority, @NotNull Function<BehaviorFactory, ControlledBehavior<? super E>> behaviourCreator) {
+         craftWeightedBehaviorsBuilder.withBehaviour(priority, behaviourCreator);
+         return this;
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftBehaviorFactory.java b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftBehaviorFactory.java
+index ed95db79fca3a1dfb84d6726398a2a224d79a3fc..eb326758a1673f5743894babb88cd5df9cc97ad9 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftBehaviorFactory.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftBehaviorFactory.java
+@@ -33,6 +33,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+ import org.bukkit.damage.DamageType;
+ import org.bukkit.entity.*;
+ import org.bukkit.entity.memory.MemoryKey;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.*;
+ import java.util.function.*;
+@@ -71,7 +72,7 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> acquirePOI(Predicate<PoiType> poiTypePredicate, MemoryKey<Location> poiPosModule, MemoryKey<Location> potentialPoiPosModule, boolean onlyRunIfChild, boolean entityEvent) {
++    public @NotNull OneShotBehavior<Mob> acquirePOI(@NotNull Predicate<PoiType> poiTypePredicate, @NotNull MemoryKey<Location> poiPosModule, @NotNull MemoryKey<Location> potentialPoiPosModule, boolean onlyRunIfChild, boolean entityEvent) {
+         Predicate<Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> poiPredicate = poiTypeHolder -> poiTypePredicate.test(CraftPoiType.minecraftToBukkit(poiTypeHolder.value()));
+         MemoryModuleType<GlobalPos> poiPosModuleNMS = CraftMemoryKey.bukkitToMinecraft(poiPosModule);
+         MemoryModuleType<GlobalPos> potentialPoiPosModuleNMS = CraftMemoryKey.bukkitToMinecraft(potentialPoiPosModule);
+@@ -80,84 +81,84 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public AIBehavior<Animals> animalMakeLove(EntityType targetType, float speed, int approachDistance) {
++    public @NotNull AIBehavior<Animals> animalMakeLove(@NotNull EntityType targetType, float speed, int approachDistance) {
+         if (!Animals.class.isAssignableFrom(targetType.getEntityClass()))
+             throw new IllegalArgumentException("Please provide an Animal EntityType");
+         return asBehavior(new AnimalMakeLove((net.minecraft.world.entity.EntityType<? extends Animal>) CraftEntityType.bukkitToMinecraft(targetType), speed, approachDistance));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> animalPanic(float speed, Function<Mob, io.papermc.paper.registry.tag.TagKey<DamageType>> panicPredicate) {
++    public @NotNull AIBehavior<Mob> animalPanic(float speed, @NotNull Function<Mob, io.papermc.paper.registry.tag.TagKey<DamageType>> panicPredicate) {
+         return asBehavior(new AnimalPanic<>(speed, pathfinderMob -> PaperRegistries.toNms(panicPredicate.apply(((Mob)pathfinderMob.getBukkitLivingEntity())))));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> assignProfessionFromJobSite() {
++    public @NotNull OneShotBehavior<Villager> assignProfessionFromJobSite() {
+         return asOneshot(AssignProfessionFromJobSite.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Ageable> babyFollowAdult(int minRange, int maxRange, float speed) {
++    public @NotNull OneShotBehavior<Ageable> babyFollowAdult(int minRange, int maxRange, float speed) {
+         return asOneshot(BabyFollowAdult.create(UniformInt.of(minRange, maxRange), speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> backupIfTooClose(int distance, float forwardMovement) {
++    public @NotNull OneShotBehavior<Mob> backupIfTooClose(int distance, float forwardMovement) {
+         return asOneshot(BackUpIfTooClose.create(distance, forwardMovement));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> becomePassiveIfMemoryPresent(MemoryKey<?> requiredMemory, int duration) {
++    public @NotNull OneShotBehavior<LivingEntity> becomePassiveIfMemoryPresent(@NotNull MemoryKey<?> requiredMemory, int duration) {
+         return asOneshot(BecomePassiveIfMemoryPresent.create(CraftMemoryKey.bukkitToMinecraft(requiredMemory), duration));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> celebrateVillagersSurviveRaid(int minRuntime, int maxRunTime) {
++    public @NotNull AIBehavior<Villager> celebrateVillagersSurviveRaid(int minRuntime, int maxRunTime) {
+         return asBehavior(new CelebrateVillagersSurvivedRaid(minRuntime, maxRunTime));
+     }
+ 
+     @Override
+-    public <T> OneShotBehavior<LivingEntity> copyMemoryWithExpiry(Predicate<LivingEntity> runPredicate, MemoryKey<T> sourceType, MemoryKey<T> targetType, int minExpiry, int maxExpiry) {
++    public <T> @NotNull OneShotBehavior<LivingEntity> copyMemoryWithExpiry(@NotNull Predicate<LivingEntity> runPredicate, @NotNull MemoryKey<T> sourceType, @NotNull MemoryKey<T> targetType, int minExpiry, int maxExpiry) {
+         return asOneshot(CopyMemoryWithExpiry.create(livingEntity -> runPredicate.test(livingEntity.getBukkitLivingEntity()), CraftMemoryKey.bukkitToMinecraft(sourceType), CraftMemoryKey.bukkitToMinecraft(targetType), UniformInt.of(minExpiry, maxExpiry)));
+     }
+ 
+     @Override
+-    public AIBehavior<LivingEntity> countDownCooldownTicks(MemoryKey<Integer> moduleType) {
++    public @NotNull AIBehavior<LivingEntity> countDownCooldownTicks(@NotNull MemoryKey<Integer> moduleType) {
+         return asBehavior(new CountDownCooldownTicks(CraftMemoryKey.bukkitToMinecraft(moduleType)));
+     }
+ 
+     @Override
+-    public AIBehavior<Frog> croak() {
++    public @NotNull AIBehavior<Frog> croak() {
+         return asBehavior(new Croak());
+     }
+ 
+     @Override
+-    public AIBehavior<RangedEntity> crossbowAttack() {
++    public @NotNull AIBehavior<RangedEntity> crossbowAttack() {
+         return asBehavior(new CrossbowAttack<>());
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> dismountOrSkipMounting(int range, BiPredicate<LivingEntity, Entity> alternativeRideCondition) {
++    public @NotNull OneShotBehavior<LivingEntity> dismountOrSkipMounting(int range, @NotNull BiPredicate<LivingEntity, Entity> alternativeRideCondition) {
+         return asOneshot(DismountOrSkipMounting.create(range, (livingEntity, entity) -> alternativeRideCondition.test(livingEntity.getBukkitLivingEntity(), entity.getBukkitEntity())));
+     }
+ 
+     @Override
+-    public ControlledBehavior<LivingEntity> doNothing(int minRuntime, int maxRunTime) {
++    public @NotNull ControlledBehavior<LivingEntity> doNothing(int minRuntime, int maxRunTime) {
+         return asControlledBehaviour(new DoNothing(minRuntime, maxRunTime));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> eraseMemoryIf(Predicate<LivingEntity> condition, MemoryKey<?> memory) {
++    public @NotNull OneShotBehavior<LivingEntity> eraseMemoryIf(@NotNull Predicate<LivingEntity> condition, @NotNull MemoryKey<?> memory) {
+         return asOneshot(EraseMemoryIf.create(livingEntity -> condition.test(livingEntity.getBukkitLivingEntity()), CraftMemoryKey.bukkitToMinecraft(memory)));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> followTemptation(Function<LivingEntity, Float> speed, Function<LivingEntity, Double> stopDistanceGetter) {
++    public @NotNull AIBehavior<Mob> followTemptation(@NotNull Function<LivingEntity, Float> speed, @NotNull Function<LivingEntity, Double> stopDistanceGetter) {
+         return asBehavior(new FollowTemptation(livingEntity -> speed.apply(livingEntity.getBukkitLivingEntity()), livingEntity -> stopDistanceGetter.apply(livingEntity.getBukkitLivingEntity())));
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> ControlledBehavior<T> gateBehaviour(Consumer<ActivityBuilder<T>> activityBuilder, GateOrderPolicy gateOrderPolicy, GateRunningPolicy gateRunningPolicy) {
++    public <T extends LivingEntity> @NotNull ControlledBehavior<T> gateBehaviour(@NotNull Consumer<ActivityBuilder<T>> activityBuilder, @NotNull GateOrderPolicy gateOrderPolicy, @NotNull GateRunningPolicy gateRunningPolicy) {
+ 
+         CraftActivityBuilder<LivingEntity> gateActivityBuilder = (CraftActivityBuilder<LivingEntity>) Bukkit.getAIFactory().createActivityBuilder(LivingEntity.class, EntityActivity.CORE);
+         activityBuilder.accept((ActivityBuilder<T>) gateActivityBuilder);
+@@ -176,42 +177,42 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> giveGiftToHero(int delay) {
++    public @NotNull AIBehavior<Villager> giveGiftToHero(int delay) {
+         return asBehavior(new GiveGiftToHero(delay));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> goToClosestVillage(float speed, int completionRange) {
++    public @NotNull OneShotBehavior<Villager> goToClosestVillage(float speed, int completionRange) {
+         return asOneshot(GoToClosestVillage.create(speed, completionRange));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> goToPotentialJobSite(float speed) {
++    public @NotNull AIBehavior<Villager> goToPotentialJobSite(float speed) {
+         return asBehavior(new GoToPotentialJobSite(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> goToTargetLocation(MemoryKey<Location> posModule, int completionRange, float speed) {
++    public @NotNull OneShotBehavior<Mob> goToTargetLocation(@NotNull MemoryKey<Location> posModule, int completionRange, float speed) {
+         return asOneshot(GoToTargetLocation.create(CraftMemoryKey.bukkitToMinecraft(posModule), completionRange, speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> goToWantedItem(Predicate<LivingEntity> startCondition, float speed, boolean requiresWalkTarget, int radius) {
++    public @NotNull OneShotBehavior<LivingEntity> goToWantedItem(@NotNull Predicate<LivingEntity> startCondition, float speed, boolean requiresWalkTarget, int radius) {
+         return asOneshot(GoToWantedItem.create(livingEntity -> startCondition.test(livingEntity.getBukkitLivingEntity()),speed, requiresWalkTarget, radius));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> harvestFarmland() {
++    public @NotNull AIBehavior<Villager> harvestFarmland() {
+         return asBehavior(new HarvestFarmland());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> insideBrownianWalk(float speed) {
++    public @NotNull OneShotBehavior<Mob> insideBrownianWalk(float speed) {
+         return asOneshot(InsideBrownianWalk.create(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> interactWith(EntityType entityType, int maxDistance, Predicate<LivingEntity> interactorPredicate, Predicate<Entity> targetPredicate, MemoryKey<Entity> memoryKey, float speed, int completionRange) {
++    public @NotNull OneShotBehavior<LivingEntity> interactWith(@NotNull EntityType entityType, int maxDistance, @NotNull Predicate<LivingEntity> interactorPredicate, @NotNull Predicate<Entity> targetPredicate, @NotNull MemoryKey<Entity> memoryKey, float speed, int completionRange) {
+         if (!LivingEntity.class.isAssignableFrom(entityType.getEntityClass()))
+             throw new IllegalArgumentException(entityType + " is not a living entity type");
+ 
+@@ -227,27 +228,27 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> interactWithDoor() {
++    public @NotNull OneShotBehavior<LivingEntity> interactWithDoor() {
+         return asOneshot(InteractWithDoor.create());
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> jumpOnBed(float walkSpeed) {
++    public @NotNull AIBehavior<Mob> jumpOnBed(float walkSpeed) {
+         return asBehavior(new JumpOnBed(walkSpeed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> locateHidingPlace(int maxDistance, float walkSpeed, int preferredDistance) {
++    public @NotNull OneShotBehavior<LivingEntity> locateHidingPlace(int maxDistance, float walkSpeed, int preferredDistance) {
+         return asOneshot(LocateHidingPlace.create(maxDistance, walkSpeed, preferredDistance));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> longJumpMidJump(int minCooldownRange, int maxCooldownRange, Sound.Type soundType) {
++    public @NotNull AIBehavior<Mob> longJumpMidJump(int minCooldownRange, int maxCooldownRange, Sound.@NotNull Type soundType) {
+         return asBehavior(new LongJumpMidJump(UniformInt.of(minCooldownRange, maxCooldownRange), BuiltInRegistries.SOUND_EVENT.get(PaperAdventure.asVanilla(soundType.key()))));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> longJumpToPreferredBlock(int minCooldownRange, int maxCooldownRange, int verticalRange, int horizontalRange, float maxRange, Sound.Type jumpSound, Tag<Material> favoredBlocks, float biasChance, BiPredicate<Mob, Location> jumpToPredicate) {
++    public @NotNull AIBehavior<Mob> longJumpToPreferredBlock(int minCooldownRange, int maxCooldownRange, int verticalRange, int horizontalRange, float maxRange, Sound.@NotNull Type jumpSound, @NotNull Tag<Material> favoredBlocks, float biasChance, @NotNull BiPredicate<Mob, Location> jumpToPredicate) {
+ 
+         if (!(favoredBlocks instanceof CraftBlockTag craftBlockTag))
+             throw new IllegalArgumentException("Please provide a Block tag");
+@@ -260,162 +261,162 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> longJumpToRandomBlock(int minCooldownRange, int maxCooldownRange, int verticalRange, int horizontalRange, float maxRange, Sound.Type jumpSound) {
++    public @NotNull AIBehavior<Mob> longJumpToRandomBlock(int minCooldownRange, int maxCooldownRange, int verticalRange, int horizontalRange, float maxRange, Sound.@NotNull Type jumpSound) {
+         return asBehavior(new LongJumpToRandomPos<>(UniformInt.of(minCooldownRange, maxCooldownRange), verticalRange, horizontalRange, maxRange, mob -> BuiltInRegistries.SOUND_EVENT.get(PaperAdventure.asVanilla(jumpSound.key()))));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> lookAndFollowTradingPlayerSink(float speed) {
++    public @NotNull AIBehavior<Villager> lookAndFollowTradingPlayerSink(float speed) {
+         return asBehavior(new LookAndFollowTradingPlayerSink(speed));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> lookAtTargetSink(int minRunTime, int maxRunTime) {
++    public @NotNull AIBehavior<Mob> lookAtTargetSink(int minRunTime, int maxRunTime) {
+         return asBehavior(new LookAtTargetSink(minRunTime, maxRunTime));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> meleeAttack(int cooldown) {
++    public @NotNull OneShotBehavior<Mob> meleeAttack(int cooldown) {
+         return asOneshot(MeleeAttack.create(cooldown));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> mount(float speed) {
++    public @NotNull OneShotBehavior<LivingEntity> mount(float speed) {
+         return asOneshot(Mount.create(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> moveToSkySeeingSpot(float speed) {
++    public @NotNull OneShotBehavior<LivingEntity> moveToSkySeeingSpot(float speed) {
+         return asOneshot(MoveToSkySeeingSpot.create(speed));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> moveToTargetSink(int minRunTime, int maxRunTime) {
++    public @NotNull AIBehavior<Mob> moveToTargetSink(int minRunTime, int maxRunTime) {
+         return asBehavior(new MoveToTargetSink(minRunTime, maxRunTime));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> playTagWithOtherKids() {
++    public @NotNull OneShotBehavior<Mob> playTagWithOtherKids() {
+         return asOneshot(PlayTagWithOtherKids.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> poiCompetitorScan() {
++    public @NotNull OneShotBehavior<Villager> poiCompetitorScan() {
+         return asOneshot(PoiCompetitorScan.create());
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> randomLookAround(int minCooldownRange, int maxCooldownRange, float maxYaw, float minPitch, float maxPitch) {
++    public @NotNull AIBehavior<Mob> randomLookAround(int minCooldownRange, int maxCooldownRange, float maxYaw, float minPitch, float maxPitch) {
+         return asBehavior(new RandomLookAround(UniformInt.of(minCooldownRange, maxCooldownRange), maxYaw, minPitch, maxPitch));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> randomStroll(float speed, boolean strollInsideWater) {
++    public @NotNull OneShotBehavior<Mob> randomStroll(float speed, boolean strollInsideWater) {
+         return asOneshot(RandomStroll.stroll(speed, strollInsideWater));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> randomStroll(float speed, int horizontalRadius, int verticalRadius) {
++    public @NotNull OneShotBehavior<Mob> randomStroll(float speed, int horizontalRadius, int verticalRadius) {
+         return asOneshot(RandomStroll.stroll(speed, horizontalRadius, verticalRadius));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> randomFlyStroll(float speed) {
++    public @NotNull OneShotBehavior<Mob> randomFlyStroll(float speed) {
+         return asOneshot(RandomStroll.fly(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> randomSwimStroll(float speed) {
++    public @NotNull OneShotBehavior<Mob> randomSwimStroll(float speed) {
+         return asOneshot(RandomStroll.swim(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> reactToBell() {
++    public @NotNull OneShotBehavior<Villager> reactToBell() {
+         return asOneshot(ReactToBell.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> resetProfession() {
++    public @NotNull OneShotBehavior<Villager> resetProfession() {
+         return asOneshot(ResetProfession.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> resetRaidStatus() {
++    public @NotNull OneShotBehavior<Villager> resetRaidStatus() {
+         return asOneshot(ResetRaidStatus.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> ringBell() {
++    public @NotNull OneShotBehavior<Villager> ringBell() {
+         return asOneshot(RingBell.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> setCloseHomeAsWalkTarget(float speed) {
++    public @NotNull OneShotBehavior<Villager> setCloseHomeAsWalkTarget(float speed) {
+         return asOneshot(SetClosestHomeAsWalkTarget.create(speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> setEntityLookTarget(Predicate<LivingEntity> predicate, float maxDistance) {
++    public @NotNull OneShotBehavior<LivingEntity> setEntityLookTarget(@NotNull Predicate<LivingEntity> predicate, float maxDistance) {
+         return asOneshot(SetEntityLookTarget.create(livingEntity -> predicate.test(livingEntity.getBukkitLivingEntity()), maxDistance));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> setHiddenState(int maxHiddenSeconds, int distance) {
++    public @NotNull OneShotBehavior<Villager> setHiddenState(int maxHiddenSeconds, int distance) {
+         return asOneshot(SetHiddenState.create(maxHiddenSeconds, distance));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> setLookAndInteract(EntityType entityType, int maxDistance) {
++    public @NotNull OneShotBehavior<LivingEntity> setLookAndInteract(@NotNull EntityType entityType, int maxDistance) {
+         return asOneshot(SetLookAndInteract.create(CraftEntityType.bukkitToMinecraft(entityType), maxDistance));
+     }
+ 
+     @Override
+-    public OneShotBehavior<LivingEntity> setRaidStatus() {
++    public @NotNull OneShotBehavior<LivingEntity> setRaidStatus() {
+         return asOneshot(SetRaidStatus.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> setWalkTargetAwayFromPos(MemoryKey<Location> memoryKey, float speed, int range, boolean requiresWalkTarget) {
++    public @NotNull OneShotBehavior<Mob> setWalkTargetAwayFromPos(@NotNull MemoryKey<Location> memoryKey, float speed, int range, boolean requiresWalkTarget) {
+         return asOneshot(SetWalkTargetAwayFrom.pos(CraftMemoryKey.bukkitToMinecraft(memoryKey), speed, range, requiresWalkTarget));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> setWalkTargetAwayFromEntity(MemoryKey<Entity> memoryKey, float speed, int range, boolean requiresWalkTarget) {
++    public @NotNull OneShotBehavior<Mob> setWalkTargetAwayFromEntity(@NotNull MemoryKey<Entity> memoryKey, float speed, int range, boolean requiresWalkTarget) {
+         return asOneshot(SetWalkTargetAwayFrom.entity(CraftMemoryKey.bukkitToMinecraft(memoryKey), speed, range, requiresWalkTarget));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> setWalkTargetFromAttackTargetIfTargetOutOfReach(Function<LivingEntity, Float> speed) {
++    public @NotNull OneShotBehavior<Mob> setWalkTargetFromAttackTargetIfTargetOutOfReach(@NotNull Function<LivingEntity, Float> speed) {
+         return asOneshot(SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(livingEntity -> speed.apply(livingEntity.getBukkitLivingEntity())));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> setWalkTargetFromBlockMemory(MemoryKey<Location> blockMemoryKey, float speed, int completionRange, int maxDistance, int maxRunTime) {
++    public @NotNull OneShotBehavior<Mob> setWalkTargetFromBlockMemory(@NotNull MemoryKey<Location> blockMemoryKey, float speed, int completionRange, int maxDistance, int maxRunTime) {
+         return asOneshot(SetWalkTargetFromBlockMemory.create(CraftMemoryKey.bukkitToMinecraft(blockMemoryKey), speed, completionRange, maxDistance, maxRunTime));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> setWalkTargetFromLookTarget(Predicate<LivingEntity> predicate, Function<LivingEntity, Float> speed, int completionRange) {
++    public @NotNull OneShotBehavior<Mob> setWalkTargetFromLookTarget(@NotNull Predicate<LivingEntity> predicate, @NotNull Function<LivingEntity, Float> speed, int completionRange) {
+         return asOneshot(SetWalkTargetFromLookTarget.create(livingEntity -> predicate.test(livingEntity.getBukkitLivingEntity()), livingEntity -> speed.apply(livingEntity.getBukkitLivingEntity()), completionRange));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> showTradesToPlayer(int minRunTime, int maxRunTime) {
++    public @NotNull AIBehavior<Villager> showTradesToPlayer(int minRunTime, int maxRunTime) {
+         return asBehavior(new ShowTradesToPlayer(minRunTime, maxRunTime));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> sleepInBed() {
++    public @NotNull AIBehavior<Villager> sleepInBed() {
+         return asBehavior(new SleepInBed());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> socializeAtBell() {
++    public @NotNull OneShotBehavior<Villager> socializeAtBell() {
+         return asOneshot(SocializeAtBell.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> startAttacking(Function<Mob, LivingEntity> targetGetter) {
++    public @NotNull OneShotBehavior<Mob> startAttacking(@NotNull Function<Mob, LivingEntity> targetGetter) {
+         return asOneshot(StartAttacking.create(mob -> {
+             var entity = targetGetter.apply((Mob)mob.getBukkitLivingEntity());
+             if(entity == null)
+@@ -426,12 +427,12 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public OneShotBehavior<Piglin> startCelebratingIfTargetDead(int celebrationDuration, BiPredicate<LivingEntity, LivingEntity> predicate) {
++    public @NotNull OneShotBehavior<Piglin> startCelebratingIfTargetDead(int celebrationDuration, @NotNull BiPredicate<LivingEntity, LivingEntity> predicate) {
+         return asOneshot(StartCelebratingIfTargetDead.create(celebrationDuration, (livingEntity, livingEntity2) -> predicate.test(livingEntity.getBukkitLivingEntity(), livingEntity2.getBukkitLivingEntity())));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> stopAttackingIfTargetInvalid(Predicate<LivingEntity> alternativeCondition, BiConsumer<Mob, LivingEntity> forgetCallback, boolean shouldForgetIfTargetUnreachable) {
++    public @NotNull AIBehavior<Mob> stopAttackingIfTargetInvalid(@NotNull Predicate<LivingEntity> alternativeCondition, @NotNull BiConsumer<Mob, LivingEntity> forgetCallback, boolean shouldForgetIfTargetUnreachable) {
+         return asBehavior((Behavior<? extends net.minecraft.world.entity.LivingEntity>) StopAttackingIfTargetInvalid.create(livingEntity ->
+             alternativeCondition.test(livingEntity.getBukkitLivingEntity()), (mob, livingEntity) -> {
+             forgetCallback.accept((Mob) mob.getBukkitLivingEntity(), livingEntity.getBukkitLivingEntity());
+@@ -439,37 +440,37 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> stopBeingAngryIfTargetDead() {
++    public @NotNull OneShotBehavior<Mob> stopBeingAngryIfTargetDead() {
+         return asOneshot(StopBeingAngryIfTargetDead.create());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> strollAroundPoi(MemoryKey<Location> posMemory, float walkSpeed, int maxDistance) {
++    public @NotNull OneShotBehavior<Mob> strollAroundPoi(@NotNull MemoryKey<Location> posMemory, float walkSpeed, int maxDistance) {
+         return asOneshot(StrollAroundPoi.create(CraftMemoryKey.bukkitToMinecraft(posMemory), walkSpeed, maxDistance));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> strollToPoi(MemoryKey<Location> posMemory, float walkSpeed, int completionRange, int maxDistance) {
++    public @NotNull OneShotBehavior<Mob> strollToPoi(@NotNull MemoryKey<Location> posMemory, float walkSpeed, int completionRange, int maxDistance) {
+         return asOneshot(StrollToPoi.create(CraftMemoryKey.bukkitToMinecraft(posMemory), walkSpeed, completionRange, maxDistance));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> strollToPoiList(MemoryKey<List<Location>> posMemory, float walkSpeed, int completionRange, int primaryPositionActivationDistance, MemoryKey<Location> primaryPosition) {
++    public @NotNull OneShotBehavior<Mob> strollToPoiList(@NotNull MemoryKey<List<Location>> posMemory, float walkSpeed, int completionRange, int primaryPositionActivationDistance, @NotNull MemoryKey<Location> primaryPosition) {
+         return asOneshot(StrollToPoiList.create(CraftMemoryKey.bukkitToMinecraft(posMemory), walkSpeed, completionRange, primaryPositionActivationDistance, CraftMemoryKey.bukkitToMinecraft(primaryPosition)));
+     }
+ 
+     @Override
+-    public AIBehavior<Mob> swim(float chance) {
++    public @NotNull AIBehavior<Mob> swim(float chance) {
+         return asBehavior(new Swim(chance));
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> tradeWithVillager() {
++    public @NotNull AIBehavior<Villager> tradeWithVillager() {
+         return asBehavior(new TradeWithVillager());
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> OneShotBehavior<T> triggerGate(Consumer<WeightedBehaviorsBuilder<T>> weightedTasks, GateOrderPolicy order, GateRunningPolicy runMode) {
++    public <T extends LivingEntity> @NotNull OneShotBehavior<T> triggerGate(@NotNull Consumer<WeightedBehaviorsBuilder<T>> weightedTasks, @NotNull GateOrderPolicy order, @NotNull GateRunningPolicy runMode) {
+         CraftWeightedBehaviorsBuilder<T> craftWeightedBehaviorsBuilder = new CraftWeightedBehaviorsBuilder<>();
+         weightedTasks.accept(craftWeightedBehaviorsBuilder);
+         List<Pair<? extends Trigger<? super net.minecraft.world.entity.LivingEntity>, Integer>> tasks = new LinkedList<>();
+@@ -483,97 +484,97 @@ public class CraftBehaviorFactory implements BehaviorFactory {
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> OneShotBehavior<T> sequence(OneShotBehavior<T> predicateBehavior, OneShotBehavior<T> task) {
++    public <T extends LivingEntity> @NotNull OneShotBehavior<T> sequence(@NotNull OneShotBehavior<T> predicateBehavior, @NotNull OneShotBehavior<T> task) {
+         return asOneshot(BehaviorBuilder.sequence((Trigger<? super net.minecraft.world.entity.LivingEntity>) ((CraftOneShotBehavior<T>) predicateBehavior).getHandle(), (Trigger<? super net.minecraft.world.entity.LivingEntity>) ((CraftOneShotBehavior<T>) task).getHandle()));
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> OneShotBehavior<T> triggerIf(Predicate<T> predicate, OneShotBehavior<T> task) {
++    public <T extends LivingEntity> @NotNull OneShotBehavior<T> triggerIf(@NotNull Predicate<T> predicate, @NotNull OneShotBehavior<T> task) {
+         return asOneshot(BehaviorBuilder.triggerIf(e -> predicate.test((T) e.getBukkitLivingEntity()), ((CraftOneShotBehavior<T>) task).getHandle()));
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> OneShotBehavior<T> triggerIf(Predicate<T> predicate) {
++    public <T extends LivingEntity> @NotNull OneShotBehavior<T> triggerIf(@NotNull Predicate<T> predicate) {
+         return asOneshot(BehaviorBuilder.triggerIf(e -> predicate.test((T) e.getBukkitLivingEntity())));
+     }
+ 
+     @Override
+-    public <T extends LivingEntity> OneShotBehavior<T> triggerIf(BiPredicate<World, T> predicate) {
++    public <T extends LivingEntity> @NotNull OneShotBehavior<T> triggerIf(@NotNull BiPredicate<World, T> predicate) {
+         return asOneshot(BehaviorBuilder.triggerIf((serverLevel, e) -> predicate.test(serverLevel.getWorld(), (T) e.getBukkitLivingEntity())));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> tryFindLand(int range, float speed) {
++    public @NotNull OneShotBehavior<Mob> tryFindLand(int range, float speed) {
+         return asOneshot(TryFindLand.create(range, speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> tryFindLandNearWater(int range, float speed) {
++    public @NotNull OneShotBehavior<Mob> tryFindLandNearWater(int range, float speed) {
+         return asOneshot(TryFindLandNearWater.create(range, speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> tryFindWater(int range, float speed) {
++    public @NotNull OneShotBehavior<Mob> tryFindWater(int range, float speed) {
+         return asOneshot(TryFindWater.create(range, speed));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Frog> tryLaySpawnOnWaterNearLand(Material spawn) {
++    public @NotNull OneShotBehavior<Frog> tryLaySpawnOnWaterNearLand(@NotNull Material spawn) {
+         return asOneshot(TryLaySpawnOnWaterNearLand.create(CraftMagicNumbers.getBlock(spawn)));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Mob> updateActivityFromSchedule() {
++    public @NotNull OneShotBehavior<Mob> updateActivityFromSchedule() {
+         return asOneshot(UpdateActivityFromSchedule.create());
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> useBonemeal() {
++    public @NotNull AIBehavior<Villager> useBonemeal() {
+         return asBehavior(new UseBonemeal());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> validateNearbyPoi(Predicate<PoiType> poiTypePredicate, MemoryKey<Location> poiMemory) {
++    public @NotNull OneShotBehavior<Villager> validateNearbyPoi(@NotNull Predicate<PoiType> poiTypePredicate, @NotNull MemoryKey<Location> poiMemory) {
+         return asOneshot(ValidateNearbyPoi.create(poiTypeHolder -> poiTypePredicate.test(CraftPoiType.minecraftToBukkit(poiTypeHolder.value())), CraftMemoryKey.bukkitToMinecraft(poiMemory)));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> villageBoundRandomStroll(float walkSpeed, int horizontalRange, int verticalRange) {
++    public @NotNull OneShotBehavior<Villager> villageBoundRandomStroll(float walkSpeed, int horizontalRange, int verticalRange) {
+         return asOneshot(VillageBoundRandomStroll.create(walkSpeed, horizontalRange, verticalRange));
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> villagerCalmDown() {
++    public @NotNull OneShotBehavior<Villager> villagerCalmDown() {
+         return asOneshot(VillagerCalmDown.create());
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> villagerMakeLove() {
++    public @NotNull AIBehavior<Villager> villagerMakeLove() {
+         return asBehavior(new VillagerMakeLove());
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> villagerPanicTrigger() {
++    public @NotNull AIBehavior<Villager> villagerPanicTrigger() {
+         return asBehavior(new VillagerPanicTrigger());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> wakeUp() {
++    public @NotNull OneShotBehavior<Villager> wakeUp() {
+         return asOneshot(WakeUp.create());
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> workAtComposter() {
++    public @NotNull AIBehavior<Villager> workAtComposter() {
+         return asBehavior(new WorkAtComposter());
+     }
+ 
+     @Override
+-    public AIBehavior<Villager> workAtPoi() {
++    public @NotNull AIBehavior<Villager> workAtPoi() {
+         return asBehavior(new WorkAtPoi());
+     }
+ 
+     @Override
+-    public OneShotBehavior<Villager> yieldJobSite(float speed) {
++    public @NotNull OneShotBehavior<Villager> yieldJobSite(float speed) {
+         return asOneshot(YieldJobSite.create(speed));
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftGoalFactory.java b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftGoalFactory.java
+index 19fb405ddaef1c046451a31f1be0b4619e277183..02a0d609e0fcd963fbb94f67f086cfb3e5756953 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/CraftGoalFactory.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/CraftGoalFactory.java
+@@ -30,6 +30,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.entity.*;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.RecipeChoice;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Function;
+@@ -37,262 +38,262 @@ import java.util.function.Predicate;
+ 
+ public class CraftGoalFactory implements GoalFactory {
+     @Override
+-    public VanillaGoal<Mob> avoidEntity(Mob mob, EntityType entityType, Predicate<LivingEntity> extraInclusionPredicate, float distance, double slowSpeed, double fastSpeed, Predicate<LivingEntity> inclusionSelector) {
++    public @NotNull VanillaGoal<Mob> avoidEntity(@NotNull Mob mob, @NotNull EntityType entityType, @NotNull Predicate<LivingEntity> extraInclusionPredicate, float distance, double slowSpeed, double fastSpeed, @NotNull Predicate<LivingEntity> inclusionSelector) {
+         return asGoal(new AvoidEntityGoal<>(toNms(mob), toNms(mob.getWorld(), entityType), toNms(extraInclusionPredicate), distance, slowSpeed, fastSpeed, toNms(inclusionSelector)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Wolf> beg(Wolf wolf, float begDistance) {
++    public @NotNull VanillaGoal<Wolf> beg(@NotNull Wolf wolf, float begDistance) {
+         return asGoal(new BegGoal((net.minecraft.world.entity.animal.Wolf) toNms(wolf), begDistance));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> breakDoor(Mob mob, Predicate<Difficulty> difficultySufficientPredicate) {
++    public @NotNull VanillaGoal<Mob> breakDoor(@NotNull Mob mob, @NotNull Predicate<Difficulty> difficultySufficientPredicate) {
+         return asGoal(new BreakDoorGoal(toNms(mob), toNmsDifficultyPredicate(difficultySufficientPredicate)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> breathAir(Mob mob) {
++    public @NotNull VanillaGoal<Mob> breathAir(@NotNull Mob mob) {
+         return asGoal(new BreathAirGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Animals> breed(Animals animal, double speed, EntityType breedTarget) {
++    public @NotNull VanillaGoal<Animals> breed(@NotNull Animals animal, double speed, @NotNull EntityType breedTarget) {
+         return asGoal(new BreedGoal((Animal) toNms(animal), speed, (Class<? extends Animal>) toNms(animal.getWorld(), breedTarget)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Cat> catLieOnBed(Cat cat, double speed, int range) {
++    public @NotNull VanillaGoal<Cat> catLieOnBed(@NotNull Cat cat, double speed, int range) {
+         return asGoal(new CatLieOnBedGoal((net.minecraft.world.entity.animal.Cat) toNms(cat), speed, range));
+     }
+ 
+     @Override
+-    public VanillaGoal<Cat> catSitOnBlock(Cat cat, double speed) {
++    public @NotNull VanillaGoal<Cat> catSitOnBlock(@NotNull Cat cat, double speed) {
+         return asGoal(new CatSitOnBlockGoal((net.minecraft.world.entity.animal.Cat) toNms(cat), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> climbOnTopOfPowderSnow(Mob mob, World world) {
++    public @NotNull VanillaGoal<Mob> climbOnTopOfPowderSnow(@NotNull Mob mob, @NotNull World world) {
+         return asGoal(new ClimbOnTopOfPowderSnowGoal(toNms(mob), toNms(world)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Dolphin> dolphinJump(Dolphin dolphin, int chance) {
++    public @NotNull VanillaGoal<Dolphin> dolphinJump(@NotNull Dolphin dolphin, int chance) {
+         return asGoal(new DolphinJumpGoal((net.minecraft.world.entity.animal.Dolphin) toNms(dolphin), chance));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> eatBlock(Mob mob, Function<VanillaRandomSource, Boolean> chanceToEat, Predicate<BlockState> predicate) {
++    public @NotNull VanillaGoal<Mob> eatBlock(@NotNull Mob mob, @NotNull Function<VanillaRandomSource, Boolean> chanceToEat, @NotNull Predicate<BlockState> predicate) {
+         return asGoal(new EatBlockGoal(toNms(mob), chanceToEat, predicate));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> fleeSun(Mob mob, double speed) {
++    public @NotNull VanillaGoal<Mob> fleeSun(@NotNull Mob mob, double speed) {
+         return asGoal(new FleeSunGoal(toNms(mob), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> floatOnWater(Mob mob) {
++    public @NotNull VanillaGoal<Mob> floatOnWater(@NotNull Mob mob) {
+         return asGoal(new FloatGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> followBoat(Mob mob) {
++    public @NotNull VanillaGoal<Mob> followBoat(@NotNull Mob mob) {
+         return asGoal(new FollowBoatGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Fish> followFlockLeader(Fish fish) {
++    public @NotNull VanillaGoal<Fish> followFlockLeader(@NotNull Fish fish) {
+         return asGoal(new FollowFlockLeaderGoal((AbstractSchoolingFish) toNms(fish)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Fish> followMob(Mob mob, double speed, float minDistance, float maxDistance, Predicate<Mob> followPredicate) {
++    public @NotNull VanillaGoal<Fish> followMob(@NotNull Mob mob, double speed, float minDistance, float maxDistance, @NotNull Predicate<Mob> followPredicate) {
+         return asGoal(new FollowMobGoal(toNms(mob), speed, minDistance, maxDistance, toNMSMobPredicate(followPredicate)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Tameable> followOwner(Tameable tameable, double speed, float minDistance, float maxDistance) {
++    public @NotNull VanillaGoal<Tameable> followOwner(@NotNull Tameable tameable, double speed, float minDistance, float maxDistance) {
+         return asGoal(new FollowOwnerGoal((TamableAnimal) toNms(tameable), speed, minDistance, maxDistance));
+     }
+ 
+     @Override
+-    public VanillaGoal<Animals> followParent(Animals animal, double speed) {
++    public @NotNull VanillaGoal<Animals> followParent(@NotNull Animals animal, double speed) {
+         return asGoal(new FollowParentGoal((Animal) toNms(animal), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> randomStrollInVillage(Mob mob, double speed) {
++    public @NotNull VanillaGoal<Mob> randomStrollInVillage(@NotNull Mob mob, double speed) {
+         return asGoal(new GolemRandomStrollInVillageGoal(toNms(mob), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> interact(Mob mob, EntityType entityType, float range, float chance) {
++    public @NotNull VanillaGoal<Mob> interact(@NotNull Mob mob, @NotNull EntityType entityType, float range, float chance) {
+         return asGoal(new InteractGoal(toNms(mob), toNms(mob.getWorld(), entityType), range, chance));
+     }
+ 
+     @Override
+-    public VanillaGoal<Parrot> landOnOwnersShoulders(Parrot parrot) {
++    public @NotNull VanillaGoal<Parrot> landOnOwnersShoulders(@NotNull Parrot parrot) {
+         return asGoal(new LandOnOwnersShoulderGoal((ShoulderRidingEntity) toNms(parrot)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> leapAtTarget(Mob mob, float velocity) {
++    public @NotNull VanillaGoal<Mob> leapAtTarget(@NotNull Mob mob, float velocity) {
+         return asGoal(new LeapAtTargetGoal(toNms(mob), velocity));
+     }
+ 
+     @Override
+-    public VanillaGoal<Llama> llamaFollowCaravan(Llama llama, double speed) {
++    public @NotNull VanillaGoal<Llama> llamaFollowCaravan(@NotNull Llama llama, double speed) {
+         return asGoal(new LlamaFollowCaravanGoal((net.minecraft.world.entity.animal.horse.Llama) toNms(llama), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> lookAtMob(Mob mob, EntityType targetType, float range, float change, boolean lookForward) {
++    public @NotNull VanillaGoal<Mob> lookAtMob(@NotNull Mob mob, @NotNull EntityType targetType, float range, float change, boolean lookForward) {
+         return asGoal(new LookAtPlayerGoal(toNms(mob), toNms(mob.getWorld(), targetType), range, change, lookForward));
+     }
+ 
+     @Override
+-    public VanillaGoal<AbstractVillager> lookAtTradingPlayer(AbstractVillager abstractVillager) {
++    public @NotNull VanillaGoal<AbstractVillager> lookAtTradingPlayer(@NotNull AbstractVillager abstractVillager) {
+         return asGoal(new LookAtTradingPlayerGoal((net.minecraft.world.entity.npc.AbstractVillager) toNms(abstractVillager)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> meleeAttack(Mob mob, double speed, boolean pauseWhenMobIdle) {
++    public @NotNull VanillaGoal<Mob> meleeAttack(@NotNull Mob mob, double speed, boolean pauseWhenMobIdle) {
+         return asGoal(new MeleeAttackGoal(toNms(mob), speed, pauseWhenMobIdle));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> moveBackToVillage(Mob mob, double speed, boolean canDespawn) {
++    public @NotNull VanillaGoal<Mob> moveBackToVillage(@NotNull Mob mob, double speed, boolean canDespawn) {
+         return asGoal(new MoveBackToVillageGoal(toNms(mob), speed, canDespawn));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> moveThroughVillage(Mob mob, double speed, boolean requiresNighttime, int distance, BooleanSupplier doorPassingThroughGetter) {
++    public @NotNull VanillaGoal<Mob> moveThroughVillage(@NotNull Mob mob, double speed, boolean requiresNighttime, int distance, BooleanSupplier doorPassingThroughGetter) {
+         return asGoal(new MoveThroughVillageGoal(toNms(mob), speed, requiresNighttime, distance, doorPassingThroughGetter));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> moveTowardsTarget(Mob mob, double speed, float maxDistance) {
++    public @NotNull VanillaGoal<Mob> moveTowardsTarget(@NotNull Mob mob, double speed, float maxDistance) {
+         return asGoal(new MoveTowardsTargetGoal(toNms(mob), speed, maxDistance));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> ocelotAttack(Mob mob) {
++    public @NotNull VanillaGoal<Mob> ocelotAttack(@NotNull Mob mob) {
+         return asGoal(new OcelotAttackGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<IronGolem> offerFlower(IronGolem ironGolem) {
++    public @NotNull VanillaGoal<IronGolem> offerFlower(@NotNull IronGolem ironGolem) {
+         return asGoal(new OfferFlowerGoal((net.minecraft.world.entity.animal.IronGolem) toNms(ironGolem)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> openDoor(Mob mob, boolean delayedClose) {
++    public @NotNull VanillaGoal<Mob> openDoor(@NotNull Mob mob, boolean delayedClose) {
+         return asGoal(new OpenDoorGoal(toNms(mob), delayedClose));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> panic(Mob mob, double speed) {
++    public @NotNull VanillaGoal<Mob> panic(@NotNull Mob mob, double speed) {
+         return asGoal(new PanicGoal(toNms(mob), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Raider> pathFindToRaid(Raider raider) {
++    public @NotNull VanillaGoal<Raider> pathFindToRaid(@NotNull Raider raider) {
+         return asGoal(new PathfindToRaidGoal<>((net.minecraft.world.entity.raid.Raider) toNms(raider)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> randomLookAround(Mob mob) {
++    public @NotNull VanillaGoal<Mob> randomLookAround(@NotNull Mob mob) {
+         return asGoal(new RandomLookAroundGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<AbstractHorse> randomStand(AbstractHorse abstractHorse) {
++    public @NotNull VanillaGoal<AbstractHorse> randomStand(@NotNull AbstractHorse abstractHorse) {
+         return asGoal(new RandomStandGoal((net.minecraft.world.entity.animal.horse.AbstractHorse) toNms(abstractHorse)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> randomSwim(Mob mob, double speed, int chance) {
++    public @NotNull VanillaGoal<Mob> randomSwim(@NotNull Mob mob, double speed, int chance) {
+         return asGoal(new RandomSwimmingGoal(toNms(mob), speed, chance));
+     }
+ 
+     @Override
+-    public VanillaGoal<RangedEntity> rangedAttack(RangedEntity rangedEntity, double mobSpeed, int minIntervalTicks, int maxIntervalTicks, float maxShootRange) {
++    public @NotNull VanillaGoal<RangedEntity> rangedAttack(@NotNull RangedEntity rangedEntity, double mobSpeed, int minIntervalTicks, int maxIntervalTicks, float maxShootRange) {
+         return asGoal(new RangedAttackGoal((RangedAttackMob) toNms(rangedEntity), mobSpeed, minIntervalTicks, maxIntervalTicks, maxShootRange));
+     }
+ 
+     @Override
+-    public VanillaGoal<RangedEntity> rangedBowAttack(RangedEntity rangedEntity, double speed, int attackInterval, float range) {
++    public @NotNull VanillaGoal<RangedEntity> rangedBowAttack(@NotNull RangedEntity rangedEntity, double speed, int attackInterval, float range) {
+         return asGoal(new RangedBowAttackGoal<>((net.minecraft.world.entity.monster.Monster & RangedAttackMob) toNms(rangedEntity), speed, attackInterval, range));
+     }
+ 
+     @Override
+-    public VanillaGoal<RangedEntity> rangedCrossBowAttack(RangedEntity rangedEntity, double speed, float range) {
++    public @NotNull VanillaGoal<RangedEntity> rangedCrossBowAttack(@NotNull RangedEntity rangedEntity, double speed, float range) {
+         return asGoal(new RangedCrossbowAttackGoal<>((net.minecraft.world.entity.monster.Monster & RangedAttackMob & CrossbowAttackMob) toNms(rangedEntity), speed, range));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> removeBlock(Mob mob, Material blockType, double speed, int maxYDifference) {
++    public @NotNull VanillaGoal<Mob> removeBlock(@NotNull Mob mob, @NotNull Material blockType, double speed, int maxYDifference) {
+         return asGoal(new RemoveBlockGoal(CraftMagicNumbers.getBlock(blockType), toNms(mob), speed, maxYDifference));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> restrictSun(Mob mob) {
++    public @NotNull VanillaGoal<Mob> restrictSun(@NotNull Mob mob) {
+         return asGoal(new RestrictSunGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<AbstractHorse> runAroundLikeCrazy(AbstractHorse abstractHorse, double speed) {
++    public @NotNull VanillaGoal<AbstractHorse> runAroundLikeCrazy(@NotNull AbstractHorse abstractHorse, double speed) {
+         return asGoal(new RunAroundLikeCrazyGoal((net.minecraft.world.entity.animal.horse.AbstractHorse) toNms(abstractHorse), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Tameable> sitWhenOrderedTo(Tameable tameable) {
++    public @NotNull VanillaGoal<Tameable> sitWhenOrderedTo(@NotNull Tameable tameable) {
+         return asGoal(new SitWhenOrderedToGoal((TamableAnimal) toNms(tameable)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> strollThroughVillage(Mob mob, int searchEngine) {
++    public @NotNull VanillaGoal<Mob> strollThroughVillage(@NotNull Mob mob, int searchEngine) {
+         return asGoal(new StrollThroughVillageGoal(toNms(mob), searchEngine));
+     }
+ 
+     @Override
+-    public VanillaGoal<Creeper> swellGoal(Creeper creeper, double distanceToStartSwell, double distanceToStopSwell) {
++    public @NotNull VanillaGoal<Creeper> swellGoal(@NotNull Creeper creeper, double distanceToStartSwell, double distanceToStopSwell) {
+         return asGoal(new SwellGoal((net.minecraft.world.entity.monster.Creeper) toNms(creeper), distanceToStartSwell, distanceToStopSwell));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> temptGoal(Mob mob, double speed, RecipeChoice food, boolean canBeScared) {
++    public @NotNull VanillaGoal<Mob> temptGoal(@NotNull Mob mob, double speed, @NotNull RecipeChoice food, boolean canBeScared) {
+         return asGoal(new TemptGoal(toNms(mob), speed, CraftRecipe.toIngredient(food, true), canBeScared));
+     }
+ 
+     @Override
+-    public VanillaGoal<AbstractVillager> tradeWithPlayer(AbstractVillager abstractVillager) {
++    public @NotNull VanillaGoal<AbstractVillager> tradeWithPlayer(@NotNull AbstractVillager abstractVillager) {
+         return asGoal(new TradeWithPlayerGoal((net.minecraft.world.entity.npc.AbstractVillager) toNms(abstractVillager)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> tryFindWater(Mob mob) {
++    public @NotNull VanillaGoal<Mob> tryFindWater(@NotNull Mob mob) {
+         return asGoal(new TryFindWaterGoal(toNms(mob)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> useItem(Mob mob, ItemStack item, Sound.Type type, Predicate<Mob> mobPredicate) {
++    public @NotNull VanillaGoal<Mob> useItem(@NotNull Mob mob, @NotNull ItemStack item, Sound.@NotNull Type type, @NotNull Predicate<Mob> mobPredicate) {
+         return asGoal(new UseItemGoal<>(toNms(mob), CraftItemStack.asNMSCopy(item), BuiltInRegistries.SOUND_EVENT.get(PaperAdventure.asVanilla(type.key())), toNMSMobPredicate(mobPredicate)));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> waterAvoidRandomFly(Mob mob, double speed) {
++    public @NotNull VanillaGoal<Mob> waterAvoidRandomFly(@NotNull Mob mob, double speed) {
+         return asGoal(new WaterAvoidingRandomFlyingGoal(toNms(mob), speed));
+     }
+ 
+     @Override
+-    public VanillaGoal<Mob> waterAvoidRandomStroll(Mob mob, double speed, float probability) {
++    public @NotNull VanillaGoal<Mob> waterAvoidRandomStroll(@NotNull Mob mob, double speed, float probability) {
+         return asGoal(new WaterAvoidingRandomStrollGoal(toNms(mob), speed, probability));
+     }
+ 
+     @Override
+-    public VanillaGoal<Zombie> zombieAttackGoal(Zombie zombie, double speed, boolean pauseWhenMobIdle) {
++    public @NotNull VanillaGoal<Zombie> zombieAttackGoal(@NotNull Zombie zombie, double speed, boolean pauseWhenMobIdle) {
+         return asGoal(new ZombieAttackGoal((net.minecraft.world.entity.monster.Zombie) toNms(zombie), speed, pauseWhenMobIdle));
+     }
+ 
