@@ -49,21 +49,21 @@ public class ItemTextureData extends ResourcePackResource {
                            @NotNull Material material,
                            @Nullable Asset<CustomResourcePack> pngFile,
                            @Nullable ModelType modelType, boolean useVanillaTexture) {
-        this(namespacedKey, material, Math.abs(Hashing.sha256().hashString(namespacedKey.asString(),StandardCharsets.UTF_8).asInt()), pngFile, modelType, useVanillaTexture);
+        this(namespacedKey, material, Math.abs(Hashing.sha256().hashString(namespacedKey.asString(), StandardCharsets.UTF_8).asInt()), pngFile, modelType, useVanillaTexture);
     }
 
     public ItemTextureData(@NotNull NamespacedKey namespacedKey,
                            @NotNull Material material,
                            int customModelData,
                            @Nullable Asset<CustomResourcePack> pngFile,
-                           @Nullable ModelType modelType){
+                           @Nullable ModelType modelType) {
         this(namespacedKey, material, customModelData, pngFile, modelType, false);
     }
 
     public ItemTextureData(@NotNull NamespacedKey namespacedKey,
                            @NotNull Material material,
                            @Nullable Asset<CustomResourcePack> pngFile,
-                           @Nullable ModelType modelType){
+                           @Nullable ModelType modelType) {
         this(namespacedKey, material, pngFile, modelType, false);
     }
 
@@ -86,38 +86,38 @@ public class ItemTextureData extends ResourcePackResource {
 
     public static void createVanillaModelFile(Material material, Set<ItemTextureData> installedItems, CustomResourcePack customPack) {
         NamespacedKey vanillaKey = new NamespacedKey(material.getKey().namespace(), "item/" + material.getKey()
-                                                                                                      .getKey());
+            .getKey());
         JsonObject jsonToWriteToFile = createModelJson(material, vanillaKey, null);
 
         addCustomModelDataListToVanillaModelFile(installedItems, jsonToWriteToFile);
 
         AssetUtil.createJsonAssetAndInstall(jsonToWriteToFile, customPack, vanillaKey, ResourcePackAssetTypes.MODELS);
         Bukkit.getLogger()
-              .info("Installing modified vanilla item model for " + vanillaKey + " with " + installedItems.size() + " entries");
+            .info("Installing modified vanilla item model for " + vanillaKey + " with " + installedItems.size() + " entries");
     }
 
     private static void addCustomModelDataListToVanillaModelFile(Set<ItemTextureData> installedItems, JsonObject jsonToWriteToFile) {
         var list = new LinkedList<JsonObject>();
         var builder = JsonObjectBuilder.create(jsonToWriteToFile)
-                                       .getOrCreateArray("overrides", jsonArrayBuilder -> {
-                                           for (ItemTextureData installedItem : installedItems) {
-                                               String textureKey = installedItem.useVanillaTexture ? NamespacedKey.minecraft("item/"+installedItem.getMaterial().getKey().value()).asString() : installedItem.key().toString();
-                                               jsonArrayBuilder.add(
-                                                   JsonObjectBuilder
-                                                       .create()
-                                                       .add("predicate",
-                                                           JsonObjectBuilder
-                                                               .create()
-                                                               .add("custom_model_data", installedItem.customModelData))
-                                                       .add("model", textureKey));
-                                           }
-                                           jsonArrayBuilder.build()
-                                                           .forEach(jsonElement -> list.add(jsonElement.getAsJsonObject()));
-                                       });
+            .getOrCreateArray("overrides", jsonArrayBuilder -> {
+                for (ItemTextureData installedItem : installedItems) {
+                    String textureKey = installedItem.useVanillaTexture ? NamespacedKey.minecraft("item/" + installedItem.getMaterial().getKey().value()).asString() : installedItem.key().toString();
+                    jsonArrayBuilder.add(
+                        JsonObjectBuilder
+                            .create()
+                            .add("predicate",
+                                JsonObjectBuilder
+                                    .create()
+                                    .add("custom_model_data", installedItem.customModelData))
+                            .add("model", textureKey));
+                }
+                jsonArrayBuilder.build()
+                    .forEach(jsonElement -> list.add(jsonElement.getAsJsonObject()));
+            });
 
         list.sort(Comparator.comparing(jsonElement -> jsonElement.getAsJsonObject().getAsJsonObject("predicate")
-                                                                 .get("custom_model_data").getAsJsonPrimitive()
-                                                                 .getAsInt()));
+            .get("custom_model_data").getAsJsonPrimitive()
+            .getAsInt()));
 
         var sortedArray = JsonArrayBuilder.create();
         list.forEach(jsonElement -> {
@@ -147,13 +147,13 @@ public class ItemTextureData extends ResourcePackResource {
 
     private static boolean isHandheldItem(Material material) {
         return material.name().contains("SWORD") || material.name().contains("AXE") || material.name()
-                                                                                               .contains("HOE") || material
+            .contains("HOE") || material
             .name().contains("SHOVEL") || material.equals(Material.FISHING_ROD) || material.equals(Material.STICK);
     }
 
     public record ModelType(String modelName, BiConsumer<NamespacedKey, JsonObject> modelCreator) {
 
-        public static ModelType fromJsonAsset(Asset<CustomResourcePack> asset, Consumer<JsonObject> consumer){
+        public static ModelType fromJsonAsset(Asset<CustomResourcePack> asset, Consumer<JsonObject> consumer) {
             try {
                 JsonObject jsonObject = JsonUtil.readJsonInputStream(asset.assetInputStream().get());
                 return new ModelType("", (namespacedKey, jsonObject1) -> {
@@ -165,7 +165,7 @@ public class ItemTextureData extends ResourcePackResource {
             }
         }
 
-        public static ModelType createJsonForModel(Consumer<JsonObject> consumer){
+        public static ModelType createJsonForModel(Consumer<JsonObject> consumer) {
             return new ModelType("", (namespacedKey, jsonObject1) -> consumer.accept(jsonObject1));
         }
 
@@ -179,14 +179,14 @@ public class ItemTextureData extends ResourcePackResource {
         public static ModelType createModelForBlockItem(String modelName, NamespacedKey blockModel) {
             return new ModelType(modelName, (namespacedKey, jsonObject) ->
                 JsonObjectBuilder.create(jsonObject).add("parent", blockModel.toString())
-                                 .build());
+                    .build());
         }
 
         public static ModelType createFullCubeModel(NamespacedKey resourceKey) {
             return new ModelType("minecraft:block/cube_all", (namespacedKey, jsonObject) ->
                 JsonObjectBuilder.create().add("parent", "minecraft:block/cube_all")
-                                 .add("textures", JsonObjectBuilder.create().add("all", resourceKey.toString()))
-                                 .build());
+                    .add("textures", JsonObjectBuilder.create().add("all", resourceKey.toString()))
+                    .build());
         }
 
         public static ModelType createFullCubeWithSingleTexture(Keyed textureKey) {
@@ -202,7 +202,7 @@ public class ItemTextureData extends ResourcePackResource {
 
             return new ModelType("", (namespacedKey, jsonObject) ->
                 JsonObjectBuilder.create(jsonObject).add("parent", "block/cube")
-                                 .add("textures", textures));
+                    .add("textures", textures));
 
         }
 
@@ -260,57 +260,63 @@ public class ItemTextureData extends ResourcePackResource {
             }
 
             var element = JsonObjectBuilder.create()
-                                           .add("from", JsonArrayBuilder.create().add(posX).add(posY).add(posZ))
-                                           .add("to", JsonArrayBuilder.create().add(sizeX).add(sizeY).add(sizeZ))
-                                           .add("faces",
-                                               JsonObjectBuilder.create()
-                                                                .add(faceName,
-                                                                    JsonObjectBuilder.create()
-                                                                                     .add("texture", "#" + faceName)
-                                                                                     .add("cullface", faceName)
-                                                                )
-                                           );
+                .add("from", JsonArrayBuilder.create().add(posX).add(posY).add(posZ))
+                .add("to", JsonArrayBuilder.create().add(sizeX).add(sizeY).add(sizeZ))
+                .add("faces",
+                    JsonObjectBuilder.create()
+                        .add(faceName,
+                            JsonObjectBuilder.create()
+                                .add("texture", "#" + faceName)
+                                .add("cullface", faceName)
+                        )
+                );
 
 
             return new ModelType("", (namespacedKey, jsonObject) ->
                 JsonObjectBuilder.create(jsonObject).add("parent", "block/block")
-                                 .add("elements", JsonArrayBuilder.create().add(element))
-                                 .add("textures",
-                                     JsonObjectBuilder.create()
-                                                      .add("particle", namespacedKey.toString())
+                    .add("elements", JsonArrayBuilder.create().add(element))
+                    .add("textures",
+                        JsonObjectBuilder.create()
+                            .add("particle", namespacedKey.toString())
 /*                                                      .add("down", emptyTexture.toString())
                                                       .add("up", emptyTexture.toString())
                                                       .add("north", emptyTexture.toString())
                                                       .add("east", emptyTexture.toString())
                                                       .add("south", emptyTexture.toString())
                                                       .add("west", emptyTexture.toString())*/
-                                                      .add(faceName, namespacedKey.toString())
-                                 )
-                                 .build());
+                            .add(faceName, namespacedKey.toString())
+                    )
+                    .build());
+        }
+
+        public static ModelType useModelOfExistingItem(NamespacedKey itemKey) {
+            return new ModelType("item/generated", (namespacedKey, jsonObject) ->
+                JsonObjectBuilder.create(jsonObject).add("parent", itemKey.asString())
+                    .build());
         }
 
         public static final ModelType GENERATED_ITEM = new ModelType("item/generated", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "item/generated")
-                             .add("textures", JsonObjectBuilder.create().add("layer0", namespacedKey.toString()))
-                             .build());
+                .add("textures", JsonObjectBuilder.create().add("layer0", namespacedKey.toString()))
+                .build());
         public static final ModelType HAND_HELD = new ModelType("item/handheld", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "item/handheld")
-                             .add("textures", JsonObjectBuilder.create().add("layer0", namespacedKey.toString()))
-                             .build());
+                .add("textures", JsonObjectBuilder.create().add("layer0", namespacedKey.toString()))
+                .build());
         public static final ModelType FAKE_CROP = new ModelType("minecraft:block/crop", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "minecraft:block/crop")
-                             .add("textures", JsonObjectBuilder.create().add("crop", namespacedKey.toString()))
-                             .build());
+                .add("textures", JsonObjectBuilder.create().add("crop", namespacedKey.toString()))
+                .build());
 
         public static final ModelType CUBE_ALL = new ModelType("minecraft:block/cube_all", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "minecraft:block/cube_all")
-                             .add("textures", JsonObjectBuilder.create().add("all", namespacedKey.toString()))
-                             .build());
+                .add("textures", JsonObjectBuilder.create().add("all", namespacedKey.toString()))
+                .build());
 
         public static final ModelType CUBE_ONLY_FACE_UP = new ModelType("minecraft:block/cube_all", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "minecraft:block/cube_all")
-                             .add("textures", JsonObjectBuilder.create().add("all", namespacedKey.toString()))
-                             .build());
+                .add("textures", JsonObjectBuilder.create().add("all", namespacedKey.toString()))
+                .build());
 
         public static final ModelType CLICKABLE_ITEM = new ModelType("clickable_item", (namespacedKey, jsonObject) ->
             JsonObjectBuilder.create(jsonObject).add("parent", "item/generated")
