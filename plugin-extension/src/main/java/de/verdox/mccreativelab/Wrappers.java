@@ -16,7 +16,7 @@ public class Wrappers {
      * @return the wrapped sound
      */
     public static Sound of(@Nullable SoundData soundData) {
-        if(soundData == null)
+        if (soundData == null)
             return new Sound(org.bukkit.Sound.INTENTIONALLY_EMPTY);
         return new Sound(soundData);
     }
@@ -28,7 +28,7 @@ public class Wrappers {
      * @return the wrapped sound
      */
     public static Sound of(@Nullable org.bukkit.Sound sound) {
-        if(sound == null)
+        if (sound == null)
             return new Sound(org.bukkit.Sound.INTENTIONALLY_EMPTY);
         return new Sound(sound);
     }
@@ -40,16 +40,16 @@ public class Wrappers {
      * @return the wrapped sound
      */
     public static Sound of(@Nullable net.kyori.adventure.sound.Sound sound) {
-        if(sound == null)
+        if (sound == null)
             return new Sound(org.bukkit.Sound.INTENTIONALLY_EMPTY);
         return new Sound(sound);
     }
 
-    public static SoundGroup of(org.bukkit.SoundGroup soundGroup){
+    public static SoundGroup of(org.bukkit.SoundGroup soundGroup) {
         return new SoundGroup(soundGroup);
     }
 
-    public static SoundGroup of(@NotNull Wrappers.Sound hitSound, @NotNull Wrappers.Sound stepSound, @NotNull Wrappers.Sound breakSound, @NotNull Wrappers.Sound placeSound, @NotNull Wrappers.Sound fallSound){
+    public static SoundGroup of(@NotNull Wrappers.Sound hitSound, @NotNull Wrappers.Sound stepSound, @NotNull Wrappers.Sound breakSound, @NotNull Wrappers.Sound placeSound, @NotNull Wrappers.Sound fallSound) {
         return new SoundGroup(hitSound, stepSound, breakSound, placeSound, fallSound);
     }
 
@@ -73,12 +73,12 @@ public class Wrappers {
             this.paperSound = paperSound;
         }
 
-        public NamespacedKey getKey(){
-            if(paperSound != null)
+        public NamespacedKey getKey() {
+            if (paperSound != null)
                 return new NamespacedKey(paperSound.name().namespace(), paperSound.name().value());
-            else if(soundData != null)
+            else if (soundData != null)
                 return soundData.getKey();
-            else if(bukkitSound != null)
+            else if (bukkitSound != null)
                 return bukkitSound.getKey();
             throw new IllegalStateException("No key was found. This is a bug");
         }
@@ -164,6 +164,7 @@ public class Wrappers {
             return Objects.hash(asSound(net.kyori.adventure.sound.Sound.Source.BLOCK).name());
         }
     }
+
     public static class SoundGroup {
         private Sound hitSound;
         private Sound stepSound;
@@ -199,7 +200,7 @@ public class Wrappers {
          * @return volume
          */
         public float getVolume() {
-            if(soundGroup != null)
+            if (soundGroup != null)
                 return soundGroup.getVolume();
             else
                 return 1.0f;
@@ -213,8 +214,8 @@ public class Wrappers {
          *
          * @return pitch
          */
-        public float getPitch(){
-            if(soundGroup != null)
+        public float getPitch() {
+            if (soundGroup != null)
                 return soundGroup.getPitch();
             else
                 return 1.0f;
@@ -225,8 +226,8 @@ public class Wrappers {
          *
          * @return the hi sound
          */
-        public Sound getHitSound(){
-            if(soundGroup != null)
+        public Sound getHitSound() {
+            if (soundGroup != null)
                 return of(soundGroup.getHitSound());
             else
                 return hitSound;
@@ -237,8 +238,8 @@ public class Wrappers {
          *
          * @return the step sound
          */
-        public Sound getStepSound(){
-            if(soundGroup != null)
+        public Sound getStepSound() {
+            if (soundGroup != null)
                 return of(soundGroup.getStepSound());
             else
                 return stepSound;
@@ -249,8 +250,8 @@ public class Wrappers {
          *
          * @return the fall sound
          */
-        public Sound getFallSound(){
-            if(soundGroup != null)
+        public Sound getFallSound() {
+            if (soundGroup != null)
                 return of(soundGroup.getFallSound());
             else
                 return fallSound;
@@ -261,8 +262,8 @@ public class Wrappers {
          *
          * @return the break sound
          */
-        public Sound getBreakSound(){
-            if(soundGroup != null)
+        public Sound getBreakSound() {
+            if (soundGroup != null)
                 return of(soundGroup.getBreakSound());
             else
                 return breakSound;
@@ -273,8 +274,8 @@ public class Wrappers {
          *
          * @return the place sound
          */
-        public Sound getPlaceSound(){
-            if(soundGroup != null)
+        public Sound getPlaceSound() {
+            if (soundGroup != null)
                 return of(soundGroup.getPlaceSound());
             else
                 return placeSound;
