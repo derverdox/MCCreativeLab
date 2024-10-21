@@ -59,9 +59,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
 
     public ActiveGUI(CustomGUIBuilder customGUIBuilder, @Nullable Consumer<ActiveGUI> initialSetup) {
         super(customGUIBuilder);
-        if (!customGUIBuilder.isInstalled())
-            throw new IllegalArgumentException("The custom gui " + customGUIBuilder.getKey().asString() + " was not registered to the MCCreativeLab custom resource pack.");
-
+        customGUIBuilder.checkInstalled();
 
         this.initialSetup = initialSetup;
 
@@ -82,20 +80,19 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
 
 
     /**
-     * This constructor is only available for the ServerSoftware since with MCCreativeLab we are able to reopen an existing inventory with a new title without creating a new inventory object.
+     * We are able to reopen an existing inventory with a new title without creating a new inventory object.
+     * Thus, we use this constructor to link a custom gui to an existing inventory
      *
      * @param customGUIBuilder The customGUIBuilder this belongs to
      * @param inventory        The inventory that is linked to this CustomGUI
      * @param initialSetup     The initial setup
      */
-    @OnlyServerSoftware
+
     public ActiveGUI(CustomGUIBuilder customGUIBuilder, Inventory inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
         super(customGUIBuilder);
-        MCCreativeLabExtension.needsServerSoftware();
         if ((customGUIBuilder.getType() != null && !inventory.getType().equals(customGUIBuilder.getType()) || customGUIBuilder.getChestSize() != inventory.getSize()))
             throw new IllegalArgumentException("Trying to link an existing inventory with type " + customGUIBuilder.getType() + " and size " + customGUIBuilder.getChestSize() + " to existing inventory with type " + inventory.getType() + " and size " + inventory.getSize());
-        if (!customGUIBuilder.isInstalled())
-            throw new IllegalArgumentException("The custom gui " + customGUIBuilder.getKey().asString() + " was not registered to the MCCreativeLab custom resource pack.");
+        customGUIBuilder.checkInstalled();
         this.initialSetup = initialSetup;
 
         customGUIBuilder.guiElements.forEach((s, guiElement) -> {

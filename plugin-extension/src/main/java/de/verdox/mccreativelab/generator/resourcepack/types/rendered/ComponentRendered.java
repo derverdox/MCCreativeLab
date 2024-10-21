@@ -28,7 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.*;
-public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T extends ActiveComponentRendered<T,C>> extends ShaderRendered implements ConfigurableResource<CustomResourcePack> {
+
+public abstract class ComponentRendered<C extends ComponentRendered<C, T>, T extends ActiveComponentRendered<T, C>> extends ShaderRendered implements ConfigurableResource<CustomResourcePack> {
     private static final int ascentRange = 1000;
     private final Font hudTexturesFont;
     private char textureChars = '\uEff1';
@@ -50,7 +51,7 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
         hudTexturesFont.addSpace(new Space(map));
     }
 
-    protected ScreenPosition convertScreenPosition(ScreenPosition screenPosition){
+    protected ScreenPosition convertScreenPosition(ScreenPosition screenPosition) {
         return screenPosition;
     }
 
@@ -78,13 +79,18 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
         }
     }
 
+    public void checkInstalled() {
+        if (!isInstalled())
+            throw new IllegalArgumentException("The " + getClass().getSimpleName() + " " + getKey().asString() + " was not registered to the MCCreativeLab custom resource pack. If you have actually installed it make sure you are using the SAME OBJECT INSTANCE to open it that you used to register to MCCreativeLab Resource Pack.");
+    }
+
     @Override
     public void afterResourceInstallation(CustomResourcePack customPack) throws IOException {
         clearShaderInstructions();
         elements.forEach((s, hudElement) -> {
-            if(hudElement instanceof SingleHudTexture singleHudTexture)
+            if (hudElement instanceof SingleHudTexture singleHudTexture)
                 createGuiSizedShaderInstruction(singleHudTexture.bitMap().ascent(), singleHudTexture.screenPosition());
-            else if (hudElement instanceof SingleHudText singleHudText){
+            else if (hudElement instanceof SingleHudText singleHudText) {
                 BitMap ascii = singleHudText.font().getBitMaps().get(0);
                 BitMap accented = singleHudText.font().getBitMaps().get(1);
 
@@ -101,11 +107,12 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
     }
 
     @Override
-    public void installResourceToPack(CustomResourcePack customPack) throws IOException {}
+    public void installResourceToPack(CustomResourcePack customPack) throws IOException {
+    }
 
     public C withTexture(String textureName, Asset<CustomResourcePack> textureAsset, ScreenPosition screenPosition, @Nullable RenderedElementBehavior<T, SingleHudTexture.RenderedSingleHudTexture> behavior) throws IOException {
         var id = drawNextFreeID();
-        AssetBasedResourcePackResource assetBasedResourcePackResource = new AssetBasedResourcePackResource(new NamespacedKey(getKey().getNamespace(), getKey().getKey()+"/textures/"+textureName), textureAsset, ResourcePackAssetTypes.TEXTURES, "png");
+        AssetBasedResourcePackResource assetBasedResourcePackResource = new AssetBasedResourcePackResource(new NamespacedKey(getKey().getNamespace(), getKey().getKey() + "/textures/" + textureName), textureAsset, ResourcePackAssetTypes.TEXTURES, "png");
         var bitMap = new BitMap(assetBasedResourcePackResource, ImageUtil.getPixelHeight(textureAsset.assetInputStream()), calculateAscentID(id), String.valueOf(drawNextChar()));
         screenPosition = convertScreenPosition(screenPosition);
 
@@ -131,7 +138,8 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
         //createGuiSizedShaderInstruction(bitMap.ascent(), screenPosition);
         return (C) this;
     }
-    public C withTexture(String textureName, Asset<CustomResourcePack> textureAsset, ScreenPosition screenPosition) throws IOException{
+
+    public C withTexture(String textureName, Asset<CustomResourcePack> textureAsset, ScreenPosition screenPosition) throws IOException {
         return withTexture(textureName, textureAsset, screenPosition, null);
     }
 
@@ -143,12 +151,12 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
         textFont.addSpace(new Space(Map.of(" ", (int) (4 * scale), "\u200c", 0)));
 
         var ascii = textFont.addBitMap(StandardFontAssets.asciiBitmap.withHeight(8)
-                                                                     .withAscent(calculateAscentID(drawNextFreeID()))
-                                                                     .withScale(scale));
+            .withAscent(calculateAscentID(drawNextFreeID()))
+            .withScale(scale));
 
         var accented = textFont.addBitMap(StandardFontAssets.accentedBitMap.withHeight(12)
-                                                                           .withAscent(calculateAscentID(drawNextFreeID()))
-                                                                           .withScale(scale));
+            .withAscent(calculateAscentID(drawNextFreeID()))
+            .withScale(scale));
 
         checkIfIDTaken(textID);
         registerElement(textID, new SingleHudText(textFont, screenPosition, alignment, scale), behavior);
@@ -159,10 +167,12 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
         hudTextFonts.add(textFont);
         return (C) this;
     }
-    public C withText(String textID, ScreenPosition screenPosition, StringAlign.Alignment alignment, float scale){
+
+    public C withText(String textID, ScreenPosition screenPosition, StringAlign.Alignment alignment, float scale) {
         return withText(textID, screenPosition, alignment, scale, null);
     }
-    public C withText(String textID, ScreenPosition screenPosition, StringAlign.Alignment alignment, @Nullable RenderedElementBehavior<T, SingleHudText.RenderedSingleHudText> behavior){
+
+    public C withText(String textID, ScreenPosition screenPosition, StringAlign.Alignment alignment, @Nullable RenderedElementBehavior<T, SingleHudText.RenderedSingleHudText> behavior) {
         return withText(textID, screenPosition, alignment, 1, behavior);
     }
 
@@ -238,7 +248,7 @@ public abstract class ComponentRendered<C extends ComponentRendered<C,T>, T exte
     public void deserializeFromJson(JsonObject jsonObject) {
         for (String s : jsonObject.keySet()) {
             JsonObject jsonObject1 = jsonObject.getAsJsonObject(s);
-            if(elements.containsKey(s))
+            if (elements.containsKey(s))
                 elements.get(s).deserializeFromJson(jsonObject1);
         }
 
