@@ -100,6 +100,31 @@ jobs:
         with:
           name: paper-${{ fromJSON(steps.determine.outputs.result).pr }}
           path: build/libs/paper-paperclip-*-mojmap.jar
+          
+      # Create and publish a GitHub Release
+      - name: Create GitHub Release
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "paperclip-${{ github.sha }}"  # Customize the tag as needed
+          release_name: "Paperclip Build for PR #${{ fromJSON(steps.determine.outputs.result).pr }}"
+          body: "Automated Paperclip build for PR #${{ fromJSON(steps.determine.outputs.result).pr }}"
+          draft: false
+          prerelease: false
+
+      - name: Upload Paperclip Jar to Release
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/libs/paper-paperclip-*-mojmap.jar
+          asset_name: paper-paperclip-${{ fromJSON(steps.determine.outputs.result).pr }}.jar
+          asset_content_type: application/java-archive
   event_file:
     name: "Event File"
     # Only run on PRs if the source branch is on someone else's repo
