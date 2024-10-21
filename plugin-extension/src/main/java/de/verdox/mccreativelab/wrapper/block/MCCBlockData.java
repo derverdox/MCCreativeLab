@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.serialization.NBTSerializer;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.world.block.FakeBlock;
+import de.verdox.mccreativelab.world.block.FakeBlockRegistry;
 import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.world.block.customhardness.BlockBreakSpeedModifier;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
@@ -25,6 +26,9 @@ public interface MCCBlockData extends MCCWrapped {
     }
 
     static MCCBlockData wrap(BlockData vanillaBlockData) {
+        FakeBlock.FakeBlockState fakeBlockState = FakeBlockRegistry.getFakeBlockStateFromBlockData(vanillaBlockData);
+        if(fakeBlockState != null)
+            return new FakeBlockState(fakeBlockState);
         return new Vanilla(vanillaBlockData);
     }
 
