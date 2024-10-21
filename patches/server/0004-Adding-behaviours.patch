@@ -1757,7 +1757,7 @@ index 8fd54bccb7af59da9113d8a289d12d8fad1fb467..3b3ad54c60c3142345a3db6906182ce2
  
      public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index eec0ec43590be7e8ae5b530a7404c98b5e23cb53..104ac07a6ec81fcba23abffde1d4ee286decf077 100644
+index 522b817f23f08eb720fe9d05eec7f548d2761603..4123f18aacae3c95841064404c1ddc75fbb8d1b7 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -264,6 +264,7 @@ public final class ItemStack implements DataComponentHolder {
@@ -2491,7 +2491,7 @@ index 03eb35d5c67f125c44cf46595c93d124ac7892b8..8157e1340aa5c01b01064b33d33b6afc
          return section;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
-index f84e07fa0876bb6da0f99f4de6cb811f897adca2..8cc58bb6aaa7dc47e897c5fd6e94464fb20e6535 100644
+index 6081c588c61406d0d21a15e8e6140d5d5240f0a8..80e953be36bdc0c4a2988b797432010d486d08f2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
 @@ -95,7 +95,9 @@ public final class CraftItemStack extends ItemStack {
@@ -2524,7 +2524,7 @@ index f84e07fa0876bb6da0f99f4de6cb811f897adca2..8cc58bb6aaa7dc47e897c5fd6e94464f
      }
  
      private CraftItemStack(Material type, int amount, short durability, ItemMeta itemMeta) {
-@@ -543,4 +548,34 @@ public final class CraftItemStack extends ItemStack {
+@@ -514,4 +519,34 @@ public final class CraftItemStack extends ItemStack {
          return this.pdcView;
      }
      // Paper end - pdc

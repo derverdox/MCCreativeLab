@@ -191,7 +191,7 @@ index 0000000000000000000000000000000000000000..3cd35eddfb5e7d6d728eb46309e58e62
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/Registry.java b/src/main/java/org/bukkit/Registry.java
-index d81f687cba38ec930c555b001afc0df93c21731b..cab6256d61872dd10b64407dba88b3b3ede300b5 100644
+index b4ef3133fdd9d79a3381cf8f659ff561ab2b4fad..33905b46fa3edb2f7e24eb44738e4e57946850b5 100644
 --- a/src/main/java/org/bukkit/Registry.java
 +++ b/src/main/java/org/bukkit/Registry.java
 @@ -10,6 +10,8 @@ import java.util.Objects;
@@ -203,7 +203,7 @@ index d81f687cba38ec930c555b001afc0df93c21731b..cab6256d61872dd10b64407dba88b3b3
  import org.bukkit.advancement.Advancement;
  import org.bukkit.attribute.Attribute;
  import org.bukkit.block.Biome;
-@@ -83,7 +85,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
+@@ -93,7 +95,7 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
       *
       * @see Attribute
       */
@@ -212,7 +212,7 @@ index d81f687cba38ec930c555b001afc0df93c21731b..cab6256d61872dd10b64407dba88b3b3
      /**
       * Server banner patterns.
       *
-@@ -178,6 +180,26 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
+@@ -198,6 +200,26 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
       * @see Material
       */
      Registry<Material> MATERIAL = new SimpleRegistry<>(Material.class, (mat) -> !mat.isLegacy());

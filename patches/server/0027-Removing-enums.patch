@@ -145,7 +145,7 @@ index 0000000000000000000000000000000000000000..5c6d277657dcc5aa7a03cceb87124fa8
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftRegistry.java b/src/main/java/org/bukkit/craftbukkit/CraftRegistry.java
-index 90046c85ce1b9901de7476761da156141249300a..94c089e2dd227ac53f22d0d822b1bddd3f16295d 100644
+index 53c70846666b746af6706ed2e363fe388e463e56..d40ca67a69b155079f777a6263dc7723ae92c7b9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftRegistry.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftRegistry.java
 @@ -154,10 +154,6 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
@@ -233,7 +233,7 @@ index 10e4318782107644f67818109784fff60d017e0a..d1a0d654ef7677f1e63726ad38164dec
 +    }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
-index e0414b0a48a95f1f5e718070dd0e5f955052a898..f27936624c365920199fad9cc3d7f15f6d56b21a 100644
+index 60ec9b228518de0521b12f3f4ef26cb30260315a..72a099fbca2bcfa3bb4bb4b48dd65605411a7b37 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 @@ -825,7 +825,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
@@ -245,7 +245,7 @@ index e0414b0a48a95f1f5e718070dd0e5f955052a898..f27936624c365920199fad9cc3d7f15f
                  if (attribute == null) {
                      continue;
                  }
-@@ -2018,7 +2018,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
+@@ -2020,7 +2020,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
              if (modCollection == null || modCollection.isEmpty()) {
                  continue;
              }

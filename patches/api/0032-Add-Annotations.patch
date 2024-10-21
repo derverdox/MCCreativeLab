@@ -1,0 +1,1614 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: verdox <mail.ysp@web.de>
+Date: Mon, 21 Oct 2024 20:32:51 +0000
+Subject: [PATCH] Add Annotations
+
+
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/GoalFactory.java b/src/main/java/de/verdox/mccreativelab/ai/builder/GoalFactory.java
+index 5832989d1fda13001551d7f083a8436d6cb521e0..3bb36fea3f289972b463581f917a672940b90aa5 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/GoalFactory.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/GoalFactory.java
+@@ -71,7 +71,7 @@ public interface GoalFactory {
+ 
+     @NotNull VanillaGoal<@NotNull Mob> moveBackToVillage(@NotNull Mob mob, double speed, boolean canDespawn);
+ 
+-    @NotNull VanillaGoal<@NotNull Mob> moveThroughVillage(@NotNull Mob mob, double speed, boolean requiresNighttime, int distance, BooleanSupplier doorPassingThroughGetter);
++    @NotNull VanillaGoal<@NotNull Mob> moveThroughVillage(@NotNull Mob mob, double speed, boolean requiresNighttime, int distance, @NotNull BooleanSupplier doorPassingThroughGetter);
+ 
+     @NotNull VanillaGoal<@NotNull Mob> moveTowardsTarget(@NotNull Mob mob, double speed, float maxDistance);
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/ai/builder/WeightedBehaviorsBuilder.java b/src/main/java/de/verdox/mccreativelab/ai/builder/WeightedBehaviorsBuilder.java
+index 1f99161b4bb432872be837a182df914ff679ad46..39b979e815a384893a175195ed9903c10cc9ca45 100644
+--- a/src/main/java/de/verdox/mccreativelab/ai/builder/WeightedBehaviorsBuilder.java
++++ b/src/main/java/de/verdox/mccreativelab/ai/builder/WeightedBehaviorsBuilder.java
+@@ -5,17 +5,18 @@ import de.verdox.mccreativelab.ai.behavior.ControlledBehavior;
+ import de.verdox.mccreativelab.ai.behavior.CustomAIBehavior;
+ import de.verdox.mccreativelab.ai.behavior.OneShotBehavior;
+ import org.bukkit.entity.LivingEntity;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.function.Function;
+ 
+ public interface WeightedBehaviorsBuilder<E extends LivingEntity> {
+-    WeightedBehaviorsBuilder<E> withBehaviour(int priority, ControlledBehavior<? super E> aiBehavior);
++    @NotNull WeightedBehaviorsBuilder<E> withBehaviour(int priority, @NotNull ControlledBehavior<? super E> aiBehavior);
+ 
+-    WeightedBehaviorsBuilder<E> withBehaviour(int priority, AIBehavior<? super E> customAiBehavior);
++    @NotNull WeightedBehaviorsBuilder<E> withBehaviour(int priority, @NotNull AIBehavior<? super E> customAiBehavior);
+ 
+-    WeightedBehaviorsBuilder<E> withBehaviour(int priority, CustomAIBehavior<? super E> customAiBehaviour);
++    @NotNull WeightedBehaviorsBuilder<E> withBehaviour(int priority, @NotNull CustomAIBehavior<? super E> customAiBehaviour);
+ 
+-    WeightedBehaviorsBuilder<E> withBehaviour(int priority, OneShotBehavior<? super E> aiBehavior);
++    @NotNull WeightedBehaviorsBuilder<E> withBehaviour(int priority, @NotNull OneShotBehavior<? super E> aiBehavior);
+ 
+-    WeightedBehaviorsBuilder<E> withBehaviour(int priority, Function<BehaviorFactory, ControlledBehavior<? super E>> behaviourCreator);
++    @NotNull WeightedBehaviorsBuilder<E> withBehaviour(int priority, @NotNull Function<BehaviorFactory, ControlledBehavior<? super E>> behaviourCreator);
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/Behaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/Behaviour.java
+index 9dc0f3aff2672c513cb6ba3d5f6c42cc40fb33c0..18e7f686acbd9bf88bacccb06b7544cbed6bb7e4 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/Behaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/Behaviour.java
+@@ -1,31 +1,40 @@
+ package de.verdox.mccreativelab.behaviour;
+ 
++import org.jetbrains.annotations.NotNull;
++
+ public interface Behaviour {
+-    default BehaviourResult.Void voidResult(BehaviourResult.Void.Type type) {
++    @NotNull
++    default BehaviourResult.Void voidResult(@NotNull BehaviourResult.Void.Type type) {
+         return new BehaviourResult.Void(type);
+     }
+ 
++    @NotNull
+     default BehaviourResult.Void voidResult() {
+         return voidResult(BehaviourResult.Void.Type.REPLACE_VANILLA);
+     }
+ 
++    @NotNull
+     default BehaviourResult.Callback done() {
+         return new BehaviourResult.Callback();
+     }
+ 
+-    default BehaviourResult.Bool bool(boolean value, BehaviourResult.Bool.Type type) {
++    @NotNull
++    default BehaviourResult.Bool bool(boolean value, @NotNull BehaviourResult.Bool.Type type) {
+         return new BehaviourResult.Bool(value, type);
+     }
+ 
++    @NotNull
+     default BehaviourResult.Bool bool(boolean value) {
+         return bool(value, BehaviourResult.Bool.Type.REPLACE_VANILLA);
+     }
+ 
+-    default <T> BehaviourResult.Object<T> result(T result, BehaviourResult.Object.Type type){
++    @NotNull
++    default <T> BehaviourResult.Object<T> result(@NotNull T result, @NotNull BehaviourResult.Object.Type type){
+         return new BehaviourResult.Object<>(result, type);
+     }
+ 
+-    default <T> BehaviourResult.Object<T> result(T result){
++    @NotNull
++    default <T> BehaviourResult.Object<T> result(@NotNull T result){
+         return result(result, BehaviourResult.Object.Type.REPLACE_VANILLA);
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/BehaviourResult.java b/src/main/java/de/verdox/mccreativelab/behaviour/BehaviourResult.java
+index 21e354fd7cc2b0f6591d228c6bbf9f60b2b1f50d..8edc9acf00ba15f04fad18b05a1e83aec4728309 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/BehaviourResult.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/BehaviourResult.java
+@@ -1,5 +1,8 @@
+ package de.verdox.mccreativelab.behaviour;
+ 
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
+ import java.util.function.Supplier;
+ 
+ /**
+@@ -10,20 +13,21 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+     private final T value;
+     private final R result;
+ 
+-    BehaviourResult(T value, R result) {
++    BehaviourResult(@Nullable T value, @NotNull R result) {
+         this.value = value;
+         this.result = result;
+     }
+ 
+-    public T getValue() {
++    @Nullable public T getValue() {
+         return value;
+     }
+ 
+-    public R getResult() {
++    @NotNull public R getResult() {
+         return result;
+     }
+ 
+-    protected abstract T evaluateReturnValue(Supplier<T> vanillaLogic);
++    @NotNull
++    protected abstract T evaluateReturnValue(@NotNull Supplier<T> vanillaLogic);
+     protected abstract boolean replaceVanillaLogic();
+ 
+     public static class Callback extends BehaviourResult<java.lang.Void, Callback.Type> {
+@@ -34,7 +38,7 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+         }
+ 
+         @Override
+-        protected java.lang.Void evaluateReturnValue(Supplier<java.lang.Void> vanillaLogic) {
++        protected java.lang.@NotNull Void evaluateReturnValue(@NotNull Supplier<java.lang.Void> vanillaLogic) {
+             return null;
+         }
+ 
+@@ -51,7 +55,7 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+     public static class Void extends BehaviourResult<java.lang.Void, Void.Type> {
+         public static final Void DEFAULT_INSTANCE = new Void(Void.Type.USE_VANILLA);
+ 
+-        public Void(Type result) {
++        public Void(@NotNull Type result) {
+             super(null, result);
+         }
+ 
+@@ -60,7 +64,7 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+         }
+ 
+         @Override
+-        protected java.lang.Void evaluateReturnValue(Supplier<java.lang.Void> vanillaLogic) {
++        protected java.lang.@NotNull Void evaluateReturnValue(@NotNull Supplier<java.lang.Void> vanillaLogic) {
+             if (!Type.REPLACE_VANILLA.equals(getResult()))
+                 return vanillaLogic.get();
+             else
+@@ -76,12 +80,12 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+     public static class Bool extends BehaviourResult<Boolean, Bool.Type> {
+         public static final Bool DEFAULT_INSTANCE = new Bool(false, Type.ONLY_VANILLA);
+ 
+-        public Bool(Boolean value, Type result) {
++        public Bool(@Nullable Boolean value, @NotNull Type result) {
+             super(value, result);
+         }
+ 
+         @Override
+-        protected Boolean evaluateReturnValue(Supplier<Boolean> vanillaLogic) {
++        protected @NotNull Boolean evaluateReturnValue(@NotNull Supplier<Boolean> vanillaLogic) {
+             return switch (getResult()) {
+                 case AND -> vanillaLogic.get() && getValue();
+                 case OR -> vanillaLogic.get() || getValue();
+@@ -107,12 +111,12 @@ public abstract class BehaviourResult<T, R extends Enum<?>> {
+     public static class Object<T> extends BehaviourResult<T, Object.Type> {
+         public static final Object DEFAULT_INSTANCE = new Object(null, Type.USE_VANILLA);
+ 
+-        public Object(T value, Type result) {
++        public Object(@Nullable T value, @NotNull Type result) {
+             super(value, result);
+         }
+ 
+         @Override
+-        protected T evaluateReturnValue(Supplier<T> vanillaLogic) {
++        protected @NotNull T evaluateReturnValue(@NotNull Supplier<T> vanillaLogic) {
+             return switch (getResult()) {
+                 case REPLACE_VANILLA -> getValue();
+                 case USE_VANILLA -> vanillaLogic.get();
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/BlockBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/BlockBehaviour.java
+index 42c042c571723971af2ac76396bb8364f6d82fea..bbf9e5298a5663d8e3053e1fefb228b34d64f2be 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/BlockBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/BlockBehaviour.java
+@@ -16,6 +16,8 @@ import org.bukkit.inventory.EquipmentSlot;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.util.RayTraceResult;
+ import org.bukkit.util.Vector;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
+ 
+ public interface BlockBehaviour extends Behaviour {
+     MultiCustomBehaviour<Material, BlockBehaviour> BLOCK_BEHAVIOUR = new MultiCustomBehaviour<>(BlockBehaviour.class, new BlockBehaviour() {}, "MCCLab - BlockBehaviour");
+@@ -27,7 +29,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param blockData The blockData of the block
+      * @return float result
+      */
+-    default BehaviourResult.Object<Float> getExplosionResistance(Block block, BlockData blockData) {
++    @NotNull
++    default BehaviourResult.Object<Float> getExplosionResistance(@NotNull Block block, @NotNull BlockData blockData) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -42,7 +45,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param neighbourLocation  The neighbour location
+      * @return The blockdata that results from this update.
+      */
+-    default BehaviourResult.Object<BlockData> blockUpdate(Location location, BlockData blockData, BlockFace direction, BlockData neighbourBlockData, Location neighbourLocation) {
++    @NotNull
++    default BehaviourResult.Object<BlockData> blockUpdate(@NotNull Location location, @NotNull BlockData blockData, @NotNull BlockFace direction, @NotNull BlockData neighbourBlockData, @NotNull Location neighbourLocation) {
+         return result(blockData, BehaviourResult.Object.Type.USE_VANILLA);
+     }
+ 
+@@ -54,7 +58,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param sourceBlock     The neighbour block receiving the block update
+      * @param notify          The Notify flag
+      */
+-    default BehaviourResult.Void onNeighbourBlockUpdate(Block block, Block sourceBlock, boolean notify) {
++    @NotNull
++    default BehaviourResult.Void onNeighbourBlockUpdate(@NotNull Block block, @NotNull Block sourceBlock, boolean notify) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -66,7 +71,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param entity    The Entity stepping on the block
+      * @return void result
+      */
+-    default BehaviourResult.Void stepOn(Block block, BlockData blockData, Entity entity) {
++    @NotNull
++    default BehaviourResult.Void stepOn(@NotNull Block block, @NotNull BlockData blockData, @NotNull Entity entity) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -76,7 +82,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param block               The randomly ticked block
+      * @param vanillaRandomSource The vanilla random source
+      */
+-    default BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
++    @NotNull
++    default BehaviourResult.Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -86,7 +93,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param blockData The block data of the block
+      * @return A boolean result
+      */
+-    default BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
++    @NotNull
++    default BehaviourResult.Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -97,7 +105,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param blockData The block data of the block
+      * @return A boolean result
+      */
+-    default BehaviourResult.Bool isBlockRandomlyTicking(Block block, BlockData blockData) {
++    @NotNull
++    default BehaviourResult.Bool isBlockRandomlyTicking(@NotNull Block block, @NotNull BlockData blockData) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -110,7 +119,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param notify       Whether this notifies the world
+      * @return callback
+      */
+-    default BehaviourResult.Callback onPlace(Location location, BlockData newBlockData, BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
++    @NotNull
++    default BehaviourResult.Callback onPlace(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -121,7 +131,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param location The location
+      * @return callback
+      */
+-    default BehaviourResult.Callback onPlayerPlace(Player player, ItemStack stackUsedToPlaceBlock, Location location, BlockData thePlacedState) {
++    @NotNull
++    default BehaviourResult.Callback onPlayerPlace(@NotNull Player player, @NotNull ItemStack stackUsedToPlaceBlock, @NotNull Location location, @NotNull BlockData thePlacedState) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -133,7 +144,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param brokenState The broken block state
+      * @return callback
+      */
+-    default BehaviourResult.Callback onPlayerBreak(Player player, Location location, BlockData brokenState) {
++    @NotNull
++    default BehaviourResult.Callback onPlayerBreak(@NotNull Player player, @NotNull Location location, @NotNull BlockData brokenState) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -147,7 +159,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param moved        Whether the block was moved
+      * @return callback
+      */
+-    default BehaviourResult.Callback onRemove(Location location, BlockData newBlockData, BlockData oldBlockData, boolean moved) {
++    @NotNull
++    default BehaviourResult.Callback onRemove(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean moved) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -159,7 +172,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param maxUpdateDepth - The chunk update depth
+      * @return a callback object
+      */
+-    default BehaviourResult.Callback onDestroy(Location location, boolean drop, @javax.annotation.Nullable Entity destroyingEntity, int maxUpdateDepth) {
++    @NotNull
++    default BehaviourResult.Callback onDestroy(@NotNull Location location, boolean drop, @Nullable Entity destroyingEntity, int maxUpdateDepth) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -172,7 +186,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param rayTraceResult The interaction info
+      * @return The result of this interaction
+      */
+-    default BehaviourResult.Object<ItemInteractionResult> use(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult) {
++    @NotNull
++    default BehaviourResult.Object<ItemInteractionResult> use(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -185,7 +200,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param rayTraceResult The interaction info
+      * @return callback
+      */
+-    default BehaviourResult.Callback onUseCallback(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult, InteractionResult interactionResult) {
++    @NotNull
++    default BehaviourResult.Callback onUseCallback(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult, @NotNull InteractionResult interactionResult) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -194,7 +210,8 @@ public interface BlockBehaviour extends Behaviour {
+      *
+      * @return callback
+      */
+-    default BehaviourResult.Callback onPistonMoveBlock(BlockData blockDataMoved, Location positionBeforeMove, Location positionAfterMove, Block piston, Vector moveDirection) {
++    @NotNull
++    default BehaviourResult.Callback onPistonMoveBlock(@NotNull BlockData blockDataMoved, @NotNull Location positionBeforeMove, @NotNull Location positionAfterMove, @NotNull Block piston, @NotNull Vector moveDirection) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -207,7 +224,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param block               The ticked block
+      * @param vanillaRandomSource The vanilla random source
+      */
+-    default BehaviourResult.Void tick(Block block, VanillaRandomSource vanillaRandomSource) {
++    @NotNull
++    default BehaviourResult.Void tick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -221,7 +239,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param world The world
+      * @return A boolean result
+      */
+-    default BehaviourResult.Bool canSurvive(Block block, World world) {
++    @NotNull
++    default BehaviourResult.Bool canSurvive(@NotNull Block block, @NotNull World world) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -232,7 +251,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param block  The clicked block
+      * @param player The player
+      */
+-    default BehaviourResult.Void attack(Block block, Player player) {
++    @NotNull
++    default BehaviourResult.Void attack(@NotNull Block block, @NotNull Player player) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -242,7 +262,8 @@ public interface BlockBehaviour extends Behaviour {
+      * @param stack The item used to fertilize. The Minecraft server will call this only for bonemeal.
+      * @return True if the action was a success
+      */
+-    default BehaviourResult.Bool fertilizeAction(Block block, ItemStack stack){
++    @NotNull
++    default BehaviourResult.Bool fertilizeAction(@NotNull Block block, @NotNull ItemStack stack){
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/FoodBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/FoodBehaviour.java
+index 725480cb19dd2b2ca2b8b0569705bcc96024248c..a14361700f301cfbbef18925e42bfa3999b7feb5 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/FoodBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/FoodBehaviour.java
+@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.behaviour;
+ 
+ import de.verdox.mccreativelab.CustomBehaviour;
+ import org.bukkit.entity.Player;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface FoodBehaviour extends Behaviour {
+     /**
+@@ -17,47 +18,47 @@ public interface FoodBehaviour extends Behaviour {
+      * @param player The player
+      * @return the regeneration rate per tick
+      */
+-    default int getSaturatedRegenRate(Player player){return 10;}
++    default int getSaturatedRegenRate(@NotNull Player player){return 10;}
+     /**
+      * Gets the regeneration rate per tick when a player is unsaturated.
+      * Defaults to 80 in vanilla.
+      * @param player The player
+      * @return the regeneration rate per tick
+      */
+-    default int getUnsaturatedRegenRate(Player player){return 80;}
++    default int getUnsaturatedRegenRate(@NotNull Player player){return 80;}
+     /**
+      * Gets the starvation rate per tick when a player is starving.
+      * Defaults to 80 in vanilla.
+      * @param player The player
+      * @return the regeneration rate per tick
+      */
+-    default int getStarvationRate(Player player){return 80;}
++    default int getStarvationRate(@NotNull Player player){return 80;}
+     /**
+      * Gets the food level when a player starts starving
+      * Defaults to 0 in vanilla.
+      * @param player The player
+      * @return the starvation food limit
+      */
+-    default int getStarvationFoodLimit(Player player){return 0;}
++    default int getStarvationFoodLimit(@NotNull Player player){return 0;}
+     /**
+      * Gets the food level a player needs at minimum to start regenerating health
+      * Defaults to 18 in vanilla.
+      * @param player The player
+      * @return the food level
+      */
+-    default int getMinimumFoodToRegenerate(Player player){return 18;}
++    default int getMinimumFoodToRegenerate(@NotNull Player player){return 18;}
+     /**
+      * Gets the exhaustion over time rate in ticks
+      * This is a custom feature. If the method returns an integer less or equal then -1 the feature won't be used.
+      * @param player The player
+      * @return the food level
+      */
+-    default int getExhaustionOverTimeRateInTicks(Player player){return 0;}
++    default int getExhaustionOverTimeRateInTicks(@NotNull Player player){return 0;}
+     /**
+      * Gets the exhaustion amount over time
+      * * This is a custom feature. If the method returns an integer less or equal then 0 the feature won't be used.
+      * @param player The player
+      * @return the food level
+      */
+-    default int getExhaustionOverTimeAmount(Player player){return 0;}
++    default int getExhaustionOverTimeAmount(@NotNull Player player){return 0;}
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/InventoryHopperBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/InventoryHopperBehaviour.java
+index 0fcfc817c2619232c4e70c7a0fb4a52f479f8a53..af3977ad9ed47287a58634c68937109a5b2655ae 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/InventoryHopperBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/InventoryHopperBehaviour.java
+@@ -17,6 +17,7 @@ public interface InventoryHopperBehaviour extends Behaviour {
+      * @param stack     The item being placed
+      * @return True if the hopper can place it
+      */
++    @NotNull
+     default BehaviourResult.Bool canPlaceItem(@NotNull Inventory inventory, int slot, @NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+@@ -30,6 +31,7 @@ public interface InventoryHopperBehaviour extends Behaviour {
+      * @param stack     The item being placed
+      * @return True if the hopper can place it
+      */
++    @NotNull
+     default BehaviourResult.Bool canTakeItem(@NotNull Inventory inventory, @NotNull Hopper hopper, int slot, @NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+@@ -41,6 +43,7 @@ public interface InventoryHopperBehaviour extends Behaviour {
+      * @param direction The direction
+      * @return The respective slots
+      */
++    @NotNull
+     default BehaviourResult.Object<int[]> getSlotsForFace(@NotNull Inventory inventory, @NotNull BlockFace direction) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -54,6 +57,7 @@ public interface InventoryHopperBehaviour extends Behaviour {
+      * @param blockFace The blockFace
+      * @return True if the hopper can place it
+      */
++    @NotNull
+     default BehaviourResult.Bool canPlaceItemThroughFace(@NotNull Inventory inventory, int slot, @NotNull ItemStack stack, @Nullable BlockFace blockFace) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+@@ -68,7 +72,8 @@ public interface InventoryHopperBehaviour extends Behaviour {
+      * @param blockFace The blockFace
+      * @return True if the hopper can place it
+      */
+-    default BehaviourResult.Bool canTakeItemThroughFace(@NotNull Inventory inventory, @NotNull Hopper hopper, int slot, @NotNull ItemStack stack, BlockFace blockFace) {
++    @NotNull
++    default BehaviourResult.Bool canTakeItemThroughFace(@NotNull Inventory inventory, @NotNull Hopper hopper, int slot, @NotNull ItemStack stack, @NotNull BlockFace blockFace) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/ItemBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/ItemBehaviour.java
+index 54a7ec44b1adb1a4d1bdd55a44bb773518e9ea27..88e7ec5cefaeb8c47c77d74d6a14947af7c77762 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/ItemBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/ItemBehaviour.java
+@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.EquipmentSlot;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.util.RayTraceResult;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
+ 
+ public interface ItemBehaviour extends Behaviour {
+     MultiCustomBehaviour<CustomItemData, ItemBehaviour> ITEM_BEHAVIOUR = new MultiCustomBehaviour<>(ItemBehaviour.class, new ItemBehaviour() {
+@@ -24,7 +26,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param usedItem - The ItemStack
+      * @return - The ItemStack that is left after using it
+      */
+-    default BehaviourResult.Object<ItemStack> finishUsingItem(LivingEntity livingEntity, ItemStack usedItem) {
++    @NotNull
++    default BehaviourResult.Object<ItemStack> finishUsingItem(@NotNull LivingEntity livingEntity, @NotNull ItemStack usedItem) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -35,7 +38,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param miner - The miner
+      * @return - If the block was mined successfully
+      */
+-    default BehaviourResult.Bool mineBlock(ItemStack stack, Block block, Player miner) {
++    @NotNull
++    default BehaviourResult.Bool mineBlock(@NotNull ItemStack stack, @NotNull Block block, @NotNull Player miner) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -45,7 +49,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param blockData - The block data
+      * @return - True when it is the correct tool
+      */
+-    default BehaviourResult.Bool isCorrectToolForDrops(ItemStack stack, BlockData blockData) {
++    @NotNull
++    default BehaviourResult.Bool isCorrectToolForDrops(@NotNull ItemStack stack, @NotNull BlockData blockData) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -56,7 +61,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param amount - The amount crafted
+      * @return - Nothing
+      */
+-    default BehaviourResult.Void onCraftedBy(ItemStack stack, Player player, int amount) {
++    @NotNull
++    default BehaviourResult.Void onCraftedBy(@NotNull ItemStack stack, @NotNull Player player, int amount) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -66,7 +72,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param item - The Item entity
+      * @return - nothing
+      */
+-    default BehaviourResult.Void onDestroyed(ItemStack stack, Item item) {
++    @NotNull
++    default BehaviourResult.Void onDestroyed(@NotNull ItemStack stack, @NotNull Item item) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -75,7 +82,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param stack - The ItemStack
+      * @return - true if it fits
+      */
+-    default BehaviourResult.Bool canBreakWhenMaxDamage(ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool canBreakWhenMaxDamage(@NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -84,7 +92,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param stack - The ItemStack
+      * @return - true if it can drop
+      */
+-    default BehaviourResult.Bool canDropOnDeath(ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool canDropOnDeath(@NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -96,7 +105,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param equipmentSlot - The hand in which the item is carried
+      * @return - An InteractionResult
+      */
+-    default BehaviourResult.Object<InteractionResult> interactLivingEntity(ItemStack stack, Player player, LivingEntity livingEntity, EquipmentSlot equipmentSlot) {
++    @NotNull
++    default BehaviourResult.Object<InteractionResult> interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity livingEntity, @NotNull EquipmentSlot equipmentSlot) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -107,7 +117,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param equipmentSlot - The hand in which the item is carried
+      * @return - An InteractionResult
+      */
+-    default BehaviourResult.Object<ItemStackInteraction> use(ItemStack stack, Player player, EquipmentSlot equipmentSlot) {
++    @NotNull
++    default BehaviourResult.Object<ItemStackInteraction> use(@NotNull ItemStack stack, @NotNull Player player, @NotNull EquipmentSlot equipmentSlot) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -119,7 +130,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param equipmentSlot - The hand in which the item is carried
+      * @return - An InteractionResult
+      */
+-    default BehaviourResult.Object<InteractionResult> useOn(ItemStack stack, Player player, EquipmentSlot equipmentSlot, RayTraceResult rayTraceResult) {
++    @NotNull
++    default BehaviourResult.Object<InteractionResult> useOn(@NotNull ItemStack stack, @NotNull Player player, @NotNull EquipmentSlot equipmentSlot, @NotNull RayTraceResult rayTraceResult) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -128,7 +140,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param stack - The ItemStack that was crafted
+      * @return - The ItemStack that remains in the crafting matrix
+      */
+-    default BehaviourResult.Object<ItemStack> getCraftRemainingItem(ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Object<ItemStack> getCraftRemainingItem(@NotNull ItemStack stack) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -137,7 +150,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param stack - The ItemStack
+      * @return - true if it fits
+      */
+-    default BehaviourResult.Bool canFitInsideContainerItems(ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool canFitInsideContainerItems(@NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -146,7 +160,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param stack - The ItemStack
+      * @return - true if it is enchantable
+      */
+-    default BehaviourResult.Bool isEnchantable(ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool isEnchantable(@NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -158,7 +173,8 @@ public interface ItemBehaviour extends Behaviour {
+      * @param vanillaBlockData - The block data vanilla would place
+      * @return - the Blockdata that will be placed
+      */
+-    default BehaviourResult.Object<BlockData> placeBlockAction(ItemStack stack, Player player, Location clickedPosition, BlockData vanillaBlockData){
++    @NotNull
++    default BehaviourResult.Object<BlockData> placeBlockAction(@NotNull ItemStack stack, @Nullable Player player, @NotNull Location clickedPosition, @NotNull BlockData vanillaBlockData){
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/ItemDisplayBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/ItemDisplayBehaviour.java
+index 0f1632d4e525c0bd33b33973d073d7e60e03c118..f8518ec7fbbaf5bc6ae85f2fd3a4df133f00a639 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/ItemDisplayBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/ItemDisplayBehaviour.java
+@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.Style;
+ import net.kyori.adventure.text.format.TextColor;
+ import net.kyori.adventure.text.format.TextDecoration;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+ /**
+  * Represents the internal server behaviour when items are fomatted
+@@ -17,7 +18,8 @@ public interface ItemDisplayBehaviour extends Behaviour {
+      * @param stack The ItemStack getting the format
+      * @return the style
+      */
+-    default Style basicLoreStyle(ItemStack stack){
++    @NotNull
++    default Style basicLoreStyle(@NotNull ItemStack stack){
+         return Style.empty().color(TextColor.fromCSSHexString("#aa00aa")).decoration(TextDecoration.ITALIC, true);
+     }
+ 
+@@ -26,7 +28,8 @@ public interface ItemDisplayBehaviour extends Behaviour {
+      * @param stack The ItemStack getting the format
+      * @return the style
+      */
+-    default Style basicCustomNameStyle(ItemStack stack){
++    @NotNull
++    default Style basicCustomNameStyle(@NotNull ItemStack stack){
+         return Style.empty().decoration(TextDecoration.ITALIC, true);
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/MCCWorldHook.java b/src/main/java/de/verdox/mccreativelab/behaviour/MCCWorldHook.java
+index ab029bf5e99a833d7314abb9a7531a3db06279cc..aed530e920a16f84d94c9d71d6f3b628c98dac85 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/MCCWorldHook.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/MCCWorldHook.java
+@@ -46,7 +46,7 @@ public abstract class MCCWorldHook {
+ 
+     }
+ 
+-    public void onBlockDrawLoot(@NotNull Block block, @javax.annotation.Nullable Entity entity, ItemStack tool, boolean dropExperience, List<ItemStack> itemsThatWillBeDropped){}
++    public void onBlockDrawLoot(@NotNull Block block, @Nullable Entity entity, @Nullable ItemStack tool, boolean dropExperience, @NotNull List<ItemStack> itemsThatWillBeDropped){}
+ 
+     public interface BlockContext {
+         @NotNull Block block();
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/RepairItemBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/RepairItemBehaviour.java
+index 6dceda9e59a195e4748589163f63deb21a76a9dd..48e7ca02a30f5e6cdc265b008e28f226dd789004 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/RepairItemBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/RepairItemBehaviour.java
+@@ -2,14 +2,16 @@ package de.verdox.mccreativelab.behaviour;
+ 
+ import de.verdox.mccreativelab.CustomBehaviour;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface RepairItemBehaviour extends Behaviour {
+     CustomBehaviour<RepairItemBehaviour> REPAIR_ITEM_BEHAVIOUR = new CustomBehaviour<>(RepairItemBehaviour.class, new RepairItemBehaviour() {},"MCCLab - RepairItemBehaviour");
+-    default boolean canCombine(ItemStack first, ItemStack second){
++    default boolean canCombine(@NotNull ItemStack first, @NotNull ItemStack second){
+         return first.getType().equals(second.getType());
+     }
+ 
+-    default ItemStack assemble(ItemStack first, ItemStack second){
++    @NotNull
++    default ItemStack assemble(@NotNull ItemStack first, @NotNull ItemStack second){
+         return new ItemStack(first.getType());
+     }
+ 
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/StorageBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/StorageBehaviour.java
+index 6f0dc3a3ac7824d331118ff41f8609d590e4ade6..8e409623627589b60aa240cdba41ac7f517c18de 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/StorageBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/StorageBehaviour.java
+@@ -24,6 +24,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param player the player
+      * @return The advancements in json loaded
+      */
++    @NotNull
+     default BehaviourResult.Object<JsonElement> loadPlayerAdvancements(@NotNull Player player) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -36,6 +37,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param serializedAdvancements the advancements serialized into json
+      * @return the path the server should save the json to
+      */
++    @NotNull
+     default BehaviourResult.Object<Path> savePlayerAdvancements(@NotNull Player player, @NotNull JsonElement serializedAdvancements) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -46,6 +48,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param playerUUID the player uuid
+      * @return The stats in json loaded
+      */
++    @NotNull
+     default BehaviourResult.Object<JsonElement> loadPlayerStats(@NotNull UUID playerUUID) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -58,6 +61,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param serializedAdvancements the stats serialized into json
+      * @return the path the server should save the json to
+      */
++    @NotNull
+     default BehaviourResult.Object<Path> savePlayerStats(@NotNull UUID playerUUID, @NotNull JsonElement serializedAdvancements) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -69,6 +73,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param player     the player if available at the time of loading the data
+      * @return the InputStream where the data will be serialized into
+      */
++    @NotNull
+     default BehaviourResult.Object<InputStream> loadPlayerNBTData(@NotNull UUID playerUUID, @Nullable Player player) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+@@ -79,6 +84,7 @@ public interface StorageBehaviour extends Behaviour {
+      * @param player the player
+      * @return the OutputStream where the data will be deserialized from
+      */
++    @NotNull
+     default BehaviourResult.Object<OutputStream> savePlayerNBTData(@NotNull Player player) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/WorldGenerationBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/WorldGenerationBehaviour.java
+index 9f2d9397a1a428220e08184571f25bbde1465c2a..5b06ca27d2f694c5a7d336265dc465d33939ac6f 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/WorldGenerationBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/WorldGenerationBehaviour.java
+@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.worldgen.WorldGenChunk;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.block.data.BlockData;
+ import org.bukkit.util.BlockVector;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface WorldGenerationBehaviour extends Behaviour {
+     CustomBehaviour<WorldGenerationBehaviour> WORLD_GENERATION_BEHAVIOUR = new CustomBehaviour<>(WorldGenerationBehaviour.class, new WorldGenerationBehaviour() {}, "MCCLab - WorldGenerationBehaviour");
+@@ -18,8 +19,8 @@ public interface WorldGenerationBehaviour extends Behaviour {
+      * @param worldGenChunk The WorldGenChunk of the block
+      * @param generatedBlockData The BlockData that was generated
+      */
+-    default void featureBlockGenerationCallback(FeatureType featureType, BlockVector blockPosition, WorldGenChunk worldGenChunk, BlockData generatedBlockData){}
+-    record FeatureType(NamespacedKey namespacedKey){
++    default void featureBlockGenerationCallback(@NotNull FeatureType featureType, @NotNull BlockVector blockPosition, @NotNull WorldGenChunk worldGenChunk, @NotNull BlockData generatedBlockData){}
++    record FeatureType(@NotNull NamespacedKey namespacedKey){
+         public static final FeatureType TREE_FEATURE = new FeatureType(NamespacedKey.minecraft("tree_feature"));
+         public static final FeatureType ORE_FEATURE = new FeatureType(NamespacedKey.minecraft("ore_feature"));
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/entity/AnimalEntityBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/entity/AnimalEntityBehaviour.java
+index f86f6b5102aec88ffff986f4000ef0d8e77c2a34..b9f8d4139efbd4168126039f3f9390fce10306bd 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/entity/AnimalEntityBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/entity/AnimalEntityBehaviour.java
+@@ -5,6 +5,7 @@ import org.bukkit.entity.Ageable;
+ import org.bukkit.entity.Animals;
+ import org.bukkit.entity.Mob;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface AnimalEntityBehaviour<T extends Animals> extends AgeableEntityBehaviour<T> {
+ 
+@@ -14,7 +15,8 @@ public interface AnimalEntityBehaviour<T extends Animals> extends AgeableEntityB
+      * @param other - The other animal
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canMate(T entity, Animals other) {
++    @NotNull
++    default BehaviourResult.Bool canMate(@NotNull T entity, @NotNull Animals other) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -24,7 +26,8 @@ public interface AnimalEntityBehaviour<T extends Animals> extends AgeableEntityB
+      * @param stack - The ItemStack
+      * @return - True if it can
+      */
+-    default BehaviourResult.Bool isFood(T entity, ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool isFood(@NotNull T entity, @NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -35,7 +38,8 @@ public interface AnimalEntityBehaviour<T extends Animals> extends AgeableEntityB
+      * @param child - The child
+      * @return - nothing
+      */
+-    default BehaviourResult.Callback onBreed(T entity, Animals other, Ageable child) {
++    @NotNull
++    default BehaviourResult.Callback onBreed(@NotNull T entity, @NotNull Animals other, @NotNull Ageable child) {
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/entity/EntityBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/entity/EntityBehaviour.java
+index 2203da4ffa6c1cb438502d7b8e971c0020fca697..12a51f24485bcc626471c338147977a3b2d1954c 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/entity/EntityBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/entity/EntityBehaviour.java
+@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.persistence.PersistentDataContainer;
+ import org.bukkit.util.Vector;
++import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
+ import java.util.List;
+@@ -19,7 +20,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - true if it is fire immune
+      */
+-    default BehaviourResult.Bool fireImmune(T entity) {
++    @NotNull
++    default BehaviourResult.Bool fireImmune(@NotNull T entity) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -28,7 +30,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - true if it ignores the explosion
+      */
+-    default BehaviourResult.Bool ignoreExplosion(T entity, Location explosionLocation, float radius, @Nullable Entity source, boolean explosionHasFire, Map<Player, Vector> hitPlayers, List<Location> hitBlocks) {
++    @NotNull
++    default BehaviourResult.Bool ignoreExplosion(@NotNull T entity, @NotNull Location explosionLocation, float radius, @Nullable Entity source, boolean explosionHasFire, @NotNull Map<Player, Vector> hitPlayers, @NotNull List<Location> hitBlocks) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -37,7 +40,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - nothing
+      */
+-    default BehaviourResult.Callback onTick(T entity){
++    @NotNull
++    default BehaviourResult.Callback onTick(@NotNull T entity){
+         return BehaviourResult.Callback.DEFAULT_INSTANCE;
+     }
+ 
+@@ -46,7 +50,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - true if it can change dimensions
+      */
+-    default BehaviourResult.Bool canChangeDimensions(T entity) {
++    @NotNull
++    default BehaviourResult.Bool canChangeDimensions(@NotNull T entity) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -55,7 +60,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - nothing
+      */
+-    default BehaviourResult.Callback readAdditionalSaveData(T entity, PersistentDataContainer persistentDataContainer){
++    @NotNull
++    default BehaviourResult.Callback readAdditionalSaveData(@NotNull T entity, @NotNull PersistentDataContainer persistentDataContainer){
+         return done();
+     }
+ 
+@@ -64,7 +70,8 @@ public interface EntityBehaviour<T extends Entity> extends Behaviour {
+      * @param entity - The entity
+      * @return - nothing
+      */
+-    default BehaviourResult.Callback addAdditionalSaveData(T entity, PersistentDataContainer persistentDataContainer){
++    @NotNull
++    default BehaviourResult.Callback addAdditionalSaveData(@NotNull T entity, @NotNull PersistentDataContainer persistentDataContainer){
+         return done();
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/entity/LivingEntityBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/entity/LivingEntityBehaviour.java
+index fd940bf18d0e45f637c0cf89a478db2bda1a0683..66d6367d36ed7078c30dae2a48161432c0d08ea8 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/entity/LivingEntityBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/entity/LivingEntityBehaviour.java
+@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.EntityType;
+ import org.bukkit.entity.Item;
+ import org.bukkit.entity.LivingEntity;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBehaviour<T> {
+     /**
+@@ -12,7 +13,8 @@ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBeh
+      * @param entity - The entity
+      * @return - true if it is
+      */
+-    default BehaviourResult.Bool isSensitiveToWater(T entity) {
++    @NotNull
++    default BehaviourResult.Bool isSensitiveToWater(@NotNull T entity) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -21,7 +23,8 @@ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBeh
+      * @param entity - The entity
+      * @return - The water damage
+      */
+-    default BehaviourResult.Object<Float> waterDamage(T entity) {
++    @NotNull
++    default BehaviourResult.Object<Float> waterDamage(@NotNull T entity) {
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -31,7 +34,8 @@ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBeh
+      * @param item - The picked up Item
+      * @return - nothing
+      */
+-    default BehaviourResult.Void onItemPickup(T entity, Item item){
++    @NotNull
++    default BehaviourResult.Void onItemPickup(@NotNull T entity, @NotNull Item item){
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -40,7 +44,8 @@ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBeh
+      * @param entity - The entity
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canDisableShield(T entity) {
++    @NotNull
++    default BehaviourResult.Bool canDisableShield(@NotNull T entity) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -49,7 +54,8 @@ public interface LivingEntityBehaviour<T extends LivingEntity> extends EntityBeh
+      * @param entity - The entity
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canAttackType(T entity, EntityType entityType) {
++    @NotNull
++    default BehaviourResult.Bool canAttackType(@NotNull T entity, @NotNull EntityType entityType) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/entity/MobBehaviour.java b/src/main/java/de/verdox/mccreativelab/behaviour/entity/MobBehaviour.java
+index c95ab713512b39b50542fb49579d2bb054225aaf..12cfa689e8a9f724e951e66c026dd2ebc9e6e8f8 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/entity/MobBehaviour.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/entity/MobBehaviour.java
+@@ -6,6 +6,7 @@ import org.bukkit.Material;
+ import org.bukkit.entity.*;
+ import org.bukkit.inventory.EquipmentSlot;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+     /**
+@@ -15,7 +16,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param hand - The Interaction Hand
+      * @return - An Interaction result
+      */
+-    default BehaviourResult.Object<InteractionResult> mobInteract(T entity, Player player, EquipmentSlot hand){
++    @NotNull
++    default BehaviourResult.Object<InteractionResult> mobInteract(@NotNull T entity, @NotNull Player player, @NotNull EquipmentSlot hand){
+         return BehaviourResult.Object.DEFAULT_INSTANCE;
+     }
+ 
+@@ -25,7 +27,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param weapon - The weapon material
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canFireProjectileWeapon(T entity, Material weapon) {
++    @NotNull
++    default BehaviourResult.Bool canFireProjectileWeapon(@NotNull T entity, @NotNull Material weapon) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -34,7 +37,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param entity - The Entity
+      * @return - nothing
+      */
+-    default BehaviourResult.Void ate(T entity) {
++    @NotNull
++    default BehaviourResult.Void ate(@NotNull T entity) {
+         return BehaviourResult.Void.DEFAULT_INSTANCE;
+     }
+ 
+@@ -44,7 +48,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param stack - The ItemStack
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canHoldItem(T entity, ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool canHoldItem(@NotNull T entity, @NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -54,7 +59,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param stack - The ItemStack
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool wantsToPickUp(T entity, ItemStack stack) {
++    @NotNull
++    default BehaviourResult.Bool wantsToPickUp(@NotNull T entity, @NotNull ItemStack stack) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -64,7 +70,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param distanceSquared - The distance
+      * @return - true if it should be removed
+      */
+-    default BehaviourResult.Bool removeWhenFarAway(T entity, double distanceSquared) {
++    @NotNull
++    default BehaviourResult.Bool removeWhenFarAway(@NotNull T entity, double distanceSquared) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ 
+@@ -74,7 +81,8 @@ public interface MobBehaviour <T extends Mob> extends LivingEntityBehaviour<T> {
+      * @param player - The Player
+      * @return - true if it can
+      */
+-    default BehaviourResult.Bool canBeLeashed(T entity, Player player) {
++    @NotNull
++    default BehaviourResult.Bool canBeLeashed(@NotNull T entity, @NotNull Player player) {
+         return BehaviourResult.Bool.DEFAULT_INSTANCE;
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/behaviour/interaction/ItemStackInteraction.java b/src/main/java/de/verdox/mccreativelab/behaviour/interaction/ItemStackInteraction.java
+index dfb16c46da5cf505f3a82b08879429cd475e749f..8fe67b80d0e2ae0434be02d24f7d47898d31b3ea 100644
+--- a/src/main/java/de/verdox/mccreativelab/behaviour/interaction/ItemStackInteraction.java
++++ b/src/main/java/de/verdox/mccreativelab/behaviour/interaction/ItemStackInteraction.java
+@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.behaviour.interaction;
+ 
+ import de.verdox.mccreativelab.InteractionResult;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+-public record ItemStackInteraction(InteractionResult interactionResult, ItemStack stack){
++public record ItemStackInteraction(@NotNull InteractionResult interactionResult, @NotNull ItemStack stack){
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/container/CustomInventory.java b/src/main/java/de/verdox/mccreativelab/container/CustomInventory.java
+index 7ea085bfa2de6f6396316a4d01fa52499c0644c3..95ca09ba0982463a872ee6313cec9f8ae46c1b42 100644
+--- a/src/main/java/de/verdox/mccreativelab/container/CustomInventory.java
++++ b/src/main/java/de/verdox/mccreativelab/container/CustomInventory.java
+@@ -2,23 +2,24 @@ package de.verdox.mccreativelab.container;
+ 
+ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface CustomInventory {
+ 
+-    Slot[] getSlots();
+-    ItemStack quickMoveStack(Player player, int slot);
++    @NotNull Slot[] getSlots();
++    @NotNull ItemStack quickMoveStack(@NotNull Player player, int slot);
+ 
+     interface Slot {
+-        default void onQuickCraft(ItemStack stack, int amount) {
++        default void onQuickCraft(@NotNull ItemStack stack, int amount) {
+         }
+ 
+         default void onSwapCraft(int amount) {
+         }
+ 
+-        default void onTake(Player player, ItemStack stack) {
++        default void onTake(@NotNull Player player, @NotNull ItemStack stack) {
+         }
+ 
+-        default boolean mayPlace(ItemStack stack) {
++        default boolean mayPlace(@NotNull ItemStack stack) {
+             return true;
+         }
+ 
+@@ -26,7 +27,7 @@ public interface CustomInventory {
+             return 64;
+         }
+ 
+-        default int getMaxStackSize(ItemStack stack) {
++        default int getMaxStackSize(@NotNull ItemStack stack) {
+             return Math.min(getMaxStackSize(), stack.getMaxStackSize());
+         }
+ 
+@@ -34,7 +35,7 @@ public interface CustomInventory {
+             return true;
+         }
+ 
+-        default boolean mayPickUp(Player player){
++        default boolean mayPickUp(@NotNull Player player){
+             return true;
+         }
+     }
+diff --git a/src/main/java/de/verdox/mccreativelab/data/DataPackInterceptor.java b/src/main/java/de/verdox/mccreativelab/data/DataPackInterceptor.java
+index 0c1f822df0d8b2377d6ad27b6c8a7435e5176a29..d24bbcc6dd32dbf1138b5aa363a46eb280a1fee8 100644
+--- a/src/main/java/de/verdox/mccreativelab/data/DataPackInterceptor.java
++++ b/src/main/java/de/verdox/mccreativelab/data/DataPackInterceptor.java
+@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.data;
+ 
+ import com.google.gson.JsonObject;
+ import net.kyori.adventure.key.Key;
++import org.jetbrains.annotations.NotNull;
+ 
+ import javax.annotation.Nullable;
+ import java.util.Objects;
+@@ -9,13 +10,13 @@ import java.util.function.Consumer;
+ import java.util.function.Function;
+ 
+ public interface DataPackInterceptor {
+-    DataPackInterceptor exclude(String pathContains);
++    @NotNull DataPackInterceptor exclude(@NotNull String pathContains);
+ 
+-    DataPackInterceptor exclude(PackAssetType packAssetType);
++    @NotNull DataPackInterceptor exclude(@NotNull PackAssetType packAssetType);
+ 
+-    DataPackInterceptor exclude(PackAssetType packAssetType, Key key);
++    @NotNull DataPackInterceptor exclude(@NotNull PackAssetType packAssetType, @NotNull Key key);
+ 
+-    DataPackInterceptor onInstall(Consumer<DataPackAsset> installCallback);
++    @NotNull DataPackInterceptor onInstall(@NotNull Consumer<DataPackAsset> installCallback);
+ 
+     /**
+      * Modifies a data pack element loaded into the server. The provided function modifies the asset and returns true if the asset should be loaded.
+@@ -25,7 +26,7 @@ public interface DataPackInterceptor {
+      * @param modifier - The modification function
+      * @return         - The interceptor
+      */
+-    DataPackInterceptor modify(PackAssetType packAssetType, Key key, Function<DataPackAsset, Boolean> modifier);
++    @NotNull DataPackInterceptor modify(@NotNull PackAssetType packAssetType, @NotNull Key key, @NotNull Function<DataPackAsset, Boolean> modifier);
+ 
+     /**
+      * Modifies a data pack element loaded into the server. The provided function modifies the asset and returns true if the asset should be loaded.
+@@ -33,11 +34,11 @@ public interface DataPackInterceptor {
+      * @param modifier - The modification function
+      * @return         - The interceptor
+      */
+-    DataPackInterceptor modify(Function<DataPackAsset, Boolean> modifier);
++    @NotNull DataPackInterceptor modify(@NotNull Function<DataPackAsset, Boolean> modifier);
+ 
+-    record DataPackAsset(PackAssetType packAssetType, Key key, JsonObject jsonObject) {}
++    record DataPackAsset(@NotNull PackAssetType packAssetType, @NotNull Key key, @NotNull JsonObject jsonObject) {}
+ 
+-    record PackAssetType(String parentFolder) {
++    record PackAssetType(@NotNull String parentFolder) {
+         public static final PackAssetType ADVANCEMENT = new PackAssetType("advancement");
+         public static final PackAssetType CHAT_TYPE = new PackAssetType("chat_type");
+         public static final PackAssetType DAMAGE_TYPE = new PackAssetType("damage_type");
+@@ -50,6 +51,7 @@ public interface DataPackInterceptor {
+         public static final PackAssetType TRIM_PATTERN = new PackAssetType("trim_pattern");
+         public static final PackAssetType WORLDGEN = new PackAssetType("worldgen");
+ 
++        @NotNull
+         public String getParentFolder() {
+             return parentFolder;
+         }
+diff --git a/src/main/java/de/verdox/mccreativelab/data/FakeEnum.java b/src/main/java/de/verdox/mccreativelab/data/FakeEnum.java
+index 87f9a7403c5165066743e9ad4bb6ebac8b71aa23..6d45ee6cd433e27295aef5dbc215d5b15aa078d0 100644
+--- a/src/main/java/de/verdox/mccreativelab/data/FakeEnum.java
++++ b/src/main/java/de/verdox/mccreativelab/data/FakeEnum.java
+@@ -3,20 +3,24 @@ package de.verdox.mccreativelab.data;
+ import org.bukkit.Keyed;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.Registry;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.List;
+ import java.util.Locale;
+ 
+ public interface FakeEnum {
+-    static <T extends Keyed> T valueOf(String name, Registry<T> storage){
++    @NotNull
++    static <T extends Keyed> T valueOf(@NotNull String name, @NotNull Registry<T> storage){
+         return storage.get(NamespacedKey.minecraft(name.replace(".","_").toLowerCase(Locale.ROOT)));
+     }
+ 
+-    static <T extends Keyed> List<T> values(Registry<T> storage){
++    @NotNull
++    static <T extends Keyed> List<T> values(@NotNull Registry<T> storage){
+         return storage.stream().toList();
+     }
+ 
+-    static String restoreEnumNameSchemeFromKey(NamespacedKey namespacedKey){
++    @NotNull
++    static String restoreEnumNameSchemeFromKey(@NotNull NamespacedKey namespacedKey){
+         return namespacedKey.value().replace(".","_").toUpperCase(Locale.ROOT);
+     }
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/data/VanillaRegistryManipulator.java b/src/main/java/de/verdox/mccreativelab/data/VanillaRegistryManipulator.java
+index 1b64832eb00fd86238179e38271a72ab3b0814e8..d83e6f12efe15d34224806e1ea5b1b50e0653a34 100644
+--- a/src/main/java/de/verdox/mccreativelab/data/VanillaRegistryManipulator.java
++++ b/src/main/java/de/verdox/mccreativelab/data/VanillaRegistryManipulator.java
+@@ -8,19 +8,20 @@ import org.bukkit.attribute.Attribute;
+ import org.bukkit.block.data.BlockData;
+ import org.bukkit.entity.Villager;
+ import org.bukkit.entity.memory.MemoryKey;
++import org.jetbrains.annotations.NotNull;
+ 
+ import java.util.Set;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+ 
+ public interface VanillaRegistryManipulator {
+-    RegistryEntryReference<Attribute> createAttribute(NamespacedKey namespacedKey, double defaultValue, double min, double max);
++    @NotNull RegistryEntryReference<Attribute> createAttribute(@NotNull NamespacedKey namespacedKey, double defaultValue, double min, double max);
+ 
+-    <T> RegistryEntryReference<MemoryKey<T>> createMemoryKey(NamespacedKey namespacedKey, Class<? extends T> storedType);
++    @NotNull <T> RegistryEntryReference<MemoryKey<T>> createMemoryKey(@NotNull NamespacedKey namespacedKey, @NotNull Class<? extends T> storedType);
+ 
+-    RegistryEntryReference<PoiType> createPoiType(NamespacedKey namespacedKey, Set<BlockData> states, int ticketCount, int searchDistance);
++    @NotNull RegistryEntryReference<PoiType> createPoiType(@NotNull NamespacedKey namespacedKey, @NotNull Set<BlockData> states, int ticketCount, int searchDistance);
+ 
+-    RegistryEntryReference<Villager.Profession> createProfession(NamespacedKey namespacedKey, Predicate<PoiType> heldWorkStation, Predicate<PoiType> acquirableWorkstation, Set<Material> gatherableItems, Set<Material> secondaryJobSites, Sound.Type workSound);
++    @NotNull RegistryEntryReference<Villager.Profession> createProfession(@NotNull NamespacedKey namespacedKey, @NotNull Predicate<PoiType> heldWorkStation, @NotNull Predicate<PoiType> acquirableWorkstation, @NotNull Set<Material> gatherableItems, @NotNull Set<Material> secondaryJobSites, @NotNull Sound.Type workSound);
+ 
+-    record RegistryEntryReference<T>(NamespacedKey namespacedKey, Supplier<T> dataSupplier){}
++    record RegistryEntryReference<T>(@NotNull NamespacedKey namespacedKey, @NotNull Supplier<T> dataSupplier){}
+ }
+diff --git a/src/main/java/de/verdox/mccreativelab/recipe/CustomItemData.java b/src/main/java/de/verdox/mccreativelab/recipe/CustomItemData.java
+index 504b1cec9736f8a0b4862ac31466494e177b5e8c..e3337bc6fa2601d19f0d77dc77736dadb7233d61 100644
+--- a/src/main/java/de/verdox/mccreativelab/recipe/CustomItemData.java
++++ b/src/main/java/de/verdox/mccreativelab/recipe/CustomItemData.java
+@@ -2,8 +2,10 @@ package de.verdox.mccreativelab.recipe;
+ 
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
+ 
+-public record CustomItemData(Material material, int customModelData) {
++public record CustomItemData(@NotNull Material material, int customModelData) {
++    @NotNull
+     public ItemStack createStack() {
+         var stack = new ItemStack(material);
+         if (customModelData != 0)
+@@ -11,7 +13,7 @@ public record CustomItemData(Material material, int customModelData) {
+         return stack;
+     }
+ 
+-    public boolean isSame(ItemStack stackToCheck) {
++    public boolean isSame(@NotNull ItemStack stackToCheck) {
+         if (!stackToCheck.getType().equals(material))
+             return false;
+         if (customModelData == 0)
+@@ -24,7 +26,8 @@ public record CustomItemData(Material material, int customModelData) {
+                 && stackToCheck.getItemMeta().getCustomModelData() == customModelData;
+     }
+ 
+-    public static CustomItemData fromItemStack(ItemStack stack) {
++    @NotNull
++    public static CustomItemData fromItemStack(@NotNull ItemStack stack) {
+         return new CustomItemData(stack.getType(), stack.hasItemMeta() ? stack.getItemMeta().hasCustomModelData() ? stack.getItemMeta().getCustomModelData() : 0 : 0);
+     }
+ }
+diff --git a/src/main/java/io/papermc/paper/event/world/WorldEffectEvent.java b/src/main/java/io/papermc/paper/event/world/WorldEffectEvent.java
+index 4b01a8a73c3ce8e5d7df756d00892dd451436806..f6c88ad7b7c4961ae9f0696ecb2bc4be4ae400ac 100644
+--- a/src/main/java/io/papermc/paper/event/world/WorldEffectEvent.java
++++ b/src/main/java/io/papermc/paper/event/world/WorldEffectEvent.java
+@@ -19,7 +19,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+     private Object data;
+     private boolean cancelled;
+ 
+-    public WorldEffectEvent(@NotNull World world, @NotNull Location soundLocation, @Nullable Player except, Effect effect, Object data, boolean global) {
++    public WorldEffectEvent(@NotNull World world, @NotNull Location soundLocation, @Nullable Player except, @NotNull Effect effect, @NotNull Object data, boolean global) {
+         super(world);
+         this.soundLocation = soundLocation;
+         this.except = except;
+@@ -33,7 +33,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @param soundLocation - The new location
+      */
+-    public void setSoundLocation(Location soundLocation) {
++    public void setSoundLocation(@NotNull Location soundLocation) {
+         this.soundLocation = soundLocation;
+     }
+ 
+@@ -42,7 +42,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @param except - The excepted player
+      */
+-    public void setExcept(Player except) {
++    public void setExcept(@Nullable Player except) {
+         this.except = except;
+     }
+ 
+@@ -51,7 +51,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @param effect - The new effect
+      */
+-    public void setEffect(Effect effect) {
++    public void setEffect(@NotNull Effect effect) {
+         this.effect = effect;
+     }
+ 
+@@ -60,7 +60,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @param data - the new data
+      */
+-    public void setData(Object data) {
++    public void setData(@NotNull Object data) {
+         this.data = data;
+     }
+ 
+@@ -78,6 +78,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @return - The location
+      */
++    @NotNull
+     public Location getSoundLocation() {
+         return soundLocation;
+     }
+@@ -98,6 +99,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @return - The effect
+      */
++    @NotNull
+     public Effect getEffect() {
+         return effect;
+     }
+@@ -108,6 +110,7 @@ public class WorldEffectEvent extends WorldEvent implements Cancellable {
+      *
+      * @return - The data
+      */
++    @NotNull
+     public Object getData() {
+         return data;
+     }
+diff --git a/src/main/java/io/papermc/paper/event/world/WorldSelectChunkGeneratorEvent.java b/src/main/java/io/papermc/paper/event/world/WorldSelectChunkGeneratorEvent.java
+index 76416b23ca3af9b7021a47bfe43aea2ec6f94ba4..e85ae00fd481a25d8f1589ca5249cc4ced60021f 100644
+--- a/src/main/java/io/papermc/paper/event/world/WorldSelectChunkGeneratorEvent.java
++++ b/src/main/java/io/papermc/paper/event/world/WorldSelectChunkGeneratorEvent.java
+@@ -23,6 +23,7 @@ public class WorldSelectChunkGeneratorEvent extends Event {
+      * Returns the world name
+      * @return the world name
+      */
++    @NotNull
+     public String getWorldName() {
+         return worldName;
+     }
+@@ -31,6 +32,7 @@ public class WorldSelectChunkGeneratorEvent extends Event {
+      * Returns the picked world generator
+      * @return the picked world generator
+      */
++    @Nullable
+     public ChunkGenerator getPickedWorldGenerator() {
+         return pickedWorldGenerator;
+     }
+@@ -39,7 +41,7 @@ public class WorldSelectChunkGeneratorEvent extends Event {
+      * Sets the picked world generator
+      * @param pickedWorldGenerator the picked world generator
+      */
+-    public void setPickedWorldGenerator(ChunkGenerator pickedWorldGenerator) {
++    public void setPickedWorldGenerator(@Nullable ChunkGenerator pickedWorldGenerator) {
+         this.pickedWorldGenerator = pickedWorldGenerator;
+     }
+ 
+diff --git a/src/main/java/io/papermc/paper/event/world/WorldSoundEvent.java b/src/main/java/io/papermc/paper/event/world/WorldSoundEvent.java
+index 9adfd51f6659e920786658c34709ee5d1b0f790a..1766c736726df8e2a72beaa445c53ed3257a6445 100644
+--- a/src/main/java/io/papermc/paper/event/world/WorldSoundEvent.java
++++ b/src/main/java/io/papermc/paper/event/world/WorldSoundEvent.java
+@@ -161,6 +161,7 @@ public class WorldSoundEvent extends WorldEvent implements Cancellable {
+      * Gets the location of the sound
+      * @return - The sound location
+      */
++    @NotNull
+     public Location getSoundLocation() {
+         return soundLocation;
+     }
+diff --git a/src/main/java/org/bukkit/attribute/Attribute.java b/src/main/java/org/bukkit/attribute/Attribute.java
+index 1c9503bbfeff3deeb839e06053c60ba33a1cc49d..3bbba1a98c8e821bac770eee7b4f65385b361cd4 100644
+--- a/src/main/java/org/bukkit/attribute/Attribute.java
++++ b/src/main/java/org/bukkit/attribute/Attribute.java
+@@ -136,13 +136,16 @@ public abstract class Attribute implements Keyed, net.kyori.adventure.translatio
+      */
+     public static final Attribute ZOMBIE_SPAWN_REINFORCEMENTS = getAttribute("zombie.spawn_reinforcements");
+ 
++    @NotNull
+     public String name(){
+         return de.verdox.mccreativelab.data.FakeEnum.restoreEnumNameSchemeFromKey(getKey());
+     }
+ 
+-    public static Attribute valueOf(String name){
++    @NotNull
++    public static Attribute valueOf(@NotNull String name){
+         return de.verdox.mccreativelab.data.FakeEnum.valueOf(name, org.bukkit.Registry.ATTRIBUTE);
+     }
++    @NotNull
+     public static Attribute[] values(){
+         return de.verdox.mccreativelab.data.FakeEnum.values(org.bukkit.Registry.ATTRIBUTE).toArray(Attribute[]::new);
+     }
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index 09dc6e36d4142743bbcce5b911a0318ad03bab81..53dd4014ea695990344d07c170cfdd1d08612c79 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -776,7 +776,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
+      * @param <T> - The Bukkit Entity Type
+      * @param <B> - The EntityBehaviour Type
+      */
+-    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> void setCustomEntityBehaviour(Class<? extends T> entityTypeClass, B behaviour);
++    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> void setCustomEntityBehaviour(@NotNull Class<? extends T> entityTypeClass, @Nullable B behaviour);
+ 
+     /**
+      * Gets the custom behaviour for this entity
+@@ -785,14 +785,15 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
+      * @param <B> - The EntityBehaviour Type
+      */
+     @Nullable
+-    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> B getCustomEntityBehaviour(Class<? extends B> behaviourType);
++    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> B getCustomEntityBehaviour(@NotNull Class<? extends B> behaviourType);
+     /**
+      * Gets the custom behaviour for this entity if it is available and has the provided type
+      * @param behaviourType - The type of behaviour
+      * @param <T> - The Bukkit Entity Type
+      * @param <B> - The EntityBehaviour Type
+      */
+-    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> B getCustomEntityBehaviourIfAvailable(Class<? extends B> behaviourType);
++    @NotNull
++    <T extends Entity, B extends de.verdox.mccreativelab.behaviour.entity.EntityBehaviour<T>> B getCustomEntityBehaviourIfAvailable(@NotNull Class<? extends B> behaviourType);
+ 
+     boolean hasCustomEntityBehaviour();
+     // MCCreativeLab end - Add EntityBehaviour
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+index 9b28420ef045f857c332b1fd45285345869f6d3f..57b659075b35b62081fdfdf32905ca614594b235 100644
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -977,7 +977,8 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
+      * Gets the brain of this entity
+      * @return The brain
+      */
+-    <T extends LivingEntity> de.verdox.mccreativelab.ai.EntityBrain<T> getBrain(Class<? extends T> type);
++    @NotNull
++    <T extends LivingEntity> de.verdox.mccreativelab.ai.EntityBrain<T> getBrain(@NotNull Class<? extends T> type);
+     //MCCLab end - Adding EntityBrain
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/event/block/BlockBreakEvent.java b/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
+index 4fb16ab0189a8c017d41034d43064344e226cce9..4868b17f8a5a5e53be7739db9c883b24898f6e7f 100644
+--- a/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
++++ b/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
+@@ -42,6 +42,7 @@ public class BlockBreakEvent extends BlockExpEvent implements Cancellable {
+      * The state of the block when it was broken
+      * @return The state of the block
+      */
++    @NotNull
+     public org.bukkit.block.BlockState getBrokenState() {
+         return brokenState;
+     }
+diff --git a/src/main/java/org/bukkit/event/world/AsyncStructureGenerateEvent.java b/src/main/java/org/bukkit/event/world/AsyncStructureGenerateEvent.java
+index bff596278758e5f901114167a295ee79ab555bef..8cecad432ae89133d5854f37cdaa5459cfb65ebc 100644
+--- a/src/main/java/org/bukkit/event/world/AsyncStructureGenerateEvent.java
++++ b/src/main/java/org/bukkit/event/world/AsyncStructureGenerateEvent.java
+@@ -72,6 +72,7 @@ public class AsyncStructureGenerateEvent extends WorldEvent {
+      * Gets the structure as generated structure in the world
+      * @return - The Generated structure
+      */
++    @NotNull
+     public org.bukkit.generator.structure.GeneratedStructure getGeneratedStructure() {
+         return generatedStructure;
+     }
+diff --git a/src/main/java/org/bukkit/generator/structure/GeneratedStructure.java b/src/main/java/org/bukkit/generator/structure/GeneratedStructure.java
+index 21cec83007a8ac8ca526d4a1ccefc1d68dd65e73..43baab209cf7b8952c654174fea7ee2a6749f69e 100644
+--- a/src/main/java/org/bukkit/generator/structure/GeneratedStructure.java
++++ b/src/main/java/org/bukkit/generator/structure/GeneratedStructure.java
+@@ -41,6 +41,7 @@ public interface GeneratedStructure extends PersistentDataHolder {
+      * Gets the {@link java.util.UUID} of the structure
+      * @return The UUID of the structure
+      */
++    @NotNull
+     public java.util.UUID getUUID();
+     // Paper end - Add UUID to GeneratedStructure
+ }
+diff --git a/src/main/java/org/bukkit/inventory/PredicateChoiceImpl.java b/src/main/java/org/bukkit/inventory/PredicateChoiceImpl.java
+index 927917f9a875595e2ff0626cbda03a08b7e6e166..8f403964e335f3c1c73401b75597607c40600452 100644
+--- a/src/main/java/org/bukkit/inventory/PredicateChoiceImpl.java
++++ b/src/main/java/org/bukkit/inventory/PredicateChoiceImpl.java
+@@ -9,7 +9,7 @@ import java.util.function.Predicate;
+  * @param predicate - The Item predicate
+  * @param choices - The recipe book choices
+  */
+-record PredicateChoiceImpl(Predicate<ItemStack> predicate, List<ItemStack> choices) implements RecipeChoice.PredicateChoice {
++record PredicateChoiceImpl(@NotNull Predicate<ItemStack> predicate, @NotNull List<ItemStack> choices) implements RecipeChoice.PredicateChoice {
+     @Override
+     public @NotNull ItemStack getItemStack() {
+         ItemStack stack = new ItemStack(choices.get(0));
+@@ -32,6 +32,7 @@ record PredicateChoiceImpl(Predicate<ItemStack> predicate, List<ItemStack> choic
+     }
+ 
+     @Override
++    @NotNull
+     public List<ItemStack> recipeBookExamples() {
+         return List.copyOf(choices);
+     }
+diff --git a/src/main/java/org/bukkit/inventory/RecipeChoice.java b/src/main/java/org/bukkit/inventory/RecipeChoice.java
+index e5c6f595d6e05a03b8ade9ac4433de97bb14a59a..06defaef44a9d869454d00a204fb6355748cfd0e 100644
+--- a/src/main/java/org/bukkit/inventory/RecipeChoice.java
++++ b/src/main/java/org/bukkit/inventory/RecipeChoice.java
+@@ -296,7 +296,8 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
+      */
+ 
+     interface PredicateChoice extends RecipeChoice {
+-        static PredicateChoice create(@NotNull Predicate<ItemStack> predicate, ItemStack... recipeBookExamples){
++        @NotNull
++        static PredicateChoice create(@NotNull Predicate<ItemStack> predicate, @NotNull ItemStack... recipeBookExamples){
+             Objects.requireNonNull(predicate, "The item predicate cannot be null!");
+             Objects.requireNonNull(predicate, "The mustHaveRecipeBookExample cannot be null!");
+             if(recipeBookExamples.length == 0)
+@@ -304,7 +305,8 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
+             return new PredicateChoiceImpl(predicate, List.of(recipeBookExamples));
+         }
+ 
+-        static PredicateChoice create(@NotNull Predicate<ItemStack> predicate, java.util.Collection<ItemStack> recipeBookExamples){
++        @NotNull
++        static PredicateChoice create(@NotNull Predicate<ItemStack> predicate, @NotNull java.util.Collection<ItemStack> recipeBookExamples){
+             Objects.requireNonNull(predicate, "The item predicate cannot be null!");
+             Objects.requireNonNull(predicate, "The mustHaveRecipeBookExample cannot be null!");
+             if(recipeBookExamples.isEmpty())
+@@ -316,12 +318,14 @@ public interface RecipeChoice extends Predicate<ItemStack>, Cloneable {
+          * Returns the Item predicate
+          * @return - The item predicate
+          */
++        @NotNull
+         Predicate<ItemStack> predicate();
+ 
+         /**
+          *
+          * @return
+          */
++        @NotNull
+         List<ItemStack> recipeBookExamples();
+     }
+     // Paper end - Adding PredicateChoice
+diff --git a/src/main/java/org/bukkit/persistence/PersistentDataContainer.java b/src/main/java/org/bukkit/persistence/PersistentDataContainer.java
+index 02bb151c43df3dcfd9a9a05275e24b706211aa01..b0e2f5f296b3a0be781262be9a3053737d2df583 100644
+--- a/src/main/java/org/bukkit/persistence/PersistentDataContainer.java
++++ b/src/main/java/org/bukkit/persistence/PersistentDataContainer.java
+@@ -76,5 +76,6 @@ public interface PersistentDataContainer extends io.papermc.paper.persistence.Pe
+      * Gets the {@link PersistentDataObjectCache} of this persistent data container
+      * @return the persistent data object cache
+      */
++    @NotNull
+     PersistentDataObjectCache getPersistentDataObjectCache();
+ }
+diff --git a/src/main/java/org/bukkit/persistence/PersistentDataObject.java b/src/main/java/org/bukkit/persistence/PersistentDataObject.java
+index 720f7a3efc0640571aad30af2ed582ca7a85d5b8..f172e67cce61ea1a6259af5910332c238f0bd71d 100644
+--- a/src/main/java/org/bukkit/persistence/PersistentDataObject.java
++++ b/src/main/java/org/bukkit/persistence/PersistentDataObject.java
+@@ -14,10 +14,10 @@ public interface PersistentDataObject {
+      * @param context - The PersistentDataAdapterContext
+      * @return The PersistentDataContainer the object is serialized into
+      */
+-    PersistentDataContainer serialize(@NotNull PersistentDataAdapterContext context);
++    @NotNull PersistentDataContainer serialize(@NotNull PersistentDataAdapterContext context);
+     /**
+      * Called when the object is deserialized
+      * @param persistentDataContainer PersistentDataContainer the object was serialized into
+      */
+-    void deSerialize(PersistentDataContainer persistentDataContainer);
++    void deSerialize(@NotNull PersistentDataContainer persistentDataContainer);
+ }
+diff --git a/src/main/java/org/bukkit/persistence/PersistentDataObjectCache.java b/src/main/java/org/bukkit/persistence/PersistentDataObjectCache.java
+index 1a5eaf5499fe1f2f13d6f92cc573b71479428dea..f7cb40b6f6b82bd1e8dd245c96fc360bc3b83f37 100644
+--- a/src/main/java/org/bukkit/persistence/PersistentDataObjectCache.java
++++ b/src/main/java/org/bukkit/persistence/PersistentDataObjectCache.java
+@@ -17,7 +17,7 @@ public interface PersistentDataObjectCache {
+      * @param <T> the type of persistent data object
+      */
+     @NotNull
+-    default <T extends PersistentDataObject> T loadOrCreatePersistentDataObject(@NotNull NamespacedKey key, T newObject){
++    default <T extends PersistentDataObject> T loadOrCreatePersistentDataObject(@NotNull NamespacedKey key, @NotNull T newObject){
+         return loadOrSupplyPersistentDataObject(key, () -> newObject);
+     }
+ 
+@@ -28,7 +28,8 @@ public interface PersistentDataObjectCache {
+      * @return the persistent data object
+      * @param <T> the type of persistent data object
+      */
+-    <T extends PersistentDataObject> T loadOrSupplyPersistentDataObject(@NotNull NamespacedKey key, Supplier<T> newObjectSupplier);
++    @NotNull
++    <T extends PersistentDataObject> T loadOrSupplyPersistentDataObject(@NotNull NamespacedKey key, @NotNull Supplier<T> newObjectSupplier);
+ 
+     /**
+      * Loads a persistent data object.
