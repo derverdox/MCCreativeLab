@@ -42,6 +42,11 @@ public abstract class CustomPack<C extends CustomPack<C>> {
     public void onShutdown() throws IOException {
     }
 
+    public void removePack() throws IOException {
+        LOGGER.info("Deleting pack " + pathToSavePackDataTo.toPath().toFile());
+        FileUtils.deleteDirectory(pathToSavePackDataTo.toPath().toFile());
+    }
+
     public File installPack(boolean reload) throws IOException {
         isReloading = reload;
 
