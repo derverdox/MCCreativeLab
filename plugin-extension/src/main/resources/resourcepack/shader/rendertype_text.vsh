@@ -13,6 +13,7 @@ uniform sampler2D Sampler0;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform vec2 ScreenSize;
+uniform int FogShape;
 
 out float vertexDistance;
 out vec4 vertexColor;
@@ -33,6 +34,7 @@ void main() {
 
     vertexColor = Color;
     texCoord0 = UV0;
+    vertexDistance = fog_distance(Position, FogShape);
 
     vec2 pixel = vec2(ProjMat[0][0], ProjMat[1][1]) / 2.0;
     int guiScale = int(round(pixel.x / (1 / ScreenSize.x)));
