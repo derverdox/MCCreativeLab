@@ -32,7 +32,7 @@ index e336934f37075a827843e4b1bb2b6b660d2c60c9..42a5ab8af640c89d43da08f19f852e37
              PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, hand);
  
 diff --git a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
-index 45f566cc9ce34f5beaeda81b70fd5c290ebc7cf7..0789ec692c8b0701216a530beeae8cec6e906445 100644
+index b96b0593f19d68a58e3a95c9c1045e5d7184a375..f4c3e19063df4a443d1dbdd4af262b16c479a4d7 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/goat/Goat.java
 @@ -75,6 +75,7 @@ public class Goat extends Animal {
@@ -96,3 +96,15 @@ index 2c21de478bff9cdf13ba46cd041831d54c11e924..5069d0333d088da35b44e2f5ee6c47a0
 +    }
 +    // Paper end - // Paper - Can give milk API attribute
  }
+diff --git a/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
+index 2b4c482e5162b22ffbe67de8b138144b760436d8..0317bd8fa125eeb6d0843551711e4655c8b65acf 100644
+--- a/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
+@@ -101,6 +101,7 @@ public class EntityTypesTest extends AbstractTestingBase {
+             Minecart.class,
+             Mob.class,
+             Monster.class,
++            org.bukkit.entity.MilkGivingEntity.class, // MCCLab: Add MilkGivingEntity
+             NPC.class,
+             PiglinAbstract.class,
+             Projectile.class,

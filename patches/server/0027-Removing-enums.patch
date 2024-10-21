@@ -30,18 +30,29 @@ index 12220f78ffaf06433ada72fd0c7f22b97d55287d..d972781f9e7675985c155c7d83da2bf5
              apiOnly(Registries.POTION, RegistryKey.POTION, () -> org.bukkit.Registry.POTION),
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftEntityActivity.java b/src/main/java/org/bukkit/craftbukkit/CraftEntityActivity.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b25a08cc1e7bcf015764201580d020401e201172
+index 0000000000000000000000000000000000000000..776a4b14e0a5d78ef183c1c012d7ffcae8b59876
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftEntityActivity.java
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,33 @@
 +package org.bukkit.craftbukkit;
 +
++import net.minecraft.core.registries.Registries;
 +import org.bukkit.EntityActivity;
 +import net.minecraft.world.entity.schedule.Activity;
 +import org.bukkit.NamespacedKey;
++import org.bukkit.PoiType;
++import org.bukkit.Registry;
 +import org.jetbrains.annotations.NotNull;
 +
 +public class CraftEntityActivity extends BukkitToNMSMapping<Activity> implements EntityActivity {
++    public static EntityActivity minecraftToBukkit(Activity minecraft) {
++        return minecraftToBukkit(minecraft, Registries.ACTIVITY, Registry.ENTITY_ACTIVITY);
++    }
++
++    public static Activity bukkitToMinecraft(EntityActivity bukkit) {
++        return bukkitToMinecraft(bukkit, Registries.ACTIVITY);
++    }
++
 +    public CraftEntityActivity(NamespacedKey key, Activity handle) {
 +        super(key, handle);
 +    }
@@ -58,18 +69,30 @@ index 0000000000000000000000000000000000000000..b25a08cc1e7bcf015764201580d02040
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftEntitySchedule.java b/src/main/java/org/bukkit/craftbukkit/CraftEntitySchedule.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..af41fd04720694a46db4e50df05a0928f9f25e9f
+index 0000000000000000000000000000000000000000..aed77f45b42aeff11e38c87226c2ac198c86d837
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftEntitySchedule.java
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,34 @@
 +package org.bukkit.craftbukkit;
 +
++import net.minecraft.core.registries.Registries;
++import net.minecraft.world.entity.schedule.Activity;
 +import net.minecraft.world.entity.schedule.Schedule;
++import org.bukkit.EntityActivity;
 +import org.bukkit.EntitySchedule;
 +import org.bukkit.NamespacedKey;
++import org.bukkit.Registry;
 +import org.jetbrains.annotations.NotNull;
 +
 +public class CraftEntitySchedule extends BukkitToNMSMapping<Schedule> implements EntitySchedule {
++    public static EntitySchedule minecraftToBukkit(Schedule minecraft) {
++        return minecraftToBukkit(minecraft, Registries.SCHEDULE, Registry.ENTITY_SCHEDULE);
++    }
++
++    public static Schedule bukkitToMinecraft(EntitySchedule bukkit) {
++        return bukkitToMinecraft(bukkit, Registries.SCHEDULE);
++    }
++
 +    public CraftEntitySchedule(NamespacedKey key, Schedule handle) {
 +        super(key, handle);
 +    }

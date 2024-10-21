@@ -22,6 +22,36 @@ index 49e7dad3e3f60edbe99df7e63bdde23f1d9e2987..8914f31555116898a47adf6e8a35f52a
      }
  
      public static DataResult<Unit> validateComponents(DataComponentMap components) {
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
+index 8e03e14d0e65bfdf2196a08220d1408b1297aa0d..ad8c5f837755d7b6065abffd43af41daac1d7546 100644
+--- a/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
+@@ -119,8 +119,8 @@ public class DeprecatedItemMetaCustomValueTest extends AbstractTestingBase {
+         String configValue = configuration.saveToString();
+         YamlConfiguration loadedConfig = YamlConfiguration.loadConfiguration(new StringReader(configValue));
+ 
+-        assertEquals(stack, loadedConfig.getSerializable("testpath", ItemStack.class));
+-        assertNotEquals(new ItemStack(Material.DIAMOND), loadedConfig.getSerializable("testpath", ItemStack.class));
++        assertEquals(stack, de.verdox.itemformat.BasicItemFormat.removeConversionTag(loadedConfig.getSerializable("testpath", ItemStack.class)));
++        assertNotEquals(new ItemStack(Material.DIAMOND), de.verdox.itemformat.BasicItemFormat.removeConversionTag(loadedConfig.getSerializable("testpath", ItemStack.class)));
+     }
+ 
+     @Test
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
+index 54ffbfd91a03efa2d0d271ed10db4209a2309638..6e433e806c83afb8d9800d3281513bdf464e0848 100644
+--- a/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
+@@ -153,8 +153,8 @@ public class PersistentDataContainerTest extends AbstractTestingBase {
+         String configValue = configuration.saveToString();
+         YamlConfiguration loadedConfig = YamlConfiguration.loadConfiguration(new StringReader(configValue));
+ 
+-        assertEquals(stack, loadedConfig.getSerializable("testpath", ItemStack.class));
+-        assertNotEquals(new ItemStack(Material.DIAMOND), loadedConfig.getSerializable("testpath", ItemStack.class));
++        assertEquals(stack, de.verdox.itemformat.BasicItemFormat.removeConversionTag(loadedConfig.getSerializable("testpath", ItemStack.class)));
++        assertNotEquals(new ItemStack(Material.DIAMOND), de.verdox.itemformat.BasicItemFormat.removeConversionTag(loadedConfig.getSerializable("testpath", ItemStack.class)));
+     }
+ 
+     @Test
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
 index 35a9a4cad098d4b39bc94330d987211bacb9c1af..5d12b0ed59fe4c1bb67455cbb07f82daa83e610d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java

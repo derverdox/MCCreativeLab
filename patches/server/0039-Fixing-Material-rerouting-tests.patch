@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: verdox <mail.ysp@web.de>
+Date: Mon, 21 Oct 2024 14:59:59 +0000
+Subject: [PATCH] Fixing Material rerouting tests
+
+
+diff --git a/src/test/java/org/bukkit/craftbukkit/legacy/MaterialReroutingTest.java b/src/test/java/org/bukkit/craftbukkit/legacy/MaterialReroutingTest.java
+index 0fac826b9367a821c6801190997592219cb47f73..a7d390ae507da8cd46e780c0690558de209aa2a6 100644
+--- a/src/test/java/org/bukkit/craftbukkit/legacy/MaterialReroutingTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/legacy/MaterialReroutingTest.java
+@@ -59,6 +59,14 @@ public class MaterialReroutingTest extends AbstractTestingBase {
+                 // Paper start - types that cannot be translated to ItemType/BlockType
+                 .filter(entry -> !entry.getName().equals("com/destroystokyo/paper/MaterialSetTag.class"))
+                 // Paper end - types that cannot be translated to ItemType/BlockType
++
++                // MCCreativeLab start
++                .filter(entry -> !entry.getName().endsWith("CustomItemData.class"))
++                .filter(entry -> !entry.getName().endsWith("BehaviorFactory.class"))
++                .filter(entry -> !entry.getName().endsWith("GoalFactory.class"))
++                .filter(entry -> !entry.getName().endsWith("MobBehaviour.class"))
++                .filter(entry -> !entry.getName().endsWith("VanillaRegistryManipulator.class"))
++                // MCCreativeLab end
+                 .map(entry -> {
+                     try {
+                         return MaterialReroutingTest.jarFile.getInputStream(entry);

@@ -2478,7 +2478,7 @@ index 89c8713d2c2206d1b0d8c0a392c9d13b3e736f0c..e86b12e23163163c7410fd3e5691fdf4
      public int getEntityId() {
          return this.entity.getId();
 diff --git a/src/main/java/org/bukkit/craftbukkit/generator/OldCraftChunkData.java b/src/main/java/org/bukkit/craftbukkit/generator/OldCraftChunkData.java
-index 03eb35d5c67f125c44cf46595c93d124ac7892b8..2a021773c48887e3fc94c4089090658824946bd9 100644
+index 03eb35d5c67f125c44cf46595c93d124ac7892b8..8157e1340aa5c01b01064b33d33b6afc973c46ac 100644
 --- a/src/main/java/org/bukkit/craftbukkit/generator/OldCraftChunkData.java
 +++ b/src/main/java/org/bukkit/craftbukkit/generator/OldCraftChunkData.java
 @@ -181,7 +181,7 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
@@ -2486,7 +2486,7 @@ index 03eb35d5c67f125c44cf46595c93d124ac7892b8..2a021773c48887e3fc94c40890906588
          LevelChunkSection section = this.sections[offset];
          if (create && section == null) {
 -            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, offset + (this.minHeight >> 4)); // Paper - Anti-Xray - Add parameters
-+            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, ((org.bukkit.craftbukkit.CraftWorld) world).getHandle().getSectionYFromSectionIndex(offset)); // MCCLab - Add BlockBehaviour // Paper - Anti-Xray - Add parameters
++            this.sections[offset] = section = new LevelChunkSection(this.biomes, this.world instanceof org.bukkit.craftbukkit.CraftWorld ? ((org.bukkit.craftbukkit.CraftWorld) this.world).getHandle() : null, null, this.world instanceof org.bukkit.craftbukkit.CraftWorld ?((org.bukkit.craftbukkit.CraftWorld) world).getHandle().getSectionYFromSectionIndex(offset) : offset + (this.minHeight >> 4)); // MCCLab - Add BlockBehaviour // Paper - Anti-Xray - Add parameters
          }
          return section;
      }
