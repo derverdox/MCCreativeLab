@@ -91,11 +91,11 @@ jobs:
             **/build/test-results/test/TEST-*.xml
 
       - name: Create Paperclip Jar
-        #if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
         run: ./gradlew createMojmapPaperclipJar --stacktrace
 
       - name: Upload Paperclip Jar
-        #if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
         uses: actions/upload-artifact@v4
         with:
           name: paper-${{ fromJSON(steps.determine.outputs.result).pr }}
@@ -103,7 +103,7 @@ jobs:
           
       # Create and publish a GitHub Release
       - name: Create GitHub Release
-        #if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -116,7 +116,7 @@ jobs:
           prerelease: false
 
       - name: Upload Paperclip Jar to Release
-        #if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
+        if: fromJSON(steps.determine.outputs.result).action == 'paperclip'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
