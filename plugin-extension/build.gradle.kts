@@ -45,6 +45,8 @@ allprojects {
         useJUnitPlatform()
     }
 
+    val jarPath = "../plugin-extension/build/libs/plugin-extension-$version.jar";
+
     tasks {
         compileJava {
             options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
@@ -54,13 +56,18 @@ allprojects {
             options.release.set(21)
         }
 
+        named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+            archiveClassifier.set("") // Entfernt das "-all" Suffix
+        }
+
+
         processResources {
             filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
         }
 
         val copyTask = register<Copy>("copyToTestServer") {
             dependsOn(":plugin-extension:shadowJar")
-            val jarPath = "../plugin-extension/build/libs/plugin-extension-$version-all.jar";
+
             println("Copying $jarPath to testserver")
             from(jarPath)
             into(file("../run/plugins"))
@@ -74,6 +81,7 @@ allprojects {
     configure<PublishingExtension> {
         publications.create<MavenPublication>("maven") {
             from(components["java"])
+            //artifact(tasks["shadowJar"])
         }
     }
 
