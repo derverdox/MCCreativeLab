@@ -64,6 +64,7 @@ subprojects {
 paperweight {
     serverProject.set(project(":mccreativelab-server"))
 
+
     remapRepo.set(paperMavenPublicUrl)
     decompileRepo.set(paperMavenPublicUrl)
 

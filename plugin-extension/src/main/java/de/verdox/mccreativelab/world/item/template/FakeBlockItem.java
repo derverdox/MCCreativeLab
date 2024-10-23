@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class FakeBlockItem extends FakeItem {
     private final BlockData blockData;
@@ -15,7 +16,7 @@ public class FakeBlockItem extends FakeItem {
     }
 
     @Override
-    public BehaviourResult.Object<BlockData> placeBlockAction(ItemStack stack, Player player, Location clickedPosition, BlockData vanillaBlockData) {
+    public BehaviourResult.@NotNull Object<BlockData> placeBlockAction(@NotNull ItemStack stack, @NotNull Player player, @NotNull Location clickedPosition, @NotNull BlockData vanillaBlockData) {
         return result(blockData);
     }
 }

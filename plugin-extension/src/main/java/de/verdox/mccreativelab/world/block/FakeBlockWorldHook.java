@@ -35,7 +35,7 @@ public class FakeBlockWorldHook extends MCCWorldHook {
     }
 
     @Override
-    public void onBlockDrawLoot(@NotNull Block block, @Nullable Entity entity, ItemStack tool, boolean dropExperience, List<ItemStack> itemsThatWillBeDropped) {
+    public void onBlockDrawLoot(@NotNull Block block, @Nullable Entity entity, ItemStack tool, boolean dropExperience, @NotNull List<ItemStack> itemsThatWillBeDropped) {
 
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 

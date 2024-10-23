@@ -18,19 +18,19 @@ public class FakeBlockEntityBehaviour implements EntityBehaviour<Marker> {
     }
 
     @Override
-    public BehaviourResult.Callback onTick(Marker entity) {
+    public BehaviourResult.@NotNull Callback onTick(@NotNull Marker entity) {
         fakeBlockEntity.doTick();
         return done();
     }
 
     @Override
-    public BehaviourResult.Callback addAdditionalSaveData(Marker entity, PersistentDataContainer persistentDataContainer) {
+    public BehaviourResult.@NotNull Callback addAdditionalSaveData(@NotNull Marker entity, @NotNull PersistentDataContainer persistentDataContainer) {
         fakeBlockEntity.saveNBTDataWithInventory(NBTContainer.of("nbt", persistentDataContainer));
         return EntityBehaviour.super.addAdditionalSaveData(entity, persistentDataContainer);
     }
 
     @Override
-    public BehaviourResult.Callback readAdditionalSaveData(Marker entity, PersistentDataContainer persistentDataContainer) {
+    public BehaviourResult.@NotNull Callback readAdditionalSaveData(@NotNull Marker entity, @NotNull PersistentDataContainer persistentDataContainer) {
         fakeBlockEntity.loadNBTData(NBTContainer.of("nbt", persistentDataContainer));
         return EntityBehaviour.super.readAdditionalSaveData(entity, persistentDataContainer);
     }

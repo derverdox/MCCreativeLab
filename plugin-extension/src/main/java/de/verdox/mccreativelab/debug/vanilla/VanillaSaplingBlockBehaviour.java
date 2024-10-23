@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.random.VanillaRandomSource;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sapling;
+import org.jetbrains.annotations.NotNull;
 
 public class VanillaSaplingBlockBehaviour extends VanillaCropRandomTickBehaviour {
     public VanillaSaplingBlockBehaviour(int minLightLevel) {
@@ -13,7 +14,7 @@ public class VanillaSaplingBlockBehaviour extends VanillaCropRandomTickBehaviour
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         if(block.getLightLevel() >= 9 && drawRandomNumber(vanillaRandomSource) < (getAndValidateGrowth("Sapling") / (100.0f * 7))){
             var sapling = (Sapling) block.getBlockData();
             var stage = sapling.getStage();
@@ -29,7 +30,7 @@ public class VanillaSaplingBlockBehaviour extends VanillaCropRandomTickBehaviour
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         return bool(true);
     }
 }

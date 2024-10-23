@@ -11,6 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ReplaceVanillaBlockStatesBehaviour extends FakeBlockBehaviour {
     }*/
 
     @Override
-    public BehaviourResult.Void tick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void tick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
         if (fakeBlockState == null)
             if (REPLACED_VISUAL_STATES.containsKey(block.getBlockData()))
@@ -56,7 +57,7 @@ public class ReplaceVanillaBlockStatesBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<BlockData> blockUpdate(Location location, BlockData blockData, BlockFace direction, BlockData neighbourBlockData, Location neighbourLocation) {
+    public BehaviourResult.@NotNull Object<BlockData> blockUpdate(@NotNull Location location, @NotNull BlockData blockData, @NotNull BlockFace direction, @NotNull BlockData neighbourBlockData, @NotNull Location neighbourLocation) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(location, false);
         if (fakeBlockState == null)
             if (REPLACED_VISUAL_STATES.containsKey(blockData))

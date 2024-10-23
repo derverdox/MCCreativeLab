@@ -138,27 +138,27 @@ public class FakeItem implements Keyed, ItemBehaviour {
     }
 
     @Override
-    public final BehaviourResult.Object<ItemStack> getCraftRemainingItem(ItemStack stack) {
+    public final BehaviourResult.@NotNull Object<ItemStack> getCraftRemainingItem(@NotNull ItemStack stack) {
         return new BehaviourResult.Object<>(fakeItemProperties.craftingRemainingItem, BehaviourResult.Object.Type.REPLACE_VANILLA);
     }
 
     @Override
-    public BehaviourResult.Bool canDropOnDeath(ItemStack stack) {
+    public BehaviourResult.@NotNull Bool canDropOnDeath(@NotNull ItemStack stack) {
         return new BehaviourResult.Bool(!fakeItemProperties.preventDrop, BehaviourResult.Bool.Type.REPLACE_VANILLA);
     }
 
     @Override
-    public BehaviourResult.Bool isEnchantable(ItemStack stack) {
+    public BehaviourResult.@NotNull Bool isEnchantable(@NotNull ItemStack stack) {
         return new BehaviourResult.Bool(fakeItemProperties.enchantable, BehaviourResult.Bool.Type.REPLACE_VANILLA);
     }
 
     @Override
-    public BehaviourResult.Bool canFitInsideContainerItems(ItemStack stack) {
+    public BehaviourResult.@NotNull Bool canFitInsideContainerItems(@NotNull ItemStack stack) {
         return new BehaviourResult.Bool(fakeItemProperties.fitsInsideContainerItem, BehaviourResult.Bool.Type.REPLACE_VANILLA);
     }
 
     @Override
-    public BehaviourResult.Bool canBreakWhenMaxDamage(ItemStack stack) {
+    public BehaviourResult.@NotNull Bool canBreakWhenMaxDamage(@NotNull ItemStack stack) {
         return new BehaviourResult.Bool(fakeItemProperties.canBreak, BehaviourResult.Bool.Type.REPLACE_VANILLA);
     }
 

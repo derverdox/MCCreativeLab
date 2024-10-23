@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.serialization.json;
 
 import com.google.gson.JsonObject;
-import de.verdox.mccreativelab.serialization.SerializationContainer;
-import de.verdox.mccreativelab.serialization.SerializationElement;
+import de.verdox.mccreativelab.serialization.generic.SerializationContainer;
+import de.verdox.mccreativelab.serialization.generic.SerializationElement;
 
 import java.util.Collection;
 

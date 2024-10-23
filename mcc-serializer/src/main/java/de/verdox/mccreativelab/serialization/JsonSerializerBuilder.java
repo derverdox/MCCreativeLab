@@ -3,7 +3,6 @@ package de.verdox.mccreativelab.serialization;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
-import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -96,7 +95,7 @@ public class JsonSerializerBuilder<T> {
         SerializableField<T, R1> field1,
         SerializableField<T, R2> field2,
         SerializableField<T, R3> field3,
-        TriFunction<R1, R2, R3, T> constructor) {
+        Function3<R1, R2, R3, T> constructor) {
         this.constructorSerializer = new ConstructorSerializer(this.id, jsonElement -> {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             R1 r1 = field1.read(jsonObject);

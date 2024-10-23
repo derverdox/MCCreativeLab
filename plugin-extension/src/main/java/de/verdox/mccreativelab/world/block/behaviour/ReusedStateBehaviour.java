@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -53,28 +54,28 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<Float> getExplosionResistance(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Object<Float> getExplosionResistance(@NotNull Block block, @NotNull BlockData blockData) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().getExplosionResistance(block, blockData);
         return super.getExplosionResistance(block, blockData);
     }
 
     @Override
-    public BehaviourResult.Bool isBlockRandomlyTicking(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockRandomlyTicking(@NotNull Block block, @NotNull BlockData blockData) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().isBlockRandomlyTicking(block, blockData);
         return super.isBlockRandomlyTicking(block, blockData);
     }
 
     @Override
-    public BehaviourResult.Callback onPlayerBreak(Player player, Location location, BlockData brokenState) {
+    public BehaviourResult.@NotNull Callback onPlayerBreak(@NotNull Player player, @NotNull Location location, @NotNull BlockData brokenState) {
         if (isReplacedVanillaBlock(location.getBlock()))
             return getReplacedVanillaBehaviour().onPlayerBreak(player, location, brokenState);
         return super.onPlayerBreak(player, location, brokenState);
     }
 
     @Override
-    public BehaviourResult.Callback onPlace(Location location, BlockData newBlockData, BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
+    public BehaviourResult.@NotNull Callback onPlace(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
         //System.out.println("onPlaceByServer: " + oldBlockData.getAsString() + " -> " + newBlockData + " (notify = " + notify + ")");
         if (isReplacedVanillaBlock(location.getBlock()))
             return getReplacedVanillaBehaviour().onPlace(location, newBlockData, oldBlockData, notify, isProcessingBlockPlaceEvent);
@@ -82,7 +83,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onRemove(Location location, BlockData newBlockData, BlockData oldBlockData, boolean moved) {
+    public BehaviourResult.@NotNull Callback onRemove(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean moved) {
         //System.out.println("onRemove: " + oldBlockData.getAsString() + " ---> " + newBlockData.getAsString() + " (moved = " + moved + ")");
         if (isReplacedVanillaBlock(location.getBlock()))
             return getReplacedVanillaBehaviour().onRemove(location, newBlockData, oldBlockData, moved);
@@ -90,7 +91,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onPlayerPlace(Player player, ItemStack stackUsedToPlaceBlock, Location location, BlockData thePlacedState) {
+    public BehaviourResult.@NotNull Callback onPlayerPlace(@NotNull Player player, @NotNull ItemStack stackUsedToPlaceBlock, @NotNull Location location, @NotNull BlockData thePlacedState) {
         if (isReplacedVanillaBlock(location.getBlock()))
             return getReplacedVanillaBehaviour().onPlayerPlace(player, stackUsedToPlaceBlock, location, thePlacedState);
         replaceVanillaWithFakeBlock(location.getBlock());
@@ -98,21 +99,21 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool canSurvive(Block block, World world) {
+    public BehaviourResult.@NotNull Bool canSurvive(@NotNull Block block, @NotNull World world) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().canSurvive(block, world);
         return super.canSurvive(block, world);
     }
 
     @Override
-    public BehaviourResult.Void stepOn(Block block, BlockData blockData, Entity entity) {
+    public BehaviourResult.@NotNull Void stepOn(@NotNull Block block, @NotNull BlockData blockData, @NotNull Entity entity) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().stepOn(block, blockData, entity);
         return super.stepOn(block, blockData, entity);
     }
 
     @Override
-    public BehaviourResult.Callback onUseCallback(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult, InteractionResult interactionResult) {
+    public BehaviourResult.@NotNull Callback onUseCallback(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult, @NotNull InteractionResult interactionResult) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().onUseCallback(block, player, hand, rayTraceResult, interactionResult);
         replaceVanillaWithFakeBlock(block);
@@ -120,7 +121,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().randomTick(block, vanillaRandomSource);
         replaceVanillaWithFakeBlock(block);
@@ -128,7 +129,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void tick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void tick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().tick(block, vanillaRandomSource);
         replaceVanillaWithFakeBlock(block);
@@ -136,7 +137,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<ItemInteractionResult> use(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult) {
+    public BehaviourResult.@NotNull Object<ItemInteractionResult> use(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().use(block, player, hand, rayTraceResult);
         replaceVanillaWithFakeBlock(block);
@@ -144,7 +145,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<BlockData> blockUpdate(Location location, BlockData blockData, BlockFace direction, BlockData neighbourBlockData, Location neighbourLocation) {
+    public BehaviourResult.@NotNull Object<BlockData> blockUpdate(@NotNull Location location, @NotNull BlockData blockData, @NotNull BlockFace direction, @NotNull BlockData neighbourBlockData, @NotNull Location neighbourLocation) {
         if (isReplacedVanillaBlock(location.getBlock()))
             return getReplacedVanillaBehaviour().blockUpdate(location, blockData, direction, neighbourBlockData, neighbourLocation);
         replaceVanillaWithFakeBlock(location.getBlock());
@@ -152,7 +153,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void onNeighbourBlockUpdate(Block block, Block sourceBlock, boolean notify) {
+    public BehaviourResult.@NotNull Void onNeighbourBlockUpdate(@NotNull Block block, @NotNull Block sourceBlock, boolean notify) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().onNeighbourBlockUpdate(block, sourceBlock, notify);
         replaceVanillaWithFakeBlock(block);
@@ -160,7 +161,7 @@ public class ReusedStateBehaviour extends FakeBlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void attack(Block block, Player player) {
+    public BehaviourResult.@NotNull Void attack(@NotNull Block block, @NotNull Player player) {
         if (isReplacedVanillaBlock(block))
             return getReplacedVanillaBehaviour().attack(block, player);
         replaceVanillaWithFakeBlock(block);

@@ -67,12 +67,12 @@ public class ServerSoftwareExclusives implements Listener {
 
         RepairItemBehaviour.REPAIR_ITEM_BEHAVIOUR.setBehaviour(new RepairItemBehaviour() {
             @Override
-            public boolean canCombine(ItemStack first, ItemStack second) {
+            public boolean canCombine(@NotNull ItemStack first, @NotNull ItemStack second) {
                 return MCCItemType.of(first).isSame(second);
             }
 
             @Override
-            public ItemStack assemble(ItemStack first, ItemStack second) {
+            public @NotNull ItemStack assemble(@NotNull ItemStack first, @NotNull ItemStack second) {
                 return MCCItemType.of(first).createItem();
             }
         });

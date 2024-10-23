@@ -13,6 +13,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.event.block.BlockGrowEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -97,12 +98,12 @@ public class VanillaCropRandomTickBehaviour extends CropRandomTickBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool isBlockRandomlyTicking(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockRandomlyTicking(@NotNull Block block, @NotNull BlockData blockData) {
         return isBlockDataRandomlyTicking(blockData);
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         if (!(blockData instanceof Ageable ageable))
             return bool(false);
         return bool(ageable.getAge() < ageable.getMaximumAge());

@@ -2,8 +2,8 @@ package de.verdox.mccreativelab.serialization.json;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import de.verdox.mccreativelab.serialization.SerializationArray;
-import de.verdox.mccreativelab.serialization.SerializationElement;
+import de.verdox.mccreativelab.serialization.generic.SerializationArray;
+import de.verdox.mccreativelab.serialization.generic.SerializationElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;

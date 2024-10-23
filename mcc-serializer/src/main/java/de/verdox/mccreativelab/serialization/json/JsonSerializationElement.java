@@ -1,9 +1,9 @@
 package de.verdox.mccreativelab.serialization.json;
 
 import com.google.gson.JsonElement;
-import de.verdox.mccreativelab.serialization.SerializationArray;
-import de.verdox.mccreativelab.serialization.SerializationContainer;
-import de.verdox.mccreativelab.serialization.SerializationElement;
+import de.verdox.mccreativelab.serialization.generic.SerializationArray;
+import de.verdox.mccreativelab.serialization.generic.SerializationContainer;
+import de.verdox.mccreativelab.serialization.generic.SerializationElement;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental

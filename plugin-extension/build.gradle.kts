@@ -19,6 +19,7 @@ allprojects {
     dependencies {
         compileOnly(project(":mccreativelab-api"))
         implementation(project(":mcc-util"))
+        implementation(project(":mcc-serializer"))
 
         //paperweight.devBundle("de.verdox.mccreativelab", "1.21.1-R0.1-SNAPSHOT")
 

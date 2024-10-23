@@ -15,6 +15,7 @@ import org.bukkit.block.data.type.Farmland;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.util.BlockVector;
+import org.jetbrains.annotations.NotNull;
 
 public class VanillaFarmBlockRandomTickBehaviour implements BlockBehaviour {
     private final int farmlandWaterRadius;
@@ -27,7 +28,7 @@ public class VanillaFarmBlockRandomTickBehaviour implements BlockBehaviour {
         this.farmlandWaterRadius = farmlandWaterRadius;
     }
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         Farmland farmlandData = (Farmland) block.getBlockData();
         int moisture = farmlandData.getMoisture();
 
@@ -46,7 +47,7 @@ public class VanillaFarmBlockRandomTickBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         return bool(true);
     }
 

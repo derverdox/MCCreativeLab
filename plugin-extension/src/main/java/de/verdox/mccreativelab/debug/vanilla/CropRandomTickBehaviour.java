@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public abstract class CropRandomTickBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         var lightLevel = block.getLightLevel();
         if (lightLevel < minLightLevel)
             return voidResult();
@@ -51,7 +52,7 @@ public abstract class CropRandomTickBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool fertilizeAction(Block block, ItemStack stack) {
+    public BehaviourResult.@NotNull Bool fertilizeAction(@NotNull Block block, @NotNull ItemStack stack) {
         System.out.println("Fertilizing");
         return BlockBehaviour.super.fertilizeAction(block, stack);
     }

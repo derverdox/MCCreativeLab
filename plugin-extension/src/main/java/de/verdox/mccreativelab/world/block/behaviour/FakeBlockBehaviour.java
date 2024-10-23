@@ -22,12 +22,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FakeBlockBehaviour implements BlockBehaviour {
 
     @Override
-    public BehaviourResult.Callback onPlayerPlace(Player player, ItemStack stackUsedToPlaceBlock, Location location, BlockData thePlacedState) {
+    public BehaviourResult.@NotNull Callback onPlayerPlace(@NotNull Player player, @NotNull ItemStack stackUsedToPlaceBlock, @NotNull Location location, @NotNull BlockData thePlacedState) {
         setFakeBlockStateIfReusesVanillaBlockState(location.getBlock(), thePlacedState);
 
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(location, false);
@@ -40,13 +41,13 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onPlayerBreak(Player player, Location location, BlockData brokenState) {
+    public BehaviourResult.@NotNull Callback onPlayerBreak(@NotNull Player player, @NotNull Location location, @NotNull BlockData brokenState) {
         FakeBlockEntityStorage.removeFakeBlockEntityAt(location);
         return BlockBehaviour.super.onPlayerBreak(player, location, brokenState);
     }
 
     @Override
-    public BehaviourResult.Callback onPistonMoveBlock(BlockData blockDataMoved, Location positionBeforeMove, Location positionAfterMove, Block piston, Vector moveDirection) {
+    public BehaviourResult.@NotNull Callback onPistonMoveBlock(@NotNull BlockData blockDataMoved, @NotNull Location positionBeforeMove, @NotNull Location positionAfterMove, @NotNull Block piston, @NotNull Vector moveDirection) {
 
         FakeBlockEntity fakeBlockEntity = FakeBlockEntityStorage.getFakeBlockEntityAt(positionBeforeMove.getBlock());
         if(fakeBlockEntity == null)
@@ -56,7 +57,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onPlace(Location location, BlockData newBlockData, BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
+    public BehaviourResult.@NotNull Callback onPlace(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean notify, boolean isProcessingBlockPlaceEvent) {
         if (!isProcessingBlockPlaceEvent)
             setFakeBlockStateIfReusesVanillaBlockState(location.getBlock(), newBlockData);
 
@@ -68,7 +69,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onRemove(Location location, BlockData newBlockData, BlockData oldBlockData, boolean moved) {
+    public BehaviourResult.@NotNull Callback onRemove(@NotNull Location location, @NotNull BlockData newBlockData, @NotNull BlockData oldBlockData, boolean moved) {
         if (!moved && !newBlockData.equals(oldBlockData)) FakeBlockEntityStorage.removeFakeBlockEntityAt(location);
 
         if (!newBlockData.getMaterial().isAir())
@@ -77,13 +78,13 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onDestroy(Location location, boolean drop, @Nullable Entity destroyingEntity, int maxUpdateDepth) {
+    public BehaviourResult.@NotNull Callback onDestroy(@NotNull Location location, boolean drop, @Nullable Entity destroyingEntity, int maxUpdateDepth) {
         FakeBlockEntityStorage.removeFakeBlockEntityAt(location);
         return BlockBehaviour.super.onDestroy(location, drop, destroyingEntity, maxUpdateDepth);
     }
 
     @Override
-    public BehaviourResult.Object<Float> getExplosionResistance(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Object<Float> getExplosionResistance(@NotNull Block block, @NotNull BlockData blockData) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
         if (fakeBlockState == null)
             return BlockBehaviour.super.getExplosionResistance(block, blockData);
@@ -92,7 +93,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool fertilizeAction(Block block, ItemStack stack) {
+    public BehaviourResult.@NotNull Bool fertilizeAction(@NotNull Block block, @NotNull ItemStack stack) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
         if (fakeBlockState == null)
             return BlockBehaviour.super.fertilizeAction(block, stack);
@@ -101,12 +102,12 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         return new BehaviourResult.Bool(true, BehaviourResult.Bool.Type.REPLACE_VANILLA);
     }
 
     @Override
-    public BehaviourResult.Bool isBlockRandomlyTicking(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockRandomlyTicking(@NotNull Block block, @NotNull BlockData blockData) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -119,7 +120,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Bool canSurvive(Block block, World world) {
+    public BehaviourResult.@NotNull Bool canSurvive(@NotNull Block block, @NotNull World world) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -132,7 +133,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void stepOn(Block block, BlockData blockData, Entity entity) {
+    public BehaviourResult.@NotNull Void stepOn(@NotNull Block block, @NotNull BlockData blockData, @NotNull Entity entity) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -145,7 +146,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -158,7 +159,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void tick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void tick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -171,7 +172,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<BlockData> blockUpdate(Location location, BlockData blockData, BlockFace direction, BlockData neighbourBlockData, Location neighbourLocation) {
+    public BehaviourResult.@NotNull Object<BlockData> blockUpdate(@NotNull Location location, @NotNull BlockData blockData, @NotNull BlockFace direction, @NotNull BlockData neighbourBlockData, @NotNull Location neighbourLocation) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(location, false);
 
         if (fakeBlockState == null)
@@ -187,7 +188,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void onNeighbourBlockUpdate(Block block, Block sourceBlock, boolean notify) {
+    public BehaviourResult.@NotNull Void onNeighbourBlockUpdate(@NotNull Block block, @NotNull Block sourceBlock, boolean notify) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -200,7 +201,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Void attack(Block block, Player player) {
+    public BehaviourResult.@NotNull Void attack(@NotNull Block block, @NotNull Player player) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
 
         if (fakeBlockState == null)
@@ -213,7 +214,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Object<ItemInteractionResult> use(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult) {
+    public BehaviourResult.@NotNull Object<ItemInteractionResult> use(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult) {
         FakeBlock.FakeBlockState fakeBlockState = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
         if (fakeBlockState != null)
             return fakeBlockState.getFakeBlock().use(block, player, hand, rayTraceResult);
@@ -221,7 +222,7 @@ public class FakeBlockBehaviour implements BlockBehaviour {
     }
 
     @Override
-    public BehaviourResult.Callback onUseCallback(Block block, Player player, EquipmentSlot hand, RayTraceResult rayTraceResult, InteractionResult interactionResult) {
+    public BehaviourResult.@NotNull Callback onUseCallback(@NotNull Block block, @NotNull Player player, @NotNull EquipmentSlot hand, @NotNull RayTraceResult rayTraceResult, @NotNull InteractionResult interactionResult) {
         setFakeBlockStateIfReusesVanillaBlockState(block, block.getBlockData());
         return BlockBehaviour.super.onUseCallback(block, player, hand, rayTraceResult, interactionResult);
     }

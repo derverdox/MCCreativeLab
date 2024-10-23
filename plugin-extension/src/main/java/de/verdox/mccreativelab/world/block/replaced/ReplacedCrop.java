@@ -17,6 +17,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,17 +43,17 @@ public class ReplacedCrop extends FakeBlock {
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         return vanillaCropRandomTickBehaviour.randomTick(block, vanillaRandomSource);
     }
 
     @Override
-    public BehaviourResult.Bool isBlockRandomlyTicking(Block block, BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockRandomlyTicking(@NotNull Block block, @NotNull BlockData blockData) {
         return vanillaCropRandomTickBehaviour.isBlockRandomlyTicking(block, blockData);
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         return vanillaCropRandomTickBehaviour.isBlockDataRandomlyTicking(blockData);
     }
 
@@ -67,7 +68,7 @@ public class ReplacedCrop extends FakeBlock {
     }
 
     @Override
-    public BehaviourResult.Bool fertilizeAction(Block block, ItemStack stack) {
+    public BehaviourResult.@NotNull Bool fertilizeAction(@NotNull Block block, @NotNull ItemStack stack) {
         int currentAge = vanillaCropRandomTickBehaviour.getAge(block);
         int maxAge = vanillaCropRandomTickBehaviour.getMaxAge(block);
         if(currentAge == maxAge)

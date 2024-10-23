@@ -1,4 +1,4 @@
-package de.verdox.mccreativelab.serialization;
+package de.verdox.mccreativelab.serialization.generic;
 
 /**
  * @param <T> the data type that is serialized

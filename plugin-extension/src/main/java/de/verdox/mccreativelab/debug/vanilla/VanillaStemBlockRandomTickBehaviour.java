@@ -9,6 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +21,7 @@ public class VanillaStemBlockRandomTickBehaviour extends VanillaCropRandomTickBe
     }
 
     @Override
-    public BehaviourResult.Void randomTick(Block block, VanillaRandomSource vanillaRandomSource) {
+    public BehaviourResult.@NotNull Void randomTick(@NotNull Block block, @NotNull VanillaRandomSource vanillaRandomSource) {
         var lightLevel = block.getLightLevel();
         if (lightLevel < 9)
             return voidResult();
@@ -70,7 +71,7 @@ public class VanillaStemBlockRandomTickBehaviour extends VanillaCropRandomTickBe
     }
 
     @Override
-    public BehaviourResult.Bool isBlockDataRandomlyTicking(BlockData blockData) {
+    public BehaviourResult.@NotNull Bool isBlockDataRandomlyTicking(@NotNull BlockData blockData) {
         return bool(true);
     }
 }

@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.ai.behavior.PaperCustomAIBehavior;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.memory.MemoryKey;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -22,27 +23,27 @@ public class AsyncBehavior<E extends LivingEntity> extends PaperCustomAIBehavior
     }
 
     @Override
-    public void start(World world, LivingEntity entity, long time) {
+    public void start(@NotNull World world, @NotNull LivingEntity entity, long time) {
 
     }
 
     @Override
-    public void tick(World world, LivingEntity entity, long time) {
+    public void tick(@NotNull World world, @NotNull LivingEntity entity, long time) {
 
     }
 
     @Override
-    public void stop(World world, LivingEntity entity, long time) {
+    public void stop(@NotNull World world, @NotNull LivingEntity entity, long time) {
 
     }
 
     @Override
-    public boolean canStillUse(World world, LivingEntity entity, long time) {
+    public boolean canStillUse(@NotNull World world, @NotNull LivingEntity entity, long time) {
         return false;
     }
 
     @Override
-    public boolean checkExtraStartConditions(World world, LivingEntity entity, long time) {
+    public boolean checkExtraStartConditions(@NotNull World world, @NotNull LivingEntity entity, long time) {
         return false;
     }
 }

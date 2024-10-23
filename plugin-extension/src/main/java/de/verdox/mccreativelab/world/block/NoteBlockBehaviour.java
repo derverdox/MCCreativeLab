@@ -7,11 +7,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.jetbrains.annotations.NotNull;
 
 public class NoteBlockBehaviour implements BlockBehaviour {
 
     @Override
-    public BehaviourResult.Object<BlockData> blockUpdate(Location location, BlockData blockData, BlockFace direction, BlockData neighbourBlockData, Location neighbourLocation) {
+    public BehaviourResult.@NotNull Object<BlockData> blockUpdate(@NotNull Location location, @NotNull BlockData blockData, @NotNull BlockFace direction, @NotNull BlockData neighbourBlockData, @NotNull Location neighbourLocation) {
         return new BehaviourResult.Object<>(Bukkit.createBlockData(Material.NOTE_BLOCK), BehaviourResult.Object.Type.REPLACE_VANILLA);
     }
 
