@@ -1769,7 +1769,7 @@ index 137ec75ee803789deb7b1ca93dd9369c9af362b9..cb433002b980ad0ee8f7c265975e308e
          } else if (!this.creeper.getSensing().hasLineOfSight(this.target)) {
              this.creeper.setSwellDir(-1);
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b7af2d4300facf41a025c8ca322bf6541949b3ab..b5791e6db73d6488b9d2386749626e59e284c733 100644
+index c7df339aeb62ee627edaf1bb4c8474b61e357ba6..08671e6bc21260b01c3be4e21c7efcedbb7ec356 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -13,6 +13,8 @@ import com.mojang.brigadier.StringReader;
@@ -1805,7 +1805,7 @@ index b7af2d4300facf41a025c8ca322bf6541949b3ab..b5791e6db73d6488b9d2386749626e59
      static {
          ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
          ConfigurationSerialization.registerClass(CraftPlayerProfile.class);
-@@ -1129,6 +1141,7 @@ public final class CraftServer implements Server {
+@@ -1131,6 +1143,7 @@ public final class CraftServer implements Server {
          io.papermc.paper.plugin.PluginInitializerManager.reload(this.console); // Paper
          this.loadPlugins();
          this.enablePlugins(PluginLoadOrder.STARTUP);
@@ -1814,7 +1814,7 @@ index b7af2d4300facf41a025c8ca322bf6541949b3ab..b5791e6db73d6488b9d2386749626e59
          this.spark.registerCommandAfterPlugins(this); // Paper - spark
          if (io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper != null) io.papermc.paper.plugin.PluginInitializerManager.instance().pluginRemapper.pluginsEnabled(); // Paper - Remap plugins
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index 4750df7354ccb5afd0910efe0415f3a2eb19a546..6694253a6010a9ba5311d50059b28162a8135b99 100644
+index 57b71a3894638253c6d24d4967a96768834bb02b..db8570fe58b878f76d4c46a953ec333953f43baf 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 @@ -921,6 +921,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {

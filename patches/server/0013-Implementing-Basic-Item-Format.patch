@@ -5,7 +5,7 @@ Subject: [PATCH] Implementing Basic Item Format
 
 
 diff --git a/src/main/java/net/minecraft/world/item/ItemStack.java b/src/main/java/net/minecraft/world/item/ItemStack.java
-index 49e7dad3e3f60edbe99df7e63bdde23f1d9e2987..8914f31555116898a47adf6e8a35f52a51f7fd08 100644
+index 4123f18aacae3c95841064404c1ddc75fbb8d1b7..9191b54aede3ce62da4c02e5d3d7c18c0609cd34 100644
 --- a/src/main/java/net/minecraft/world/item/ItemStack.java
 +++ b/src/main/java/net/minecraft/world/item/ItemStack.java
 @@ -304,11 +304,13 @@ public final class ItemStack implements DataComponentHolder {
@@ -22,11 +22,23 @@ index 49e7dad3e3f60edbe99df7e63bdde23f1d9e2987..8914f31555116898a47adf6e8a35f52a
      }
  
      public static DataResult<Unit> validateComponents(DataComponentMap components) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+index 80e953be36bdc0c4a2988b797432010d486d08f2..13a03a5e07e0e0b9ca27ba59fe560db1e4a1eb08 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+@@ -169,6 +169,7 @@ public final class CraftItemStack extends ItemStack {
+         this.setAmount(amount);
+         this.setDurability(durability);
+         this.setItemMeta(itemMeta);
++        de.verdox.itemformat.BasicItemFormat.applyItemFormatAndReturn(this);
+     }
+ 
+     @Override
 diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
-index 8e03e14d0e65bfdf2196a08220d1408b1297aa0d..ad8c5f837755d7b6065abffd43af41daac1d7546 100644
+index 1c80fe7549d70ae16c7b755c22752549261f072a..3c8110dc83556aa1206ece71aedaaf910e939812 100644
 --- a/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
 +++ b/src/test/java/org/bukkit/craftbukkit/inventory/DeprecatedItemMetaCustomValueTest.java
-@@ -119,8 +119,8 @@ public class DeprecatedItemMetaCustomValueTest extends AbstractTestingBase {
+@@ -120,8 +120,8 @@ public class DeprecatedItemMetaCustomValueTest {
          String configValue = configuration.saveToString();
          YamlConfiguration loadedConfig = YamlConfiguration.loadConfiguration(new StringReader(configValue));
  
@@ -38,10 +50,10 @@ index 8e03e14d0e65bfdf2196a08220d1408b1297aa0d..ad8c5f837755d7b6065abffd43af41da
  
      @Test
 diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
-index 54ffbfd91a03efa2d0d271ed10db4209a2309638..6e433e806c83afb8d9800d3281513bdf464e0848 100644
+index f33b49915d1f1f0838c49ac943e8d4d619450f6b..e9b3b61516c6a3c2f923dd0497d3cb8277c81ded 100644
 --- a/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
 +++ b/src/test/java/org/bukkit/craftbukkit/inventory/PersistentDataContainerTest.java
-@@ -153,8 +153,8 @@ public class PersistentDataContainerTest extends AbstractTestingBase {
+@@ -154,8 +154,8 @@ public class PersistentDataContainerTest {
          String configValue = configuration.saveToString();
          YamlConfiguration loadedConfig = YamlConfiguration.loadConfiguration(new StringReader(configValue));
  
@@ -52,15 +64,3 @@ index 54ffbfd91a03efa2d0d271ed10db4209a2309638..6e433e806c83afb8d9800d3281513bdf
      }
  
      @Test
-diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
-index 35a9a4cad098d4b39bc94330d987211bacb9c1af..5d12b0ed59fe4c1bb67455cbb07f82daa83e610d 100644
---- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
-+++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
-@@ -169,6 +169,7 @@ public final class CraftItemStack extends ItemStack {
-         this.setAmount(amount);
-         this.setDurability(durability);
-         this.setItemMeta(itemMeta);
-+        de.verdox.itemformat.BasicItemFormat.applyItemFormatAndReturn(this);
-     }
- 
-     @Override

@@ -97,10 +97,10 @@ index 2c21de478bff9cdf13ba46cd041831d54c11e924..5069d0333d088da35b44e2f5ee6c47a0
 +    // Paper end - // Paper - Can give milk API attribute
  }
 diff --git a/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
-index 2b4c482e5162b22ffbe67de8b138144b760436d8..0317bd8fa125eeb6d0843551711e4655c8b65acf 100644
+index da2f0127ad92b12cc6a77afb0e66322a21d3d25a..9316015a8bde256ba9516e248b87adabdac26ad1 100644
 --- a/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
 +++ b/src/test/java/org/bukkit/craftbukkit/entity/EntityTypesTest.java
-@@ -101,6 +101,7 @@ public class EntityTypesTest extends AbstractTestingBase {
+@@ -102,6 +102,7 @@ public class EntityTypesTest {
              Minecart.class,
              Mob.class,
              Monster.class,
