@@ -1,16 +1,24 @@
 package de.verdox.mccreativelab.classgenerator;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class ClassBuilder {
+    public static final Logger LOGGER = Logger.getLogger(ClassBuilder.class.getName());
     private String packageName;
     private String classModifier;
     private ClassHeader classHeader;
     private String className;
+    private String classSuffix;
     private final Set<Method> methods = new HashSet<>();
     private final Set<Import> imports = new HashSet<>();
     private final Set<ClassBuilder> includedClasses = new HashSet<>();
@@ -29,10 +37,11 @@ public class ClassBuilder {
         this.depth = parent.depth + 1;
     }
 
-    public ClassBuilder withHeader(String modifier, ClassHeader classHeader, String className) {
+    public ClassBuilder withHeader(String modifier, ClassHeader classHeader, String className, String suffix) {
         this.classModifier = modifier;
         this.classHeader = classHeader;
         this.className = className;
+        this.classSuffix = suffix;
         return this;
     }
 
@@ -53,6 +62,8 @@ public class ClassBuilder {
     }
 
     public ClassBuilder includeImport(ImportableClass importedClassOrPackage) {
+        if(importedClassOrPackage.packageName.isEmpty())
+            return this;
         if (isInnerClass && this.parent != null)
             this.parent.includeImport(importedClassOrPackage);
         else
@@ -86,7 +97,8 @@ public class ClassBuilder {
             }
         }
 
-        String classTitleBuilder = tabs + (classModifier != null ? classModifier : "") + " " + classHeader.getHeader() + " " + className + " {\n\n";
+        StringBuilder classTitleBuilder = buildClassTitle(tabs);
+
 
         StringBuilder importBuilder = new StringBuilder();
         for (Import anImport : imports) {
@@ -105,11 +117,41 @@ public class ClassBuilder {
         code.append("}\n");
     }
 
+    private @NotNull StringBuilder buildClassTitle(String tabs) {
+        StringBuilder classTitleBuilder = new StringBuilder();
+        classTitleBuilder.append(tabs);
+        if(classModifier != null)
+            classTitleBuilder.append(classModifier);
+        classTitleBuilder.append(" ");
+        classTitleBuilder.append(classHeader.getHeader());
+        classTitleBuilder.append(" ");
+        classTitleBuilder.append(className);
+        classTitleBuilder.append(" ");
+        if(classSuffix != null)
+            classTitleBuilder.append(classSuffix);
+        classTitleBuilder.append("{\n\n");
+        return classTitleBuilder;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         buildClassFileString(stringBuilder);
         return stringBuilder.toString();
+    }
+
+    public void writeClassFile(String fileName) throws IOException {
+        writeClassFile(new File(fileName));
+    }
+
+    public void writeClassFile(File sourceDir) throws IOException {
+        File file = new File(sourceDir.getPath() + "/" + packageName.replace(".", "/") + "/" + className+".java");
+        file.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(file)) {
+            StringBuilder code = new StringBuilder();
+            buildClassFileString(code);
+            writer.write(code.toString());
+        }
     }
 
     public enum ClassHeader {
@@ -162,9 +204,14 @@ public class ClassBuilder {
         }
     }
 
-    public record ImportableClass(String packageName, String className){
+    public record ImportableClass(String packageName, String className) implements Type {
         public ImportableClass(Class<?> type){
             this(type.getPackageName(), type.getSimpleName());
+        }
+
+        @Override
+        public String getTypeName() {
+            return className;
         }
 
         @Override

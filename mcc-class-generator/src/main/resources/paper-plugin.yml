@@ -1,0 +1,12 @@
+name: APIGenerator
+version: '1.0'
+main: de.verdox.mccreativelab.classgenerator.PluginRunner
+description: APIGenerator for MCCreativeLab
+api-version: '1.20'
+load: STARTUP
+
+commands:
+  fakeblock:
+    description: "Fake Block command"
+  debug:
+    description: "Debug command"

@@ -20,12 +20,18 @@ public class DynamicType {
 
     public String toString() {
         if (type instanceof ParameterizedType parameterizedType) {
-            System.out.println(type + " is parameterized");
             ClassBuilder.ImportableClass importableClass = getNameForClass((Class<?>) parameterizedType.getRawType());
-            importedClasses.add(importableClass);
+
 
             StringBuilder genericTypeName = new StringBuilder();
-            genericTypeName.append(importableClass.className());
+
+            ClassBuilder.ImportableClass swappedGeneric = NMSMapper.getAPIGenericClassOfNMSClass((Class<?>) parameterizedType.getRawType());
+            if (swappedGeneric != null)
+                addImport(swappedGeneric);
+            else
+                addImport((Class<?>) parameterizedType.getRawType());
+
+            genericTypeName.append(swappedGeneric != null ? swappedGeneric.className() : importableClass.className());
             genericTypeName.append("<");
 
             Type[] typeArguments = parameterizedType.getActualTypeArguments();
@@ -40,15 +46,17 @@ public class DynamicType {
             genericTypeName.append(">");
 
             return genericTypeName.toString();
+        } else if (type instanceof ClassBuilder.ImportableClass importableClass) {
+            return importableClass.getTypeName();
         } else if (type instanceof Class<?> clazz) {
             String name;
             if (clazz.isArray()) {
                 name = getTypeNameOfChild(clazz.getComponentType()) + "[]";
-                importedClasses.add(new ClassBuilder.ImportableClass(clazz.getComponentType()));
+                addImport(clazz.getComponentType());
             } else {
                 name = getNameForClass(clazz).className();
-                if (!clazz.isPrimitive())
-                    importedClasses.add(new ClassBuilder.ImportableClass(clazz));
+                if (!isPrimitiveType(clazz))
+                    addImport(clazz);
             }
             return name;
         }
@@ -74,6 +82,9 @@ public class DynamicType {
             toCheck = clazz;
         }
 
+        if (isPrimitiveType(toCheck))
+            return type;
+
         if (toCheck == null)
             return type;
 
@@ -81,17 +92,27 @@ public class DynamicType {
 
         if (apiClass == null) {
             // If the class was not replaced by API but does not contain to the nms source we want to import it since it might be a library from dependencies
-            if(!PACKAGE_EXCLUDE_FROM_IMPORT_PREDICATE.test(toCheck.getPackageName()))
-                importedClasses.add(new ClassBuilder.ImportableClass(toCheck));
-
+            addImport(toCheck);
             return type;
         }
-        importedClasses.add(new ClassBuilder.ImportableClass(apiClass));
+        addImport(apiClass);
         return apiClass;
     }
 
     private ClassBuilder.ImportableClass getNameForClass(Class<?> type) {
         return NMSMapper.getAPIClassNameForNMSClass(type);
+    }
+
+    private void addImport(ClassBuilder.ImportableClass importableClass) {
+        importedClasses.add(importableClass);
+    }
+
+    private void addImport(Class<?> clazz) {
+        if (isPrimitiveType(clazz))
+            return;
+        if (PACKAGE_EXCLUDE_FROM_IMPORT_PREDICATE.test(clazz.getPackageName()))
+            return;
+        addImport(new ClassBuilder.ImportableClass(clazz));
     }
 
     @Override
@@ -105,5 +126,11 @@ public class DynamicType {
     @Override
     public int hashCode() {
         return Objects.hash(type, importedClasses);
+    }
+
+    public static boolean isPrimitiveType(Class<?> clazz) {
+        return clazz == int.class || clazz == boolean.class || clazz == double.class ||
+            clazz == long.class || clazz == short.class || clazz == byte.class ||
+            clazz == char.class || clazz == float.class || clazz == void.class;
     }
 }
