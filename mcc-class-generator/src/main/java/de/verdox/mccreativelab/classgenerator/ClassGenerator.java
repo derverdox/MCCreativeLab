@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.classgenerator;
 
-import de.verdox.mccreativelab.classgenerator.util.FieldNameUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Unit;
@@ -9,6 +8,8 @@ import net.minecraft.world.item.component.*;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.function.TriConsumer;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.*;
 import java.util.logging.Logger;
 
 public class ClassGenerator {
@@ -24,18 +26,19 @@ public class ClassGenerator {
 
     public static void run() {
         LOGGER.info("Running class generator");
+        NMSConverterGenerator nmsConverterGenerator = new NMSConverterGenerator("de.verdox.mccreativelab.impl.vanilla", "NMSConverter");
 
 
         try {
-            generateMCCItemComponentWrapper();
+            generateMCCItemComponentWrapper(nmsConverterGenerator);
+            nmsConverterGenerator.buildConverterInterface(new File("../../mcc-wrapper/generated"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-    private static void generateMCCItemComponentWrapper() throws IOException {
-        File parentDir = new File("../mcc-wrapper/generated/");
+    private static void generateMCCItemComponentWrapper(NMSConverterGenerator nmsConverterGenerator) throws IOException {
+        File parentDir = new File("../../mcc-wrapper/generated/");
         try {
             FileUtils.deleteDirectory(parentDir);
         } catch (IOException e) {
@@ -68,7 +71,16 @@ public class ClassGenerator {
             ItemLore.class,
             Fireworks.class,
             PotDecorations.class,
-            CustomData.class
+            CustomData.class,
+
+            Function.class,
+            BiFunction.class,
+            TriFunction.class,
+            Consumer.class,
+            BiConsumer.class,
+            TriConsumer.class,
+            Predicate.class,
+            BiPredicate.class
         );
         final List<String> excludedPackages = List.of("java.");
 
@@ -89,9 +101,13 @@ public class ClassGenerator {
                 continue;
 
             if (typeArguments.length > 0 && typeArguments[0] instanceof Class<?> componentType) {
-                if (NMSMapper.getAPIClassOfNMSClass(componentType) == null && !excludedTypes.contains(componentType)) {
-                    WrapperInterfaceGenerator wrapperInterfaceGenerator = new WrapperInterfaceGenerator(new File("../mcc-wrapper/generated"), "MCC", "extends MCCItemComponentType", excludedMethodNames, excludedTypes, excludedPackages);
+                if (!NMSMapper.isSwapped(componentType) && !excludedTypes.contains(componentType)) {
+                    WrapperInterfaceGenerator wrapperInterfaceGenerator = new WrapperInterfaceGenerator(new File("../../mcc-wrapper/generated"), "MCC", "extends MCCItemComponent", excludedMethodNames, excludedTypes, excludedPackages);
+
+                    wrapperInterfaceGenerator.generateWrapper(componentType, "de.verdox.mccreativelab.wrapper.item.components", "de.verdox.mccreativelab.impl.vanilla.wrapper.item.components", nmsConverterGenerator);
+     /*
                     wrapperInterfaceGenerator.generateInterface("de.verdox.mccreativelab.wrapper.item.components", componentType, false, new ClassBuilder());
+                    wrapperInterfaceGenerator.generateVanillaWrapperImplementation("de.verdox.mccreativelab.impl.vanilla.wrapper.item.components", componentType, false, new ClassBuilder());*/
                 }
             }
         }

@@ -2,8 +2,9 @@ package de.verdox.mccreativelab.classgenerator;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
+import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import de.verdox.mccreativelab.wrapper.MCCLocation;
-import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockData;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
@@ -27,33 +28,30 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.bukkit.Location;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class NMSMapper {
-    public static final Map<Class<?>, ClassBuilder.ImportableClass> NMS_TO_API_NAME = new HashMap<>();
-    public static final Map<Class<?>, Class<?>> NMS_TO_API_MAPPING = new HashMap<>();
-    public static final Map<Class<?>, ClassBuilder.ImportableClass> NMS_GENERIC_TO_API_GENERIC = new HashMap<>();
+    public static final Logger LOGGER = Logger.getLogger(NMSMapper.class.getName());
 
-    public static void register(Class<?> nmsClass, ClassBuilder.ImportableClass apiClass) {
-        NMS_TO_API_NAME.put(nmsClass, apiClass);
+    private static final Map<DynamicType, ClassSwap> SWAP_MAP = new HashMap<>();
+
+    public static void register(Type from, Type to, boolean allowsGenerics) {
+        register(DynamicType.of(from, false), DynamicType.of(to, false), allowsGenerics);
     }
 
-    public static void register(Class<?> nmsClass, Class<?> apiClass) {
-        NMS_TO_API_MAPPING.put(nmsClass, apiClass);
-        register(nmsClass, new ClassBuilder.ImportableClass(apiClass));
+    public static void register(Type from, Type to) {
+        register(DynamicType.of(from, false), DynamicType.of(to, false), false);
     }
 
-    public static void registerGeneric(Class<?> nmsClass, ClassBuilder.ImportableClass importableClass) {
-        NMS_GENERIC_TO_API_GENERIC.put(nmsClass, importableClass);
-        register(nmsClass, importableClass);
+    private static void register(DynamicType from, DynamicType to, boolean allowsGenerics) {
+        ClassSwap classSwap = new ClassSwap(to, allowsGenerics);
+        SWAP_MAP.put(from, classSwap);
     }
 
     static {
@@ -83,23 +81,57 @@ public class NMSMapper {
         register(EquipmentSlotGroup.class, org.bukkit.inventory.EquipmentSlotGroup.class);
 
         // NMS to java
-        register(Void.class, new ClassBuilder.ImportableClass("", "void"));
-        registerGeneric(HolderSet.class, new ClassBuilder.ImportableClass(List.class));
-        registerGeneric(NonNullList.class, new ClassBuilder.ImportableClass(List.class));
+        register(Void.class, new ClassDescription("", "void", null));
+        register(HolderSet.class, List.class, true);
+        register(NonNullList.class, List.class, true);
+    }
+
+    public static boolean isSwapped(Type type) {
+        return isSwapped(DynamicType.of(type, false));
+    }
+
+    public static boolean isSwapped(DynamicType type) {
+        if (getSwap(type) != null)
+            return true;
+        for (DynamicType genericType : type.getGenericTypes()) {
+            if (isSwapped(genericType))
+                return true;
+        }
+        return false;
     }
 
     @Nullable
-    public static Class<?> getAPIClassOfNMSClass(Class<?> nmsClass) {
-        return NMS_TO_API_MAPPING.getOrDefault(nmsClass, null);
+    public static DynamicType getSwap(Type type) {
+        DynamicType typeToCompare = DynamicType.of(type, false);
+        return getSwap(typeToCompare);
     }
 
-    @Nullable
-    public static ClassBuilder.ImportableClass getAPIGenericClassOfNMSClass(Class<?> nmsClass) {
-        return NMS_GENERIC_TO_API_GENERIC.getOrDefault(nmsClass, null);
+    public static DynamicType getSwap(DynamicType type) {
+        for (Map.Entry<DynamicType, ClassSwap> dynamicTypeClassSwapEntry : SWAP_MAP.entrySet()) {
+            DynamicType key = dynamicTypeClassSwapEntry.getKey();
+
+            if (key.compareWithoutGenerics(type)) {
+                ClassSwap classSwap = dynamicTypeClassSwapEntry.getValue();
+
+                // If we want to ignore generics we erase them and swap with the blank class
+                if (!classSwap.allowsGenerics())
+                    return classSwap.newType();
+
+                return type.withRawType(classSwap.newType);
+            }
+        }
+
+        DynamicType swappedType = null;
+        for (DynamicType genericType : type.getGenericTypes()) {
+            DynamicType swappedGeneric = getSwap(genericType);
+            if(swappedGeneric != null) {
+                swappedType = type.withSwappedGeneric(genericType, swappedGeneric);
+            }
+        }
+        return swappedType;
     }
 
-    @Nullable
-    public static ClassBuilder.ImportableClass getAPIClassNameForNMSClass(Class<?> nmsClass) {
-        return NMS_TO_API_NAME.getOrDefault(nmsClass, new ClassBuilder.ImportableClass(nmsClass));
+    public record ClassSwap(DynamicType newType, boolean allowsGenerics) {
+
     }
 }
