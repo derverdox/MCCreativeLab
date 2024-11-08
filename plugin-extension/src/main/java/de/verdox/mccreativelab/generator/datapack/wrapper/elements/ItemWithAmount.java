@@ -1,6 +1,6 @@
 package de.verdox.mccreativelab.generator.datapack.wrapper.elements;
 
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 
 public class ItemWithAmount implements RecipeResult {
     private final Item item;

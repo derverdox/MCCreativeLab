@@ -5,7 +5,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.font.Font;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.ActiveComponentRendered;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.SingleHudElement;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.ScreenPosition;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.util.io.StringAlign;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

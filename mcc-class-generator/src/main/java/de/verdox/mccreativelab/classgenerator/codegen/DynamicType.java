@@ -1,11 +1,13 @@
 package de.verdox.mccreativelab.classgenerator.codegen;
 
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
+import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.*;
 
 public class DynamicType {
@@ -17,6 +19,8 @@ public class DynamicType {
     private Class<?> arrayComponentType;
     @Nullable
     private Class<?> rawType;
+    private List<DynamicType> upperBounds = new LinkedList<>();
+    private List<DynamicType> lowerBounds = new LinkedList<>();
 
     public static DynamicType of(Type type, boolean trySwap) {
         if (trySwap && NMSMapper.isSwapped(type) && !isPrimitiveType(type))
@@ -28,8 +32,39 @@ public class DynamicType {
         return DynamicType.of(type, true);
     }
 
+    public CodeExpression getDefaultValueAsString() {
+        return codeLineBuilder -> {
+            if (getClassDescription().isPrimitiveType()) {
+                if (boolean.class.equals(rawType) || Boolean.class.equals(rawType)) {
+                    codeLineBuilder.append("false");
+                } else if (
+                    byte.class.equals(rawType) || Byte.class.equals(rawType) ||
+                        char.class.equals(rawType) || Character.class.equals(rawType) ||
+                        short.class.equals(rawType) || Short.class.equals(rawType) ||
+                        int.class.equals(rawType) || Integer.class.equals(rawType) ||
+                        long.class.equals(rawType) || Long.class.equals(rawType) ||
+                        float.class.equals(rawType) || Float.class.equals(rawType) ||
+                        double.class.equals(rawType) || Double.class.equals(rawType)) {
+                    codeLineBuilder.append("0");
+                }
+            } else if (rawType != null && List.class.isAssignableFrom(rawType)) {
+                if (rawType.getPackageName().contains("it.unimi.dsi.fastutil.")) {
+                    codeLineBuilder.append(DynamicType.of(rawType, false) + ".of()");
+                } else {
+                    codeLineBuilder.append("List.of()");
+                }
+            } else if (rawType != null && Set.class.isAssignableFrom(rawType)) {
+                codeLineBuilder.append("Set.of()");
+            } else if (rawType != null && Map.class.isAssignableFrom(rawType)) {
+                codeLineBuilder.append("Map.of()");
+            } else {
+                codeLineBuilder.append("null");
+            }
+        };
+    }
+
     private DynamicType(Type type, boolean trySwap) {
-        System.out.println(type+", "+trySwap);
+        Objects.requireNonNull(type);
         switch (type) {
             case ClassDescription description -> this.classDescription = description;
             case ParameterizedType parameterizedType -> {
@@ -50,14 +85,34 @@ public class DynamicType {
                 this.classDescription = new ClassDescription(clazz);
                 this.rawType = clazz;
             }
-            case null, default -> throw new RuntimeException("Dynamic Types are not supported for " + type);
+            case WildcardType wildcardType -> {
+                for (Type bound : wildcardType.getLowerBounds()) {
+                    DynamicType lowerBound = DynamicType.of(bound, trySwap);
+                    lowerBounds.add(lowerBound);
+                    if (this.rawType == null) {
+                        this.rawType = lowerBound.rawType;
+                        this.classDescription = lowerBound.getClassDescription();
+                    }
+                }
+
+                for (Type bound : wildcardType.getUpperBounds()) {
+                    DynamicType upperBound = DynamicType.of(bound, trySwap);
+                    upperBounds.add(upperBound);
+                    if (this.rawType == null) {
+                        this.rawType = upperBound.rawType;
+                        this.classDescription = upperBound.getClassDescription();
+                    }
+                }
+            }
+            case null, default ->
+                throw new RuntimeException("Dynamic Types are not supported for " + type + " (" + type.getClass() + ", " + type + ")");
         }
 
         // Is inner class of a top level class
         if (this.rawType != null && this.rawType.getDeclaringClass() != null)
             importedClasses.addAll(DynamicType.of(this.rawType.getDeclaringClass(), false).getImportedClasses());
-        else if (this.classDescription.declaringParentClass() != null)
-            importedClasses.addAll(DynamicType.of(this.classDescription.declaringParentClass(), false).getImportedClasses());
+        else if (this.classDescription.getDeclaringParentClass() != null)
+            importedClasses.addAll(DynamicType.of(this.classDescription.getDeclaringParentClass(), false).getImportedClasses());
             // Else we import the top level class
         else if (!isPrimitiveType(type))
             addImport(this.classDescription);
@@ -76,6 +131,9 @@ public class DynamicType {
         dynamicType.genericTypes = new LinkedList<>(this.genericTypes);
         dynamicType.arrayComponentType = this.arrayComponentType;
 
+        dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
+        dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
+
         dynamicType.rawType = other.rawType;
         dynamicType.classDescription = other.getClassDescription();
         dynamicType.addImport(dynamicType.classDescription);
@@ -93,7 +151,44 @@ public class DynamicType {
         dynamicType.genericTypes.remove(oldGeneric);
         dynamicType.genericTypes.add(newGeneric);
 
+        dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
+        dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
+
         dynamicType.removeImport(oldGeneric.classDescription);
+        dynamicType.addImport(newGeneric.classDescription);
+
+        dynamicType.rawType = this.rawType;
+        dynamicType.classDescription = this.getClassDescription();
+        return dynamicType;
+    }
+
+    public DynamicType withNoGenerics() {
+
+        DynamicType dynamicType = new DynamicType();
+        dynamicType.importedClasses = new HashSet<>(this.importedClasses);
+        dynamicType.genericTypes = new LinkedList<>(this.genericTypes);
+        dynamicType.arrayComponentType = this.arrayComponentType;
+
+        dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
+        dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
+
+        dynamicType.rawType = this.rawType;
+        dynamicType.classDescription = this.getClassDescription();
+        return dynamicType;
+    }
+
+    public DynamicType withAddedGeneric(DynamicType newGeneric) {
+
+        DynamicType dynamicType = new DynamicType();
+        dynamicType.importedClasses = new HashSet<>(this.importedClasses);
+        dynamicType.genericTypes = new LinkedList<>(this.genericTypes);
+        dynamicType.arrayComponentType = this.arrayComponentType;
+
+        dynamicType.genericTypes.add(newGeneric);
+
+        dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
+        dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
+
         dynamicType.addImport(newGeneric.classDescription);
 
         dynamicType.rawType = this.rawType;
@@ -138,7 +233,7 @@ public class DynamicType {
     }
 
     public String toStringWithPackage() {
-        return classDescription.packageName() + "." + toString();
+        return classDescription.getPackageName() + "." + toString();
     }
 
     public Set<ClassDescription> getImportedClasses() {
@@ -149,16 +244,16 @@ public class DynamicType {
         return dynamicType.classDescription.equals(this.classDescription);
     }
 
-    private void addImport(ClassDescription classDescription){
-        if(classDescription.declaringParentClass() != null)
-            addImport(classDescription.declaringParentClass());
+    private void addImport(ClassDescription classDescription) {
+        if (classDescription.getDeclaringParentClass() != null)
+            addImport(classDescription.getDeclaringParentClass());
         else
             this.importedClasses.add(classDescription);
     }
 
-    private void removeImport(ClassDescription classDescription){
-        if(classDescription.declaringParentClass() != null)
-            removeImport(classDescription.declaringParentClass());
+    private void removeImport(ClassDescription classDescription) {
+        if (classDescription.getDeclaringParentClass() != null)
+            removeImport(classDescription.getDeclaringParentClass());
         else
             this.importedClasses.remove(classDescription);
     }
@@ -168,12 +263,12 @@ public class DynamicType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DynamicType that = (DynamicType) o;
-        return Objects.equals(importedClasses, that.importedClasses) && Objects.equals(genericTypes, that.genericTypes) && Objects.equals(classDescription, that.classDescription) && Objects.equals(arrayComponentType, that.arrayComponentType) && Objects.equals(rawType, that.rawType);
+        return Objects.equals(importedClasses, that.importedClasses) && Objects.equals(genericTypes, that.genericTypes) && Objects.equals(arrayComponentType, that.arrayComponentType) && Objects.equals(rawType, that.rawType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(importedClasses, genericTypes, classDescription, arrayComponentType, rawType);
+        return Objects.hash(importedClasses, genericTypes, arrayComponentType, rawType);
     }
 
     public static boolean isPrimitiveType(Type type) {

@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntityStorage;
 import de.verdox.mccreativelab.world.block.replaced.ReplacedBlocks;
 import de.verdox.mccreativelab.world.item.FakeItem;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -106,7 +107,7 @@ public class FakeBlockCommand extends Command {
         if (args.length <= 1)
             return List.of("get", "info");
         if (args.length == 2)
-            return MCCreativeLabExtension.getFakeBlockRegistry().streamKeys().map(NamespacedKey::asString).filter(s -> s.contains(args[1])).toList();
+            return MCCreativeLabExtension.getFakeBlockRegistry().streamKeys().map(Key::asString).filter(s -> s.contains(args[1])).toList();
         return List.of();
     }
 }

@@ -4,7 +4,7 @@ import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import org.bukkit.NamespacedKey;
 
 public enum Resolution {

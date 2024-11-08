@@ -16,6 +16,8 @@ import de.verdox.mccreativelab.util.io.AssetUtil;
 import de.verdox.mccreativelab.util.io.ZipUtil;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.vserializer.util.gson.JsonUtil;
+import net.kyori.adventure.key.Key;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +26,8 @@ import java.util.*;
 public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     public static final AssetPath resourcePacksFolder = AssetPath.buildPath("resourcePacks");
     private final Map<String, SoundFile> soundFilesPerNamespace = new HashMap<>();
-    private final Map<Material, Set<ItemTextureData>> itemTextureDataPerMaterial = new HashMap<>();
-    private final Map<Material, Set<AlternateBlockStateModel>> alternateBlockStateModels = new HashMap<>();
+    private final Map<Key, Set<ItemTextureData>> itemTextureDataPerMaterial = new HashMap<>();
+    private final Map<Key, Set<AlternateBlockStateModel>> alternateBlockStateModels = new HashMap<>();
     private final LanguageStorage languageStorage = new LanguageStorage(this);
     private final ResourcePackMapper resourcePackMapper = new ResourcePackMapper();
     private final ItemTextureData emptyItem;
@@ -33,7 +35,7 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
 
     public CustomResourcePack(String packName, int packFormat, String description, AssetPath savePath) {
         super(packName, packFormat, description, savePath);
-        emptyItem = new ItemTextureData(new NamespacedKey("fixedminecraft", "item/empty_item"), Material.GRAY_STAINED_GLASS_PANE, CustomModelDataProvider.drawCustomModelData(Material.GRAY_STAINED_GLASS_PANE), new Asset<>("/empty_block/textures/empty.png"), null);
+        emptyItem = new ItemTextureData(Key.key("fixedminecraft", "item/empty_item"), Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane"), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane")), new Asset<>("/empty_block/textures/empty.png"), null);
         register(emptyItem);
     }
 
@@ -84,11 +86,11 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
         Asset<CustomResourcePack> spaceSplitterTexture = new Asset<>(() -> CustomResourcePack.class.getResourceAsStream("/space/textures/font/splitter.png"));
         //Asset<CustomResourcePack> minecraftFontWithSpaceChars = new Asset<>(() -> CustomResourcePack.class.getResourceAsStream("/font/default.json"));
 
-        AssetBasedResourcePackResource spaceFontResource = new AssetBasedResourcePackResource(new NamespacedKey("space", "default"), spaceFont, ResourcePackAssetTypes.FONT, "json");
+        AssetBasedResourcePackResource spaceFontResource = new AssetBasedResourcePackResource(Key.key("space", "default"), spaceFont, ResourcePackAssetTypes.FONT, "json");
         register(spaceFontResource);
-        AssetBasedResourcePackResource spaceLanguageResource = new AssetBasedResourcePackResource(new NamespacedKey("space", "en_us"), spaceLanguage, ResourcePackAssetTypes.LANG, "json");
+        AssetBasedResourcePackResource spaceLanguageResource = new AssetBasedResourcePackResource(Key.key("space", "en_us"), spaceLanguage, ResourcePackAssetTypes.LANG, "json");
         register(spaceLanguageResource);
-        AssetBasedResourcePackResource spaceSplitterTextureResource = new AssetBasedResourcePackResource(new NamespacedKey("space", "font/splitter"), spaceSplitterTexture, ResourcePackAssetTypes.TEXTURES, "png");
+        AssetBasedResourcePackResource spaceSplitterTextureResource = new AssetBasedResourcePackResource(Key.key("space", "font/splitter"), spaceSplitterTexture, ResourcePackAssetTypes.TEXTURES, "png");
         register(spaceSplitterTextureResource);
 /*        AssetBasedResourcePackResource minecraftFontWithSpaceCharsResource = new AssetBasedResourcePackResource(new NamespacedKey("minecraft", "default"), minecraftFontWithSpaceChars, ResourcePackAssetTypes.FONT, "json");
         register(minecraftFontWithSpaceCharsResource);*/
@@ -117,7 +119,7 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
         for (Map.Entry<Material, Set<ItemTextureData>> materialSetEntry : itemTextureDataPerMaterial.entrySet()) {
             Material material = materialSetEntry.getKey();
             Set<ItemTextureData> itemTextureDataSet = materialSetEntry.getValue();
-            ItemTextureData.createVanillaModelFile(material, itemTextureDataSet, this);
+            ItemTextureData.createVanillaModelFile(material.getKey(), itemTextureDataSet, this);
         }
         for (Map.Entry<Material, Set<AlternateBlockStateModel>> materialSetEntry : alternateBlockStateModels.entrySet()) {
 
@@ -137,7 +139,7 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     protected void onRegister(Resource<CustomResourcePack> resource) {
         if (resource instanceof SoundData soundData)
             soundFilesPerNamespace.computeIfAbsent(soundData.key().namespace(), namespace -> {
-                SoundFile soundFile = new SoundFile(new NamespacedKey(namespace, "sounds"));
+                SoundFile soundFile = new SoundFile(Key.key(namespace, "sounds"));
                 register(soundFile);
                 return soundFile;
             }).addSoundData(soundData);

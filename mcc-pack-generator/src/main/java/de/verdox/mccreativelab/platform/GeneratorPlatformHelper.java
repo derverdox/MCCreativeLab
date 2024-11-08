@@ -1,6 +1,9 @@
 package de.verdox.mccreativelab.platform;
 
+import de.verdox.mccreativelab.Singleton;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.frontend.FrontEndBehavior;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
@@ -50,4 +53,6 @@ public interface GeneratorPlatformHelper {
      * @return the currently loaded resource pack if available, else null
      */
     @Nullable CustomResourcePack getLoadedResourcePack(UUID playerUUID);
+
+    @NotNull FrontEndBehavior createFrondEndBehavior(ActiveGUI activeGUI);
 }

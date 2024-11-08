@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack;
 
 import com.google.gson.JsonObject;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import io.vertx.core.json.Json;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

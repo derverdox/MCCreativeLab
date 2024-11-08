@@ -1,35 +1,42 @@
 package de.verdox.mccreativelab.wrapper;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.registry.Reference;
+import de.verdox.mccreativelab.serialization.Serializers;
 import de.verdox.mccreativelab.world.block.behaviour.FakeBlockBehaviour;
 import de.verdox.mccreativelab.world.item.FakeItem;
 import de.verdox.mccreativelab.world.item.FakeItemRegistry;
-import de.verdox.mccreativelab.serialization.WrapperSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.generic.SerializerBuilder;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface MCCItemType extends MCCWrapped {
-    static JsonElement serialize(MCCItemType mccItemType) {
-        return WrapperSerializer.ItemTypeSerializer.INSTANCE.toJson(mccItemType);
-    }
+    Serializer<MCCItemType> SERIALIZER = SerializerBuilder.create("item_type", MCCItemType.class)
+        .constructor(
+            new SerializableField<>("key", Serializers.NAMESPACED_KEY_SERIALIZER, Keyed::getKey),
+            new SerializableField<>("type", Serializer.Primitive.STRING, mccItemType -> {
+                if (mccItemType instanceof Vanilla)
+                    return "vanilla";
+                else if (mccItemType instanceof FakeItemType)
+                    return "mcc";
+                throw new IllegalStateException("Unknown type " + mccItemType.getClass());
+            }),
+            (key, s) -> {
+                if ("vanilla".equals(s))
+                    return MCCItemType.of(RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).get(key).createItemStack());
+                else if ("mcc".equals(s))
+                    return MCCItemType.of(MCCreativeLabExtension.getFakeItemRegistry().get(key));
+                throw new IllegalStateException("Unknown type " + s);
+            }
 
-    @Nullable
-    static MCCItemType deserialize(JsonElement jsonElement) {
-        return WrapperSerializer.ItemTypeSerializer.INSTANCE.fromJson(jsonElement);
-    }
-
-    static MCCItemType deserialize(String json) {
-        return deserialize(JsonParser.parseString(json));
-    }
+        )
+        .build();
 
     static MCCItemType of(Material material) {
         return new Vanilla(material);

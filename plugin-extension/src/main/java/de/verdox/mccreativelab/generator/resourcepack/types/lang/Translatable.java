@@ -1,19 +1,33 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.lang;
 
-import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
+import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.generic.SerializerBuilder;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Translatable implements GameTranslation{
+    public static final Serializer<Translatable> TRANSLATABLE_NO_KEY = SerializerBuilder.create("translatable", Translatable.class)
+        .constructor(
+            new SerializableField<>("translations", Serializer.Collection.create(Translation.SERIALIZER_NO_KEY, HashSet::new), Translatable::getTranslations),
+                Translatable::new
+        )
+        .build();
+
     private final Map<LanguageInfo, Translation> cache = new HashMap<>();
     private String key;
 
     public Translatable(LanguageInfo languageInfo, String key, String content){
         this.key = key;
         withAdditionalTranslation(languageInfo, content);
+    }
+
+    private Translatable(Set<Translation> translations){
+        translations.forEach(translation -> this.cache.put(translation.languageInfo(), translation));
     }
 
     public String getTranslation(LanguageInfo languageInfo){
@@ -24,6 +38,11 @@ public class Translatable implements GameTranslation{
 
     public void changeTranslationKey(String key) {
         this.key = key;
+        Map<LanguageInfo, Translation> copy = Map.copyOf(cache);
+        this.cache.clear();
+        copy.forEach((languageInfo, translation) -> {
+            this.cache.put(languageInfo, new Translation(translation.languageInfo(), key, translation.content()));
+        });
     }
 
     public Translatable(String key){

@@ -1,6 +1,6 @@
 package de.verdox.mccreativelab.registry;
 
-import de.verdox.mccreativelab.registry.CustomRegistry;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -77,7 +77,7 @@ public class RegistryLookUpCommand<T> extends Command {
         if (args.length <= 1)
             return List.of(subCommand);
         else if (args.length == 2)
-            return registry.streamKeys().map(NamespacedKey::asString).filter(s -> s.contains(args[1])).toList();
+            return registry.streamKeys().map(Key::asString).filter(s -> s.contains(args[1])).toList();
         return List.of();
     }
 }

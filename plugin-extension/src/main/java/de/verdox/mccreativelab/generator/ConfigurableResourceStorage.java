@@ -1,10 +1,9 @@
 package de.verdox.mccreativelab.generator;
 
 import de.verdox.mccreativelab.MCCreativeLabExtension;
-import de.verdox.mccreativelab.util.gson.JsonUtil;
+import de.verdox.vserializer.util.gson.JsonUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.NamespacedKey;
-import org.bukkit.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;

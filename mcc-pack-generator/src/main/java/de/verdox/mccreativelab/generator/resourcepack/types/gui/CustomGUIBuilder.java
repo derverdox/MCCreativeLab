@@ -10,7 +10,12 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.Screen
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.TextType;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.RenderedElementBehavior;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
+import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,27 +28,38 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, ActiveGUI> {
-    private InventoryType type;
+    private final MCCMenuType type;
     Consumer<ActiveGUI> onOpen;
     Consumer<ActiveGUI> onClose;
     Consumer<ActiveGUI> whileOpen;
     int updateInterval = 20;
-    BiConsumer<InventoryClickEvent, ActiveGUI> clickConsumer;
+    BiConsumer<GUIClickAction, ActiveGUI> clickConsumer;
     private final Set<Integer> blockedSlots = new HashSet<>();
     final Map<String, GUIElement> guiElements = new HashMap<>();
-    private int chestSize;
     private boolean allSlotsBlocked;
     private boolean usePlayerSlots;
     private final Map<GUIElement, GUIElementBehavior<?>> guiElementBehaviors = new HashMap<>();
 
-    public CustomGUIBuilder(@NotNull NamespacedKey namespacedKey, @NotNull InventoryType type) {
+    public CustomGUIBuilder(@NotNull Key namespacedKey, @NotNull MCCMenuType type) {
         super(namespacedKey);
         this.type = type;
     }
 
-    public CustomGUIBuilder(@NotNull NamespacedKey namespacedKey, int amountChestRows) {
+    public CustomGUIBuilder(@NotNull Key namespacedKey, int amountChestRows) {
         super(namespacedKey);
-        this.chestSize = amountChestRows;
+        this.type = switch (amountChestRows){
+            case 1 -> MCCMenuTypes.GENERIC_9x1;
+            case 2 -> MCCMenuTypes.GENERIC_9x2;
+            case 3 -> MCCMenuTypes.GENERIC_9x3;
+            case 4 -> MCCMenuTypes.GENERIC_9x4;
+            case 5 -> MCCMenuTypes.GENERIC_9x5;
+            case 6 -> MCCMenuTypes.GENERIC_9x6;
+            default -> throw new IllegalStateException("Minecraft does not allow containers with " + amountChestRows+" rows.");
+        };
+    }
+
+    public BiConsumer<GUIClickAction, ActiveGUI> getClickConsumer() {
+        return clickConsumer;
     }
 
     public Map<GUIElement, GUIElementBehavior<?>> getGuiElementBehaviors() {
@@ -65,10 +81,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     }
 
     public ScreenPosition getTopLeftPos() {
-        if (type != null)
-            return TextType.getTopLeftCorner(type);
-        else
-            return TextType.getTopLeftCorner(chestSize);
+        return TextType.getTopLeftCorner(type);
     }
 
     @Override
@@ -111,7 +124,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     public CustomGUIBuilder withButton(String buttonName, int index, Consumer<GUIButton.Builder> setup, @Nullable GUIElementBehavior<?> behavior) {
         if (index < 0)
             throw new IllegalArgumentException("Index must be >= 0");
-        int preferredSize = getType() != null ? (getType().getDefaultSize()) : (getChestSize() * 9);
+        int preferredSize = getType().containerSize();
         if (index > preferredSize)
             throw new IllegalArgumentException("Index must be < " + preferredSize);
         GUIButton.Builder builder = new GUIButton.Builder(index);
@@ -157,7 +170,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
         return this;
     }
 
-    public CustomGUIBuilder withClick(BiConsumer<InventoryClickEvent, ActiveGUI> clickConsumer) {
+    public CustomGUIBuilder withClick(BiConsumer<GUIClickAction, ActiveGUI> clickConsumer) {
         this.clickConsumer = clickConsumer;
         return this;
     }
@@ -185,36 +198,27 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     }
 
     public TextType getCorrectTextType() {
-        return type != null ? TextType.getByInventoryType(type) : TextType.getByChestSize(chestSize);
+        return TextType.getByInventoryType(type);
     }
 
     public boolean isSlotBlocked(int slot) {
         return allSlotsBlocked || this.blockedSlots.contains(slot);
     }
 
-    boolean isUsePlayerSlots() {
+    public boolean isUsePlayerSlots() {
         return usePlayerSlots;
     }
 
-    @Nullable
-    InventoryType getType() {
+    @NotNull
+    MCCMenuType getType() {
         return type;
-    }
-
-    public int getChestSize() {
-        return chestSize;
     }
 
     public Set<Integer> getBlockedSlots() {
         if (allSlotsBlocked) {
             var set = new HashSet<Integer>();
-            if (type != null) {
-                for (int i = 0; i < type.getDefaultSize(); i++)
-                    set.add(i);
-            } else {
-                for (int i = 0; i < this.chestSize * 9; i++)
-                    set.add(i);
-            }
+            for (int i = 0; i < type.containerSize(); i++)
+                set.add(i);
             return set;
         }
         return new HashSet<>(blockedSlots);
@@ -226,7 +230,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
      * @param predecessor  the predecessor gui
      * @param initialSetup the initial setup for the new gui
      */
-    public ActiveGUI asNestedGUI(Player player, ActiveGUI predecessor, @Nullable Consumer<ActiveGUI> initialSetup) {
+    public ActiveGUI asNestedGUI(MCCPlayer player, ActiveGUI predecessor, @Nullable Consumer<ActiveGUI> initialSetup) {
         return createMenuForPlayer(player, activeGUI -> {
             predecessor.trackGUIInStack(player);
             if (initialSetup != null)
@@ -239,15 +243,15 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
      *
      * @param predecessor the predecessor gui
      */
-    public ActiveGUI asNestedGUI(Player player, ActiveGUI predecessor) {
+    public ActiveGUI asNestedGUI(MCCPlayer player, ActiveGUI predecessor) {
         return asNestedGUI(player, predecessor, null);
     }
 
-    public ActiveGUI createMenuForPlayer(Player player) {
+    public ActiveGUI createMenuForPlayer(MCCPlayer player) {
         return createMenuForPlayer(player, null);
     }
 
-    public ActiveGUI createMenuForPlayer(Player player, @Nullable Consumer<ActiveGUI> initialSetup) {
+    public ActiveGUI createMenuForPlayer(MCCPlayer player, @Nullable Consumer<ActiveGUI> initialSetup) {
         ActiveGUI activeGUI = new ActiveGUI(this, gui -> {
             if (initialSetup != null)
                 initialSetup.accept(gui);
@@ -264,8 +268,8 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
      * @param predecessor  the predecessor gui
      * @param initialSetup the initial setup for the new gui
      */
-    @OnlyServerSoftware
-    public ActiveGUI asNestedGUI(Player player, ActiveGUI predecessor, @NotNull Inventory inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
+
+    public ActiveGUI asNestedGUI(MCCPlayer player, ActiveGUI predecessor, @NotNull MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
         return linkToExistingInventory(player, inventory, activeGUI -> {
             predecessor.trackGUIInStack(player);
             if (initialSetup != null)
@@ -273,8 +277,8 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
         });
     }
 
-    @OnlyServerSoftware
-    public ActiveGUI linkToExistingInventory(Player player, @NotNull Inventory inventory, @Nullable Consumer<ActiveGUI> initialSetup){
+
+    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup){
         ActiveGUI activeGUI = new ActiveGUI(this, inventory, gui -> {
             if (initialSetup != null)
                 initialSetup.accept(gui);
@@ -283,8 +287,8 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
         return activeGUI;
     }
 
-    @OnlyServerSoftware
-    public ActiveGUI linkToExistingInventory(Player player, @NotNull Inventory inventory){
+
+    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory){
         return linkToExistingInventory(player, inventory, null);
     }
 

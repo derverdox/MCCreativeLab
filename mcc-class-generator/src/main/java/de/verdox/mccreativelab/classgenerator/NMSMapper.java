@@ -4,8 +4,8 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
-import de.verdox.mccreativelab.wrapper.MCCLocation;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockData;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import net.kyori.adventure.key.Key;
@@ -19,8 +19,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.EitherHolder;
@@ -31,7 +29,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.logging.Logger;
@@ -68,7 +65,7 @@ public class NMSMapper {
         register(Block.class, MCCBlockType.class);
         register(ItemStack.class, MCCItemStack.class);
         register(ItemLike.class, MCCItemStack.class);
-        register(BlockState.class, MCCBlockData.class);
+        register(BlockState.class, MCCBlockState.class);
 
         // NMS to Bukkit
 
@@ -77,11 +74,9 @@ public class NMSMapper {
         register(DyeColor.class, org.bukkit.DyeColor.class);
         register(Player.class, org.bukkit.entity.Player.class);
         register(EquipmentSlot.class, org.bukkit.inventory.EquipmentSlot.class);
-        register(AttributeModifier.class, org.bukkit.attribute.AttributeModifier.class);
-        register(EquipmentSlotGroup.class, org.bukkit.inventory.EquipmentSlotGroup.class);
 
         // NMS to java
-        register(Void.class, new ClassDescription("", "void", null));
+        register(Void.class, new ClassDescription(void.class));
         register(HolderSet.class, List.class, true);
         register(NonNullList.class, List.class, true);
     }
@@ -107,6 +102,8 @@ public class NMSMapper {
     }
 
     public static DynamicType getSwap(DynamicType type) {
+        DynamicType swappedType = null;
+
         for (Map.Entry<DynamicType, ClassSwap> dynamicTypeClassSwapEntry : SWAP_MAP.entrySet()) {
             DynamicType key = dynamicTypeClassSwapEntry.getKey();
 
@@ -116,18 +113,20 @@ public class NMSMapper {
                 // If we want to ignore generics we erase them and swap with the blank class
                 if (!classSwap.allowsGenerics())
                     return classSwap.newType();
-
-                return type.withRawType(classSwap.newType);
+                swappedType = type;
+                swappedType = swappedType.withRawType(classSwap.newType);
             }
         }
 
-        DynamicType swappedType = null;
         for (DynamicType genericType : type.getGenericTypes()) {
             DynamicType swappedGeneric = getSwap(genericType);
             if(swappedGeneric != null) {
-                swappedType = type.withSwappedGeneric(genericType, swappedGeneric);
+                if(swappedType == null)
+                    swappedType = type;
+                swappedType = swappedType.withSwappedGeneric(genericType, swappedGeneric);
             }
         }
+
         return swappedType;
     }
 

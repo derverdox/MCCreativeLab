@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.block;
 
-import de.verdox.mccreativelab.wrapper.MCCItemType;
-import de.verdox.mccreativelab.wrapper.MCCWrapped;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,22 +9,54 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface MCCTag<T extends MCCWrapped> {
+/**
+ * Tags are defined via data packs and are used to group elements of the same type together
+ *
+ * @param <T> the tag type
+ */
+public interface MCCTag<T extends MCCKeyedWrapper> {
 
-    static MCCTag<MCCBlockData> ofBlocks(Key key, MCCBlockData... tags) {
+    /**
+     * Creates a new tag of blocks.
+     * This does not add the tag to the native minecraft registries
+     *
+     * @param key  the key for this tag
+     * @param tags the blocks
+     * @return the new tag
+     */
+    static MCCTag<MCCBlockState> ofBlocks(Key key, MCCBlockState... tags) {
         return new BlockTags(key, Set.of(tags));
     }
 
+    /**
+     * Creates a new tag of item types
+     * This does not add the tag to the native minecraft registries
+     *
+     * @param key  the key for this tag
+     * @param tags the item types
+     * @return the new tag
+     */
     static MCCTag<MCCItemType> ofItems(Key key, MCCItemType... tags) {
         return new ItemTags(key, Set.of(tags));
     }
 
+    /**
+     * Returns all values this tag contains
+     *
+     * @return a set of values
+     */
     Set<T> getValues();
 
+    /**
+     * Returns whether a value is contained in a tag.
+     *
+     * @param value the value
+     * @return true if the value is contained
+     */
     boolean isTagged(T value);
 
-    class BlockTags extends CustomTag<MCCBlockData> {
-        protected BlockTags(Key namespacedKey, Set<MCCBlockData> handle) {
+    class BlockTags extends CustomTag<MCCBlockState> {
+        protected BlockTags(Key namespacedKey, Set<MCCBlockState> handle) {
             super(namespacedKey, handle);
         }
     }
@@ -36,7 +68,7 @@ public interface MCCTag<T extends MCCWrapped> {
         }
     }
 
-    class CustomTag<T extends MCCWrapped> extends MCCWrapped.Impl<Set<T>> implements MCCTag<T> {
+    class CustomTag<T extends MCCKeyedWrapper> extends MCCKeyedWrapper.Impl<Set<T>> implements MCCTag<T> {
         private final Key key;
 
         protected CustomTag(Key key, Set<T> handle) {
@@ -58,12 +90,17 @@ public interface MCCTag<T extends MCCWrapped> {
         public @NotNull Key key() {
             return key;
         }
+
+        @Override
+        public boolean isVanilla() {
+            return false;
+        }
     }
 
-    class Builder<T extends MCCWrapped> {
+    class Builder<T extends MCCKeyedWrapper> {
         private final Key key;
 
-        public static <T extends MCCWrapped> Builder<T> create(Key key, Class<? extends T> type) {
+        public static <T extends MCCKeyedWrapper> Builder<T> create(Key key, Class<? extends T> type) {
             return new Builder<T>(key);
         }
 

@@ -1,9 +1,15 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.lang;
 
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.generic.SerializerBuilder;
+
 import java.util.Locale;
 import java.util.Objects;
 
 public record LanguageInfo(String identifier, String name, String region, boolean bidirectional) {
+
+    static final Serializer<LanguageInfo> SERIALIZER = SerializerBuilder.createObjectToPrimitiveSerializer("language", LanguageInfo.class, Serializer.Primitive.STRING, LanguageInfo::identifier, s -> new LanguageInfo(s, "", "", false));
+
     public static LanguageInfo GERMAN = new LanguageInfo("de_de", "German", "Germany", false);
     public static LanguageInfo ENGLISH_AU = new LanguageInfo("en_au", "Australian English", "Australia", false);
     public static LanguageInfo ENGLISH_CA = new LanguageInfo("en_ca", "Canadian English", "Canada", false);

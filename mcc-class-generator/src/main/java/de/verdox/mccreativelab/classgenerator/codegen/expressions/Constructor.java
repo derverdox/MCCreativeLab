@@ -14,7 +14,7 @@ public record Constructor(String modifier, DynamicType constructorType,
     public void write(CodeLineBuilder code) {
         code.increaseDepth(1);
 
-        code.append(modifier).append(" ").append(constructorType.getClassDescription().className()).append(" (");
+        code.append(modifier).append(" ").append(constructorType.getClassDescription().getClassName()).append(" (");
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             parameter.write(code);
@@ -27,12 +27,12 @@ public record Constructor(String modifier, DynamicType constructorType,
             code.increaseDepth(1);
             content.accept(code);
             code.increaseDepth(-1);
-            code.newLine();
+            code.appendAndNewLine("");
             code.appendAndNewLine("}");
         } else
             code.appendAndNewLine(";");
         code.increaseDepth(-1);
-        code.newLine();
+        code.appendAndNewLine("");
     }
 
 }

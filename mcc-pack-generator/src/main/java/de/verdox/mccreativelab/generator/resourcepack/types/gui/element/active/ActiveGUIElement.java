@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active;
 
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIClickAction;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.GUIElement;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ActiveGUIElement<T extends GUIElement> {
@@ -24,5 +24,5 @@ public abstract class ActiveGUIElement<T extends GUIElement> {
     }
 
     public abstract void setVisible(boolean visible);
-    public abstract void onClick(InventoryClickEvent inventoryClickEvent, int clickedX, int clickedY);
+    public abstract void onClick(GUIClickAction inventoryClickEvent, int clickedX, int clickedY);
 }

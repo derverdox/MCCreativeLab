@@ -5,7 +5,7 @@ import org.bukkit.Keyed;
 import java.util.Objects;
 
 /**
- * A wrapped object
+ * A wrapper wrapping a keyed object
  */
 public interface MCCWrapped extends Keyed {
     Object getHandle();

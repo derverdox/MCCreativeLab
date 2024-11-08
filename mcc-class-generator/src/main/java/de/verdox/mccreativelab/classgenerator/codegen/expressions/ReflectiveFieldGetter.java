@@ -15,7 +15,11 @@ import java.lang.reflect.Parameter;
 public record ReflectiveFieldGetter(String variableName, Class<?> classToReflect, Parameter parameter) implements CodeExpression {
     @Override
     public void write(CodeLineBuilder codeLineBuilder) {
+
         codeLineBuilder.appendAndNewLine(DynamicType.of(parameter.getParameterizedType(), false)+" "+variableName+";");
+        codeLineBuilder.append("if(handle==null) return ");
+        codeLineBuilder.append(DynamicType.of(parameter.getParameterizedType(), false).getDefaultValueAsString());
+        codeLineBuilder.appendAndNewLine(";");
         codeLineBuilder.appendAndNewLine("try {");
         codeLineBuilder.increaseDepth(+1);
         codeLineBuilder.append("Field nmsField = ").append(classToReflect.getSimpleName()).append(".class").append(".getDeclaredField(\"").append(parameter.getName()).appendAndNewLine("\");");

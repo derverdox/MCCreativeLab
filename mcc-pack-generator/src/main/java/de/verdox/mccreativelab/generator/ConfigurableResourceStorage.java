@@ -2,8 +2,8 @@ package de.verdox.mccreativelab.generator;
 
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.vserializer.util.gson.JsonUtil;
+import net.kyori.adventure.key.Key;
 import org.apache.commons.io.FileUtils;
-import org.bukkit.NamespacedKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,14 +32,14 @@ public class ConfigurableResourceStorage<C extends CustomPack<C>> {
     private File getFileOfResource(ConfigurableResource<C> configurableResource) {
         File parentFolder = MCCreativeLabExtension.getInstance().getDataFolder();
         String type = configurableResource.getClass().getSimpleName();
-        NamespacedKey namespacedKey = configurableResource.getKey();
+        Key namespacedKey = configurableResource.getKey();
         return new File(parentFolder, type + "/" + namespacedKey.getNamespace() + "/" + namespacedKey.getKey() + ".json");
     }
 
     private File getTemplateFileOfResource(ConfigurableResource<C> configurableResource){
         File parentFolder = new File(MCCreativeLabExtension.getInstance().getDataFolder()+"/template");
         String type = configurableResource.getClass().getSimpleName();
-        NamespacedKey namespacedKey = configurableResource.getKey();
+        Key namespacedKey = configurableResource.getKey();
         return new File(parentFolder, type + "/" + namespacedKey.getNamespace() + "/" + namespacedKey.getKey() + ".json");
 
     }

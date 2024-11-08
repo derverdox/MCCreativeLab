@@ -7,13 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CodeLineBuilder {
+    private final ClassBuilder classBuilder;
     private int depth;
     private final List<CodeLine> lines = new LinkedList<>();
     private boolean lineBreak;
 
-    public CodeLineBuilder(int depth) {
+    public CodeLineBuilder(ClassBuilder classBuilder, int depth) {
+        this.classBuilder = classBuilder;
         this.depth = depth;
+    }
 
+    public ClassBuilder getClassBuilder() {
+        return classBuilder;
     }
 
     public CodeLineBuilder append(String line) {
@@ -27,6 +32,13 @@ public class CodeLineBuilder {
 
     public CodeLineBuilder append(CodeExpression codeExpression) {
         codeExpression.write(this);
+        return this;
+    }
+
+    public CodeLineBuilder add(CodeLineBuilder codeLineBuilder) {
+        for (CodeLine line : codeLineBuilder.lines) {
+            this.lines.add(new CodeLine(depth, line.content()));
+        }
         return this;
     }
 
@@ -47,7 +59,7 @@ public class CodeLineBuilder {
         return this;
     }
 
-    public CodeLineBuilder appendVariablesInBrackets(String... variableNames) {
+    public CodeLineBuilder appendVariablesInBrackets(CodeExpression... variableNames) {
         append("(");
         for (int i = 0; i < variableNames.length; i++) {
             append(variableNames[i]);
@@ -63,7 +75,7 @@ public class CodeLineBuilder {
         return newLine();
     }
 
-    public CodeLineBuilder newLine() {
+    private CodeLineBuilder newLine() {
         lineBreak = true;
         return this;
     }
@@ -89,6 +101,10 @@ public class CodeLineBuilder {
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public boolean isEmpty() {
+        return this.lines.isEmpty();
     }
 
     private record CodeLine(int depth, StringBuilder content) {

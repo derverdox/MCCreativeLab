@@ -4,8 +4,7 @@ import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.util.storage.palette.NBTPalettedContainer;
 import de.verdox.mccreativelab.util.storage.palette.IdMap;
 import de.verdox.mccreativelab.util.PaletteUtil;
-import de.verdox.mccreativelab.world.block.customhardness.BlockBreakSpeedModifier;
-import de.verdox.mccreativelab.worldgen.WorldGenChunk;
+import net.kyori.adventure.key.Key;
 import org.bukkit.*;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -205,7 +204,7 @@ public class FakeBlockStorage {
             int blockStateID = fakeBlock.getBlockStateID(data);
             if (blockStateID == -1)
                 return null;
-            NamespacedKey blockKey = MCCreativeLabExtension.getFakeBlockRegistry().getKey(fakeBlock);
+            Key blockKey = MCCreativeLabExtension.getFakeBlockRegistry().getKey(fakeBlock);
 
             blockStateData.set(BLOCK_STATE_BLOCK_KEY, PersistentDataType.STRING, blockKey.asString());
             blockStateData.set(BLOCK_STATE_ID, PersistentDataType.INTEGER, blockStateID);

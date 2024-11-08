@@ -2,6 +2,10 @@ package de.verdox.mccreativelab.generator.resourcepack;
 
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.AssetType;
+import de.verdox.mccreativelab.serialization.Serializers;
+import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.generic.SerializerBuilder;
 import org.bukkit.NamespacedKey;
 
 import java.io.IOException;

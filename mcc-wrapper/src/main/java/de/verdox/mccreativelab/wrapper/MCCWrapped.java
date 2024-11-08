@@ -1,50 +1,23 @@
 package de.verdox.mccreativelab.wrapper;
 
-import net.kyori.adventure.key.Keyed;
-
-import java.util.Objects;
-
 /**
- * A wrapped object
+ * Base class for all wrappers in MCCreativeLab
  */
-public interface MCCWrapped extends Keyed {
-    Object getHandle();
-
-    default boolean matches(MCCWrapped mccWrapped){
-        return equals(mccWrapped);
+public interface MCCWrapped {
+    /**
+     * Returns true when the wrapped element is from vanilla minecraft
+     * @return true if the element is vanilla
+     */
+    default boolean isVanilla(){
+        return true;
     }
 
-    abstract class Impl<T> implements MCCWrapped {
-        private final T handle;
-
-        protected Impl(T handle) {
-            Objects.requireNonNull(handle);
-            this.handle = handle;
-        }
-
-        @Override
-        public T getHandle() {
-            return handle;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "{" +
-                "handle=" + handle +
-                '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Impl<?> impl = (Impl<?>) o;
-            return Objects.equals(handle, impl.handle);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(handle);
-        }
+    /**
+     * Checks if the two wrappers wrap the same element
+     * @param mccWrapped the other wrapped element
+     * @return true if they wrap the same element
+     */
+    default boolean matches(MCCWrapped mccWrapped) {
+        return equals(mccWrapped);
     }
 }

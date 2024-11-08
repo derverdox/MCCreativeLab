@@ -4,13 +4,16 @@ import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIClickAction;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIButton;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
 import de.verdox.mccreativelab.util.io.StringAlign;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class GUIButton implements GUIElement {
     private final @NotNull ItemTextureData buttonItem;
@@ -22,9 +25,7 @@ public class GUIButton implements GUIElement {
     private final float textScale;
     private final boolean playClickSound;
     @Nullable
-    private final Consumer<ItemMeta> itemMeta;
-    @Nullable
-    private final BiConsumer<InventoryClickEvent, ActiveGUI> onClick;
+    private final BiConsumer<GUIClickAction, ActiveGUI> onClick;
     private final String textureID;
     private final String textID;
 
@@ -37,7 +38,6 @@ public class GUIButton implements GUIElement {
         this.startIndex = builder.startIndex;
         this.xSize = builder.xSize;
         this.ySize = builder.ySize;
-        this.itemMeta = builder.itemMeta;
         this.onClick = builder.onClick;
         this.textureID = textureID;
         this.textID = textID;
@@ -79,11 +79,7 @@ public class GUIButton implements GUIElement {
         return ySize;
     }
 
-    public Consumer<ItemMeta> getItemMeta() {
-        return itemMeta;
-    }
-
-    public BiConsumer<InventoryClickEvent, ActiveGUI> getOnClick() {
+    public BiConsumer<GUIClickAction, ActiveGUI> getOnClick() {
         return onClick;
     }
 
@@ -93,7 +89,7 @@ public class GUIButton implements GUIElement {
     }
 
     public static class Builder {
-        private @NotNull ItemTextureData buttonItem = new ItemTextureData(new NamespacedKey("mccreativelab","dummy"), Material.STONE, 0, null, null);
+        private @NotNull ItemTextureData buttonItem = new ItemTextureData(Key.key("mccreativelab","dummy"), Material.STONE, 0, null, null);
         private final int startIndex;
         private @Nullable Asset<CustomResourcePack> buttonTexture;
         private int xSize = 1;
@@ -102,9 +98,7 @@ public class GUIButton implements GUIElement {
         private float textScale = 1f;
         private boolean playClickSound = true;
         @Nullable
-        private Consumer<ItemMeta> itemMeta;
-        @Nullable
-        private BiConsumer<InventoryClickEvent, ActiveGUI> onClick;
+        private BiConsumer<GUIClickAction, ActiveGUI> onClick;
         public Builder(int startIndex){
             this.startIndex = startIndex;
         }
@@ -145,12 +139,7 @@ public class GUIButton implements GUIElement {
             return this;
         }
 
-        public Builder withItemMeta(Consumer<ItemMeta> itemMeta) {
-            this.itemMeta = itemMeta;
-            return this;
-        }
-
-        public Builder withClick(BiConsumer<InventoryClickEvent, ActiveGUI> onClick) {
+        public Builder withClick(BiConsumer<GUIClickAction, ActiveGUI> onClick) {
             this.onClick = onClick;
             return this;
         }

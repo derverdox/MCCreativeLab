@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.sound.SoundData;
 import de.verdox.vserializer.util.gson.JsonArrayBuilder;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.util.io.AssetUtil;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashSet;
@@ -13,7 +14,7 @@ public class SoundFile extends ResourcePackResource {
     private final Set<SoundData> soundDataSet = new HashSet<>();
 
     @ApiStatus.Internal
-    SoundFile(MCCKey namespacedKey) {
+    SoundFile(Key namespacedKey) {
         super(namespacedKey);
     }
 
@@ -40,7 +41,7 @@ public class SoundFile extends ResourcePackResource {
             soundObject.add("replace", soundData.isReplace());
             soundObject.add("subtitle", soundData.getSubtitle());
 
-            soundsFileJson.add(soundData.key().getKey(), soundObject);
+            soundsFileJson.add(soundData.key().asString(), soundObject);
         }
 
         AssetUtil.createJsonAssetAndInstall(soundsFileJson.build(), customPack, key(), ResourcePackAssetTypes.SOUND_FILE);

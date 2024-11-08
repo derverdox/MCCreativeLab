@@ -17,7 +17,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.font.BitMap;
 import de.verdox.mccreativelab.generator.resourcepack.types.font.Font;
 import de.verdox.mccreativelab.generator.resourcepack.types.font.Space;
 import de.verdox.mccreativelab.generator.resourcepack.types.font.StandardFontAssets;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.util.io.AssetUtil;
 import de.verdox.mccreativelab.util.io.BitMapReader;
 import de.verdox.mccreativelab.util.io.ImageUtil;

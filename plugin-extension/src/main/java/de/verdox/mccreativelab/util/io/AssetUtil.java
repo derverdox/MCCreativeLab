@@ -6,7 +6,7 @@ import de.verdox.mccreativelab.generator.AssetType;
 import de.verdox.mccreativelab.generator.CustomPack;
 import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
-import de.verdox.mccreativelab.util.gson.JsonUtil;
+import de.verdox.vserializer.util.gson.JsonUtil;
 import org.bukkit.NamespacedKey;
 
 import javax.imageio.ImageIO;

@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.generator.resourcepack.types.rendered.util;
 
 import com.google.gson.JsonObject;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.CustomGUIBuilder;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 
 /**
  * @param x        - The x Coordinate at the players screen. Left to right

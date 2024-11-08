@@ -1,12 +1,9 @@
 package de.verdox.mccreativelab.generator.resourcepack;
 
 import com.google.gson.JsonObject;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
-import io.vertx.core.json.Json;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.data.BlockData;
 
 import java.io.IOException;
 import java.util.Set;
@@ -14,11 +11,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AlternateBlockStateModel extends ResourcePackResource {
-    private final BlockData blockData;
+    private final MCCBlockState blockData;
     private final Key alternativeModelKey;
 
-    public AlternateBlockStateModel(BlockData blockData, Key alternativeModelKey) {
-        super(blockData.getMaterial().getKey());
+    public AlternateBlockStateModel(MCCBlockState blockData, Key alternativeModelKey) {
+        super(blockData.key());
         this.blockData = blockData;
         this.alternativeModelKey = alternativeModelKey;
     }
@@ -28,7 +25,7 @@ public class AlternateBlockStateModel extends ResourcePackResource {
 
     String getVariantName() {
         String regex = "\\[(.*?)\\]";
-        String input = blockData.getAsString();
+        String input = blockData.toBlockDataString();
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
         if (matcher.find())
@@ -36,7 +33,7 @@ public class AlternateBlockStateModel extends ResourcePackResource {
         else return "";
     }
 
-    public BlockData getBlockData() {
+    public MCCBlockState getBlockData() {
         return blockData;
     }
 

@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.font;
 
-import de.verdox.mccreativelab.util.gson.JsonArrayBuilder;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonArrayBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import org.bukkit.NamespacedKey;
 
 import java.util.Arrays;

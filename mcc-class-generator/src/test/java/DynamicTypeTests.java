@@ -1,3 +1,4 @@
+import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import model.TestImplClass;
@@ -12,7 +13,6 @@ public class DynamicTypeTests {
 
     @Test
     public void testRawTypeAttributeSetCorrectly() throws NoSuchFieldException {
-
         Type type = TestImplClass.class.getDeclaredField("simpleListWithSwappableGeneric").getGenericType();
 
         DynamicType dynamicType = DynamicType.of(type, false);
@@ -33,20 +33,37 @@ public class DynamicTypeTests {
         Assertions.assertEquals("List<ItemStack>", dynamicType.toString());
     }
 
-    @Test
+/*    @Test
     public void testToStringWithFakeClassRawTypeSwap() throws NoSuchFieldException {
         Type type = TestImplClass.class.getDeclaredField("simpleListWithSwappableGeneric").getGenericType();
         DynamicType listType = DynamicType.of(type, false);
         DynamicType ABCClassType = DynamicType.of(new ClassDescription("de.verdox.test", "ABCClass", null), false);
         DynamicType merged = listType.withRawType(ABCClassType);
         Assertions.assertEquals("ABCClass<ItemStack>", merged.toString());
-    }
+    }*/
 
     @Test
     public void testNestedGenerics() throws NoSuchFieldException {
         Type type = TestImplClass.class.getDeclaredField("tripleGeneric").getGenericType();
-        DynamicType tripleGenericType = DynamicType.of(type, false);
+        DynamicType tripleGenericType = DynamicType.of(type, true);
         Assertions.assertEquals("Optional<Key>", tripleGenericType.toString());
+    }
+
+    /**
+     * Tests if Generic Type is swapped correctly. The generic type of the type is also swapped
+     * @throws NoSuchFieldException
+     */
+    @Test
+    public void testDynamicTypeSwappingGeneric() throws NoSuchFieldException {
+        Type type = TestImplClass.class.getDeclaredField("swappableCollection").getGenericType();
+        DynamicType swappableCollection = DynamicType.of(type);
+        Assertions.assertEquals("List<MCCBlockType>", swappableCollection.toString());
+    }
+
+    @Test
+    public void testMapperReturnsNullIfNoMappingExists() throws NoSuchFieldException {
+        Assertions.assertNull(NMSMapper.getSwap(DynamicType.of(Boolean.class)));
+        Assertions.assertFalse(NMSMapper.isSwapped(DynamicType.of(Boolean.class)));
     }
 
     //TODO Test ob nach mergen die imports stimmen

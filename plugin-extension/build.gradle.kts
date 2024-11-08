@@ -19,16 +19,17 @@ allprojects {
     dependencies {
         compileOnly(project(":mccreativelab-api"))
         implementation(project(":mcc-util"))
-        implementation(project(":mcc-serializer"))
+        implementation("de.verdox.vcore:Paper:1.0")
 
         //paperweight.devBundle("de.verdox.mccreativelab", "1.21.1-R0.1-SNAPSHOT")
 
         compileOnly("com.hierynomus:sshj:0.38.0")
-        compileOnly("io.vertx:vertx-core:4.5.0")
+        compileOnly("io.vertx:vertx-core:4.5.3")
         compileOnly("ws.schild:jave-all-deps:3.5.0")
         compileOnly("org.apache.commons:commons-compress:1.26.1")
         compileOnly("commons-io:commons-io:2.16.1")
         compileOnly("org.tukaani:xz:1.9")
+
 
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
         testImplementation("org.hamcrest:hamcrest:2.2")
@@ -39,6 +40,9 @@ allprojects {
         mavenCentral()
         maven {
             url = uri("https://papermc.io/repo/repository/maven-public/")
+        }
+        maven {
+            url = uri("https://www.jitpack.io")
         }
     }
 

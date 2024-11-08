@@ -5,7 +5,6 @@ import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.world.block.replaced;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.display.TransparentFullBlockEntityDisplay;
 import org.bukkit.Bukkit;

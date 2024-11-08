@@ -1,10 +1,10 @@
 package de.verdox.mccreativelab.generator.datapack;
 
 import de.verdox.mccreativelab.generator.AbstractResource;
-import org.bukkit.NamespacedKey;
+import net.kyori.adventure.key.Key;
 
 public abstract class DataPackResource extends AbstractResource<CustomDataPack> {
-    public DataPackResource(NamespacedKey namespacedKey) {
+    public DataPackResource(Key namespacedKey) {
         super(namespacedKey);
     }
 }

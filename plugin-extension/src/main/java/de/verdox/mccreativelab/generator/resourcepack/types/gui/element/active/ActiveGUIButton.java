@@ -5,7 +5,6 @@ import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.GUIButto
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudText;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 

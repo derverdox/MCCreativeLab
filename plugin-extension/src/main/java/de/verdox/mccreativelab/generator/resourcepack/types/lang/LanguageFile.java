@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
-import de.verdox.mccreativelab.util.gson.JsonUtil;
+import de.verdox.vserializer.util.gson.JsonUtil;
 import org.bukkit.NamespacedKey;
 
 import java.io.IOException;

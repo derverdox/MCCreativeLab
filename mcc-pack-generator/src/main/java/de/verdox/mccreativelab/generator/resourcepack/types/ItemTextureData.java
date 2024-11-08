@@ -6,6 +6,8 @@ import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.vserializer.util.gson.JsonArrayBuilder;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.vserializer.util.gson.JsonUtil;
@@ -65,7 +67,7 @@ public class ItemTextureData extends ResourcePackResource {
         this(namespacedKey, material, pngFile, modelType, false);
     }
 
-    public ItemStack createItem() {
+    public MCCItemStack createItem() {
         var stack = new ItemStack(material);
         if (customModelData != 0)
             stack.editMeta(meta -> meta.setCustomModelData(customModelData));
@@ -184,10 +186,10 @@ public class ItemTextureData extends ResourcePackResource {
         }
 
         public static ModelType createFullCubeWithSingleTexture(Key textureKey) {
-            return createFullCubeWithSeparateTextures(Map.of(BlockFace.UP, textureKey, BlockFace.DOWN, textureKey, BlockFace.NORTH, textureKey, BlockFace.EAST, textureKey, BlockFace.SOUTH, textureKey, BlockFace.WEST, textureKey));
+            return createFullCubeWithSeparateTextures(Map.of(MCCBlockFace.UP, textureKey, MCCBlockFace.DOWN, textureKey, MCCBlockFace.NORTH, textureKey, MCCBlockFace.EAST, textureKey, MCCBlockFace.SOUTH, textureKey, MCCBlockFace.WEST, textureKey));
         }
 
-        public static ModelType createFullCubeWithSeparateTextures(Map<BlockFace, ? extends Keyed> texturesPerBlockFace) {
+        public static ModelType createFullCubeWithSeparateTextures(Map<MCCBlockFace, ? extends Keyed> texturesPerBlockFace) {
             var textures = JsonObjectBuilder.create();
             texturesPerBlockFace.forEach((blockFace, itemTextureData) -> {
                 textures.add(blockFace.name().toLowerCase(Locale.ROOT), itemTextureData.key().toString());
@@ -200,10 +202,10 @@ public class ItemTextureData extends ResourcePackResource {
 
         }
 
-        public static ModelType createOnlyOneSideTextureOfCube(BlockFace face) {
+        public static ModelType createOnlyOneSideTextureOfCube(MCCBlockFace face) {
 
             String faceName;
-            if (face.equals(BlockFace.UP) || face.equals(BlockFace.DOWN))
+            if (face.equals(MCCBlockFace.UP) || face.equals(MCCBlockFace.DOWN))
                 faceName = face.name().toLowerCase(Locale.ROOT);
             else
                 faceName = face.getOppositeFace().name().toLowerCase(Locale.ROOT);
@@ -215,37 +217,37 @@ public class ItemTextureData extends ResourcePackResource {
             int sizeY = 0;
             int sizeZ = 0;
 
-            if (face == BlockFace.DOWN) {
+            if (face == MCCBlockFace.DOWN) {
                 posY = 8;
                 sizeY = 8;
 
                 sizeX = 16;
                 sizeZ = 16;
-            } else if (face == BlockFace.EAST) {
+            } else if (face == MCCBlockFace.EAST) {
                 posX = 8;
                 sizeX = 8;
 
                 sizeY = 16;
                 sizeZ = 16;
-            } else if (face == BlockFace.NORTH) {
+            } else if (face == MCCBlockFace.NORTH) {
                 posZ = 8;
                 sizeZ = 8;
 
                 sizeX = 16;
                 sizeY = 16;
-            } else if (face == BlockFace.SOUTH) {
+            } else if (face == MCCBlockFace.SOUTH) {
                 posZ = 8;
                 sizeZ = 8;
 
                 sizeX = 16;
                 sizeY = 16;
-            } else if (face == BlockFace.UP) {
+            } else if (face == MCCBlockFace.UP) {
                 posY = 8;
                 sizeY = 8;
 
                 sizeX = 16;
                 sizeZ = 16;
-            } else if (face == BlockFace.WEST) {
+            } else if (face == MCCBlockFace.WEST) {
                 posX = 8;
                 sizeX = 8;
 

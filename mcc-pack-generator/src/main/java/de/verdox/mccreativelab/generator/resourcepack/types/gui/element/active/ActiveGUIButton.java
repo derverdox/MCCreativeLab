@@ -1,12 +1,12 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active;
 
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIClickAction;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.GUIButton;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudText;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
 
@@ -41,10 +41,10 @@ public class ActiveGUIButton extends ActiveGUIElement<GUIButton> {
     }
 
     @Override
-    public void onClick(InventoryClickEvent inventoryClickEvent, int clickedX, int clickedY) {
+    public void onClick(GUIClickAction inventoryClickEvent, int clickedX, int clickedY) {
         if (guiElement.getOnClick() != null)
             guiElement.getOnClick().accept(inventoryClickEvent, activeGUI);
-        inventoryClickEvent.getWhoClicked().playSound(Sound.sound().type(org.bukkit.Sound.UI_BUTTON_CLICK.key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
+        inventoryClickEvent.getClickerAsAudience().playSound(Sound.sound().type(org.bukkit.Sound.UI_BUTTON_CLICK.key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
     }
 
     private void hideOtherButtons() {
@@ -62,9 +62,7 @@ public class ActiveGUIButton extends ActiveGUIElement<GUIButton> {
         for (int x = 0; x < guiElement.getXSize(); x++) {
             for (int y = 0; y < guiElement.getYSize(); y++) {
                 int slotIndex = index + x + (9 * y);
-                ItemStack stackToPut = guiElement.getButtonItem().createItem();
-                if(guiElement.getItemMeta() != null)
-                    stackToPut.editMeta(guiElement.getItemMeta());
+                MCCItemStack stackToPut = guiElement.getButtonItem().createItem();
                 activeGUI.placeGuiElementInSlot(slotIndex, this);
                 activeGUI.getVanillaInventory().setItem(slotIndex, stackToPut);
             }

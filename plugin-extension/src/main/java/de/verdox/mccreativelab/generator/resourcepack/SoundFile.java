@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.generator.resourcepack;
 
 import de.verdox.mccreativelab.generator.resourcepack.types.sound.SoundData;
-import de.verdox.mccreativelab.util.gson.JsonArrayBuilder;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonArrayBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.util.io.AssetUtil;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;

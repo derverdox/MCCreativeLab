@@ -5,7 +5,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 import de.verdox.vserializer.util.gson.JsonArrayBuilder;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.mccreativelab.util.io.AssetUtil;
-import org.bukkit.NamespacedKey;
+import net.kyori.adventure.key.Key;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,19 +15,19 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class ModelBuilder extends ResourcePackResource {
-    public static ModelBuilder create(NamespacedKey namespacedKey) {
+    public static ModelBuilder create(Key namespacedKey) {
         return new ModelBuilder(namespacedKey);
     }
     private final Map<String, AssetBasedResourcePackResource> textures = new HashMap<>();
     private final Set<ModelElementBuilder> elementBuilders = new HashSet<>();
     private int[] texture_size = new int[]{16, 16};
-    private NamespacedKey parent;
+    private Key parent;
 
-    private ModelBuilder(NamespacedKey namespacedKey) {
+    private ModelBuilder(Key namespacedKey) {
         super(namespacedKey);
     }
 
-    public ModelBuilder withParent(NamespacedKey parent){
+    public ModelBuilder withParent(Key parent){
         this.parent = parent;
         return this;
     }
@@ -37,7 +37,7 @@ public class ModelBuilder extends ResourcePackResource {
         return this;
     }
 
-    public ModelBuilder withTexture(String textureID, NamespacedKey namespacedKey, Asset<CustomResourcePack> asset) {
+    public ModelBuilder withTexture(String textureID, Key namespacedKey, Asset<CustomResourcePack> asset) {
         textures.put(textureID, new AssetBasedResourcePackResource(namespacedKey, asset, ResourcePackAssetTypes.TEXTURES, "png"));
         if(!textures.containsKey("particle"))
             textures.put("particle", new AssetBasedResourcePackResource(namespacedKey, asset, ResourcePackAssetTypes.TEXTURES, "png"));

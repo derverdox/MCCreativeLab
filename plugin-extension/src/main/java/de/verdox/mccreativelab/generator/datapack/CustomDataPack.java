@@ -3,8 +3,8 @@ package de.verdox.mccreativelab.generator.datapack;
 import de.verdox.mccreativelab.generator.AssetPath;
 import de.verdox.mccreativelab.generator.CustomPack;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translation;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
-import de.verdox.mccreativelab.util.gson.JsonUtil;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonUtil;
 
 import java.io.IOException;
 

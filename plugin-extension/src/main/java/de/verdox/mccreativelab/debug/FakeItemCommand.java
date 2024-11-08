@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.behaviour.ItemBehaviour;
 import de.verdox.mccreativelab.debug.Debug;
 import de.verdox.mccreativelab.world.item.FakeItem;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -53,7 +54,7 @@ public class FakeItemCommand extends Command {
         if(args.length <= 1)
             return List.of("get");
         if(args.length == 2)
-            return MCCreativeLabExtension.getFakeItemRegistry().streamKeys().map(NamespacedKey::asString).filter(s -> s.contains(args[1])).toList();
+            return MCCreativeLabExtension.getFakeItemRegistry().streamKeys().map(Key::asString).filter(s -> s.contains(args[1])).toList();
         if(args.length == 3)
             return super.tabComplete(sender, alias, args);
         return List.of();

@@ -1,13 +1,17 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ClickableItem {
-    private final ItemStack stack;
-    private final BiConsumer<InventoryClickEvent, ActiveGUI> onClick;
+    private final MCCItemStack stack;
+    private final BiConsumer<GUIClickAction, ActiveGUI> onClick;
     private final Builder builder;
 
-    protected ClickableItem(ItemStack stack, BiConsumer<InventoryClickEvent, ActiveGUI> onClick, Builder builder) {
+    protected ClickableItem(MCCItemStack stack, BiConsumer<GUIClickAction, ActiveGUI> onClick, Builder builder) {
         this.stack = stack;
         this.onClick = onClick;
         this.builder = builder;
@@ -17,46 +21,39 @@ public class ClickableItem {
         return builder;
     }
 
-    public BiConsumer<InventoryClickEvent, ActiveGUI> getOnClick() {
+    public BiConsumer<GUIClickAction, ActiveGUI> getOnClick() {
         return onClick;
     }
 
-    public ItemStack getStack() {
+    public MCCItemStack getStack() {
         return stack;
     }
 
     public static class Builder {
-        private BiConsumer<InventoryClickEvent, ActiveGUI> onClick = (inventoryClickEvent, activeGUI) -> {
+        private BiConsumer<GUIClickAction, ActiveGUI> onClick = (inventoryClickEvent, activeGUI) -> {
         };
-        private ItemStack item = MCCreativeLabExtension.getCustomResourcePack().getEmptyItem().createItem();
+        private MCCItemStack item = MCCreativeLabExtension.getCustomResourcePack().getEmptyItem().createItem();
         public boolean popGUIStack = false;
         public boolean clearGUIStackAndClose = false;
-        Consumer<ItemMeta> metaSetup = meta -> {
-        };
 
-        public Builder(ItemStack stack) {
-            this.item = stack;
+        public Builder(MCCItemStack stack) {
+            this.item = stack.copy();
         }
 
-        public Builder(Material material) {
-            this.item = new ItemStack(material);
+        public Builder(MCCItemType material) {
+            this.item = material.createItem();
         }
 
         public Builder() {
         }
 
-        public Builder withClick(BiConsumer<InventoryClickEvent, ActiveGUI> onClick) {
+        public Builder withClick(BiConsumer<GUIClickAction, ActiveGUI> onClick) {
             this.onClick = onClick;
             return this;
         }
 
-        public Builder withItem(ItemStack stack) {
+        public Builder withItem(MCCItemStack stack) {
             this.item = stack;
-            return this;
-        }
-
-        public Builder withItemMeta(Consumer<ItemMeta> metaSetup) {
-            this.metaSetup = metaSetup;
             return this;
         }
 
@@ -66,7 +63,6 @@ public class ClickableItem {
             copy.item = this.item.clone();
             copy.popGUIStack = this.popGUIStack;
             copy.clearGUIStackAndClose = this.clearGUIStackAndClose;
-            copy.metaSetup = this.metaSetup;
             return copy;
         }
 
@@ -78,7 +74,7 @@ public class ClickableItem {
         public Builder openGUI(Supplier<CustomGUIBuilder> supplyGUI){
             return withClick((inventoryClickEvent, activeGUI) -> {
                 CustomGUIBuilder customGUIBuilder = supplyGUI.get();
-                customGUIBuilder.asNestedGUI((Player) inventoryClickEvent.getWhoClicked(), activeGUI, activeGUI::copyTemporaryDataFromGUI);
+                customGUIBuilder.asNestedGUI((Player) inventoryClickEvent.getEntityClicking(), activeGUI, activeGUI::copyTemporaryDataFromGUI);
             });
         }
 
@@ -91,11 +87,8 @@ public class ClickableItem {
             return this;
         }
 
-        ItemStack createStack() {
-            ItemStack stack1 = this.item.clone();
-            if (metaSetup != null)
-                stack1.editMeta(metaSetup);
-            return stack1;
+        MCCItemStack createStack() {
+            return this.item.copy();
         }
 
         public ClickableItem build() {

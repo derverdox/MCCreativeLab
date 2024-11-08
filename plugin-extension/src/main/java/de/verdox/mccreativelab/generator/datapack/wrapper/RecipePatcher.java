@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import de.verdox.mccreativelab.generator.datapack.wrapper.elements.Item;
 import de.verdox.mccreativelab.generator.datapack.wrapper.elements.ItemWithAmount;
 import de.verdox.mccreativelab.generator.datapack.wrapper.elements.RecipeIngredient;
-import de.verdox.mccreativelab.util.gson.JsonArrayBuilder;
-import de.verdox.mccreativelab.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.util.gson.JsonArrayBuilder;
+import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 
 public abstract class RecipePatcher extends JsonMinecraftWrapper {
     public RecipePatcher(JsonObject jsonObject) {

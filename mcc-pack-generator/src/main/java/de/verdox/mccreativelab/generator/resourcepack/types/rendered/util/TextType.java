@@ -1,10 +1,14 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.rendered.util;
 
+import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
+import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
+import net.kyori.adventure.key.Key;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public record TextType(int xOffset, int yOffset) {
-    private static final Map<InventoryType, TextType> invTypes = new HashMap<>();
+    private static final Map<MCCMenuType, TextType> invTypes = new HashMap<>();
     private static final Map<Integer, TextType> chestSizes = new HashMap<>();
     private static final Map<TextType, ScreenPosition> topLeftCorner = new HashMap<>();
     public static TextType ACTION_BAR = new TextType(0, 64);
@@ -29,7 +33,7 @@ public record TextType(int xOffset, int yOffset) {
     // Dispenser - Mid
     public static TextType DISPENSER = new TextType(0, 70);
     // Dropper - Mid
-    public static TextType DROPPER = new TextType(0, 70);
+    public static TextType DROPPER = DISPENSER;
     // Enchanting - Left
     public static TextType ENCHANTING_TABLE = new TextType(-80, -70);
     // EnderChest - Left
@@ -64,7 +68,7 @@ public record TextType(int xOffset, int yOffset) {
         return type;
     }
 
-    public static TextType getByInventoryType(InventoryType type) {
+    public static TextType getByInventoryType(MCCMenuType type) {
         if(!invTypes.containsKey(type)) {
             throw new IllegalArgumentException("Chest type " + type + " not available");
         }
@@ -83,7 +87,7 @@ public record TextType(int xOffset, int yOffset) {
         return topLeftCorner.get(type);
     }
 
-    public static ScreenPosition getTopLeftCorner(InventoryType type) {
+    public static ScreenPosition getTopLeftCorner(MCCMenuType type) {
         return topLeftCorner.get(getByInventoryType(type));
     }
 
@@ -96,26 +100,22 @@ public record TextType(int xOffset, int yOffset) {
     }
 
     static {
-        invTypes.put(InventoryType.ANVIL, ANVIL);
-        invTypes.put(InventoryType.BARREL, BARREL);
-        invTypes.put(InventoryType.BLAST_FURNACE, BLAST_FURNACE);
-        invTypes.put(InventoryType.BREWING, BREWING);
-        invTypes.put(InventoryType.CARTOGRAPHY, CARTOGRAPHY_TABLE);
-        invTypes.put(InventoryType.CHEST, CHEST_9x_3);
-        invTypes.put(InventoryType.DISPENSER, DISPENSER);
-        invTypes.put(InventoryType.DROPPER, DROPPER);
-        invTypes.put(InventoryType.ENCHANTING, ENCHANTING_TABLE);
-        invTypes.put(InventoryType.ENDER_CHEST, ENDER_CHEST);
-        invTypes.put(InventoryType.GRINDSTONE, GRIND_STONE);
-        invTypes.put(InventoryType.HOPPER, HOPPER);
-        invTypes.put(InventoryType.LOOM, LOOM);
-        invTypes.put(InventoryType.MERCHANT, MERCHANT);
-        invTypes.put(InventoryType.PLAYER, PLAYER);
-        invTypes.put(InventoryType.SHULKER_BOX, SHULKER_BOX);
-        invTypes.put(InventoryType.SMITHING, SMITHING);
-        invTypes.put(InventoryType.SMOKER, SMOKER);
-        invTypes.put(InventoryType.STONECUTTER, STONE_CUTTER);
-        invTypes.put(InventoryType.WORKBENCH, WORKBENCH);
+        invTypes.put(MCCMenuTypes.ANVIL, ANVIL);
+        invTypes.put(MCCMenuTypes.GENERIC_9x3, BARREL);
+        invTypes.put(MCCMenuTypes.BLAST_FURNACE, BLAST_FURNACE);
+        invTypes.put(MCCMenuTypes.BREWING_STAND, BREWING);
+        invTypes.put(MCCMenuTypes.CARTOGRAPHY_TABLE, CARTOGRAPHY_TABLE);
+        invTypes.put(MCCMenuTypes.GENERIC_3x3, DISPENSER);
+        invTypes.put(MCCMenuTypes.ENCHANTMENT, ENCHANTING_TABLE);
+        invTypes.put(MCCMenuTypes.GRINDSTONE, GRIND_STONE);
+        invTypes.put(MCCMenuTypes.HOPPER, HOPPER);
+        invTypes.put(MCCMenuTypes.LOOM, LOOM);
+        invTypes.put(MCCMenuTypes.MERCHANT, MERCHANT);
+        invTypes.put(MCCMenuTypes.SHULKER_BOX, SHULKER_BOX);
+        invTypes.put(MCCMenuTypes.SMITHING, SMITHING);
+        invTypes.put(MCCMenuTypes.SMOKER, SMOKER);
+        invTypes.put(MCCMenuTypes.STONECUTTER, STONE_CUTTER);
+        invTypes.put(MCCMenuTypes.CRAFTING, WORKBENCH);
 
         topLeftCorner.put(CHEST_9x_6, new ScreenPosition(50, 50, -(CHEST_9x_6.xOffset + 8), CHEST_9x_6.yOffset() + 13, 1));
         topLeftCorner.put(CHEST_9x_5, new ScreenPosition(50, 50, -(CHEST_9x_5.xOffset + 8), CHEST_9x_5.yOffset() + 13, 1));

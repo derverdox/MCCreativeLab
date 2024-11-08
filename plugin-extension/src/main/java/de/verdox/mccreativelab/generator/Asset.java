@@ -1,10 +1,7 @@
 package de.verdox.mccreativelab.generator;
 
-import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.util.FileUtil;
 
 import javax.annotation.Nullable;
 import java.io.*;

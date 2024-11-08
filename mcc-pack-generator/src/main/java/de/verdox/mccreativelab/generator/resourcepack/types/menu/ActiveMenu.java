@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.gro
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudText;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import io.vertx.core.impl.ConcurrentHashSet;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.sound.Sound;
@@ -22,7 +23,7 @@ public class ActiveMenu {
     private final CustomMenu customMenu;
     private final MenuBehaviour behaviour;
     private final Set<MenuState> enabledStates = new ConcurrentHashSet<>();
-    private ItemStack activeBackgroundPicture;
+    private MCCItemStack activeBackgroundPicture;
 
     ActiveMenu(Audience player, CustomMenu customMenu) {
         this.player = player;
@@ -45,7 +46,7 @@ public class ActiveMenu {
         });
     }
 
-    ItemStack getActiveBackgroundPicture() {
+    MCCItemStack getActiveBackgroundPicture() {
         return activeBackgroundPicture;
     }
 
@@ -76,7 +77,7 @@ public class ActiveMenu {
     @Nullable
     public ActiveHud getActiveHud() {
         if (customMenu.getMenuHud() != null)
-            return MCCreativeLabExtension.getHudRenderer().getOrStartActiveHud(player, customMenu.getMenuHud());
+            return GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player, customMenu.getMenuHud());
         return null;
     }
 
@@ -108,7 +109,7 @@ public class ActiveMenu {
         if (!customMenu.getBackgroundPictures().containsKey(id))
             throw new IllegalArgumentException("No background picture found with id " + id);
 
-        ItemStack newBackgroundPicture = customMenu.getBackgroundPictures().get(id).createItem();
+        MCCItemStack newBackgroundPicture = customMenu.getBackgroundPictures().get(id).createItem();
         if(activeBackgroundPicture != null && activeBackgroundPicture.equals(newBackgroundPicture))
             return;
 

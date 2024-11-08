@@ -7,4 +7,9 @@ public record StringExpression(String expression) implements CodeExpression {
     public void write(CodeLineBuilder codeLineBuilder) {
         codeLineBuilder.append(expression);
     }
+
+    @Override
+    public String toString() {
+        return expression;
+    }
 }

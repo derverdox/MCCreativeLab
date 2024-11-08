@@ -1,5 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+
 import java.util.Map;
 import java.util.Stack;
 
@@ -9,16 +11,16 @@ import java.util.Stack;
 public class PlayerGUIStack implements Listener {
 
     private final Stack<StackElement> stack = new Stack<>();
-    private final Player player;
+    private final MCCPlayer player;
 
-    static PlayerGUIStack load(Player player) {
-        if(!player.hasMetadata("playerGUIStack"))
-            player.setMetadata("playerGUIStack", new FixedMetadataValue(MCCreativeLabExtension.getInstance(), new PlayerGUIStack(player)));
+    static PlayerGUIStack load(MCCPlayer player) {
+        if (!player.containsData("playerGUIStack"))
+            player.storeData("playerGUIStack", new PlayerGUIStack(player));
 
-        return (PlayerGUIStack) player.getMetadata("playerGUIStack").get(0).value();
+        return player.getData(PlayerGUIStack.class, "playerGUIStack");
     }
 
-    public PlayerGUIStack(Player player) {
+    public PlayerGUIStack(MCCPlayer player) {
         this.player = player;
         Bukkit.getPluginManager().registerEvents(this, MCCreativeLabExtension.getInstance());
     }
@@ -34,14 +36,13 @@ public class PlayerGUIStack implements Listener {
     public void onInventoryClose(GUICloseEvent e) {
         if (stack.isEmpty() || e.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW))
             return;
-        if(e.getReason().equals(InventoryCloseEvent.Reason.PLAYER)){
+        if (e.getReason().equals(InventoryCloseEvent.Reason.PLAYER)) {
             popAndOpenLast(e.getPlayer(), e.getActiveGUI());
-        }
-        else
+        } else
             clear();
     }
 
-    public void popAndOpenLast(Player player, ActiveGUI activeGUI) {
+    public void popAndOpenLast(MCCPlayer player, ActiveGUI activeGUI) {
         StackElement stackElement = stack.pop();
 
         if (stackElement.activeGUI.getComponentRendered().equals(activeGUI.getComponentRendered()))

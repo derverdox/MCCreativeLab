@@ -6,19 +6,49 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public interface ItemComponentEditor<T extends MCCItemComponentType> {
+/**
+ * Used to edit an item component
+ *
+ * @param <R> the generic type of the component
+ * @param <T> the component type
+ */
+public interface ItemComponentEditor<R, T extends MCCDataComponentType<R>> {
 
-    @Nullable T get();
+    /**
+     * Reads the value from the component
+     *
+     * @return the component value
+     */
+    @Nullable R get();
 
-    void set(@Nullable T data);
+    /**
+     * Sets the value in the component
+     *
+     * @param data the new value
+     */
+    void set(@Nullable R data);
 
-    @NotNull T create();
+    /**
+     * Creates a new value
+     *
+     * @return the new value
+     */
+    @NotNull R create();
 
-    default void with(@NotNull Consumer<T> consumer) {
+    /**
+     *
+     * @param consumer
+     */
+    default void with(@NotNull Consumer<R> consumer) {
         Objects.requireNonNull(consumer);
-        T component = create();
+        R component = create();
         consumer.accept(component);
         set(component);
     }
 
+    /**
+     * Gets the {@link MCCDataComponentType}
+     * @return the type
+     */
+    T type();
 }
