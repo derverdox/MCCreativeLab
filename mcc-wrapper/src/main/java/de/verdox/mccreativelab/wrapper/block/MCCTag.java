@@ -1,8 +1,10 @@
 package de.verdox.mccreativelab.wrapper.block;
 
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -14,7 +16,7 @@ import java.util.Set;
  *
  * @param <T> the tag type
  */
-public interface MCCTag<T extends MCCKeyedWrapper> {
+public interface MCCTag<T extends MCCKeyedWrapper> extends MCCWrapped, Keyed {
 
     /**
      * Creates a new tag of blocks.
@@ -68,32 +70,28 @@ public interface MCCTag<T extends MCCKeyedWrapper> {
         }
     }
 
-    class CustomTag<T extends MCCKeyedWrapper> extends MCCKeyedWrapper.Impl<Set<T>> implements MCCTag<T> {
+    class CustomTag<T extends MCCKeyedWrapper> implements MCCTag<T> {
         private final Key key;
+        private final Set<T> handle;
 
         protected CustomTag(Key key, Set<T> handle) {
-            super(handle);
             this.key = key;
+            this.handle = handle;
         }
 
         @Override
         public Set<T> getValues() {
-            return Set.copyOf(getHandle());
+            return Set.copyOf(handle);
         }
 
         @Override
         public boolean isTagged(T value) {
-            return getHandle().contains(value);
+            return handle.contains(value);
         }
 
         @Override
         public @NotNull Key key() {
             return key;
-        }
-
-        @Override
-        public boolean isVanilla() {
-            return false;
         }
     }
 

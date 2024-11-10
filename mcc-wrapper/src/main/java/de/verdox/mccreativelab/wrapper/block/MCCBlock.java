@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.wrapper.block;
 
+import de.verdox.mccreativelab.wrapper.platform.TempDataHolder;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
@@ -12,7 +13,7 @@ import java.util.Collection;
 /**
  * Describes an actual block in a minecraft world with a location and a type
  */
-public interface MCCBlock extends MCCKeyedWrapper {
+public interface MCCBlock extends MCCKeyedWrapper, TempDataHolder {
     /**
      * Returns the location of this block
      * @return

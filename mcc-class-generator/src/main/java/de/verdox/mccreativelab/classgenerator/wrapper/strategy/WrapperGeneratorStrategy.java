@@ -1,11 +1,15 @@
 package de.verdox.mccreativelab.classgenerator.wrapper.strategy;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.ConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.util.FieldNameUtil;
+
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.platform.adapter.MCCAdapters;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -17,24 +21,31 @@ import java.util.*;
 public interface WrapperGeneratorStrategy {
 
     List<ParameterOrRecord> collectParametersForGettersAndSetters(Class<?> nmsClass);
+
     CodeExpression createInstantiationExpression(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator, Map<ParameterOrRecord, LocalVariableAssignment> parameters);
 
-    default String getApiGetterMethodName(ParameterOrRecord parameter){
+    default String getApiGetterMethodName(ParameterOrRecord parameter) {
         String capitalizedParameterName = FieldNameUtil.capitalize(parameter.getName());
         return "get" + capitalizedParameterName;
     }
 
-    default String getApiSetterMethodName(ParameterOrRecord parameter){
+    default String getApiSetterMethodName(ParameterOrRecord parameter) {
         String capitalizedParameterName = FieldNameUtil.capitalize(parameter.getName());
         return "with" + capitalizedParameterName;
     }
 
-    default String getImplGetterMethodName(ParameterOrRecord parameter){
-        return getApiGetterMethodName(parameter)+"FromImpl";
+    default String getImplGetterMethodName(ParameterOrRecord parameter) {
+        return getApiGetterMethodName(parameter) + "FromImpl";
     }
 
     default void createGetterAndSetter(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator) {
         List<ParameterOrRecord> parameters = collectParametersForGettersAndSetters(nmsClass);
+        implBuilder.includeImport(DynamicType.of(MCCPlatform.class));
+        implBuilder.includeImport(DynamicType.of(TypeToken.class));
+        implBuilder.includeImport(DynamicType.of(List.class));
+        implBuilder.includeImport(DynamicType.of(ArrayList.class));
+        implBuilder.includeImport(DynamicType.of(Set.class));
+        implBuilder.includeImport(DynamicType.of(HashSet.class));
 
         //TODO: Create a private utility function to gather those information
         Map<ParameterOrRecord, String> parameterToGetter = new HashMap<>();
@@ -56,7 +67,6 @@ public interface WrapperGeneratorStrategy {
             DynamicType parameterTypeNotSwapped = DynamicType.of(parameter.getGenericType(), false);
 
             CodeExpression notSwappedStandardValue = parameterTypeNotSwapped.getDefaultValueAsString();
-
 
 
             String apiGetterMethodName = getApiGetterMethodName(parameter);
@@ -88,8 +98,8 @@ public interface WrapperGeneratorStrategy {
                     }
 
                     methodCode.append("return ");
-                    converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                    CodeExpression converterExpression = createConverterExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped, converterGenerator);
+                    //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
+                    CodeExpression converterExpression = createImplToApiExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped, converterGenerator);
                     methodCode.append(converterExpression);
                     methodCode.appendAndNewLine(";");
                 });
@@ -116,7 +126,6 @@ public interface WrapperGeneratorStrategy {
                     if (!param.equals(parameter)) {
 
 
-
                         variables.put(param, new LocalVariableAssignment("param" + (counter++), new StringExpression(getImplGetterMethodName(param) + "()")));
                         variables.get(param).write(codeLineBuilder);
                         continue;
@@ -124,8 +133,8 @@ public interface WrapperGeneratorStrategy {
 
 
                     if (isParameterSwapped) {
-                        converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                        CodeExpression conversionExpression = createConverterExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped, converterGenerator);
+                        //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
+                        CodeExpression conversionExpression = createApiToImplExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped, converterGenerator);
                         variables.put(param, new LocalVariableAssignment("param" + (counter++), conversionExpression));
                     } else {
                         variables.put(param, new LocalVariableAssignment("param" + (counter++), new StringExpression(parameter.getName())));
@@ -149,14 +158,28 @@ public interface WrapperGeneratorStrategy {
         return fieldOfParameter;
     }
 
-    private static CodeExpression createConverterExpression(CodeExpression variableToConvert, DynamicType from, DynamicType to, ConverterGenerator converterGenerator) {
-        String functionName = converterGenerator.getConverterFunctionName(from, to);
-        return new StringExpression("NMSConverter.INSTANCE.get()." + functionName + "(").with(variableToConvert).with(")");
+    private static CodeExpression createApiToImplExpression(String variableToConvert, DynamicType api, DynamicType impl, ConverterGenerator converterGenerator) {
+        if (api.compareWithoutGenerics(DynamicType.of(Optional.class)) && impl.compareWithoutGenerics(DynamicType.of(Optional.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapOptional(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {})");
+        } else if (api.compareWithoutGenerics(DynamicType.of(List.class)) && impl.compareWithoutGenerics(DynamicType.of(List.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapCollection(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {}, ArrayList::new)");
+        } else if (api.compareWithoutGenerics(DynamicType.of(Set.class)) && impl.compareWithoutGenerics(DynamicType.of(Set.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapCollection(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {}, HashSet::new)");
+        } else {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrap(" + variableToConvert + ", new TypeToken<" + impl + ">() {})");
+        }
     }
 
-    private static CodeExpression createConverterExpression(String variableToConvert, DynamicType from, DynamicType to, ConverterGenerator converterGenerator) {
-        String functionName = converterGenerator.getConverterFunctionName(from, to);
-        return new StringExpression("NMSConverter.INSTANCE.get()." + functionName + "(" + variableToConvert + ")");
+    private static CodeExpression createImplToApiExpression(String variableToConvert, DynamicType impl, DynamicType api, ConverterGenerator converterGenerator) {
+        if (api.compareWithoutGenerics(DynamicType.of(Optional.class)) && impl.compareWithoutGenerics(DynamicType.of(Optional.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapOptional(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {})");
+        } else if (api.compareWithoutGenerics(DynamicType.of(List.class)) && impl.compareWithoutGenerics(DynamicType.of(List.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapCollection(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {}, ArrayList::new)");
+        } else if (api.compareWithoutGenerics(DynamicType.of(Set.class)) && impl.compareWithoutGenerics(DynamicType.of(Set.class))) {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapCollection(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {}, HashSet::new)");
+        } else {
+            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrap(" + variableToConvert + ", new TypeToken<" + api + ">() {})");
+        }
     }
 
     default @Nullable java.lang.reflect.Constructor<?> findConstructorWithMostNumberOfArguments(Class<?> nmsClass) {
@@ -202,11 +225,11 @@ public interface WrapperGeneratorStrategy {
             this(null, recordComponent);
         }
 
-        public String getName(){
+        public String getName() {
             return parameter != null ? parameter.getName() : recordComponent.getName();
         }
 
-        public Type getGenericType(){
+        public Type getGenericType() {
             return parameter != null ? parameter.getParameterizedType() : recordComponent.getGenericType();
         }
     }

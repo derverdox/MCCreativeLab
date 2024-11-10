@@ -1,9 +1,14 @@
 package de.verdox.mccreativelab.wrapper.platform;
 
 import de.verdox.mccreativelab.Singleton;
+import de.verdox.mccreativelab.conversion.ConversionService;
+import de.verdox.mccreativelab.wrapper.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.event.MCCEvent;
 import de.verdox.mccreativelab.wrapper.inventory.factory.MCCContainerFactory;
+import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -40,10 +45,17 @@ public interface MCCPlatform {
      */
     MCCTaskManager getTaskManager();
 
+    /**
+     * Returns the typed key factory of this platform
+     *
+     * @return the factory
+     */
+    TypedKeyFactory getTypedKeyFactory();
+
+    ConversionService getConversionService();
 
     void callEvent(MCCEvent mccEvent);
 
 
     @Nullable MCCPlayer getOnlinePlayer(UUID uuid);
-
 }

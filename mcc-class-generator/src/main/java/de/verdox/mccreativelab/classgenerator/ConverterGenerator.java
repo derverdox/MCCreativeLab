@@ -4,13 +4,9 @@ import de.verdox.mccreativelab.Singleton;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.GenericDeclaration;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter;
 import de.verdox.mccreativelab.wrapper.platform.adapter.WrapperAdapter;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.block.BlockFace;
-import org.bukkit.inventory.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +16,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ConverterGenerator {
     public static final Logger LOGGER = Logger.getLogger(ConverterGenerator.class.getName());
@@ -135,12 +130,47 @@ public class ConverterGenerator {
         }
 
         variants.forEach((types, genericVariants) -> {
+            if (types.api().compareWithoutGenerics(DynamicType.of(List.class)))
+                return;
 
             String className = "NMS" + types.impl().getClassDescription().getClassName() + "Adapter";
             ClassBuilder classBuilder = new ClassBuilder();
-            classBuilder.withPackage(converterClassPackage+".adapters");
-            classBuilder.withHeader("public", ClassBuilder.ClassHeader.INTERFACE, className, "");
+            classBuilder.withPackage(converterClassPackage + ".adapters");
+            classBuilder.withHeader("public", ClassBuilder.ClassHeader.CLASS, className, "");
             classBuilder.implementsClasses(DynamicType.of(WrapperAdapter.class).withAddedGeneric(types.impl()).withAddedGeneric(types.api()));
+
+            classBuilder.includeImport(types.api());
+            classBuilder.includeImport(types.impl());
+            classBuilder.includeImport(DynamicType.of(WrapperAdapter.class));
+
+            classBuilder.withMethod("public", "getPlatformType", DynamicType.of(Class.class).withAddedGeneric(types.impl()), methodCode -> {
+                methodCode.appendAndNewLine("return " + types.impl().getTypeName() + ".class;");
+            });
+
+            classBuilder.withMethod("public", "getApiType", DynamicType.of(Class.class).withAddedGeneric(types.api()), methodCode -> {
+                methodCode.appendAndNewLine("return " + types.api().getTypeName() + ".class;");
+            });
+
+            classBuilder.withMethod("public", "apiToPlatform", types.impl(), methodCode -> {
+
+                for (ApiToImpl genericVariant : genericVariants) {
+                    methodCode.appendAndNewLine("if(wrappedObject instanceof " + genericVariant.api() + ") {");
+                    methodCode.appendAndNewLine("return null;");
+                    methodCode.appendAndNewLine("}");
+                }
+
+                methodCode.appendAndNewLine("return null;");
+            }, new Parameter(types.api(), "wrappedObject"));
+
+            classBuilder.withMethod("public", "platformToApi", types.api(), methodCode -> {
+                methodCode.appendAndNewLine("return null;");
+            }, new Parameter(types.impl(), "platformObject"));
+
+            try {
+                classBuilder.writeClassFile(sourceDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 

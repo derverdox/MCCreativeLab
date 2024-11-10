@@ -31,7 +31,9 @@ public interface MCCBlockState extends MCCKeyedWrapper {
      * @param location     the location to change the block at
      * @param applyPhysics whether the change should trigger block updates
      */
-    void setBlock(@NotNull MCCLocation location, boolean applyPhysics);
+    default void setBlock(@NotNull MCCLocation location, boolean applyPhysics){
+        location.world().setBlock(this, location, applyPhysics);
+    }
 
     /**
      * The block state string describing the state and its variables

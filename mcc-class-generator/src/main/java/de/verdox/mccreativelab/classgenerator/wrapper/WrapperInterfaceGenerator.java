@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.classgenerator.wrapper;
 
+import de.verdox.mccreativelab.classgenerator.AbstractClassGenerator;
 import de.verdox.mccreativelab.classgenerator.ConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
@@ -22,21 +23,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-public class WrapperInterfaceGenerator {
+public class WrapperInterfaceGenerator extends AbstractClassGenerator {
     public static final Logger LOGGER = Logger.getLogger(WrapperInterfaceGenerator.class.getName());
 
-    private final String wrapperSuffix;
-    private final List<Class<?>> excludedTypes;
-    private final List<String> excludedPackages;
-    private final File srcDir;
-    private final String wrapperPrefix;
-
     public WrapperInterfaceGenerator(File srcDir, String wrapperPrefix, String wrapperSuffix, List<Class<?>> excludedTypes, List<String> excludedPackages) {
-        this.srcDir = srcDir;
-        this.wrapperPrefix = wrapperPrefix;
-        this.wrapperSuffix = wrapperSuffix;
-        this.excludedTypes = excludedTypes;
-        this.excludedPackages = excludedPackages;
+        super(srcDir, wrapperPrefix, wrapperSuffix, excludedTypes, excludedPackages);
     }
 
     @Nullable
@@ -49,7 +40,7 @@ public class WrapperInterfaceGenerator {
     }
 
     private WrappedClass generateWrapper(Class<?> nmsClass, String apiPackage, String implPackage, boolean isInnerClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator, DynamicType wrapperParentClass) {
-        String interfaceName = wrapperPrefix + nmsClass.getSimpleName();
+        String interfaceName = prefix + nmsClass.getSimpleName();
         String implName = interfaceName + "Impl";
         interfaceBuilder.withPackage(apiPackage);
 
@@ -57,7 +48,7 @@ public class WrapperInterfaceGenerator {
         if (nmsClass.isEnum()) {
             header = ClassBuilder.ClassHeader.ENUM;
         }
-        interfaceBuilder.withHeader(isInnerClass ? "public static" : "public", header, interfaceName, wrapperSuffix);
+        interfaceBuilder.withHeader(isInnerClass ? "public static" : "public", header, interfaceName, suffix);
 
         if (nmsClass.isEnum()) {
             if (wrapperParentClass != null) {

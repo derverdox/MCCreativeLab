@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.wrapper.item;
 
-import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import net.kyori.adventure.text.Component;
@@ -108,8 +107,4 @@ public interface MCCItemStack {
      * @return a copy of the item
      */
     MCCItemStack copy();
-
-    default int getMaxStackSize() {
-        return editAndGet(MCCDataComponentType.MAX_STACK_SIZE, ItemComponentEditor::get);
-    }
 }

@@ -163,11 +163,11 @@ public class DynamicType {
     }
 
     public DynamicType withNoGenerics() {
-
         DynamicType dynamicType = new DynamicType();
         dynamicType.importedClasses = new HashSet<>(this.importedClasses);
-        dynamicType.genericTypes = new LinkedList<>(this.genericTypes);
         dynamicType.arrayComponentType = this.arrayComponentType;
+
+        genericTypes.stream().map(DynamicType::getClassDescription).toList().forEach(dynamicType.importedClasses::remove);
 
         dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
         dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);

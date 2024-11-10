@@ -22,16 +22,4 @@ public interface WrapperAdapter<F, T> {
      * @return the wrapped object
      */
     T platformToApi(F platformObject);
-
-    /**
-     * Returns the platform type
-     * @return the platform type
-     */
-    Class<F> getPlatformType();
-
-    /**
-     * Returns the wrapped type
-     * @return the wrapped type
-     */
-    Class<T> getApiType();
 }

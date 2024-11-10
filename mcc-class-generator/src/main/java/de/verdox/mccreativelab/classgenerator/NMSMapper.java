@@ -4,6 +4,9 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
+import de.verdox.mccreativelab.wrapper.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
@@ -13,6 +16,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -22,6 +26,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.EitherHolder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -53,10 +58,12 @@ public class NMSMapper {
 
     static {
         // NMS to adventure
-        register(EitherHolder.class, Key.class);
-        register(ResourceKey.class, Key.class);
         register(ResourceLocation.class, Key.class);
-        register(Holder.class, Key.class);
+
+        register(ResourceKey.class, MCCTypedKey.class, true);
+        register(EitherHolder.class, MCCTypedKey.class, true);
+        register(Holder.class, MCCTypedKey.class, true);
+
         register(Component.class, net.kyori.adventure.text.Component.class);
         register(MutableComponent.class, net.kyori.adventure.text.Component.class);
 
@@ -64,8 +71,10 @@ public class NMSMapper {
         register(GlobalPos.class, MCCLocation.class);
         register(Block.class, MCCBlockType.class);
         register(ItemStack.class, MCCItemStack.class);
+        register(Item.class, MCCItemType.class);
         register(ItemLike.class, MCCItemStack.class);
         register(BlockState.class, MCCBlockState.class);
+        register(DataComponentType.class, MCCDataComponentType.class, true);
 
         // NMS to Bukkit
 

@@ -16,7 +16,19 @@ public interface MCCBlockType extends MCCKeyedWrapper {
      *
      * @param location the location to change the block at
      */
-    void setBlock(@NotNull MCCLocation location);
+    default void setBlock(@NotNull MCCLocation location){
+        setBlock(location, false);
+    }
+
+    /**
+     * Changes a block at the provided location to this block type
+     *
+     * @param location the location to change the block at
+     * @param applyPhysics whether a block update is triggered
+     */
+    default void setBlock(@NotNull MCCLocation location, boolean applyPhysics){
+        location.world().setBlock(this, location, applyPhysics);
+    }
 
     /**
      * Returns all defined block states for this block type

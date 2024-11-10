@@ -1,6 +1,6 @@
 package de.verdox.mccreativelab.wrapper.platform.adapter;
 
-public class NoAdapterFoundException extends Exception {
+public class NoAdapterFoundException extends RuntimeException {
     public NoAdapterFoundException() {
     }
 
