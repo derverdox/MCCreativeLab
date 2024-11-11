@@ -4,11 +4,12 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.item.components.NMSItemComponentEditor;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
-import de.verdox.mccreativelab.wrapper.platform.adapter.MCCAdapters;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.text.Component;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -67,22 +68,22 @@ public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
 
     @Override
     public Component name() {
-        return MCCAdapters.getAdapter(new TypeToken<Component>() {}).wrap(handle.get(DataComponents.ITEM_NAME));
+        return MCCPlatform.getInstance().getConversionService().wrap(handle.get(DataComponents.ITEM_NAME), new TypeToken<>() {});
     }
 
     @Override
     public void name(Component name) {
-        handle.set(DataComponents.ITEM_NAME, MCCAdapters.getAdapter(new TypeToken<Component>() {}).unwrap(new TypeToken<>() {}, name));
+        handle.set(DataComponents.ITEM_NAME, MCCPlatform.getInstance().getConversionService().unwrap(name, net.minecraft.network.chat.Component.class));
     }
 
     @Override
     public Component customName() {
-        return MCCAdapters.getAdapter(new TypeToken<Component>() {}).wrap(handle.get(DataComponents.CUSTOM_NAME));
+        return MCCPlatform.getInstance().getConversionService().wrap(handle.get(DataComponents.CUSTOM_NAME), new TypeToken<>() {});
     }
 
     @Override
     public void customName(Component name) {
-        handle.set(DataComponents.CUSTOM_NAME, MCCAdapters.getAdapter(new TypeToken<Component>() {}).unwrap(new TypeToken<>() {}, name));
+        handle.set(DataComponents.CUSTOM_NAME, MCCPlatform.getInstance().getConversionService().unwrap(name, net.minecraft.network.chat.Component.class));
     }
 
     @Override

@@ -40,6 +40,18 @@ public interface ConversionService {
     <A, T extends A, F> void registerCustomPlatformType(Class<A> apiType, MCCConverter<F, T> converter);
 
     /**
+     * Used to register a direct converter between an API type and a native Type. The direct converter decides on the implementation of the api type.
+     * This is useful for conversions between other apis like the adventure api and the minecraft native components.
+     * Since we cannot control how an interface of the adventure api is implemented we use a direct converter.
+     *
+     * @param apiType   The api type
+     * @param converter the converter that converts between the impl and the native object
+     * @param <A>       the generic api type
+     * @param <F>       the generic native type
+     */
+    <A, F> void registerDirectConverter(Class<A> apiType, MCCConverter<F, A> converter);
+
+    /**
      * Used to find platform implementations of MCC Wrapper classes.
      * For example, we could search for Implementation classes of {@link de.verdox.mccreativelab.wrapper.block.MCCBlockType}
      *
@@ -135,7 +147,7 @@ public interface ConversionService {
      * @return the wrapped object
      */
     default Object wrap(Object nativeObject) {
-        Class<?> apiType = findAPITypeForNativeClass(nativeObject.getClass());
+        Class<?> apiType = findAPITypeForNativeClass(findClosestRelativeNativeType(nativeObject.getClass()));
         if (apiType == null)
             return nativeObject;
         return wrap(nativeObject, apiType);
@@ -154,6 +166,27 @@ public interface ConversionService {
             return platformImpl;
         return unwrap(platformImpl, nativeType);
     }
+
+    /**
+     * Checks whether the provided native type is used in a converter known to this service
+     *
+     * @param nativeType the native type
+     * @return true if it is known
+     */
+    boolean isNativeTypeKnown(Class<?> nativeType);
+
+    boolean isApiTypeKnown(Class<?> apiType);
+
+    /**
+     * Used to find the native type that is the closest related to any known native type
+     *
+     * @param nativeType the provided native type
+     * @return a registered native type that is a supertype of the provided native type
+     */
+    @Nullable
+    Class<?> findClosestRelativeNativeType(Class<?> nativeType);
+
+    Class<?> findClosestRelativeApiType(Class<?> implType);
 
 /*    default <F, T> Optional<T> wrapOptional(Optional<F> optionalWithObjectToWrap, TypeToken<T> apiTypeToConvertTo) {
         return optionalWithObjectToWrap.map(f -> wrap(f, apiTypeToConvertTo));

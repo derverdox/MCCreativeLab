@@ -19,4 +19,8 @@ public class Singleton<T> {
             throw new IllegalStateException("The singleton "+type+" was not setup by the running server platform. Please provide a valid implementation by using the setup function.");
         return singleton;
     }
+
+    public boolean isSetup(){
+        return this.singleton != null;
+    }
 }

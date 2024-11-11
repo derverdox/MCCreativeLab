@@ -9,11 +9,9 @@ import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
-import de.verdox.mccreativelab.wrapper.platform.adapter.MCCAdapters;
-import de.verdox.mccreativelab.wrapper.platform.adapter.WrapperAdapter;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSPlayer extends NMSEntity<Player> implements MCCPlayer {
@@ -26,7 +24,7 @@ public class NMSPlayer extends NMSEntity<Player> implements MCCPlayer {
 
     @Override
     public MCCContainer getInventory() {
-        return MCCAdapters.getAdapter(new TypeToken<MCCContainer>() {}).wrap(handle.getInventory());
+        return MCCPlatform.getInstance().getConversionService().wrap(handle.getInventory(), new TypeToken<>() {});
     }
 
     @Override

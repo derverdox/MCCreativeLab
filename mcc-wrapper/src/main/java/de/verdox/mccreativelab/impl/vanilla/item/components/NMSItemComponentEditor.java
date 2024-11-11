@@ -30,7 +30,8 @@ public record NMSItemComponentEditor<R, T extends MCCDataComponentType<R>>(ItemS
             itemStack.set(nativeDataComponentType, null);
             return;
         }
-        itemStack.set(nativeDataComponentType, MCCPlatform.getInstance().getConversionService().unwrap(data));
+
+        itemStack.set(nativeDataComponentType, MCCPlatform.getInstance().getConversionService().unwrap(data, type.nativeType()));
     }
 
     @Override

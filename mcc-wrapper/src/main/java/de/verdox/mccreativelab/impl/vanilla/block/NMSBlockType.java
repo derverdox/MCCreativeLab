@@ -6,7 +6,7 @@ import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
-import de.verdox.mccreativelab.wrapper.platform.adapter.MCCAdapters;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +24,7 @@ public class NMSBlockType extends NMSHandle<Block> implements MCCBlockType {
 
     @Override
     public List<MCCBlockState> getAllBlockStates() {
-        return handle.getStateDefinition().getPossibleStates().stream().map(blockState -> MCCAdapters.getAdapter(new TypeToken<MCCBlockState>() {}).wrap(blockState)).toList();
+        return handle.getStateDefinition().getPossibleStates().stream().map(blockState -> MCCPlatform.getInstance().getConversionService().wrap(blockState, new TypeToken<MCCBlockState>() {})).toList();
     }
 
     @Override

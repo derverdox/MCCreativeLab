@@ -5,7 +5,6 @@ import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
-import de.verdox.mccreativelab.wrapper.platform.adapter.WrapperAdapter;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import net.kyori.adventure.key.Key;
 import net.minecraft.world.entity.EntityType;

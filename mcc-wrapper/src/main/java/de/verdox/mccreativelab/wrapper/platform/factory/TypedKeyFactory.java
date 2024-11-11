@@ -1,9 +1,11 @@
 package de.verdox.mccreativelab.wrapper.platform.factory;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.wrapper.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import net.kyori.adventure.key.Key;
+
+import java.util.List;
 
 /**
  * Used to create typed keys
@@ -19,4 +21,8 @@ public interface TypedKeyFactory {
      * @return the typed key
      */
     <T extends MCCWrapped> MCCTypedKey<T> getKey(Key key, Key registryKey, TypeToken<T> type);
+
+    <T extends MCCWrapped> MCCTag<T> createTag(Key key, Key registryKey, TypeToken<T> type);
+
+    <T extends MCCWrapped> MCCReferenceSet<T> createImmutableSetWithoutKey(List<MCCRegistry<T>> references);
 }

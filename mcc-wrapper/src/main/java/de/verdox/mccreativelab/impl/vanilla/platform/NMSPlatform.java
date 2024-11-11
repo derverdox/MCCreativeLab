@@ -8,13 +8,11 @@ import de.verdox.mccreativelab.impl.vanilla.entity.NMSEntity;
 import de.verdox.mccreativelab.impl.vanilla.entity.NMSEntityType;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemType;
-import de.verdox.mccreativelab.impl.vanilla.platform.converter.EitherHolderConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.converter.HolderConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.converter.HolderSetConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceKeyConverter;
+import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.factory.NMSTypedKeyFactory;
+import de.verdox.mccreativelab.impl.vanilla.registry.*;
 import de.verdox.mccreativelab.impl.vanilla.world.NMSWorld;
-import de.verdox.mccreativelab.wrapper.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
@@ -28,9 +26,9 @@ import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTaskManager;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
 import java.util.UUID;
 
 public class NMSPlatform implements MCCPlatform {
@@ -46,10 +44,13 @@ public class NMSPlatform implements MCCPlatform {
         getConversionService().registerPlatformType(MCCItemType.class, NMSItemType.CONVERTER);
         getConversionService().registerPlatformType(MCCWorld.class, NMSWorld.CONVERTER);
 
-        getConversionService().registerPlatformType(MCCTypedKey.class, new ResourceKeyConverter());
-        getConversionService().registerPlatformType(MCCTypedKey.class, new HolderConverter());
-        getConversionService().registerPlatformType(MCCTypedKey.class, new EitherHolderConverter());
-        getConversionService().registerPlatformType(Set.class, new HolderSetConverter());
+        getConversionService().registerDirectConverter(Key.class, new ResourceLocationConverter());
+        getConversionService().registerPlatformType(MCCTypedKey.class, NMSTypedKey.CONVERTER);
+        getConversionService().registerPlatformType(MCCReference.class, NMSReference.CONVERTER);
+        getConversionService().registerPlatformType(MCCTag.class, NMSTag.CONVERTER);
+        getConversionService().registerPlatformType(MCCReferenceSet.class, NMSReferenceSet.CONVERTER);
+        getConversionService().registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
+        getConversionService().registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
     }
 
     @Override

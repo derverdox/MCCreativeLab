@@ -1,16 +1,23 @@
 package de.verdox.mccreativelab.conversion;
 
+import de.verdox.mccreativelab.TestBase;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StonecutterBlock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,21 +28,22 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ConverterTests {
+public class ConverterTests extends TestBase {
 
     private record TestEntry<A, T extends A, F>(Class<A> apiType, MCCConverter<F, T> converter, T implObject,
-                                                F nativeObject) {
+                                                F nativeObject, boolean shouldRegister) {
         private void register() {
-            System.out.println("Register converter (" + converter().apiImplementationClass() + " <->" + converter().nativeMinecraftType() + ") for api type: " + apiType());
-            MCCPlatform.getInstance().getConversionService().registerCustomPlatformType(apiType(), converter());
+            if (shouldRegister) {
+                MCCPlatform.getInstance().getConversionService().registerCustomPlatformType(apiType(), converter());
+            }
         }
 
         @Override
         public String toString() {
             return "TestEntry{" +
-                "apiType=" + apiType +
-                ", implType=" + converter.apiImplementationClass() +
-                ", nativeType=" + converter.nativeMinecraftType() +
+                "apiType=" + apiType.getSimpleName() +
+                ", implType=" + converter.apiImplementationClass().getSimpleName() +
+                ", nativeType=" + converter.nativeMinecraftType().getSimpleName() +
                 ", implObject=" + implObject +
                 ", nativeObject=" + nativeObject +
                 '}';
@@ -48,24 +56,26 @@ public class ConverterTests {
         return testEntries.stream();
     }
 
+    //TODO We also need tests for cases when we want to wrap classes that extend a registered native type.
+
     @BeforeAll
     public static void setupTestEntries() {
-        testEntries.add(new TestEntry<>(MCCBlockType.class, TestBlockTypeImpl.CONVERTER, new TestBlockTypeImpl((StonecutterBlock) Blocks.STONECUTTER), (StonecutterBlock) Blocks.STONECUTTER));
+        testEntries.add(new TestEntry<>(MCCBlockType.class, TestBlockTypeImpl.CONVERTER, new TestBlockTypeImpl((StonecutterBlock) Blocks.STONECUTTER), (StonecutterBlock) Blocks.STONECUTTER, true));
         ItemStack stone = new ItemStack(Items.STONE);
-        testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyStoneItemStack.CONVERTER, new OnlyStoneItemStack(stone), stone));
+        testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyStoneItemStack.CONVERTER, new OnlyStoneItemStack(stone), stone, true));
         ItemStack log = new ItemStack(Items.ACACIA_LOG);
-        testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyLogItemStack.CONVERTER, new OnlyLogItemStack(log), log));
+        testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyLogItemStack.CONVERTER, new OnlyLogItemStack(log), log, true));
+        StairBlock stairBlock = (StairBlock) Blocks.STONE_STAIRS;
+        testEntries.add(new TestEntry<>(MCCBlockType.class, NMSBlockType.CONVERTER, new NMSBlockType(stairBlock), stairBlock, false));
+        ResourceKey<Block> blockResourceKey = BuiltInRegistries.BLOCK.getResourceKey(Blocks.KELP).get();
+        //testEntries.add(new TestEntry<>(MCCTypedKey.class, new ResourceKeyConverter(), new NMSTypedKey<>(blockResourceKey), blockResourceKey, false));
+        Holder.Reference<Block> blockReference = BuiltInRegistries.BLOCK.getHolder(blockResourceKey).get();
+        //testEntries.add(new TestEntry<>(MCCTypedKey.class, new HolderConverter(), new NMSTypedKey<>(blockResourceKey), blockReference, false));
+
+
         for (TestEntry<?, ?, ?> testEntry : testEntries) {
             testEntry.register();
         }
-    }
-
-    @BeforeAll
-    public static void bootstrap() {
-        SharedConstants.tryDetectVersion();
-        Bootstrap.bootStrap();
-        Bootstrap.validate();
-        MCCPlatform.INSTANCE.setup(new NMSPlatform());
     }
 
     @Test

@@ -1,7 +1,8 @@
 package de.verdox.mccreativelab.impl.vanilla.platform;
 
+import de.verdox.mccreativelab.conversion.NoConverterFoundException;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.wrapper.platform.adapter.WrapperAdapter;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 
 import java.util.Objects;
 import java.util.function.Function;

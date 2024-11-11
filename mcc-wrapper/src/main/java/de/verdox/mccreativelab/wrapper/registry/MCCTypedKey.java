@@ -1,5 +1,6 @@
-package de.verdox.mccreativelab.wrapper;
+package de.verdox.mccreativelab.wrapper.registry;
 
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
@@ -7,7 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public interface MCCTypedKey<T> extends Keyed {
+/**
+ * Represents key value pairs that point to a data object in the minecraft registries
+ *
+ * @param <T>
+ */
+public interface MCCTypedKey<T> extends Keyed, MCCWrapped {
     /**
      * Reads the value from the registry where it is stored or null if the value is not stored in any known registry
      *
@@ -31,7 +37,15 @@ public interface MCCTypedKey<T> extends Keyed {
 
     /**
      * Returns the key of the registry this typed key belongs to
+     *
      * @return the registry key
      */
     Key getRegistryKey();
+
+    /**
+     * Gets a reference of this typed key that wraps the underlying element.
+     *
+     * @return the reference
+     */
+    MCCReference<T> getAsReference();
 }
