@@ -3,6 +3,7 @@ import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import model.TestImplClass;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,12 @@ public class DynamicTypeTests {
     }
 
     @Test
+    public void testClassDescriptionCorrectIfNotSwapped() throws NoSuchFieldException {
+        DynamicType dynamicType = DynamicType.of(Block.class, false);
+        Assertions.assertEquals(new ClassDescription(Block.class), dynamicType.getClassDescription());
+    }
+
+    @Test
     public void testGenericsSetCorrectly() throws NoSuchFieldException {
         Type type = TestImplClass.class.getDeclaredField("simpleListWithSwappableGeneric").getGenericType();
         DynamicType dynamicType = DynamicType.of(type, false);
@@ -32,15 +39,6 @@ public class DynamicTypeTests {
         DynamicType dynamicType = DynamicType.of(type, false);
         Assertions.assertEquals("List<ItemStack>", dynamicType.toString());
     }
-
-/*    @Test
-    public void testToStringWithFakeClassRawTypeSwap() throws NoSuchFieldException {
-        Type type = TestImplClass.class.getDeclaredField("simpleListWithSwappableGeneric").getGenericType();
-        DynamicType listType = DynamicType.of(type, false);
-        DynamicType ABCClassType = DynamicType.of(new ClassDescription("de.verdox.test", "ABCClass", null), false);
-        DynamicType merged = listType.withRawType(ABCClassType);
-        Assertions.assertEquals("ABCClass<ItemStack>", merged.toString());
-    }*/
 
     @Test
     public void testNestedGenerics() throws NoSuchFieldException {

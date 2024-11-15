@@ -1,12 +1,10 @@
 package de.verdox.mccreativelab.classgenerator.wrapper.strategy;
 
-import de.verdox.mccreativelab.classgenerator.ConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.ConstructorCall;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.LocalVariableAssignment;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.StringExpression;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -23,8 +21,8 @@ public class RecordGeneratorStrategy implements WrapperGeneratorStrategy {
     }
 
     @Override
-    public CodeExpression createInstantiationExpression(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator, Map<ParameterOrRecord, LocalVariableAssignment> parameters) {
+    public CodeExpression createInstantiationExpression(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, Map<ParameterOrRecord, LocalVariableAssignment> parameters) {
         DynamicType implType = DynamicType.of(implBuilder.getClassDescription(), false);
-        return new ConstructorCall(implType, new ConstructorCall(DynamicType.of(nmsClass, false), parameters.values().stream().map(localVariableAssignment -> new StringExpression(localVariableAssignment.variableName())).toArray(CodeExpression[]::new)));
+        return new ConstructorCall(implType, new ConstructorCall(DynamicType.of(nmsClass, false), parameters.values().stream().map(localVariableAssignment -> CodeExpression.create().with(localVariableAssignment.variableName())).toArray(CodeExpression[]::new)));
     }
 }

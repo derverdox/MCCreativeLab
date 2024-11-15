@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +31,7 @@ public class ClassBuilder {
     private final List<DynamicType> implementsList = new LinkedList<>();
     private final List<DynamicType> extendsList = new LinkedList<>();
     private final List<GenericDeclaration> genericDeclarations = new LinkedList<>();
+    private final Map<String, DynamicType> uniqueNames = new HashMap<>();
     private boolean isInnerClass;
     private ClassBuilder parent;
     private int depth = 0;
@@ -50,6 +52,10 @@ public class ClassBuilder {
     }
 
     public ClassBuilder withField(String modifier, DynamicType type, String fieldName, String initValue, DynamicType... genericTypes) {
+        return withField(modifier, type, fieldName, CodeExpression.create().with(initValue), genericTypes);
+    }
+
+    public ClassBuilder withField(String modifier, DynamicType type, String fieldName, CodeExpression initValue, DynamicType... genericTypes) {
         Field field = new Field(modifier, type, fieldName, initValue, genericTypes);
         LOGGER.log(Level.FINER, "Including field " + field);
         fields.add(field);
@@ -118,23 +124,27 @@ public class ClassBuilder {
         return this;
     }
 
-    public ClassBuilder withMethod(String modifier, String name, DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
+    public ClassBuilder withMethod(String modifier, String name, @Nullable DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
         Method method = new Method(modifier, name, returnType, content, parameters);
         LOGGER.log(Level.FINER, "Including method " + method);
         methods.add(method);
 
-        includeImport(returnType);
+        if(returnType != null){
+            includeImport(returnType);
+        }
         for (Parameter parameter : parameters)
             includeImport(parameter.type());
         return this;
     }
 
-    public ClassBuilder withMethod(String modifier, List<GenericDeclaration> genericDeclarations, String name, DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
+    public ClassBuilder withMethod(String modifier, List<GenericDeclaration> genericDeclarations, String name, @Nullable DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
         Method method = new Method(modifier, genericDeclarations, name, returnType, content, parameters);
         LOGGER.log(Level.FINER, "Including method " + method);
         methods.add(method);
 
-        includeImport(returnType);
+        if(returnType != null){
+            includeImport(returnType);
+        }
         for (Parameter parameter : parameters)
             includeImport(parameter.type());
         return this;
@@ -179,7 +189,7 @@ public class ClassBuilder {
 
     public ClassBuilder includeImport(DynamicType dynamicType) {
         Objects.requireNonNull(dynamicType);
-        if (dynamicType.getClassDescription().getPackageName().equals(packageName))
+        if (Objects.equals(packageName, dynamicType.getClassDescription().getPackageName()))
             return this;
         if (this.isInnerClass && this.parent != null) {
             this.parent.includeImport(dynamicType);
@@ -217,13 +227,11 @@ public class ClassBuilder {
         CodeLineBuilder constructorBuilder = new CodeLineBuilder(this, depth);
         for (Constructor constructor : constructors) {
             constructor.write(constructorBuilder);
-            constructorBuilder.appendAndNewLine("");
         }
 
         CodeLineBuilder methodsBuilder = new CodeLineBuilder(this, depth);
         for (Method method : methods) {
             method.write(methodsBuilder);
-            methodsBuilder.appendAndNewLine("");
         }
 
         CodeLineBuilder fieldsBuilder = new CodeLineBuilder(this, depth);
@@ -235,6 +243,10 @@ public class ClassBuilder {
 
         CodeLineBuilder importBuilder = new CodeLineBuilder(this, depth);
         for (Import anImport : imports) {
+            Objects.requireNonNull(anImport.classDescription().getClassName(), "No class name found for import: "+anImport);
+            Objects.requireNonNull(anImport.classDescription().getPackageName(), "No class name found for import: "+anImport);
+            if(anImport.classDescription().isPrimitiveType())
+                continue;
             anImport.write(importBuilder);
         }
 
@@ -253,10 +265,8 @@ public class ClassBuilder {
         }
 
         code.append(fieldsBuilder);
-        code.append("\n");
         if (!classHeader.equals(ClassHeader.INTERFACE)) {
             code.append(constructorBuilder);
-            code.append("\n");
         }
         code.append(methodsBuilder);
         code.append(includedClassesBuilder);
@@ -284,7 +294,15 @@ public class ClassBuilder {
                     classTitleBuilder.append(", ");
             }
             classTitleBuilder.append(" ");
-
+        }
+        if (!extendsList.isEmpty()) {
+            classTitleBuilder.append("extends ");
+            for (int i = 0; i < extendsList.size(); i++) {
+                DynamicType extendedType = extendsList.get(i);
+                classTitleBuilder.append(extendedType);
+                if (i < extendsList.size() - 1)
+                    classTitleBuilder.append(", ");
+            }
             classTitleBuilder.append(" ");
         }
         if (!implementsList.isEmpty()) {
@@ -297,18 +315,9 @@ public class ClassBuilder {
             }
             classTitleBuilder.append(" ");
         }
-        if (!extendsList.isEmpty()) {
-            classTitleBuilder.append("extends ");
-            for (int i = 0; i < extendsList.size(); i++) {
-                DynamicType extendedType = extendsList.get(i);
-                classTitleBuilder.append(extendedType);
-                if (i < extendsList.size() - 1)
-                    classTitleBuilder.append(", ");
-            }
-        }
         if (classSuffix != null)
             classTitleBuilder.append(classSuffix);
-        classTitleBuilder.append("{");
+        classTitleBuilder.append(" {");
         classTitleBuilder.appendAndNewLine("");
         classTitleBuilder.appendAndNewLine("");
         return classTitleBuilder;
@@ -335,6 +344,28 @@ public class ClassBuilder {
             LOGGER.log(Level.FINER, "Created java file " + file);
         }
     }
+
+    private void logType(DynamicType type) {
+        if (!uniqueNames.containsKey(type.getTypeName())) {
+            uniqueNames.put(type.getTypeName(), type);
+        }
+        for (DynamicType genericType : type.getGenericTypes()) {
+            logType(genericType);
+        }
+    }
+
+    /**
+     * @param type Checks if this types name was written anywhere in the class builder. If no it returns true. Else the class builder wants it to be written with full package name
+     * @return true if the type was already written in the class, and it's the same type.
+     */
+    public boolean canWriteSimpleName(DynamicType type) {
+        logType(type);
+        boolean canWriteSimple = uniqueNames.containsKey(type.getTypeName()) && uniqueNames.get(type.getTypeName()).compareWithoutGenerics(type);
+        if (!canWriteSimple)
+            imports.remove(new Import(type.getClassDescription()));
+        return canWriteSimple;
+    }
+
 
     public enum ClassHeader {
         INTERFACE("interface"),

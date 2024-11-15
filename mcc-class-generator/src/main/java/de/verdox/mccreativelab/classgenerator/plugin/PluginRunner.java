@@ -1,5 +1,6 @@
-package de.verdox.mccreativelab.classgenerator;
+package de.verdox.mccreativelab.classgenerator.plugin;
 
+import de.verdox.mccreativelab.classgenerator.ClassGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PluginRunner extends JavaPlugin {

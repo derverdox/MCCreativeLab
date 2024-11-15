@@ -7,12 +7,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public record Method(String modifier, List<GenericDeclaration> genericDeclarations, String name, DynamicType returnType,
+public record Method(String modifier, List<GenericDeclaration> genericDeclarations, String name,
+                     @Nullable DynamicType returnType,
                      @Nullable Consumer<CodeLineBuilder> content,
                      Parameter... parameters) implements CodeExpression {
-    public Method (String modifier, String name, DynamicType returnType,
-    @Nullable Consumer<CodeLineBuilder> content,
-    Parameter... parameters){
+    public Method(String modifier, String name, DynamicType returnType,
+                  @Nullable Consumer<CodeLineBuilder> content,
+                  Parameter... parameters) {
         this(modifier, List.of(), name, returnType, content, parameters);
     }
 
@@ -25,11 +26,17 @@ public record Method(String modifier, List<GenericDeclaration> genericDeclaratio
         for (int i = 0; i < genericDeclarations.size(); i++) {
             GenericDeclaration genericDeclaration = genericDeclarations.get(i);
             genericDeclaration.write(code);
-            if(i < genericDeclarations.size() - 1)
+            if (i < genericDeclarations.size() - 1)
                 code.append("; ");
         }
 
-        code.append(returnType).append(" ").append(name).append(" (");
+        if (returnType != null) {
+            code.append(returnType);
+        } else {
+            code.append("void");
+        }
+
+        code.append(" ").append(name).append("(");
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             parameter.write(code);

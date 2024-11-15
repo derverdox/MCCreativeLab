@@ -5,13 +5,16 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
+import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import net.kyori.adventure.key.Key;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -67,10 +70,7 @@ public class ConverterTests extends TestBase {
         testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyLogItemStack.CONVERTER, new OnlyLogItemStack(log), log, true));
         StairBlock stairBlock = (StairBlock) Blocks.STONE_STAIRS;
         testEntries.add(new TestEntry<>(MCCBlockType.class, NMSBlockType.CONVERTER, new NMSBlockType(stairBlock), stairBlock, false));
-        ResourceKey<Block> blockResourceKey = BuiltInRegistries.BLOCK.getResourceKey(Blocks.KELP).get();
-        //testEntries.add(new TestEntry<>(MCCTypedKey.class, new ResourceKeyConverter(), new NMSTypedKey<>(blockResourceKey), blockResourceKey, false));
-        Holder.Reference<Block> blockReference = BuiltInRegistries.BLOCK.getHolder(blockResourceKey).get();
-        //testEntries.add(new TestEntry<>(MCCTypedKey.class, new HolderConverter(), new NMSTypedKey<>(blockResourceKey), blockReference, false));
+        testEntries.add(new TestEntry<>(Key.class, new ResourceLocationConverter(), Key.key("minecraft","stone"), ResourceLocation.tryBuild("minecraft", "stone"), false));
 
 
         for (TestEntry<?, ?, ?> testEntry : testEntries) {

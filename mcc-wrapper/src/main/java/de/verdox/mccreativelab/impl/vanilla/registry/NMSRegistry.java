@@ -36,7 +36,7 @@ public class NMSRegistry<T, R> extends NMSHandle<Registry<R>> implements MCCRegi
     private R unwrap(T value) {
         if (value == null)
             return null;
-        return conversionService.unwrap(value, getNativeTypeOfRegistry());
+        return (R) conversionService.unwrap(value);
     }
 
     private T wrap(R value) {
@@ -99,8 +99,7 @@ public class NMSRegistry<T, R> extends NMSHandle<Registry<R>> implements MCCRegi
 
     @Override
     public T getOrThrow(MCCTypedKey<T> key) {
-        return conversionService.wrap(handle.getOrThrow(unwrap(key)), new TypeToken<>() {
-        });
+        return (T) conversionService.wrap(handle.getOrThrow(unwrap(key)));
     }
 
     @Override

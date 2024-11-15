@@ -35,6 +35,7 @@ public class ConversionServiceImpl implements ConversionService {
         this.inner = inner;
         registerDirectConverter(Optional.class, new OptionalConverter());
         registerDirectConverter(List.class, new CollectionConverter<>(ArrayList::new, List.class));
+
         registerDirectConverter(Set.class, new CollectionConverter<>(HashSet::new, Set.class));
         registerDirectConverter(Map.class, new MapConverter<>(HashMap::new, Map.class));
         registerDirectConverter(Map.Entry.class, new MapEntryConverter());
@@ -157,8 +158,17 @@ public class ConversionServiceImpl implements ConversionService {
         // This condition is only true if platformType = apiType -> direct converter
         if(apiTypesToDirectConverters.containsKey(platformType))
             return apiTypesToDirectConverters.get(platformType).nativeMinecraftType();
-
-        return implClassesToNativeClasses.getOrDefault(platformType, null);
+        else if(implClassesToNativeClasses.containsKey(platformType))
+            return implClassesToNativeClasses.get(platformType);
+        else {
+            for (Class<?> aClass : apiTypesToDirectConverters.keySet()) {
+                if(aClass.isAssignableFrom(platformType)){
+                    apiTypesToDirectConverters.put(platformType, apiTypesToDirectConverters.get(aClass));
+                    return apiTypesToDirectConverters.get(aClass).nativeMinecraftType();
+                }
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -172,7 +182,17 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public <A> Class<?> findAPIClassForImplClass(Class<A> implType) {
-        return implClassesToApiClasses.getOrDefault(implType, null);
+        if(implClassesToApiClasses.containsKey(implType))
+            return implClassesToApiClasses.get(implType);
+        else {
+            for (Class<?> aClass : apiTypesToDirectConverters.keySet()) {
+                if(aClass.isAssignableFrom(implType)){
+                    implClassesToApiClasses.put(implType, aClass);
+                    return aClass;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -223,7 +243,6 @@ public class ConversionServiceImpl implements ConversionService {
     @Override
     public <F, T> F unwrap(T objectToUnwrap, TypeToken<F> nativeTypeToConvertTo) {
         if (nativeTypesToDirectConverters.containsKey(nativeTypeToConvertTo.getRawType())) {
-            System.out.println(nativeTypeToConvertTo+" is used in a direct converter");
             var converter = (MCCConverter<F, T>) nativeTypesToDirectConverters.get(nativeTypeToConvertTo.getRawType());
             var directResult = converter.unwrap(objectToUnwrap);
             if (!directResult.result().isDone())
@@ -299,6 +318,13 @@ public class ConversionServiceImpl implements ConversionService {
         return result;
     }
 
+    @Override
+    public Set<ClassPair> getAllKnownClassPairs() {
+        Set<ClassPair> set = new HashSet<>(registeredConverters.keySet());
+        variants.values().stream().flatMap(Collection::stream).forEach(conversionService -> set.addAll(conversionService.getAllKnownClassPairs()));
+        return set;
+    }
+
     private Class<?> findKnownNativeInHierarchy(Class<?> type, Predicate<Class<?>> predicate) {
         // Superklassen durchsuchen
         Class<?> superClass = type.getSuperclass();
@@ -324,8 +350,5 @@ public class ConversionServiceImpl implements ConversionService {
 
         // Kein bekannter nativer Typ gefunden
         return null;
-    }
-
-    private record ClassPair(Class<?> apiType, Class<?> nativeType) {
     }
 }

@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.conversion;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -188,63 +189,13 @@ public interface ConversionService {
 
     Class<?> findClosestRelativeApiType(Class<?> implType);
 
-/*    default <F, T> Optional<T> wrapOptional(Optional<F> optionalWithObjectToWrap, TypeToken<T> apiTypeToConvertTo) {
-        return optionalWithObjectToWrap.map(f -> wrap(f, apiTypeToConvertTo));
+    Set<ClassPair> getAllKnownClassPairs();
+    /**
+     * Represents an entry pair in the conversion service
+     *
+     * @param apiType    the api type
+     * @param nativeType the native type
+     */
+    record ClassPair(Class<?> apiType, Class<?> nativeType) {
     }
-
-    default <F, T> Optional<T> wrapOptional(Optional<F> optionalWithObjectToWrap, Class<T> apiTypeToConvertTo) {
-        return wrapOptional(optionalWithObjectToWrap, TypeToken.of(apiTypeToConvertTo));
-    }
-
-    default <F, T> Optional<F> unwrapOptional(Optional<T> optionalWithObjectToWrap, TypeToken<F> nativePlatformType) {
-        return optionalWithObjectToWrap.map(t -> unwrap(t, nativePlatformType));
-    }
-
-    default <F, T> Optional<F> unwrapOptional(Optional<T> optionalWithObjectToWrap, Class<F> nativePlatformType) {
-        return wrapOptional(optionalWithObjectToWrap, TypeToken.of(nativePlatformType));
-    }
-
-    default <F, T, C extends Collection<T>> C wrapCollection(Collection<F> collectionToWrap, TypeToken<T> apiTypeToConvertTo, Supplier<C> constructor) {
-        C collection = constructor.get();
-        collectionToWrap.stream().map(f -> wrap(f, apiTypeToConvertTo)).forEach(collection::add);
-        return collection;
-    }
-
-    default <F, T, C extends Collection<T>> C wrapCollection(Collection<F> collectionToWrap, Class<T> apiTypeToConvertTo, Supplier<C> constructor) {
-        return wrapCollection(collectionToWrap, TypeToken.of(apiTypeToConvertTo), constructor);
-    }
-
-    default <F, T, C extends Collection<F>> C unwrapCollection(Collection<T> collectionToWrap, TypeToken<F> nativePlatformType, Supplier<C> constructor) {
-        C collection = constructor.get();
-        collectionToWrap.stream().map(t -> unwrap(t, nativePlatformType)).forEach(collection::add);
-        return collection;
-    }
-
-    default <F, T, C extends Collection<F>> C unwrapCollection(Collection<T> collectionToWrap, Class<F> nativePlatformType, Supplier<C> constructor) {
-        return wrapCollection(collectionToWrap, TypeToken.of(nativePlatformType), constructor);
-    }
-
-    default <KF, KT, VF, VT, M extends Map<KT, VT>> M wrapMap(Map<KF, VF> mapToWrap, TypeToken<KT> apiTypeToConvertKeyTo, TypeToken<VT> apiTypeToConvertValueTo, Supplier<M> constructor) {
-        M map = constructor.get();
-        mapToWrap.forEach((kf, vf) -> {
-            map.put(wrap(kf, apiTypeToConvertKeyTo), wrap(vf, apiTypeToConvertValueTo));
-        });
-        return map;
-    }
-
-    default <KF, KT, VF, VT, M extends Map<KT, VT>> M wrapMap(Map<KF, VF> mapToWrap, Class<KT> apiTypeToConvertKeyTo, Class<VT> apiTypeToConvertValueTo, Supplier<M> constructor) {
-        return wrapMap(mapToWrap, TypeToken.of(apiTypeToConvertKeyTo), TypeToken.of(apiTypeToConvertValueTo), constructor);
-    }
-
-    default <KF, KT, VF, VT, M extends Map<KF, VF>> M unwrapMap(Map<KT, VT> mapToWrap, TypeToken<KF> nativeTypeToConvertKeyTo, TypeToken<VF> nativeTypeToConvertValueTo, Supplier<M> constructor) {
-        M map = constructor.get();
-        mapToWrap.forEach((key, value) -> {
-            map.put(wrap(key, nativeTypeToConvertKeyTo), unwrap(value, nativeTypeToConvertValueTo));
-        });
-        return map;
-    }
-
-    default <KF, KT, VF, VT, M extends Map<KF, VF>> M unwrapMap(Map<KT, VT> mapToWrap, Class<KF> nativeTypeToConvertKeyTo, Class<VF> nativeTypeToConvertValueTo, Supplier<M> constructor) {
-        return unwrapMap(mapToWrap, TypeToken.of(nativeTypeToConvertKeyTo), TypeToken.of(nativeTypeToConvertValueTo), constructor);
-    }*/
 }

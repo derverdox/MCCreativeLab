@@ -5,8 +5,10 @@ import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class AbstractClassGenerator {
+    public static final Logger LOGGER = Logger.getLogger(AbstractClassGenerator.class.getName());
     protected final String suffix;
     protected final List<Class<?>> excludedTypes;
     protected final List<String> excludedPackages;
@@ -22,15 +24,20 @@ public class AbstractClassGenerator {
     }
 
     public boolean isForbiddenType(DynamicType dynamicType){
-        if(dynamicType.getRawType() == null)
-            return false;
-
-        if(excludedTypes.contains(dynamicType.getRawType()))
+        if(dynamicType.getClassDescription().getPackageName().contains("net.minecraft") && !NMSMapper.isSwapped(dynamicType.getClassDescription())) {
+            LOGGER.info(dynamicType+" is forbidden swap: "+NMSMapper.isSwapped(dynamicType.getClassDescription()));
             return true;
+        }
+
+        if(dynamicType.getRawType() != null && excludedTypes.contains(dynamicType.getRawType())) {
+            LOGGER.info(dynamicType+" is excluded");
+            return true;
+        }
 
         for (DynamicType genericType : dynamicType.getGenericTypes()) {
-            if(isForbiddenType(genericType))
+            if(isForbiddenType(genericType)) {
                 return true;
+            }
         }
         return false;
     }

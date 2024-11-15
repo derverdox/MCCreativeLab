@@ -20,8 +20,6 @@ public class NMSReferenceSetTests extends TestBase {
         Key elementKey = Key.key("minecraft", "stone_blocks");
         Key registryKey = Key.key("minecraft", "block");
 
-
-
         MCCTag<MCCBlockType> tag = MCCPlatform.getInstance().getTypedKeyFactory().createTag(elementKey, registryKey, new TypeToken<>() {});
         MCCReferenceSet<MCCBlockType> referenceSet = MCCRegistries.BLOCK_REGISTRY.get().getOrCreateTag(tag);
 

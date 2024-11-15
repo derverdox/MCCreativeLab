@@ -1,5 +1,8 @@
 package de.verdox.mccreativelab.classgenerator.codegen;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
@@ -47,12 +50,18 @@ public class DynamicType {
                         double.class.equals(rawType) || Double.class.equals(rawType)) {
                     codeLineBuilder.append("0");
                 }
+            } else if (rawType != null && ImmutableMap.class.isAssignableFrom(rawType)) {
+                codeLineBuilder.append("ImmutableMap.of()");
+            } else if (rawType != null && ImmutableList.class.isAssignableFrom(rawType)) {
+                codeLineBuilder.append("ImmutableList.of()");
             } else if (rawType != null && List.class.isAssignableFrom(rawType)) {
                 if (rawType.getPackageName().contains("it.unimi.dsi.fastutil.")) {
                     codeLineBuilder.append(DynamicType.of(rawType, false) + ".of()");
                 } else {
                     codeLineBuilder.append("List.of()");
                 }
+            } else if (rawType != null && ImmutableSet.class.isAssignableFrom(rawType)) {
+                codeLineBuilder.append("ImmutableSet.of()");
             } else if (rawType != null && Set.class.isAssignableFrom(rawType)) {
                 codeLineBuilder.append("Set.of()");
             } else if (rawType != null && Map.class.isAssignableFrom(rawType)) {
@@ -155,7 +164,13 @@ public class DynamicType {
         dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
 
         dynamicType.removeImport(oldGeneric.classDescription);
+
+        oldGeneric.getImportedClasses().forEach(dynamicType::removeImport);
+
         dynamicType.addImport(newGeneric.classDescription);
+
+        newGeneric.getImportedClasses().forEach(dynamicType::addImport);
+
 
         dynamicType.rawType = this.rawType;
         dynamicType.classDescription = this.getClassDescription();
@@ -190,6 +205,7 @@ public class DynamicType {
         dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
 
         dynamicType.addImport(newGeneric.classDescription);
+        newGeneric.getImportedClasses().forEach(dynamicType::addImport);
 
         dynamicType.rawType = this.rawType;
         dynamicType.classDescription = this.getClassDescription();
@@ -215,6 +231,38 @@ public class DynamicType {
             '}';
     }
 
+    public String asCodeExpression(ClassBuilder classBuilder) {
+        return asCodeExpression(classBuilder, false);
+    }
+
+    private String asCodeExpression(ClassBuilder classBuilder, boolean isGeneric) {
+        String typeName = getTypeNameInContext(classBuilder, isGeneric);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(typeName);
+        if (!genericTypes.isEmpty()) {
+            stringBuilder.append("<");
+            for (int i = 0; i < genericTypes.size(); i++) {
+                DynamicType genericType = genericTypes.get(i);
+                stringBuilder.append(genericType.asCodeExpression(classBuilder, true));
+                if (i < genericTypes.size() - 1)
+                    stringBuilder.append(", ");
+            }
+            stringBuilder.append(">");
+        }
+        return stringBuilder.toString();
+    }
+
+    private String getTypeNameInContext(ClassBuilder classBuilder, boolean isGeneric) {
+        String typeName = this.getTypeName();
+        if (getClassDescription().isPrimitiveType() && isGeneric) {
+            typeName = typeName.substring(0, 1).toUpperCase() + typeName.substring(1);
+            if (typeName.equals("Int"))
+                typeName = "Integer";
+        }
+
+        return classBuilder.canWriteSimpleName(this) ? typeName : this.getClassDescription().getPackageName() + "." + typeName;
+    }
+
     public String toString() {
         String typeName = classDescription.getTypeName();
         StringBuilder stringBuilder = new StringBuilder();
@@ -230,10 +278,6 @@ public class DynamicType {
             stringBuilder.append(">");
         }
         return stringBuilder.toString();
-    }
-
-    public String toStringWithPackage() {
-        return classDescription.getPackageName() + "." + toString();
     }
 
     public Set<ClassDescription> getImportedClasses() {

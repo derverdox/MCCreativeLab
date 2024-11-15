@@ -1,7 +1,6 @@
 package de.verdox.mccreativelab.classgenerator.wrapper.strategy;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.classgenerator.ConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
@@ -9,7 +8,6 @@ import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.util.FieldNameUtil;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.platform.adapter.MCCAdapters;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -22,7 +20,7 @@ public interface WrapperGeneratorStrategy {
 
     List<ParameterOrRecord> collectParametersForGettersAndSetters(Class<?> nmsClass);
 
-    CodeExpression createInstantiationExpression(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator, Map<ParameterOrRecord, LocalVariableAssignment> parameters);
+    CodeExpression createInstantiationExpression(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, Map<ParameterOrRecord, LocalVariableAssignment> parameters);
 
     default String getApiGetterMethodName(ParameterOrRecord parameter) {
         String capitalizedParameterName = FieldNameUtil.capitalize(parameter.getName());
@@ -38,7 +36,7 @@ public interface WrapperGeneratorStrategy {
         return getApiGetterMethodName(parameter) + "FromImpl";
     }
 
-    default void createGetterAndSetter(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, ConverterGenerator converterGenerator) {
+    default void createGetterAndSetter(Class<?> nmsClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, boolean withSetters) {
         List<ParameterOrRecord> parameters = collectParametersForGettersAndSetters(nmsClass);
         implBuilder.includeImport(DynamicType.of(MCCPlatform.class));
         implBuilder.includeImport(DynamicType.of(TypeToken.class));
@@ -75,7 +73,10 @@ public interface WrapperGeneratorStrategy {
             String nmsGetterMethodName = getImplGetterMethodName(parameter);
 
             interfaceBuilder.withAbstractMethod("public", apiGetterMethodName, parameterTypeSwapped);
-            interfaceBuilder.withAbstractMethod("public", apiSetterMethodName, interfaceType, new Parameter(parameterTypeSwapped, parameter.getName()));
+            if (withSetters) {
+                interfaceBuilder.withAbstractMethod("public", apiSetterMethodName, interfaceType, new Parameter(parameterTypeSwapped, parameter.getName()));
+            }
+
 
             boolean generateGetterImpl = true;
 
@@ -99,7 +100,7 @@ public interface WrapperGeneratorStrategy {
 
                     methodCode.append("return ");
                     //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                    CodeExpression converterExpression = createImplToApiExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped, converterGenerator);
+                    CodeExpression converterExpression = createImplToApiExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped);
                     methodCode.append(converterExpression);
                     methodCode.appendAndNewLine(";");
                 });
@@ -118,33 +119,35 @@ public interface WrapperGeneratorStrategy {
                 });
             }
 
-            implBuilder.withMethod("public", apiSetterMethodName, interfaceType, codeLineBuilder -> {
-                int counter = 0;
-                Map<ParameterOrRecord, LocalVariableAssignment> variables = new LinkedHashMap<>();
+            if (withSetters) {
+                implBuilder.withMethod("public", apiSetterMethodName, interfaceType, codeLineBuilder -> {
+                    int counter = 0;
+                    Map<ParameterOrRecord, LocalVariableAssignment> variables = new LinkedHashMap<>();
 
-                for (ParameterOrRecord param : parameters) {
-                    if (!param.equals(parameter)) {
+                    for (ParameterOrRecord param : parameters) {
+                        if (!param.equals(parameter)) {
 
 
-                        variables.put(param, new LocalVariableAssignment("param" + (counter++), new StringExpression(getImplGetterMethodName(param) + "()")));
+                            variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(getImplGetterMethodName(param) + "()")));
+                            variables.get(param).write(codeLineBuilder);
+                            continue;
+                        }
+
+
+                        if (isParameterSwapped) {
+                            //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
+                            CodeExpression conversionExpression = createApiToImplExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped);
+                            variables.put(param, new LocalVariableAssignment("param" + (counter++), conversionExpression));
+                        } else {
+                            variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(parameter.getName())));
+                        }
                         variables.get(param).write(codeLineBuilder);
-                        continue;
                     }
-
-
-                    if (isParameterSwapped) {
-                        //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                        CodeExpression conversionExpression = createApiToImplExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped, converterGenerator);
-                        variables.put(param, new LocalVariableAssignment("param" + (counter++), conversionExpression));
-                    } else {
-                        variables.put(param, new LocalVariableAssignment("param" + (counter++), new StringExpression(parameter.getName())));
-                    }
-                    variables.get(param).write(codeLineBuilder);
-                }
-                codeLineBuilder.append("return ");
-                createInstantiationExpression(nmsClass, interfaceBuilder, implBuilder, converterGenerator, variables).write(codeLineBuilder);
-                codeLineBuilder.append(";");
-            }, new Parameter(parameterTypeSwapped, parameter.getName()));
+                    codeLineBuilder.append("return ");
+                    createInstantiationExpression(nmsClass, interfaceBuilder, implBuilder, variables).write(codeLineBuilder);
+                    codeLineBuilder.append(";");
+                }, new Parameter(parameterTypeSwapped, parameter.getName()));
+            }
             implBuilder.includeImport(parameter.getGenericType());
         }
     }
@@ -158,28 +161,12 @@ public interface WrapperGeneratorStrategy {
         return fieldOfParameter;
     }
 
-    private static CodeExpression createApiToImplExpression(String variableToConvert, DynamicType api, DynamicType impl, ConverterGenerator converterGenerator) {
-        if (api.compareWithoutGenerics(DynamicType.of(Optional.class)) && impl.compareWithoutGenerics(DynamicType.of(Optional.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapOptional(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {})");
-        } else if (api.compareWithoutGenerics(DynamicType.of(List.class)) && impl.compareWithoutGenerics(DynamicType.of(List.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapCollection(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {}, ArrayList::new)");
-        } else if (api.compareWithoutGenerics(DynamicType.of(Set.class)) && impl.compareWithoutGenerics(DynamicType.of(Set.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrapCollection(" + variableToConvert + ", new TypeToken<" + impl.getGenericTypes().get(0) + ">() {}, HashSet::new)");
-        } else {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().unwrap(" + variableToConvert + ", new TypeToken<" + impl + ">() {})");
-        }
+    private static CodeExpression createApiToImplExpression(String variableToConvert, DynamicType api, DynamicType impl) {
+        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().unwrap(").with(variableToConvert).with(", new TypeToken<").with(impl).with(">() {})");
     }
 
-    private static CodeExpression createImplToApiExpression(String variableToConvert, DynamicType impl, DynamicType api, ConverterGenerator converterGenerator) {
-        if (api.compareWithoutGenerics(DynamicType.of(Optional.class)) && impl.compareWithoutGenerics(DynamicType.of(Optional.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapOptional(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {})");
-        } else if (api.compareWithoutGenerics(DynamicType.of(List.class)) && impl.compareWithoutGenerics(DynamicType.of(List.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapCollection(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {}, ArrayList::new)");
-        } else if (api.compareWithoutGenerics(DynamicType.of(Set.class)) && impl.compareWithoutGenerics(DynamicType.of(Set.class))) {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrapCollection(" + variableToConvert + ", new TypeToken<" + api.getGenericTypes().get(0) + ">() {}, HashSet::new)");
-        } else {
-            return new StringExpression("MCCPlatform.getInstance().getConversionService().wrap(" + variableToConvert + ", new TypeToken<" + api + ">() {})");
-        }
+    private static CodeExpression createImplToApiExpression(String variableToConvert, DynamicType impl, DynamicType api) {
+        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().wrap(").with(variableToConvert).with(", new TypeToken<").with(api).with(">() {})");
     }
 
     default @Nullable java.lang.reflect.Constructor<?> findConstructorWithMostNumberOfArguments(Class<?> nmsClass) {

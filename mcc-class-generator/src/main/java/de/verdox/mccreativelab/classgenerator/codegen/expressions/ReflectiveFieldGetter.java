@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 
 import java.lang.reflect.Parameter;
 
@@ -22,7 +23,7 @@ public record ReflectiveFieldGetter(String variableName, Class<?> classToReflect
         codeLineBuilder.appendAndNewLine(";");
         codeLineBuilder.appendAndNewLine("try {");
         codeLineBuilder.increaseDepth(+1);
-        codeLineBuilder.append("Field nmsField = ").append(classToReflect.getSimpleName()).append(".class").append(".getDeclaredField(\"").append(parameter.getName()).appendAndNewLine("\");");
+        codeLineBuilder.append("Field nmsField = ").append(new ClassDescription(classToReflect).getTypeName()).append(".class").append(".getDeclaredField(\"").append(parameter.getName()).appendAndNewLine("\");");
         codeLineBuilder.appendAndNewLine("nmsField.setAccessible(true);");
         codeLineBuilder.appendAndNewLine(variableName+" = (" + DynamicType.of(parameter.getParameterizedType(), false) + ") nmsField.get(handle);");
         codeLineBuilder.increaseDepth(-1);

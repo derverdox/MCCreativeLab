@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.classgenerator.codegen;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter;
 
@@ -81,7 +82,12 @@ public class CodeLineBuilder {
     }
 
     public CodeLineBuilder append(DynamicType dynamicType) {
-        return append(dynamicType.toString());
+        return append(dynamicType.asCodeExpression(getClassBuilder()));
+    }
+
+    public CodeLineBuilder appendTypeToken(DynamicType dynamicType) {
+        getClassBuilder().includeImport(DynamicType.of(TypeToken.class, false));
+        return append("new TypeToken<").append(dynamicType.asCodeExpression(getClassBuilder())).append(">(){}");
     }
 
     public CodeLineBuilder increaseDepth(int increase) {

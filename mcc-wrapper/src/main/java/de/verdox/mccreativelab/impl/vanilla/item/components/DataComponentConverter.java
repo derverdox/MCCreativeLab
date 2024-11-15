@@ -8,9 +8,10 @@ public class DataComponentConverter implements MCCConverter<DataComponentType, N
     @Override
     public ConversionResult<NMSDataComponentType> wrap(DataComponentType platform) {
 
+        
 /*
         if(platform.equals(DataComponents.CUSTOM_MODEL_DATA))
-            return new NMSDataComponentType(DataComponents.CUSTOM_MODEL_DATA ,MCCCustomModelData.class, () -> new MCCCustomModelDataImpl());
+            return new NMSDataComponentType(DataComponents.CUSTOM_MODEL_DATA, Integer.class, MCCCustomModelData.class, () -> new MCCCustomModelDataImpl());
 */
 
         return null;

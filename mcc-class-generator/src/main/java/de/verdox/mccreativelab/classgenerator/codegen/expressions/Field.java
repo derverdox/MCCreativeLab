@@ -3,8 +3,8 @@ package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
 
-public record Field(String modifier, DynamicType type, String fieldName, String initValue,
-                    DynamicType... genericTypes) implements CodeExpression{
+public record Field(String modifier, DynamicType type, String fieldName, CodeExpression initValue,
+                    DynamicType... genericTypes) implements CodeExpression {
     @Override
     public void write(CodeLineBuilder code) {
         code.increaseDepth(1);
@@ -19,7 +19,7 @@ public record Field(String modifier, DynamicType type, String fieldName, String 
             }
             code.append(">");
         }
-        if (initValue != null && !initValue.isEmpty()) {
+        if (initValue != null) {
             code.append(" ").append(" = ").append(initValue);
         }
         code.append(";\n");
