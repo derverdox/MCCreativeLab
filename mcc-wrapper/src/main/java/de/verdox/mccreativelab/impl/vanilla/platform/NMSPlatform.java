@@ -36,21 +36,27 @@ public class NMSPlatform implements MCCPlatform {
     private final ConversionService conversionService = new ConversionServiceImpl();
 
     public NMSPlatform() {
-        getConversionService().registerPlatformType(MCCBlockState.class, NMSBlockState.CONVERTER);
-        getConversionService().registerPlatformType(MCCBlockType.class, NMSBlockType.CONVERTER);
-        getConversionService().registerPlatformType(MCCEntity.class, NMSEntity.CONVERTER);
-        getConversionService().registerPlatformType(MCCEntityType.class, NMSEntityType.CONVERTER);
-        getConversionService().registerPlatformType(MCCItemStack.class, NMSItemStack.CONVERTER);
-        getConversionService().registerPlatformType(MCCItemType.class, NMSItemType.CONVERTER);
-        getConversionService().registerPlatformType(MCCWorld.class, NMSWorld.CONVERTER);
+        //GeneratedConverters.init(conversionService);
+        conversionService.registerPlatformType(MCCBlockState.class, NMSBlockState.CONVERTER);
+        conversionService.registerPlatformType(MCCBlockType.class, NMSBlockType.CONVERTER);
+        conversionService.registerPlatformType(MCCEntity.class, NMSEntity.CONVERTER);
+        conversionService.registerPlatformType(MCCEntityType.class, NMSEntityType.CONVERTER);
+        conversionService.registerPlatformType(MCCItemStack.class, NMSItemStack.CONVERTER);
+        conversionService.registerPlatformType(MCCItemType.class, NMSItemType.CONVERTER);
+        conversionService.registerPlatformType(MCCWorld.class, NMSWorld.CONVERTER);
 
-        getConversionService().registerDirectConverter(Key.class, new ResourceLocationConverter());
-        getConversionService().registerPlatformType(MCCTypedKey.class, NMSTypedKey.CONVERTER);
-        getConversionService().registerPlatformType(MCCReference.class, NMSReference.CONVERTER);
-        getConversionService().registerPlatformType(MCCTag.class, NMSTag.CONVERTER);
-        getConversionService().registerPlatformType(MCCReferenceSet.class, NMSReferenceSet.CONVERTER);
-        getConversionService().registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
-        getConversionService().registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
+        conversionService.registerPlatformType(Key.class, new ResourceLocationConverter());
+        conversionService.registerPlatformType(MCCTypedKey.class, NMSTypedKey.CONVERTER);
+        conversionService.registerPlatformType(MCCReference.class, NMSReference.CONVERTER);
+        conversionService.registerPlatformType(MCCTag.class, NMSTag.CONVERTER);
+        conversionService.registerPlatformType(MCCReferenceSet.class, NMSReferenceSet.CONVERTER);
+        conversionService.registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
+        conversionService.registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
+    }
+
+    @Override
+    public void init(){
+
     }
 
     @Override

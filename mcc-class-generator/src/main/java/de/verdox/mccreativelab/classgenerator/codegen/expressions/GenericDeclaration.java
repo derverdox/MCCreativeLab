@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import org.jetbrains.annotations.Nullable;
 
 public record GenericDeclaration(String name, @Nullable DynamicType type) implements CodeExpression {

@@ -1,6 +1,6 @@
 package de.verdox.mccreativelab.classgenerator;
 
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -25,12 +25,10 @@ public class AbstractClassGenerator {
 
     public boolean isForbiddenType(DynamicType dynamicType){
         if(dynamicType.getClassDescription().getPackageName().contains("net.minecraft") && !NMSMapper.isSwapped(dynamicType.getClassDescription())) {
-            LOGGER.info(dynamicType+" is forbidden swap: "+NMSMapper.isSwapped(dynamicType.getClassDescription()));
             return true;
         }
 
         if(dynamicType.getRawType() != null && excludedTypes.contains(dynamicType.getRawType())) {
-            LOGGER.info(dynamicType+" is excluded");
             return true;
         }
 

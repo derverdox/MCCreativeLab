@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.classgenerator.codegen;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 
 import java.util.LinkedList;
 import java.util.List;

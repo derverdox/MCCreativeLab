@@ -1,5 +1,5 @@
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import model.TestImplClass;
 import net.minecraft.world.item.ItemStack;

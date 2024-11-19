@@ -1,43 +1,40 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 
 /**
  * Tracks the GUIs opened by a player
  */
-public class PlayerGUIStack implements Listener {
+public class PlayerGUIStack {
 
     private final Stack<StackElement> stack = new Stack<>();
     private final MCCPlayer player;
 
     static PlayerGUIStack load(MCCPlayer player) {
-        if (!player.containsData("playerGUIStack"))
-            player.storeData("playerGUIStack", new PlayerGUIStack(player));
+        if (!player.getTempData().containsData("playerGUIStack"))
+            player.getTempData().storeData("playerGUIStack", new PlayerGUIStack(player));
 
-        return player.getData(PlayerGUIStack.class, "playerGUIStack");
+        return player.getTempData().getData(PlayerGUIStack.class, "playerGUIStack");
     }
 
     public PlayerGUIStack(MCCPlayer player) {
         this.player = player;
-        Bukkit.getPluginManager().registerEvents(this, MCCreativeLabExtension.getInstance());
     }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        if (!e.getPlayer().equals(this.player))
+    public void onActiveGuiClose(@NotNull ActiveGUI closedActiveGui, MCCContainerCloseReason closeReason){
+        Objects.requireNonNull(closedActiveGui);
+        Objects.requireNonNull(closeReason);
+        if (stack.isEmpty() || closeReason.equals(MCCContainerCloseReason.OPEN_NEW))
             return;
-        HandlerList.unregisterAll(this);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInventoryClose(GUICloseEvent e) {
-        if (stack.isEmpty() || e.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW))
-            return;
-        if (e.getReason().equals(InventoryCloseEvent.Reason.PLAYER)) {
-            popAndOpenLast(e.getPlayer(), e.getActiveGUI());
+        if (closeReason.equals(MCCContainerCloseReason.CLOSED_BY_VIEWER)) {
+            popAndOpenLast(player, closedActiveGui);
         } else
             clear();
     }

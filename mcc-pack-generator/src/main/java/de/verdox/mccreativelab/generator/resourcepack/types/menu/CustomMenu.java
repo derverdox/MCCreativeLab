@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.CustomHud;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +80,7 @@ public class CustomMenu extends ResourcePackResource {
 
         Key backgroundPictureKey = Key.key(getKey().namespace(), "item/menu/"+getKey().value() + "/background/" + id);
         ItemTextureData.ModelType modelType = Resolution.createModel(resolution, backgroundPictureKey);
-        ItemTextureData itemTextureData = new ItemTextureData(backgroundPictureKey, Key.key(Key.MINECRAFT_NAMESPACE, "firework_star"), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "firework_star")), picture, modelType);
+        ItemTextureData itemTextureData = new ItemTextureData(backgroundPictureKey, MCCItems.FIREWORK_STAR.get(), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "firework_star")), picture, modelType);
         backgroundPictures.put(id, itemTextureData);
         return this;
     }

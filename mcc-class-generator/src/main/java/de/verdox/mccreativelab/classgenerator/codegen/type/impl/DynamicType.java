@@ -1,21 +1,20 @@
-package de.verdox.mccreativelab.classgenerator.codegen;
+package de.verdox.mccreativelab.classgenerator.codegen.type.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
+import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class DynamicType {
-
-    private Set<ClassDescription> importedClasses = new HashSet<>();
+    protected boolean trySwap;
+    protected Set<ClassDescription> importedClasses = new HashSet<>();
     private List<DynamicType> genericTypes = new LinkedList<>();
     private ClassDescription classDescription;
     @Nullable
@@ -25,6 +24,9 @@ public class DynamicType {
     private List<DynamicType> upperBounds = new LinkedList<>();
     private List<DynamicType> lowerBounds = new LinkedList<>();
 
+    private String typeVariableName;
+    private List<DynamicType> typeVariableBounds = new LinkedList<>();
+
     public static DynamicType of(Type type, boolean trySwap) {
         if (trySwap && NMSMapper.isSwapped(type) && !isPrimitiveType(type))
             return NMSMapper.getSwap(type);
@@ -33,6 +35,10 @@ public class DynamicType {
 
     public static DynamicType of(Type type) {
         return DynamicType.of(type, true);
+    }
+
+    public static DynamicType of(String generic, DynamicType... bounds) {
+        return new DynamicType(generic, bounds);
     }
 
     public CodeExpression getDefaultValueAsString() {
@@ -72,7 +78,21 @@ public class DynamicType {
         };
     }
 
-    private DynamicType(Type type, boolean trySwap) {
+    protected DynamicType(ClassDescription classDescription, boolean trySwap) {
+        this.classDescription = classDescription;
+        this.trySwap = trySwap;
+    }
+
+    protected DynamicType(String generic, DynamicType... bounds) {
+        this.typeVariableName = generic;
+        for (DynamicType boundType : bounds) {
+            this.typeVariableBounds.add(boundType);
+            this.classDescription = boundType.classDescription;
+            importedClasses.addAll(boundType.getImportedClasses());
+        }
+    }
+
+    protected DynamicType(Type type, boolean trySwap) {
         Objects.requireNonNull(type);
         switch (type) {
             case ClassDescription description -> this.classDescription = description;
@@ -84,6 +104,15 @@ public class DynamicType {
                 }
                 this.classDescription = new ClassDescription((Class<?>) parameterizedType.getRawType());
                 this.rawType = (Class<?>) parameterizedType.getRawType();
+            }
+            case TypeVariable<?> typeVariable -> {
+                this.typeVariableName = typeVariable.getName();
+                for (Type bound : typeVariable.getBounds()) {
+                    DynamicType boundType = DynamicType.of(bound, trySwap);
+                    this.typeVariableBounds.add(boundType);
+                    this.classDescription = boundType.classDescription;
+                    importedClasses.addAll(boundType.getImportedClasses());
+                }
             }
             case Class<?> clazz -> {
                 if (clazz.isArray()) {
@@ -163,11 +192,16 @@ public class DynamicType {
         dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
         dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
 
-        dynamicType.removeImport(oldGeneric.classDescription);
+        if (oldGeneric.classDescription != null) {
+            dynamicType.removeImport(oldGeneric.classDescription);
+        }
 
         oldGeneric.getImportedClasses().forEach(dynamicType::removeImport);
 
-        dynamicType.addImport(newGeneric.classDescription);
+        if (newGeneric.classDescription != null) {
+            dynamicType.addImport(newGeneric.classDescription);
+        }
+
 
         newGeneric.getImportedClasses().forEach(dynamicType::addImport);
 
@@ -204,7 +238,10 @@ public class DynamicType {
         dynamicType.upperBounds = new LinkedList<>(this.upperBounds);
         dynamicType.lowerBounds = new LinkedList<>(this.lowerBounds);
 
-        dynamicType.addImport(newGeneric.classDescription);
+        if (newGeneric.classDescription != null) {
+            dynamicType.addImport(newGeneric.classDescription);
+        }
+
         newGeneric.getImportedClasses().forEach(dynamicType::addImport);
 
         dynamicType.rawType = this.rawType;
@@ -212,14 +249,54 @@ public class DynamicType {
         return dynamicType;
     }
 
+    @Nullable
     public ClassDescription getClassDescription() {
         return classDescription;
     }
 
     public String getTypeName() {
-        return getClassDescription().getTypeName();
+        if (typeVariableName != null) {
+            return typeVariableName;
+        }
+        else {
+            return getClassDescription().getTypeName();
+        }
     }
 
+    public Type toType() {
+        if (rawType != null) {
+            // 1. Einfacher Typ (z. B. String, int, etc.)
+            if (genericTypes.isEmpty() && arrayComponentType == null) {
+                return rawType;
+            }
+
+            // 2. ParameterizedType (z. B. List<String>)
+            if (!genericTypes.isEmpty()) {
+                DynamicParameterizedType dynamicParameterizedType = new DynamicParameterizedType(rawType, genericTypes.stream().map(DynamicType::toType).toArray(Type[]::new));
+                for (Type actualTypeArgument : dynamicParameterizedType.getActualTypeArguments()) {
+                    if (actualTypeArgument instanceof DynamicParameterizedType parameterizedType) {
+                        parameterizedType.setOwnerType(dynamicParameterizedType);
+                    }
+                }
+                return dynamicParameterizedType;
+            }
+
+            // 3. GenericArrayType (z. B. T[])
+            if (arrayComponentType != null) {
+                return new DynamicGenericArrayType(DynamicType.of(arrayComponentType, false).toType());
+            }
+        }
+
+        // 4. WildcardType (z. B. ? extends Number)
+        if (!upperBounds.isEmpty() || !lowerBounds.isEmpty()) {
+            return new DynamicWildcardType(
+                upperBounds.stream().map(DynamicType::toType).toArray(Type[]::new),
+                lowerBounds.stream().map(DynamicType::toType).toArray(Type[]::new)
+            );
+        }
+
+        throw new UnsupportedOperationException("Unsupported DynamicType: " + this);
+    }
 
     public String debugString() {
         return "DynamicType{" +
@@ -236,6 +313,9 @@ public class DynamicType {
     }
 
     private String asCodeExpression(ClassBuilder classBuilder, boolean isGeneric) {
+        if(typeVariableName != null){
+            return typeVariableName;
+        }
         String typeName = getTypeNameInContext(classBuilder, isGeneric);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(typeName);
@@ -253,6 +333,9 @@ public class DynamicType {
     }
 
     private String getTypeNameInContext(ClassBuilder classBuilder, boolean isGeneric) {
+        if(typeVariableName != null){
+            return typeVariableName;
+        }
         String typeName = this.getTypeName();
         if (getClassDescription().isPrimitiveType() && isGeneric) {
             typeName = typeName.substring(0, 1).toUpperCase() + typeName.substring(1);
@@ -264,7 +347,7 @@ public class DynamicType {
     }
 
     public String toString() {
-        String typeName = classDescription.getTypeName();
+        String typeName = getTypeName();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(typeName);
         if (!genericTypes.isEmpty()) {

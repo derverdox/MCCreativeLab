@@ -2,9 +2,9 @@ package de.verdox.mccreativelab.classgenerator.codegen;
 
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -129,7 +129,7 @@ public class ClassBuilder {
         LOGGER.log(Level.FINER, "Including method " + method);
         methods.add(method);
 
-        if(returnType != null){
+        if (returnType != null) {
             includeImport(returnType);
         }
         for (Parameter parameter : parameters)
@@ -142,7 +142,7 @@ public class ClassBuilder {
         LOGGER.log(Level.FINER, "Including method " + method);
         methods.add(method);
 
-        if(returnType != null){
+        if (returnType != null) {
             includeImport(returnType);
         }
         for (Parameter parameter : parameters)
@@ -152,6 +152,17 @@ public class ClassBuilder {
 
     public ClassBuilder withAbstractMethod(String modifier, String name, DynamicType returnType, Parameter... parameters) {
         Method method = new Method(modifier, name, returnType, null, parameters);
+        LOGGER.log(Level.FINER, "Including abstract method " + method);
+        methods.add(method);
+
+        includeImport(returnType);
+        for (Parameter parameter : parameters)
+            includeImport(parameter.type());
+        return this;
+    }
+
+    public ClassBuilder withAbstractMethod(String modifier, List<GenericDeclaration> genericDeclarations, String name, DynamicType returnType, Parameter... parameters) {
+        Method method = new Method(modifier, genericDeclarations, name, returnType, null, parameters);
         LOGGER.log(Level.FINER, "Including abstract method " + method);
         methods.add(method);
 
@@ -189,6 +200,8 @@ public class ClassBuilder {
 
     public ClassBuilder includeImport(DynamicType dynamicType) {
         Objects.requireNonNull(dynamicType);
+        if (dynamicType.getClassDescription() == null)
+            return this;
         if (Objects.equals(packageName, dynamicType.getClassDescription().getPackageName()))
             return this;
         if (this.isInnerClass && this.parent != null) {
@@ -243,9 +256,9 @@ public class ClassBuilder {
 
         CodeLineBuilder importBuilder = new CodeLineBuilder(this, depth);
         for (Import anImport : imports) {
-            Objects.requireNonNull(anImport.classDescription().getClassName(), "No class name found for import: "+anImport);
-            Objects.requireNonNull(anImport.classDescription().getPackageName(), "No class name found for import: "+anImport);
-            if(anImport.classDescription().isPrimitiveType())
+            Objects.requireNonNull(anImport.classDescription().getClassName(), "No class name found for import: " + anImport);
+            Objects.requireNonNull(anImport.classDescription().getPackageName(), "No class name found for import: " + anImport);
+            if (anImport.classDescription().isPrimitiveType())
                 continue;
             anImport.write(importBuilder);
         }
@@ -287,12 +300,19 @@ public class ClassBuilder {
 
         classTitleBuilder.append(" ");
         if (!genericDeclarations.isEmpty()) {
+            classTitleBuilder.append("<");
             for (int i = 0; i < genericDeclarations.size(); i++) {
                 GenericDeclaration genericDeclaration = genericDeclarations.get(i);
-                classTitleBuilder.append(genericDeclaration);
+
+                if (genericDeclaration.type() != null) {
+                    classTitleBuilder.append(genericDeclaration.name() + " extends " + genericDeclaration.type());
+                } else {
+                    classTitleBuilder.append(genericDeclaration.name());
+                }
                 if (i < genericDeclarations.size() - 1)
                     classTitleBuilder.append(", ");
             }
+            classTitleBuilder.append(">");
             classTitleBuilder.append(" ");
         }
         if (!extendsList.isEmpty()) {

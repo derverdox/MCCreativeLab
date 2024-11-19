@@ -3,29 +3,31 @@ package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuCloseEvent;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuOpenEvent;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.platform.MCCTask;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
 public class MenuBehaviour implements Listener {
     private static final int tickCooldown = 3;
-    private final Player player;
+    private final MCCPlayer player;
     private final ActiveMenu activeMenu;
     private final BiConsumer<PlayerKeyInput, ActiveMenu> consumer;
-    private final JavaPlugin platformPlugin;
     private final Runnable onEnd;
-    private BukkitTask posUpdaterTask;
-    private BukkitTask effectTask;
-    private Location locationBefore;
+    private MCCTask posUpdaterTask;
+    private MCCTask effectTask;
+    private MCCLocation locationBefore;
     private int lastTickButtonPressed;
     private int lastScrollTick;
     private int currentScrollMode = 0;
     private int heldSlotBefore;
 
-    public MenuBehaviour(JavaPlugin platformPlugin, Player player, ActiveMenu activeMenu, BiConsumer<PlayerKeyInput, ActiveMenu> consumer, Runnable onEnd) {
-        this.platformPlugin = platformPlugin;
+    public MenuBehaviour(MCCPlayer player, ActiveMenu activeMenu, BiConsumer<PlayerKeyInput, ActiveMenu> consumer, Runnable onEnd) {
         this.onEnd = onEnd;
-        Bukkit.getPluginManager().registerEvents(this, platformPlugin);
         this.player = player;
         this.activeMenu = activeMenu;
         this.consumer = consumer;

@@ -2,15 +2,13 @@ package de.verdox.mccreativelab.classgenerator;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
-import de.verdox.mccreativelab.classgenerator.wrapper.WrappedClassRegistry;
-import de.verdox.mccreativelab.wrapper.registry.MCCReference;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.JukeboxSongs;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +54,8 @@ public class TypedKeyCollectionBuilder extends AbstractClassGenerator {
             Type fieldType = declaredField.getGenericType();
 
             if (isForbiddenType(fieldType)) {
-                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Could not generate collection class " + groupClassName + " because a type was found that has no wrapper yet in MCC. (" + DynamicType.of(fieldType) + ")");
-                return list;
+                //Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Could not generate collection class " + groupClassName + " because a type was found that has no wrapper yet in MCC. (" + DynamicType.of(fieldType) + ")");
+                continue;
             }
             String fieldName = declaredField.getName();
 
@@ -65,29 +63,40 @@ public class TypedKeyCollectionBuilder extends AbstractClassGenerator {
             DynamicType newFieldType = DynamicType.of(MCCTypedKey.class);
             DynamicType genericOfTypedKey;
             DynamicType nativeType;
-            if (declaredField.getType().equals(ResourceKey.class)) {
+            if (declaredField.getType().equals(ResourceKey.class) || Holder.class.isAssignableFrom(declaredField.getType())) {
                 //TODO: Wenn es bereits ein resource key ist müssen wir seinen key auslesen
                 //TODO: Danach erstellen ganz normal
                 try {
-                    ResourceKey<?> resourceKey = (ResourceKey<?>) declaredField.get(null);
+                    ResourceKey<?> resourceKey;
+                    if(Holder.class.isAssignableFrom(declaredField.getType())){
+                        resourceKey = ((Holder<?>)declaredField.get(null)).unwrapKey().get();
+                    }
+                    else {
+                        resourceKey = (ResourceKey<?>) declaredField.get(null);
+                    }
                     key = resourceKey.location().getPath();
                     nativeType = DynamicType.of(fieldType, false).getGenericTypes().get(0);
                     genericOfTypedKey = DynamicType.of(fieldType, true).getGenericTypes().get(0);
                 }
                 catch (Throwable e){
-                    LOGGER.warning("Could not determine type of field "+fieldName+" of class "+groupingClass+" with type "+DynamicType.of(fieldType, false)+" ("+DynamicType.of(fieldType, true)+")");
+                    //LOGGER.warning("Could not determine type of field "+fieldName+" of class "+groupingClass+" with type "+DynamicType.of(fieldType, false)+" ("+DynamicType.of(fieldType, true)+")");
                     e.printStackTrace();
                     continue;
                 }
-            } else {
+            }
+            else if(typeToGroup.isAssignableFrom(declaredField.getType())){
                 key = fieldName.toLowerCase(Locale.ROOT);
                 nativeType = DynamicType.of(fieldType, false);
                 genericOfTypedKey = DynamicType.of(fieldType, true);
             }
+            else {
+                LOGGER.warning("Could not determine type of field "+fieldName+" of class "+groupingClass+" with type "+DynamicType.of(fieldType, false)+" ("+DynamicType.of(fieldType, true)+")");
+                continue;
+            }
 
             if (isForbiddenType(nativeType)) {
-                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Could not generate collection class " + groupClassName + " because a type was found that has no wrapper yet in MCC. (" + genericOfTypedKey + ")");
-                return list;
+                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Skipping field "+fieldName+"("+fieldType+")"+" of collection class " + groupClassName);
+                continue;
             }
             newFieldType = newFieldType.withAddedGeneric(genericOfTypedKey);
             if (apiTypeOfGroupedType == null) {

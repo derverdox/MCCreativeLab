@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.generator;
 import de.verdox.mccreativelab.config.ConfigValue;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.util.io.ZipUtil;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -11,6 +12,9 @@ import net.kyori.adventure.text.Component;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
+import org.apache.commons.compress.compressors.FileNameUtil;
+import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,11 +30,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class ResourcePackFileHoster implements Listener {
+public class ResourcePackFileHoster {
+    public static final Logger LOGGER = Logger.getLogger(ResourcePackFileHoster.class.getSimpleName());
+    
     public static final boolean WITH_HASHES = false;
     private HttpServer httpServer;
     private final Map<String, ResourcePackInfo> availableResourcePacks = new HashMap<>();
@@ -65,9 +72,9 @@ public class ResourcePackFileHoster implements Listener {
         config.save(configFile);
 
         if (mode.read().equals(Mode.INTERNAL_WEBSERVER)) {
-            Bukkit.getLogger().info("Starting ResourcePackFileHoster on " + internalWebServerSettings.hostName.read() + ":" + internalWebServerSettings.port.read());
+            LOGGER.info("Starting ResourcePackFileHoster on " + internalWebServerSettings.hostName.read() + ":" + internalWebServerSettings.port.read());
             this.httpServer = Vertx.vertx().createHttpServer();
-            this.httpServer.exceptionHandler(event -> Bukkit.getLogger().warning("Exception happened in ResourcePackFileHoster: " + event.getLocalizedMessage()));
+            this.httpServer.exceptionHandler(event -> LOGGER.warning("Exception happened in ResourcePackFileHoster: " + event.getLocalizedMessage()));
             webServerHandler = new WebServerHandler();
             this.httpServer.requestHandler(webServerHandler);
             this.httpServer.listen(internalWebServerSettings.port.read(), internalWebServerSettings.hostName.read());
@@ -76,30 +83,16 @@ public class ResourcePackFileHoster implements Listener {
         }
     }
 
-    public void registerListener(){
-        Bukkit.getPluginManager().registerEvents(new ExtensionResourcePackApply(), MCCreativeLabExtension.getInstance());
-    }
-
     public void closeAndWait() throws InterruptedException {
         if (mode.read().equals(Mode.INTERNAL_WEBSERVER))
             this.httpServer.close().result();
     }
 
-    public void sendDefaultResourcePackToPlayers(Collection<? extends Player> players) {
-        players.forEach(this::sendDefaultResourcePackToPlayer);
-    }
-
-    public void sendDefaultResourcePackToPlayer(Player player) {
-        availableResourcePacks.forEach((s, resourcePackInfo) -> {
-            if (resourcePackInfo.isRequired) sendResourcePackToPlayer(player, resourcePackInfo);
-        });
-    }
-
-    public void sendResourcePackToPlayer(Player player, ResourcePackFileHoster.ResourcePackInfo packInfo) {
-        String downloadURL = MCCreativeLabExtension.getResourcePackFileHoster().createDownloadUrl(packInfo.hash());
+    public void sendResourcePackToPlayer(MCCPlayer player, ResourcePackFileHoster.ResourcePackInfo packInfo) {
+        String downloadURL = createDownloadUrl(packInfo.hash());
 
         player.setResourcePack(packInfo.getUUID(), downloadURL, WITH_HASHES ? packInfo.hashBytes() : null, (Component) null, requireResourcePack.read());
-        Bukkit.getLogger().info("Sending resource pack with url " + downloadURL + " to " + player.getUniqueId());
+        LOGGER.info("Sending resource pack with url " + downloadURL + " to " + player.getUniqueId());
     }
 
     public void createResourcePackZipFiles() throws IOException {
@@ -121,26 +114,26 @@ public class ResourcePackFileHoster implements Listener {
                 long start = System.currentTimeMillis();
                 ZipUtil.zipFolder(resourcePackParentFolder.toPath(), zipPath);
                 long end = System.currentTimeMillis() - start;
-                Bukkit.getLogger().info("Created Zip file " + zipFile + " in " + end + " ms");
+                LOGGER.info("Created Zip file " + zipFile + " in " + end + " ms");
                 try {
                     byte[] hashBytes = null;
                     String hash = "mcclab";
                     if(WITH_HASHES){
-                        Bukkit.getLogger().info("Calculating sha1 hash of resource pack");
+                        LOGGER.info("Calculating sha1 hash of resource pack");
                         start = System.currentTimeMillis();
                         hashBytes = calculateSHA1(zipFile.getPath());
                         hash = calculateSHA1String(hashBytes);
                         end = System.currentTimeMillis() - start;
-                        Bukkit.getLogger().info("Took " + end + " ms");
+                        LOGGER.info("Took " + end + " ms");
                     }
 
                     ResourcePackInfo resourcePackInfo = new ResourcePackInfo(resourcePackName, zipFile, createDownloadUrl(hash), hash, hashBytes, true, null);
                     availableResourcePacks.put(hash, resourcePackInfo);
                     if (mode.read().equals(Mode.INTERNAL_WEBSERVER)) {
                         if (WITH_HASHES)
-                            Bukkit.getLogger().info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName() + " with hash: " + hash);
+                            LOGGER.info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName() + " with hash: " + hash);
                         else
-                            Bukkit.getLogger().info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName());
+                            LOGGER.info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName());
                     }
                     else if (mode.read().equals(Mode.SSH_UPLOAD)) {
                         this.sshResourcePackUpload.upload();
@@ -170,13 +163,13 @@ public class ResourcePackFileHoster implements Listener {
         Files.walk(CustomResourcePack.resourcePacksFolder.toPath(), 1).forEach(path -> {
             if (path.equals(CustomResourcePack.resourcePacksFolder.toPath()))
                 return;
-            if (!FileUtils.extension(path.toFile().getName()).equals("zip"))
+            if (!FileNameUtils.getExtension(path.toFile().getName()).equals("zip"))
                 return;
-            Bukkit.getLogger().info("Deleting ResourcePack file " + path.toFile().getName());
+            LOGGER.info("Deleting ResourcePack file " + path.toFile().getName());
             long start = System.currentTimeMillis();
             path.toFile().delete();
             long end = System.currentTimeMillis() - start;
-            Bukkit.getLogger().info("ResourcePack file " + path.toFile().getName() + " deleted in " + end + " ms");
+            LOGGER.info("ResourcePack file " + path.toFile().getName() + " deleted in " + end + " ms");
         });
     }
 
@@ -238,6 +231,7 @@ public class ResourcePackFileHoster implements Listener {
         public final ConfigValue.Integer port;
 
         public InternalWebServerSettings(FileConfiguration fileConfiguration) {
+
             this.fileConfiguration = fileConfiguration;
             this.hostName = new ConfigValue.String(fileConfiguration, "webserver.hostName", "0.0.0.0");
             this.port = new ConfigValue.Integer(fileConfiguration, "webserver.port", 8080);
@@ -279,12 +273,12 @@ public class ResourcePackFileHoster implements Listener {
                 }*/
                 ResourcePackInfo resourcePackInfo = availableResourcePacks.getOrDefault(hash, null);
                 if (resourcePackInfo == null) {
-                    Bukkit.getLogger().warning("Someone requested a resource pack with hash " + hash + " that does not exist");
+                    LOGGER.warning("Someone requested a resource pack with hash " + hash + " that does not exist");
                     event.response().end();
                     return;
                 }
                 event.response().sendFile(resourcePackInfo.file.getAbsolutePath());
-                Bukkit.getLogger().info("Sending resource pack with hash " + hash + " to " + event.remoteAddress());
+                LOGGER.info("Sending resource pack with hash " + hash + " to " + event.remoteAddress());
             } finally {
 
             }
@@ -311,7 +305,7 @@ public class ResourcePackFileHoster implements Listener {
 
         public SshResourcePackUpload() throws IOException {
             //ssh.loadKnownHosts();
-            Bukkit.getLogger().info("Loading SSH Keys ");
+            LOGGER.info("Loading SSH Keys ");
             keyProvider = ssh.loadKeys(sshUploadSettings.keyFilePath.read());
             String fingerprint = sshUploadSettings.remoteFingerPrintEd25519.read();
             if (fingerprint.isEmpty())
@@ -326,13 +320,13 @@ public class ResourcePackFileHoster implements Listener {
         public void upload() throws IOException {
             ssh.connect(sshUploadSettings.address.read());
             try {
-                Bukkit.getLogger().info("Authenticating public key...");
+                LOGGER.info("Authenticating public key...");
                 ssh.authPublickey(sshUploadSettings.user.read(), keyProvider);
                 for (Map.Entry<String, ResourcePackInfo> stringResourcePackInfoEntry : availableResourcePacks.entrySet()) {
                     ResourcePackInfo resourcePackInfo = stringResourcePackInfoEntry.getValue();
-                    Bukkit.getLogger().info("Uploading ResourcePack " + resourcePackInfo.file.getAbsolutePath() + " to " + sshUploadSettings.remotePath.read() + resourcePackInfo.file.getName());
+                    LOGGER.info("Uploading ResourcePack " + resourcePackInfo.file.getAbsolutePath() + " to " + sshUploadSettings.remotePath.read() + resourcePackInfo.file.getName());
                     ssh.newSCPFileTransfer().upload(resourcePackInfo.file.getAbsolutePath(), sshUploadSettings.remotePath.read());
-                    Bukkit.getLogger().info("Done...");
+                    LOGGER.info("Done...");
 
                 }
             } finally {
@@ -344,33 +338,5 @@ public class ResourcePackFileHoster implements Listener {
     private enum Mode {
         INTERNAL_WEBSERVER,
         SSH_UPLOAD
-    }
-
-    private class ServerSoftwareResourcePackApply implements Listener {
-
-    }
-
-    private class ExtensionResourcePackApply implements Listener {
-        @EventHandler
-        public void applyRequiredResourcePackOnJoin(PlayerJoinEvent e) {
-            Bukkit.getLogger().info("Sending resource pack on join to player "+e.getPlayer().getName());
-            if(!e.getPlayer().hasResourcePack())
-                sendDefaultResourcePackToPlayer(e.getPlayer());
-        }
-
-        @EventHandler
-        public void playerQuit(PlayerQuitEvent e){
-            e.getPlayer().removeResourcePacks();
-        }
-
-        @EventHandler
-        public void kickPlayersIfResourcePackWasNotAppliedButIsRequired(PlayerResourcePackStatusEvent e) {
-            switch (e.getStatus()) {
-                case DECLINED, FAILED_DOWNLOAD, FAILED_RELOAD, INVALID_URL, DISCARDED -> {
-                    if (requireResourcePack.read())
-                        e.getPlayer().kick(Component.text("Resource pack could not be loaded!"), PlayerKickEvent.Cause.RESOURCE_PACK_REJECTION);
-                }
-            }
-        }
     }
 }

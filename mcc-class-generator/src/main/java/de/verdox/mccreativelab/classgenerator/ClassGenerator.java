@@ -2,9 +2,8 @@ package de.verdox.mccreativelab.classgenerator;
 
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
-import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 import de.verdox.mccreativelab.classgenerator.conversion.*;
 import de.verdox.mccreativelab.classgenerator.wrapper.WrappedClass;
 import de.verdox.mccreativelab.classgenerator.wrapper.WrappedClassRegistry;
@@ -26,7 +25,6 @@ import net.minecraft.data.advancements.packs.VanillaHusbandryAdvancements;
 import net.minecraft.data.advancements.packs.VanillaNetherAdvancements;
 import net.minecraft.data.advancements.packs.VanillaTheEndAdvancements;
 import net.minecraft.data.worldgen.DimensionTypes;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.StatType;
@@ -131,10 +129,17 @@ public class ClassGenerator {
             //converterGenerator.buildWrapperAdapters(GENERATION_DIR);
             generateTypedKeys();
             createItemComponentConverters();
+            //generateEventClasses();
+            new EventDescriptionGenerator(GENERATION_DIR).generate(10);
             MCCConverterGenerator.createGeneratedConvertersClass(GENERATION_DIR);
         } catch (IOException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void generateEventClasses() throws IOException {
+        EventGeneratorFromBukkitPreset generator = new EventGeneratorFromBukkitPreset(new File("../../mcc-wrapper/generated"), "MCC", "", excludedTypes, EXCLUDED_PACKAGES);
+        generator.generateEventWrappers();
     }
 
     private static void generateMCCItemComponentWrapper() throws IOException {

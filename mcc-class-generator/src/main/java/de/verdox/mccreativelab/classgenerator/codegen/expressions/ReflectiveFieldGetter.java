@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
 
 import java.lang.reflect.Parameter;

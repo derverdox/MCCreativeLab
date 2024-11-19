@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -27,7 +27,6 @@ public record Constructor(String modifier, DynamicType constructorType,
             code.increaseDepth(1);
             content.accept(code);
             code.increaseDepth(-1);
-            code.appendAndNewLine("");
             code.appendAndNewLine("}");
         } else
             code.appendAndNewLine(";");

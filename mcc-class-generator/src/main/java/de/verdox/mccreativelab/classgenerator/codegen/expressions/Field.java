@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 
 public record Field(String modifier, DynamicType type, String fieldName, CodeExpression initValue,
                     DynamicType... genericTypes) implements CodeExpression {

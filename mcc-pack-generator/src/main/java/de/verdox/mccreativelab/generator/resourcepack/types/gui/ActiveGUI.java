@@ -112,7 +112,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         frontEndRenderer = new FrontEndRenderer();
         frontEndRenderer.start();
 
-        MCCPlatform.getInstance().runTimerAsync(mccTask -> {
+        MCCPlatform.getInstance().getTaskManager().runTimerAsync(mccTask -> {
             synchronized (viewers) {
                 if (viewers.isEmpty()) {
                     updateTask.cancel();
@@ -127,7 +127,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         }, 0, getComponentRendered().updateInterval > 0 ? getComponentRendered().updateInterval * 50L : 1, TimeUnit.MILLISECONDS);
 
         if (getComponentRendered().updateInterval < 0) {
-            MCCPlatform.getInstance().runAsync(mccTask -> forceUpdate());
+            MCCPlatform.getInstance().getTaskManager().runAsync(mccTask -> forceUpdate());
         }
     }
 
@@ -241,7 +241,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
 
                 CompletableFuture<Void> waitForSync = new CompletableFuture<>();
 
-                MCCPlatform.getInstance().runAsync(mccTask -> {
+                MCCPlatform.getInstance().getTaskManager().runAsync(mccTask -> {
                     synchronized (viewers) {
                         Iterator<Audience> iterator = viewers.iterator();
 
@@ -272,7 +272,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     }
 
     private @NotNull MCCContainer createInventory(Component rendering) {
-        return MCCPlatform.getInstance().createContainer(getComponentRendered().getType(), rendering);
+        return MCCPlatform.getInstance().getContainerFactory().createContainer(getComponentRendered().getType(), rendering);
     }
 
     private void openUpdatedInventory(MCCPlayer player, MCCItemStack itemAtCursor, Component rendering) {
@@ -337,17 +337,17 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     private static class PlayerGUIData {
         public static void trackCurrentActiveGUI(MCCPlayer player, @Nullable ActiveGUI activeGUI) {
             if (activeGUI != null) {
-                player.storeData("active_gui", activeGUI);
+                player.getTempData().storeData("active_gui", activeGUI);
             } else {
-                player.removeData("active_gui");
+                player.getTempData().removeData("active_gui");
             }
         }
 
         @Nullable
         public static ActiveGUI getCurrentActiveGUI(MCCPlayer player) {
-            if (!player.containsData("active_gui"))
+            if (!player.getTempData().containsData("active_gui"))
                 return null;
-            return player.getData(ActiveGUI.class, "active_gui");
+            return player.getTempData().getData(ActiveGUI.class, "active_gui");
         }
     }
 }

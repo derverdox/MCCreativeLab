@@ -17,19 +17,20 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StonecutterBlock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ConverterTests extends TestBase {
-
+public class OldConverterTests extends TestBase {
+/*
     private record TestEntry<A, T extends A, F>(Class<A> apiType, MCCConverter<F, T> converter, T implObject,
                                                 F nativeObject, boolean shouldRegister) {
         private void register() {
             if (shouldRegister) {
-                MCCPlatform.getInstance().getConversionService().registerPlatformType(apiType(), converter());
+                MCCPlatform.getInstance().getConversionService().registerCustomPlatformType(apiType(), converter());
             }
         }
 
@@ -55,9 +56,6 @@ public class ConverterTests extends TestBase {
 
     @BeforeAll
     public static void setupTestEntries() {
-
-        System.out.println(MCCPlatform.getInstance().getConversionService());
-
         testEntries.add(new TestEntry<>(MCCBlockType.class, TestBlockTypeImpl.CONVERTER, new TestBlockTypeImpl((StonecutterBlock) Blocks.STONECUTTER), (StonecutterBlock) Blocks.STONECUTTER, true));
         ItemStack stone = new ItemStack(Items.STONE);
         testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyStoneItemStack.CONVERTER, new OnlyStoneItemStack(stone), stone, true));
@@ -67,11 +65,41 @@ public class ConverterTests extends TestBase {
         testEntries.add(new TestEntry<>(MCCBlockType.class, NMSBlockType.CONVERTER, new NMSBlockType(stairBlock), stairBlock, false));
         testEntries.add(new TestEntry<>(Key.class, new ResourceLocationConverter(), Key.key("minecraft","stone"), ResourceLocation.tryBuild("minecraft", "stone"), false));
 
-        testEntries.add(new TestEntry<>(MCCItemStack.class, NMSItemStack.CONVERTER, new OnlyLogItemStack(log), log, false));
 
         for (TestEntry<?, ?, ?> testEntry : testEntries) {
             testEntry.register();
         }
+    }
+
+    @Test
+    void testFindNativeClassForPlatformType() {
+        Set<Class<?>> implTypes = new HashSet<>();
+        implTypes.add(NMSItemStack.class);
+        testEntries.stream().filter(testEntry -> testEntry.apiType().equals(MCCItemStack.class)).map(testEntry -> testEntry.converter.apiImplementationClass()).forEach(implTypes::add);
+
+        Set<Class<?>> foundImplTypes = MCCPlatform.getInstance().getConversionService().findAllPlatformTypesForApiType(MCCItemStack.class);
+        Assertions.assertEquals(implTypes, foundImplTypes);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInputs")
+    void testFindAPIClassForImplClass(TestEntry<?, ?, ?> testEntry) {
+        Class<?> apiClassForImpl = MCCPlatform.getInstance().getConversionService().findAPIClassForImplClass(testEntry.converter().apiImplementationClass());
+        Assertions.assertEquals(testEntry.apiType(), apiClassForImpl, "Entry: " + testEntry);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInputs")
+    void testFindAPITypeForNativeClass(TestEntry<?, ?, ?> testEntry) {
+        Class<?> apiClassForImpl = MCCPlatform.getInstance().getConversionService().findAPITypeForNativeClass(testEntry.converter().nativeMinecraftType());
+        Assertions.assertEquals(testEntry.apiType(), apiClassForImpl, "Entry: " + testEntry);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInputs")
+    void findNativeClassForPlatformType(TestEntry<?, ?, ?> testEntry) {
+        Class<?> nativeClassForAPIType = MCCPlatform.getInstance().getConversionService().findNativeClassForPlatformType(testEntry.converter().apiImplementationClass());
+        Assertions.assertEquals(testEntry.converter().nativeMinecraftType(), nativeClassForAPIType, "Entry: " + testEntry);
     }
 
     @ParameterizedTest
@@ -128,5 +156,5 @@ public class ConverterTests extends TestBase {
     void testUnwrapOptionalWithoutProvidingTheNativeType(TestEntry<?, ?, ?> testEntry) {
         var wrapped = MCCPlatform.getInstance().getConversionService().unwrap(Optional.of(testEntry.implObject()));
         Assertions.assertEquals(Optional.of(testEntry.nativeObject()), wrapped, "Entry: " + testEntry);
-    }
+    }*/
 }

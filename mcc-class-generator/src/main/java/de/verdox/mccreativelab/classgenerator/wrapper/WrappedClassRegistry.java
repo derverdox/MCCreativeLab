@@ -32,6 +32,11 @@ public class WrappedClassRegistry {
     }
 
     @Nullable
+    public WrappedClass getWrappingInformationByApiName(String name){
+        return apiToWrapped.keySet().stream().filter(classDescription -> classDescription.getClassName().equals(name)).map(apiToWrapped::get).findAny().orElse(null);
+    }
+
+    @Nullable
     public WrappedClass getWrappingInformationByImplInterface(ClassDescription implInterface) {
         return implToWrapped.getOrDefault(implInterface, null);
     }

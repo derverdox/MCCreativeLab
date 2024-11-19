@@ -55,4 +55,6 @@ public interface MCCPlatform {
 
 
     @Nullable MCCPlayer getOnlinePlayer(UUID uuid);
+
+    void init();
 }

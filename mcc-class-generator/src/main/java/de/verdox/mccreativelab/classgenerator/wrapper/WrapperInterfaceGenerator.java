@@ -3,12 +3,10 @@ package de.verdox.mccreativelab.classgenerator.wrapper;
 import de.verdox.mccreativelab.classgenerator.AbstractClassGenerator;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.MethodCall;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.conversion.MCCConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.wrapper.strategy.ClassGeneratorStrategy;
 import de.verdox.mccreativelab.classgenerator.wrapper.strategy.RecordGeneratorStrategy;
-import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import org.jetbrains.annotations.Nullable;
 

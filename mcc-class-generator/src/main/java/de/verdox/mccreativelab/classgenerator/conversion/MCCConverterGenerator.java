@@ -3,11 +3,11 @@ package de.verdox.mccreativelab.classgenerator.conversion;
 import de.verdox.mccreativelab.classgenerator.AbstractClassGenerator;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.MethodCall;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter;
-import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
+import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 
@@ -68,7 +68,7 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
         converterImportClass.includeImport(to);
         converterImportClass.includeImport(apiType);
 
-        CodeExpression register = CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().registerPlatformType(").with(apiType).with(".class, new ").with(classBuilder.getClassDescription().getTypeName()).with("());");
+        CodeExpression register = CodeExpression.create().with("conversionService.registerPlatformType(").with(apiType).with(".class, new ").with(classBuilder.getClassDescription().getTypeName()).with("());");
         registerExpressions.add(register);
 
         classBuilder.writeClassFile(srcDir);
@@ -81,7 +81,7 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
         //converterImportClass.includeImport(nmsType);
         converterImportClass.includeImport(implType);
         converterImportClass.includeImport(apiType);
-        CodeExpression register = CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().registerPlatformType(").with(apiType).with(".class, ").with(implType).with(".CONVERTER);");
+        CodeExpression register = CodeExpression.create().with("conversionService.registerPlatformType(").with(apiType).with(".class, ").with(implType).with(".CONVERTER);");
         registerExpressions.add(register);
     }
 
@@ -92,7 +92,7 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
                 registerExpression.write(codeLineBuilder);
                 codeLineBuilder.appendAndNewLine("");
             }
-        });
+        }, new Parameter(DynamicType.of(ConversionService.class), "conversionService"));
         converterImportClass.writeClassFile(srcDir);
     }
 

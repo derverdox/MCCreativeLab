@@ -14,6 +14,10 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.ShaderRende
 import de.verdox.mccreativelab.generator.resourcepack.types.sound.SoundData;
 import de.verdox.mccreativelab.util.io.AssetUtil;
 import de.verdox.mccreativelab.util.io.ZipUtil;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.vserializer.util.gson.JsonUtil;
 import net.kyori.adventure.key.Key;
@@ -26,8 +30,8 @@ import java.util.*;
 public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     public static final AssetPath resourcePacksFolder = AssetPath.buildPath("resourcePacks");
     private final Map<String, SoundFile> soundFilesPerNamespace = new HashMap<>();
-    private final Map<Key, Set<ItemTextureData>> itemTextureDataPerMaterial = new HashMap<>();
-    private final Map<Key, Set<AlternateBlockStateModel>> alternateBlockStateModels = new HashMap<>();
+    private final Map<MCCItemType, Set<ItemTextureData>> itemTextureDataPerMaterial = new HashMap<>();
+    private final Map<MCCBlockState, Set<AlternateBlockStateModel>> alternateBlockStateModels = new HashMap<>();
     private final LanguageStorage languageStorage = new LanguageStorage(this);
     private final ResourcePackMapper resourcePackMapper = new ResourcePackMapper();
     private final ItemTextureData emptyItem;
@@ -35,7 +39,7 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
 
     public CustomResourcePack(String packName, int packFormat, String description, AssetPath savePath) {
         super(packName, packFormat, description, savePath);
-        emptyItem = new ItemTextureData(Key.key("fixedminecraft", "item/empty_item"), Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane"), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane")), new Asset<>("/empty_block/textures/empty.png"), null);
+        emptyItem = new ItemTextureData(Key.key("fixedminecraft", "item/empty_item"), MCCItems.GRAY_STAINED_GLASS_PANE.get(), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane")), new Asset<>("/empty_block/textures/empty.png"), null);
         register(emptyItem);
     }
 
@@ -111,26 +115,25 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     public File installPack(boolean reload) throws IOException {
         File file = super.installPack(reload);
         globalAssetInstallation();
-        Bukkit.getPluginManager().callEvent(new ResourcePackInstallEvent());
         return file;
     }
 
     private void globalAssetInstallation() throws IOException {
-        for (Map.Entry<Material, Set<ItemTextureData>> materialSetEntry : itemTextureDataPerMaterial.entrySet()) {
-            Material material = materialSetEntry.getKey();
+        for (Map.Entry<MCCItemType, Set<ItemTextureData>> materialSetEntry : itemTextureDataPerMaterial.entrySet()) {
+            //TODO: Make sure that only vanilla types are used here
+            MCCItemType material = materialSetEntry.getKey();
             Set<ItemTextureData> itemTextureDataSet = materialSetEntry.getValue();
-            ItemTextureData.createVanillaModelFile(material.getKey(), itemTextureDataSet, this);
+            ItemTextureData.createVanillaModelFile(material, itemTextureDataSet, this);
         }
-        for (Map.Entry<Material, Set<AlternateBlockStateModel>> materialSetEntry : alternateBlockStateModels.entrySet()) {
-
-            Material material = materialSetEntry.getKey();
+        for (Map.Entry<MCCBlockState, Set<AlternateBlockStateModel>> materialSetEntry : alternateBlockStateModels.entrySet()) {
+            //TODO: Make sure that only vanilla types are used here
+            MCCBlockState material = materialSetEntry.getKey();
             Set<AlternateBlockStateModel> alternateBlockStateModels = materialSetEntry.getValue();
 
             JsonObject jsonObject = AlternateBlockStateModel.createBlockStateJson(alternateBlockStateModels);
 
-            AssetUtil.createJsonAssetAndInstall(jsonObject, this, material.getKey(), ResourcePackAssetTypes.BLOCK_STATES);
+            AssetUtil.createJsonAssetAndInstall(jsonObject, this, material.key(), ResourcePackAssetTypes.BLOCK_STATES);
         }
-        Bukkit.getLogger().info("Installing shader files");
         ShaderRendered.installShaderFileToPack(this);
         this.languageStorage.installLanguages();
     }
@@ -148,7 +151,7 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
                                       .add(itemTextureData);
         if (resource instanceof AlternateBlockStateModel alternateBlockStateModel) {
             alternateBlockStateModels
-                .computeIfAbsent(alternateBlockStateModel.getBlockData().getMaterial(), material -> new HashSet<>())
+                .computeIfAbsent(alternateBlockStateModel.getBlockData(), material -> new HashSet<>())
                 .add(alternateBlockStateModel);
         }
         if (resource instanceof LanguageFile languageFile) {

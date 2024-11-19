@@ -2,7 +2,6 @@ package de.verdox.mccreativelab.impl.vanilla.registry;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
-import de.verdox.mccreativelab.conversion.NoConverterFoundException;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;

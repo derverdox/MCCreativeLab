@@ -10,6 +10,7 @@ import de.verdox.mccreativelab.wrapper.event.MCCCancellable;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 
 import java.util.List;
 import java.util.Set;
@@ -193,7 +194,7 @@ public abstract class FrontEndBehavior {
             }
 
             // Überprüfe, ob das Item im aktuellen Slot vom gleichen Typ und stapelbar ist
-            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.getMaxStackSize()) {
+            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.editAndGet()) {
                 int spaceLeft = currentSlotItem.getMaxStackSize() - currentSlotItem.getAmount();
                 int amountToMove = Math.min(spaceLeft, itemStack.getAmount());
 

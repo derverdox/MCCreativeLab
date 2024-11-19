@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.classgenerator.wrapper.strategy;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.DynamicType;
+import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.util.FieldNameUtil;
 

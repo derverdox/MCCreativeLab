@@ -8,6 +8,7 @@ import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import net.kyori.adventure.key.Key;
+import net.minecraft.world.entity.animal.FrogVariant;
 import org.jetbrains.annotations.NotNull;
 
 public interface MCCRegistries {
@@ -42,6 +43,8 @@ public interface MCCRegistries {
     // Instrument
     // GameEvent
     // FrogVariant
+
+
 
     MCCTypedKey<MCCRegistry<MCCBlockType>> BLOCK_REGISTRY = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "block"), REGISTRY_OF_REGISTRIES, new TypeToken<>() {});
     MCCTypedKey<MCCRegistry<MCCItemType>> ITEM_REGISTRY = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "item"), REGISTRY_OF_REGISTRIES, new TypeToken<>() {});
