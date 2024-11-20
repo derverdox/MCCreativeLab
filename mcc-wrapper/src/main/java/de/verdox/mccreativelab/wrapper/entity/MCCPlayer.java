@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,7 @@ public interface MCCPlayer extends MCCEntity, ContainerViewer {
      *
      * @return the inventory
      */
-    MCCContainer getInventory();
+    MCCPlayerInventoryContainer getInventory();
 
     /**
      * Returns the item on the player's cursor. If no item is on the players cursor null is returned instead
@@ -29,4 +30,10 @@ public interface MCCPlayer extends MCCEntity, ContainerViewer {
      * @param mccItemStack the item stack to put on the players cursor
      */
     void setCursorItem(MCCItemStack mccItemStack);
+
+    void resetPlayerTime();
+
+    void resetPlayerWeather();
+
+    void updateInventory();
 }

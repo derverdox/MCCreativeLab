@@ -97,6 +97,11 @@ public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
     }
 
     @Override
+    public boolean isEmpty() {
+        return getHandle().isEmpty();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -3,6 +3,8 @@ package de.verdox.mccreativelab.conversion;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 
+import java.util.Set;
+
 public interface ConversionService {
     <A, T extends A, F> void registerPlatformType(Class<A> apiType, MCCConverter<F, T> converter);
 
@@ -29,4 +31,9 @@ public interface ConversionService {
     default <F, T> F unwrap(T objectToUnwrap, Class<F> nativePlatformType) {
         return (F) unwrap(objectToUnwrap);
     }
+
+
+    Set<ClassPair> getAllKnownClassPairs();
+
+    record ClassPair(Class<?> apiType, Class<?> nativeType){}
 }

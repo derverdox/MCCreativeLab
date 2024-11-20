@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.world;
 
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
+import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
@@ -18,6 +19,29 @@ public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder {
     MCCBlockState getBlockDataAt(int x, int y, int z);
 
     MCCBlockType getBlockTypeAt(int x, int y, int z);
+
+    MCCBlock getBlockAt(int x, int y, int z);
+
+    default MCCBlockState getBlockDataAt(MCCLocation location) {
+        if(!location.world().equals(this)){
+            throw new IllegalArgumentException("The provided location does not belong to this world.");
+        }
+        return getBlockDataAt((int) location.x(), (int) location.y(), (int) location.z());
+    }
+
+    default MCCBlockType getBlockTypeAt(MCCLocation location) {
+        if(!location.world().equals(this)){
+            throw new IllegalArgumentException("The provided location does not belong to this world.");
+        }
+        return getBlockTypeAt((int) location.x(), (int) location.y(), (int) location.z());
+    }
+
+    default MCCBlock getBlockAt(MCCLocation location) {
+        if(!location.world().equals(this)){
+            throw new IllegalArgumentException("The provided location does not belong to this world.");
+        }
+        return getBlockAt((int) location.x(), (int) location.y(), (int) location.z());
+    }
 
     /**
      * Changes a block at the provided location to this block state

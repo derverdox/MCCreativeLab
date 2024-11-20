@@ -93,7 +93,7 @@ public class DynamicType {
     }
 
     protected DynamicType(Type type, boolean trySwap) {
-        Objects.requireNonNull(type);
+        Objects.requireNonNull(type, "The provided type cannot be null");
         switch (type) {
             case ClassDescription description -> this.classDescription = description;
             case ParameterizedType parameterizedType -> {

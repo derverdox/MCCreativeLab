@@ -1,17 +1,22 @@
 package de.verdox.mccreativelab.impl.vanilla.platform;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.ConversionServiceImpl;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
+import de.verdox.mccreativelab.impl.vanilla.entity.NMSAttribute;
 import de.verdox.mccreativelab.impl.vanilla.entity.NMSEntity;
 import de.verdox.mccreativelab.impl.vanilla.entity.NMSEntityType;
+import de.verdox.mccreativelab.impl.vanilla.inventory.types.*;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemType;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.factory.NMSTypedKeyFactory;
 import de.verdox.mccreativelab.impl.vanilla.registry.*;
 import de.verdox.mccreativelab.impl.vanilla.world.NMSWorld;
+import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
+import de.verdox.mccreativelab.wrapper.inventory.types.*;
 import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
@@ -27,8 +32,11 @@ import de.verdox.mccreativelab.wrapper.platform.MCCTaskManager;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import net.kyori.adventure.key.Key;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 public class NMSPlatform implements MCCPlatform {
@@ -40,6 +48,7 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCBlockState.class, NMSBlockState.CONVERTER);
         conversionService.registerPlatformType(MCCBlockType.class, NMSBlockType.CONVERTER);
         conversionService.registerPlatformType(MCCEntity.class, NMSEntity.CONVERTER);
+        conversionService.registerPlatformType(MCCAttribute.class, NMSAttribute.CONVERTER);
         conversionService.registerPlatformType(MCCEntityType.class, NMSEntityType.CONVERTER);
         conversionService.registerPlatformType(MCCItemStack.class, NMSItemStack.CONVERTER);
         conversionService.registerPlatformType(MCCItemType.class, NMSItemType.CONVERTER);
@@ -52,6 +61,8 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCReferenceSet.class, NMSReferenceSet.CONVERTER);
         conversionService.registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
         conversionService.registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
+
+        registerContainerTypes();
     }
 
     @Override
@@ -85,7 +96,29 @@ public class NMSPlatform implements MCCPlatform {
     }
 
     @Override
+    public List<MCCWorld> getWorlds() {
+        List<MCCWorld> worlds = new LinkedList<>();
+        MinecraftServer.getServer().getAllLevels().forEach(serverLevel -> {
+            worlds.add(getConversionService().wrap(serverLevel, new TypeToken<>() {}));
+        });
+        return worlds;
+    }
+
+    @Override
     public @Nullable MCCPlayer getOnlinePlayer(UUID uuid) {
         return null;
     }
+
+    private void registerContainerTypes(){
+        /*conversionService.registerPlatformType(MCCAnvilContainer.class, NMSAnvilContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCBeaconContainer.class, NMSBeaconContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCBrewingStandContainer.class, NMSBrewingStandContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCCartographyTableContainer.class, NMSCartographyTableContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCChestContainer.class, NMSChestContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCCrafterContainer.class, NMSCrafterContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCEnchantingTableContainer.class, NMSEnchantingTableContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCFurnaceContainer.class, NMSFurnaceContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCGrindstoneContainer.class, NMSGrindstoneContainer.CONVERTER);
+        conversionService.registerPlatformType(MCCLecternContainer.class, NMSLecternContainer.CONVERTER);
+    */}
 }

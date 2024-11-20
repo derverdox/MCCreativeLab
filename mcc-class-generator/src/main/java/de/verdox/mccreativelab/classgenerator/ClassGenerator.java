@@ -33,7 +33,9 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -232,10 +234,11 @@ public class ClassGenerator {
 
         WrapperInterfaceGenerator generator = new WrapperInterfaceGenerator(new File("../../mcc-wrapper/generated"), "MCC", "", "NMS", excludedTypes, EXCLUDED_PACKAGES);
         TypedKeyCollectionBuilder typedKeyCollectionBuilder = new TypedKeyCollectionBuilder(GENERATION_DIR, "MCC", "", excludedTypes, List.of());
+        typedKeyCollectionBuilder.generateForPlatformGroupingClass(Attributes.class, Attribute.class, Registries.ATTRIBUTE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCAttributes");
+
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Blocks.class, Block.class, Registries.BLOCK.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCBlocks");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Items.class, Item.class, Registries.ITEM.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCItems");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(DataComponents.class, DataComponentType.class, Registries.DATA_COMPONENT_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCDataComponentTypes");
-
 
         generator.generateWrapper(FrogVariant.class, wrapperPackage + "types", implPackage + "types", DynamicType.of(MCCWrapped.class), false);
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(FrogVariant.class, FrogVariant.class, Registries.FROG_VARIANT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCFrogVariants");

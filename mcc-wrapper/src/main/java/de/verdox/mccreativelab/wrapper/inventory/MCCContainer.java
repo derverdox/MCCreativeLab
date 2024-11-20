@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.inventory;
 
 import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
+import de.verdox.mccreativelab.wrapper.inventory.source.MCCContainerSource;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import net.kyori.adventure.text.Component;
@@ -13,7 +14,7 @@ import java.util.Set;
 /**
  * Describes a minecraft inventory
  */
-public interface MCCContainer extends Iterable<MCCItemStack> {
+public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCCItemStack> {
     /**
      * Gets the {@link MCCMenuType} of the container
      *
@@ -27,7 +28,7 @@ public interface MCCContainer extends Iterable<MCCItemStack> {
      * @param index the index of the slot
      * @param stack the item
      */
-    void setItem(int index, MCCItemStack stack);
+    void setItem(int index, @Nullable MCCItemStack stack);
 
     /**
      * Gets the {@link MCCItemStack} at the given container slot
@@ -98,6 +99,14 @@ public interface MCCContainer extends Iterable<MCCItemStack> {
      * @param component the new title of the inventory
      */
     void setTitle(Component component);
+
+    /**
+     * Returns the title of the container
+     *
+     * @return the title
+     */
+    Component getTitle();
+
 
     default int getSize() {
         return getType().containerSize();
@@ -216,4 +225,18 @@ public interface MCCContainer extends Iterable<MCCItemStack> {
      * @return the viewers
      */
     Set<ContainerViewer> getViewers();
+
+    /**
+     * Returns true when this container has a GUI that can be opened by a player
+     *
+     * @return true if the container can be opened
+     */
+    boolean canBeOpened();
+
+    /**
+     * Returns the container source of this container. Might be null if the container was created by the server software instead of being from a real game element.
+     * @return the source or null if no source is available
+     */
+    @Nullable
+    T getSource();
 }

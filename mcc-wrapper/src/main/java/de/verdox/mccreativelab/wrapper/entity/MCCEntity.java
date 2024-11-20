@@ -4,11 +4,13 @@ import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.platform.TempData;
 import de.verdox.mccreativelab.wrapper.platform.TempDataHolder;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Describes an entity in a minecraft world
@@ -48,4 +50,8 @@ public interface MCCEntity extends MCCKeyedWrapper, TempDataHolder, MCCWrapped {
      * @param name the display name
      */
     void displayName(Component name);
+
+    CompletableFuture<Void> teleport(MCCLocation location);
+
+    MCCLocation getLocation();
 }

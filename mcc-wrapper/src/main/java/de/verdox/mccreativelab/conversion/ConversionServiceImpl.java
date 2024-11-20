@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.conversion;
 import de.verdox.mccreativelab.conversion.converter.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConversionServiceImpl implements ConversionService {
     private final ConversionCache<MCCConverter<?, ?>> conversionCache = new ConversionCache<>();
@@ -51,6 +52,11 @@ public class ConversionServiceImpl implements ConversionService {
     @Override
     public boolean isApiTypeKnown(Class<?> apiType) {
         return conversionCache.knowsApiType(apiType);
+    }
+
+    @Override
+    public Set<ClassPair> getAllKnownClassPairs() {
+        return conversionCache.getApiToNativeMapping().stream().map(pair -> new ClassPair(pair.getKey(), pair.getValue())).collect(Collectors.toSet());
     }
 
     @Override

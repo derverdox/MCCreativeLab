@@ -31,6 +31,10 @@ public record MCCContainerCloseReason(String id) {
      */
     public static final MCCContainerCloseReason CLOSED_BY_VIEWER = new MCCContainerCloseReason("viewer");
     /**
+     * The viewer intentionally closed the container
+     */
+    public static final MCCContainerCloseReason CLOSED_BY_SERVER = new MCCContainerCloseReason("closed_by_server");
+    /**
      * Closed because the viewer disconnected from the server
      */
     public static final MCCContainerCloseReason DISCONNECT = new MCCContainerCloseReason("disconnect");

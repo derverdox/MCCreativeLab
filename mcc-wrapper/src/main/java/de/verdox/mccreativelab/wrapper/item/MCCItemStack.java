@@ -107,4 +107,6 @@ public interface MCCItemStack {
      * @return a copy of the item
      */
     MCCItemStack copy();
+
+    boolean isEmpty();
 }

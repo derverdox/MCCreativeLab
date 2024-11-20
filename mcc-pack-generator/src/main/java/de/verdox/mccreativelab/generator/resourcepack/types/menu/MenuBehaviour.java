@@ -1,18 +1,14 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 
 import de.verdox.mccreativelab.MCCUtil;
-import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuCloseEvent;
-import de.verdox.mccreativelab.generator.resourcepack.types.menu.events.PlayerMenuOpenEvent;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
-import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTask;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-public class MenuBehaviour implements Listener {
+public class MenuBehaviour {
     private static final int tickCooldown = 3;
     private final MCCPlayer player;
     private final ActiveMenu activeMenu;
@@ -44,9 +40,7 @@ public class MenuBehaviour implements Listener {
 
         heldSlotBefore = player.getInventory().getHeldItemSlot();
 
-        Bukkit.getPluginManager().callEvent(new PlayerMenuOpenEvent(player, activeMenu));
-
-        locationBefore = player.getLocation().clone();
+        locationBefore = player.getLocation();
 
         if (activeMenu.getCustomMenu().doFakeTime)
             player.setPlayerTime(6000, false);
@@ -54,7 +48,7 @@ public class MenuBehaviour implements Listener {
             player.setPlayerWeather(WeatherType.CLEAR);
         player.setMetadata("hasMenuOpen", new FixedMetadataValue(MCCreativeLabExtension.getInstance(), false));
 
-        Location locationOnOpen = getLocationOnOpen();
+        MCCLocation locationOnOpen = getLocationOnOpen();
 
         this.posUpdaterTask = Bukkit.getScheduler().runTaskTimer(platformPlugin, () -> {
             player.getInventory().setHeldItemSlot(4);
@@ -64,7 +58,7 @@ public class MenuBehaviour implements Listener {
             if (!activeMenu.getCustomMenu().doYawPitchLock && !activeMenu.getCustomMenu().doPositionLoc)
                 return;
 
-            if (player.getLocation().getYaw() == 0 && player.getLocation().getPitch() == -90 && activeMenu.getCustomMenu().doYawPitchLock)
+            if (player.getLocation().yaw() == 0 && player.getLocation().pitch() == -90 && activeMenu.getCustomMenu().doYawPitchLock)
                 return;
 
             if (locationOnOpen != null)
@@ -80,13 +74,13 @@ public class MenuBehaviour implements Listener {
         }
     }
 
-    private @Nullable Location getLocationOnOpen() {
-        Location location = null;
+    private @Nullable MCCLocation getLocationOnOpen() {
+        MCCLocation location = null;
 
         if (activeMenu.getCustomMenu().doYawPitchLock)
-            location = new Location(player.getLocation().getWorld(), player.getLocation().getBlockX() + 0.5, player.getLocation().getY(), player.getLocation().getBlockZ() + 0.5, 0, -90);
+            location = new MCCLocation(player.getLocation().world(), player.getLocation().x() + 0.5, player.getLocation().y(), player.getLocation().z() + 0.5, 0, -90);
         else if (activeMenu.getCustomMenu().doPositionLoc)
-            location = new Location(player.getLocation().getWorld(), player.getLocation().getBlockX() + 0.5, player.getLocation().getY(), player.getLocation().getBlockZ() + 0.5, player.getYaw(), player.getPitch());
+            location = new MCCLocation(player.getLocation().world(), player.getLocation().x() + 0.5, player.getLocation().y(), player.getLocation().z() + 0.5, player.getLocation().yaw(), player.getLocation().pitch());
         return location;
     }
 
@@ -95,8 +89,6 @@ public class MenuBehaviour implements Listener {
         player.resetPlayerWeather();
 
         FakeInventory.stopFakeInventoryOfPlayer(player);
-
-        Bukkit.getPluginManager().callEvent(new PlayerMenuCloseEvent(player, activeMenu));
 
         player.getInventory().setHeldItemSlot(heldSlotBefore);
 
@@ -117,14 +109,6 @@ public class MenuBehaviour implements Listener {
                 player.showPlayer(MCCreativeLabExtension.getInstance(), onlinePlayer);
             }
         }
-    }
-
-    private boolean isRightPlayer(Player player) {
-        return player.getUniqueId().equals(this.player.getUniqueId());
-    }
-
-    private boolean isRightPlayer(Entity player) {
-        return player.getUniqueId().equals(this.player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

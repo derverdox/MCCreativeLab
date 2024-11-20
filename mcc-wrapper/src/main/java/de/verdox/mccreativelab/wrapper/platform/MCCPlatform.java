@@ -6,8 +6,11 @@ import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.event.MCCEvent;
 import de.verdox.mccreativelab.wrapper.inventory.factory.MCCContainerFactory;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
+import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -53,6 +56,7 @@ public interface MCCPlatform {
 
     void callEvent(MCCEvent mccEvent);
 
+    List<MCCWorld> getWorlds();
 
     @Nullable MCCPlayer getOnlinePlayer(UUID uuid);
 

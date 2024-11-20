@@ -4,6 +4,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.type.ClassDescription;
+import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.entity.ai.MCCMemoryModuleType;
@@ -12,6 +13,7 @@ import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import io.papermc.paper.registry.data.util.Conversions;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponentType;
@@ -40,6 +42,9 @@ public class NMSMapper {
     }
 
     public static void register(Type from, Type to) {
+        if (from == null || to == null) {
+            return;
+        }
         register(DynamicType.of(from, false), DynamicType.of(to, false), false);
     }
 
@@ -56,7 +61,7 @@ public class NMSMapper {
     static {
         if (!MCCPlatform.INSTANCE.isSetup())
             MCCPlatform.INSTANCE.setup(new NMSPlatform());
-        for (LegacyConversionService.ClassPair classPair : MCCPlatform.getInstance().getConversionService().getAllKnownClassPairs()) {
+        for (ConversionService.ClassPair classPair : MCCPlatform.getInstance().getConversionService().getAllKnownClassPairs()) {
             register(classPair.nativeType(), classPair.apiType());
         }
 

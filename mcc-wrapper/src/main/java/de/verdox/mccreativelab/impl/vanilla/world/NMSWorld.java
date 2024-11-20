@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.world;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
@@ -34,6 +35,11 @@ public class NMSWorld extends NMSHandle<ServerLevel> implements MCCWorld {
 
     @Override
     public MCCBlockType getBlockTypeAt(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public MCCBlock getBlockAt(int x, int y, int z) {
         return null;
     }
 

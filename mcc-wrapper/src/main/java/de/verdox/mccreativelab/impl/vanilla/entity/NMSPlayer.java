@@ -8,6 +8,7 @@ import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.text.Component;
@@ -23,7 +24,7 @@ public class NMSPlayer extends NMSEntity<Player> implements MCCPlayer {
     }
 
     @Override
-    public MCCContainer getInventory() {
+    public MCCPlayerInventoryContainer getInventory() {
         return MCCPlatform.getInstance().getConversionService().wrap(handle.getInventory(), new TypeToken<>() {});
     }
 
@@ -34,6 +35,21 @@ public class NMSPlayer extends NMSEntity<Player> implements MCCPlayer {
 
     @Override
     public void setCursorItem(MCCItemStack mccItemStack) {
+
+    }
+
+    @Override
+    public void resetPlayerTime() {
+
+    }
+
+    @Override
+    public void resetPlayerWeather() {
+
+    }
+
+    @Override
+    public void updateInventory() {
 
     }
 
