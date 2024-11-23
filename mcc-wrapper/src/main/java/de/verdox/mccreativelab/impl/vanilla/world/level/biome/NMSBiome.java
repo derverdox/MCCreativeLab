@@ -31,7 +31,7 @@ public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
 
     @Override
     public MCCBiomeSpecialEffects getSpecialEffects() {
-        BiomeSpecialEffects specialEffects = getHandle().getSpecialEffects();
+        final BiomeSpecialEffects specialEffects = getHandle().getSpecialEffects();
         return new MCCBiomeSpecialEffects(
             specialEffects.getFogColor(),
             specialEffects.getWaterColor(),
@@ -41,5 +41,11 @@ public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
             specialEffects.getGrassColorOverride(),
             MCCBiomeSpecialEffects.MCCGrassColorModifier.valueOf(specialEffects.getGrassColorModifier().name())
         );
+    }
+
+    @Override
+    public TemperatureModifier getTemperatureModifier() {
+        final Biome.TemperatureModifier temperatureModifier = getHandle().climateSettings.temperatureModifier();
+        return MCCBiome.TemperatureModifier.valueOf(temperatureModifier.name());
     }
 }

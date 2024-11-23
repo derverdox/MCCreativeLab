@@ -20,21 +20,28 @@ public interface MCCBiome {
     float getBaseTemperature();
 
     /**
-     * Gets the temperature modifier of the biome
+     * Gets the special effects of the biome
      *
-     * @return the temperature modifier
+     * @return the special effects
      */
     MCCBiomeSpecialEffects getSpecialEffects();
 
     /**
+     * Gets the temperature modifier of the biome
+     *
+     * @return the temperature modifier
+     */
+    TemperatureModifier getTemperatureModifier();
+
+    /**
      * Enum for temperature modifiers
      */
-    enum MCCTemperatureModifier {
+    public enum TemperatureModifier {
         NONE("none"),
         FROZEN("frozen"),;
         private final String name;
 
-        MCCTemperatureModifier(final String name) {
+        TemperatureModifier(final String name) {
             this.name = name;
         }
 
