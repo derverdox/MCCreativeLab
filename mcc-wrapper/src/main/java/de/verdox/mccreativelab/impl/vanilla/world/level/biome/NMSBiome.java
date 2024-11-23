@@ -8,13 +8,16 @@ import de.verdox.mccreativelab.wrapper.world.level.biome.MCCBiomeSpecialEffects;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 
+/**
+ * Class representing the native Minecraft Biome implementing the MCCBiome interface
+ */
 public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
     public static final MCCConverter<Biome, NMSBiome> CONVERTER = converter(NMSBiome.class, Biome.class, NMSBiome::new, NMSHandle::getHandle);
 
     public NMSBiome(Biome handle) {
         super(handle);
     }
-
+    
     @Override
     public Boolean hasPrecipitation() {
         return getHandle().hasPrecipitation();
