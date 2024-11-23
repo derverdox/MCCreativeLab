@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.platform;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 
 import java.util.Objects;
@@ -75,5 +76,13 @@ public class NMSHandle<T> {
     @Override
     public int hashCode() {
         return Objects.hashCode(handle);
+    }
+
+    protected <T> T readFieldFromHandle(String fieldName, TypeToken<T> type){
+        try {
+            return (T) getHandle().getClass().getDeclaredField(fieldName).get(getHandle());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

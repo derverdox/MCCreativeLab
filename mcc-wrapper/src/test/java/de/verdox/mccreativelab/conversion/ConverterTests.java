@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.StonecutterBlock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -65,13 +66,18 @@ public class ConverterTests extends TestBase {
         testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyLogItemStack.CONVERTER, new OnlyLogItemStack(log), log, true));
         StairBlock stairBlock = (StairBlock) Blocks.STONE_STAIRS;
         testEntries.add(new TestEntry<>(MCCBlockType.class, NMSBlockType.CONVERTER, new NMSBlockType(stairBlock), stairBlock, false));
-        testEntries.add(new TestEntry<>(Key.class, new ResourceLocationConverter(), Key.key("minecraft","stone"), ResourceLocation.tryBuild("minecraft", "stone"), false));
+        testEntries.add(new TestEntry<>(Key.class, new ResourceLocationConverter(), Key.key("minecraft", "stone"), ResourceLocation.tryBuild("minecraft", "stone"), false));
 
         testEntries.add(new TestEntry<>(MCCItemStack.class, NMSItemStack.CONVERTER, new OnlyLogItemStack(log), log, false));
 
         for (TestEntry<?, ?, ?> testEntry : testEntries) {
             testEntry.register();
         }
+    }
+
+    @Test
+    public void testNoNullEntriesInMapping() {
+
     }
 
     @ParameterizedTest

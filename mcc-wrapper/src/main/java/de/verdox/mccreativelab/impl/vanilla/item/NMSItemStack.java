@@ -26,15 +26,22 @@ public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
     }
 
     @Override
-    public <R, T extends MCCDataComponentType<R>> void edit(T dataComponentType, Consumer<ItemComponentEditor<R, T>> editor) {
+    public <R, T extends MCCDataComponentType<R>> MCCItemStack edit(T dataComponentType, Consumer<ItemComponentEditor<R, T>> editor) {
         NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
         editor.accept(nmsItemComponentEditor);
+        return this;
     }
 
     @Override
     public <R, T extends MCCDataComponentType<R>> R editAndGet(T dataComponentType, Function<ItemComponentEditor<R, T>, R> editor) {
         NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
         return editor.apply(nmsItemComponentEditor);
+    }
+
+    @Override
+    public <R, T extends MCCDataComponentType<R>> R get(T dataComponentType) {
+        NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
+        return nmsItemComponentEditor.get();
     }
 
     @Override

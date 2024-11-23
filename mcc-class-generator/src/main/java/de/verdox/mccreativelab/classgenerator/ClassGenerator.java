@@ -33,6 +33,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -103,7 +104,6 @@ public class ClassGenerator {
         DebugStickState.class,
         BannerPatternLayers.class,
         BundleContents.class,
-        ItemLore.class,
         Fireworks.class,
         PotDecorations.class,
         CustomData.class,
@@ -132,7 +132,7 @@ public class ClassGenerator {
             generateTypedKeys();
             createItemComponentConverters();
             //generateEventClasses();
-            new EventDescriptionGenerator(GENERATION_DIR).generate(10);
+            //new EventDescriptionGenerator(GENERATION_DIR).generate(10);
             MCCConverterGenerator.createGeneratedConvertersClass(GENERATION_DIR);
         } catch (IOException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -236,6 +236,10 @@ public class ClassGenerator {
         TypedKeyCollectionBuilder typedKeyCollectionBuilder = new TypedKeyCollectionBuilder(GENERATION_DIR, "MCC", "", excludedTypes, List.of());
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Attributes.class, Attribute.class, Registries.ATTRIBUTE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCAttributes");
 
+        typedKeyCollectionBuilder.generateForPlatformGroupingClass(MobEffects.class, MobEffect.class, Registries.MOB_EFFECT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCEffects");
+
+        typedKeyCollectionBuilder.generateForPlatformGroupingClass(SoundEvents.class, SoundEvent.class, Registries.SOUND_EVENT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCSounds");
+
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Blocks.class, Block.class, Registries.BLOCK.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCBlocks");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Items.class, Item.class, Registries.ITEM.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCItems");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(DataComponents.class, DataComponentType.class, Registries.DATA_COMPONENT_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCDataComponentTypes");
@@ -254,11 +258,6 @@ public class ClassGenerator {
 
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(MemoryModuleType.class, MemoryModuleType.class, Registries.MEMORY_MODULE_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCMemoryModuleTypes");
 
-        generator.generateWrapper(MenuType.class, wrapperPackage + "types", implPackage + "types", DynamicType.of(MCCWrapped.class), false);
-        typedKeyCollectionBuilder.generateForPlatformGroupingClass(MenuType.class, MenuType.class, Registries.MENU.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCMenuTypes");
-
-        typedKeyCollectionBuilder.generateForPlatformGroupingClass(MobEffects.class, MobEffect.class, Registries.MOB_EFFECT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCMobEffects");
-
         generator.generateWrapper(PaintingVariant.class, wrapperPackage + "types", implPackage + "types", DynamicType.of(MCCWrapped.class), false);
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(PaintingVariants.class, PaintingVariant.class, Registries.PAINTING_VARIANT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCPaintingVariants");
 
@@ -268,9 +267,6 @@ public class ClassGenerator {
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Potions.class, Potion.class, Registries.POTION.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCPotions");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(RecipeType.class, RecipeType.class, Registries.RECIPE_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCRecipeTypes");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Schedule.class, Schedule.class, Registries.SCHEDULE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCSchedules");
-
-        typedKeyCollectionBuilder.generateForPlatformGroupingClass(SoundEvents.class, SoundEvent.class, Registries.SOUND_EVENT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCSoundEvents");
-
         //generator.generateWrapper(StatType.class, wrapperPackage+"types", implPackage+"types", DynamicType.of(MCCWrapped.class), false);
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Stats.class, StatType.class, Registries.STAT_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCStatTypes");
 

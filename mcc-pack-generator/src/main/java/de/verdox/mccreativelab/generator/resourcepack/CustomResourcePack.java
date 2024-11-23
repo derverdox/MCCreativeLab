@@ -29,6 +29,7 @@ import java.util.*;
 
 public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     public static final AssetPath resourcePacksFolder = AssetPath.buildPath("resourcePacks");
+    public static final ItemTextureData EMPTY_ITEM = new ItemTextureData(Key.key("mcclab", "item/empty_item"), MCCItems.GRAY_STAINED_GLASS_PANE.get(), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane")), new Asset<>("/empty_block/textures/empty.png"), null);
     private final Map<String, SoundFile> soundFilesPerNamespace = new HashMap<>();
     private final Map<MCCItemType, Set<ItemTextureData>> itemTextureDataPerMaterial = new HashMap<>();
     private final Map<MCCBlockState, Set<AlternateBlockStateModel>> alternateBlockStateModels = new HashMap<>();
@@ -37,9 +38,9 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
     private final ItemTextureData emptyItem;
     private final List<File> includedResourcePacks = new LinkedList<>();
 
-    public CustomResourcePack(String packName, int packFormat, String description, AssetPath savePath) {
-        super(packName, packFormat, description, savePath);
-        emptyItem = new ItemTextureData(Key.key("fixedminecraft", "item/empty_item"), MCCItems.GRAY_STAINED_GLASS_PANE.get(), CustomModelDataProvider.drawCustomModelData(Key.key(Key.MINECRAFT_NAMESPACE, "gray_staned_glass_pane")), new Asset<>("/empty_block/textures/empty.png"), null);
+    public CustomResourcePack(String packName, int packFormat, String description, AssetPath savePath, File templateFolder, File dataFolder) {
+        super(packName, packFormat, description, savePath, templateFolder, dataFolder);
+        emptyItem = EMPTY_ITEM;
         register(emptyItem);
     }
 

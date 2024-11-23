@@ -12,7 +12,6 @@ import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
-import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +35,7 @@ public class NMSFurnaceContainer extends NMSContainer<MCCBlockContainerSource, A
     @Override
     public boolean canSmelt(@Nullable MCCItemStack stack) {
         ServerLevel mainWorld = MCCPlatform.getInstance().getConversionService().unwrap(MCCPlatform.getInstance().getWorlds().get(0), new TypeToken<ServerLevel>() {});
-        return stack != null && !stack.getType().isEmpty() && mainWorld.getRecipeManager().getRecipeFor(((AbstractFurnaceBlockEntity) this.container).recipeType, new net.minecraft.world.item.crafting.SingleRecipeInput(MCCPlatform.getInstance().getConversionService().unwrap(stack, new TypeToken<>() {})), mainWorld).isPresent();
+        return stack != null && !stack.getType().isEmpty() && mainWorld.getRecipeManager().getRecipeFor(((AbstractFurnaceBlockEntity) this.implContainer.getHandle()).recipeType, new net.minecraft.world.item.crafting.SingleRecipeInput(MCCPlatform.getInstance().getConversionService().unwrap(stack, new TypeToken<>() {})), mainWorld).isPresent();
     }
 
     @Override

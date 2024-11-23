@@ -23,6 +23,7 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.item.components.MCCArmorTrim;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import de.verdox.mccreativelab.wrapper.item.components.MCCPotionContents;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLodestoneTracker;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapPostProcessing;
@@ -50,6 +51,8 @@ public class MCCDataComponentTypes  {
 	public static final MCCTypedKey<MCCDataComponentType<Component>> CUSTOM_NAME  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "custom_name"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
 
 	public static final MCCTypedKey<MCCDataComponentType<Component>> ITEM_NAME  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "item_name"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
+
+	public static final MCCTypedKey<MCCDataComponentType<MCCItemLore>> LORE  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "lore"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
 
 	public static final MCCTypedKey<MCCDataComponentType<MCCRarity>> RARITY  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "rarity"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
 

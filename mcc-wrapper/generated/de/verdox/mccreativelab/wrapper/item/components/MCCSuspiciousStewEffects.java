@@ -1,9 +1,9 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.world.effect.MobEffect;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 
 public interface MCCSuspiciousStewEffects extends MCCItemComponent  {
 
@@ -16,9 +16,9 @@ public interface MCCSuspiciousStewEffects extends MCCItemComponent  {
 
 	public static interface MCCEntry  {
 	
-		public MCCReference<MobEffect> getEffect();
+		public MCCReference<MCCEffectType> getEffect();
 	
-		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MobEffect> effect);
+		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MCCEffectType> effect);
 	
 		public int getDuration();
 	

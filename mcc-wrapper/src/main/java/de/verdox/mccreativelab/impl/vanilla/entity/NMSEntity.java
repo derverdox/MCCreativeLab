@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.impl.vanilla.platform.NMSTempCache;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import de.verdox.mccreativelab.wrapper.platform.TempData;
@@ -52,7 +53,7 @@ public class NMSEntity<T extends Entity> extends NMSHandle<T> implements MCCEnti
     }
 
     @Override
-    public CompletableFuture<Void> teleport(MCCLocation location) {
+    public CompletableFuture<MCCEntity> teleport(MCCLocation location) {
         return null;
     }
 
@@ -63,11 +64,11 @@ public class NMSEntity<T extends Entity> extends NMSHandle<T> implements MCCEnti
 
     @Override
     public @NotNull Key key() {
-        return null;
+        return getType().key();
     }
 
     @Override
     public TempData getTempData() {
-        return null;
+        return NMSTempCache.get(getHandle());
     }
 }

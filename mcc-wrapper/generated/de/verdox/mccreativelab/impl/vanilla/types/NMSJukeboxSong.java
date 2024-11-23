@@ -5,6 +5,7 @@ import net.minecraft.world.item.JukeboxSong;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSJukeboxSong;
@@ -24,9 +25,9 @@ public class NMSJukeboxSong extends NMSHandle<JukeboxSong> implements MCCJukebox
 		super(handle);
 	}
 
-	public MCCReference<SoundEvent> getSoundEvent(){
+	public MCCReference<MCCSound> getSoundEvent(){
 		var nms = getSoundEventFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<SoundEvent>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCSound>>() {});
 	}
 
 	private Holder<SoundEvent> getSoundEventFromImpl(){

@@ -1,12 +1,12 @@
 package de.verdox.mccreativelab.wrapper.types;
 
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.sounds.SoundEvent;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 
 public interface MCCInstrument extends MCCWrapped  {
 
-	public MCCReference<SoundEvent> getSoundEvent();
+	public MCCReference<MCCSound> getSoundEvent();
 
 	public int getUseDuration();
 

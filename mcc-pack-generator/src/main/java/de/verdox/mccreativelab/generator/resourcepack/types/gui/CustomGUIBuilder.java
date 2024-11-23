@@ -12,6 +12,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.sin
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.RenderedElementBehavior;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
 import net.kyori.adventure.audience.Audience;

@@ -1,10 +1,10 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import java.util.Optional;
-import org.bukkit.potion.PotionEffect;
 
 public interface MCCFoodProperties extends MCCItemComponent  {
 
@@ -39,9 +39,9 @@ public interface MCCFoodProperties extends MCCItemComponent  {
 
 	public static interface MCCPossibleEffect  {
 	
-		public PotionEffect getEffect();
+		public MCCEffect getEffect();
 	
-		public MCCFoodProperties.MCCPossibleEffect withEffect(PotionEffect effect);
+		public MCCFoodProperties.MCCPossibleEffect withEffect(MCCEffect effect);
 	
 		public float getProbability();
 	

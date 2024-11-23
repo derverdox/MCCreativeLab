@@ -22,15 +22,16 @@ public abstract class CustomPack<C extends CustomPack<C>> {
     private boolean noNewInstallations;
     private boolean isReloading;
     private static Logger LOGGER = Logger.getGlobal();
-    private ConfigurableResourceStorage<C> configurableResourceStorage = new ConfigurableResourceStorage<>();
+    private final ConfigurableResourceStorage<C> configurableResourceStorage;
 
-    public CustomPack(String packName, int packFormat, String description, AssetPath savePath) {
+    public CustomPack(String packName, int packFormat, String description, AssetPath savePath, File templateFolder, File dataFolder) {
         this.packName = packName;
         this.packFormat = packFormat;
         this.description = description;
         this.savePath = savePath;
         this.pathToSavePackDataTo = AssetPath.buildPath(packName).withNewParentPath(savePath);
         this.packFromLastRestart = pathToSavePackDataTo.withNewParentPath("old");
+        this.configurableResourceStorage = new ConfigurableResourceStorage<>(templateFolder, dataFolder);
     }
 
     public void clearResources() {
@@ -86,13 +87,13 @@ public abstract class CustomPack<C extends CustomPack<C>> {
 
     private void reloadResourcesFromConfigs() throws IOException {
         if(!addedResources.isEmpty())
-            ConfigurableResourceStorage.deleteTemplateFolder();
+            configurableResourceStorage.deleteTemplateFolder();
         for (Resource<C> addedResource : addedResources) {
             Serializer<Resource<C>> serializer = addedResource.getSerializer();
             if(serializer == null)
                 continue;
             //TODO
-            configurableResourceStorage.loadResourceFromStorage(addedResource, serializer);
+            configurableResourceStorage.loadResourceFromStorage(addedResource);
         }
     }
 

@@ -24,11 +24,6 @@ public class NMSEntityType extends NMSHandle<EntityType<?>> implements MCCEntity
     }
 
     @Override
-    public CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @Nullable Consumer<MCCEntity> callback) {
-        return null;
-    }
-
-    @Override
     public @NotNull Key key() {
         return null;
     }

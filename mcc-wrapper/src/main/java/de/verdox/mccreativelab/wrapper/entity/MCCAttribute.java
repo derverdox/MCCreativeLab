@@ -1,9 +1,11 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
+
 /**
  * Represents an entity attribute
  */
-public interface MCCAttribute {
+public interface MCCAttribute extends MCCWrapped {
 
     /**
      * Gets the translation key of this attribute

@@ -3,13 +3,16 @@ package de.verdox.mccreativelab.impl.vanilla.world;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.impl.vanilla.platform.NMSTempCache;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
+import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import de.verdox.mccreativelab.wrapper.platform.TempData;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
+import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.minecraft.server.level.ServerLevel;
@@ -54,7 +57,22 @@ public class NMSWorld extends NMSHandle<ServerLevel> implements MCCWorld {
     }
 
     @Override
-    public CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @Nullable Consumer<MCCEntity> callback) {
+    public CompletableFuture<MCCEntity> teleport(@NotNull MCCLocation location, @NotNull MCCEntity mccEntity) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @NotNull MCCEntityType mccEntityType) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<MCCChunk> getOrLoadChunk(int x, int z) {
+        return null;
+    }
+
+    @Override
+    public @Nullable MCCChunk getChunkImmediately(int x, int z) {
         return null;
     }
 
@@ -75,6 +93,6 @@ public class NMSWorld extends NMSHandle<ServerLevel> implements MCCWorld {
 
     @Override
     public TempData getTempData() {
-        return null;
+        return NMSTempCache.get(getHandle());
     }
 }

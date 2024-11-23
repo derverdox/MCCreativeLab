@@ -1,12 +1,10 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.frontend.FrontEndBehavior;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.ActiveComponentRendered;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTask;
@@ -17,14 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuilder> {
     private final Map<String, ActiveGUIElement<?>> activeGUIElements = new HashMap<>();
@@ -103,34 +97,6 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         }
     }
 
-    private void startFrontEnd() {
-        if (updateTask != null && updateTask.isRunning())
-            return;
-
-        frontEndBehavior.onFrontendRenderStart();
-
-        frontEndRenderer = new FrontEndRenderer();
-        frontEndRenderer.start();
-
-        MCCPlatform.getInstance().getTaskManager().runTimerAsync(mccTask -> {
-            synchronized (viewers) {
-                if (viewers.isEmpty()) {
-                    updateTask.cancel();
-                    frontEndBehavior.onFrontendClose();
-                    frontEndRenderer.stopRenderer();
-                    //Bukkit.getLogger().info("Stopping dynamic frontend renderer for gui " + getComponentRendered().getKey().asString());
-                    return;
-                }
-            }
-            if (getComponentRendered().updateInterval > 0)
-                forceUpdate();
-        }, 0, getComponentRendered().updateInterval > 0 ? getComponentRendered().updateInterval * 50L : 1, TimeUnit.MILLISECONDS);
-
-        if (getComponentRendered().updateInterval < 0) {
-            MCCPlatform.getInstance().getTaskManager().runAsync(mccTask -> forceUpdate());
-        }
-    }
-
     public final void addClickableItem(int index, ClickableItem clickableItem) {
         this.getVanillaInventory().setItem(index, clickableItem.getStack());
         indexToClickableItemMapping.put(index, clickableItem);
@@ -144,30 +110,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     }
 
     public void openToPlayer(MCCPlayer player) {
-        ActiveGUI currentActiveGUI = PlayerGUIData.getCurrentActiveGUI(player);
-        if (currentActiveGUI != null) {
-            if (currentActiveGUI.equals(this))
-                return;
-
-            //Bukkit.getLogger().info("Before opening " + getComponentRendered().getKey().asString() + " we must remove the player from " + currentActiveGUI.getComponentRendered().getKey().asString());
-            currentActiveGUI.frontEndBehavior.removePlayerFromGUI(player, MCCContainerCloseReason.OPEN_NEW);
-        }
-
-        addPlayerToGUI(player);
-    }
-
-    private void addPlayerToGUI(MCCPlayer player) {
-        synchronized (viewers) {
-            if (viewers.contains(player.asAudience()))
-                return;
-            //Bukkit.getLogger().info("Adding player " + player.getName() + " to gui " + getComponentRendered().getKey().asString());
-            PlayerGUIData.trackCurrentActiveGUI(player, this);
-            viewers.add(player.asAudience());
-        }
-        startFrontEnd();
-        if (getComponentRendered().onOpen != null) {
-            getComponentRendered().onOpen.accept(this);
-        }
+        this.frontEndBehavior.openToPlayer(player);
     }
 
     public final void forEachGUIElementBehavior(BiConsumer<GUIElementBehavior<ActiveGUIElement<?>>, ActiveGUIElement<?>> forEach) {
@@ -257,7 +200,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
                                 continue;
                             }
 
-                            var itemAtCursor = player.getCursorItem().copy();
+                            var itemAtCursor = player.getCursorProperty().get().copy();
                             openUpdatedInventory(player, itemAtCursor, newRendering);
                         }
                     }
@@ -271,14 +214,19 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         });
     }
 
+    void addToViewers(Audience audience){
+        viewers.add(audience);
+    }
+
     private @NotNull MCCContainer createInventory(Component rendering) {
         return MCCPlatform.getInstance().getContainerFactory().createContainer(getComponentRendered().getType(), rendering);
     }
 
     private void openUpdatedInventory(MCCPlayer player, MCCItemStack itemAtCursor, Component rendering) {
         synchronized (viewers) {
-            if (!viewers.contains(player.asAudience()) && !FakeInventory.hasFakeInventory(player) && getComponentRendered().isUsePlayerSlots())
-                FakeInventory.setFakeInventoryOfPlayer(player);
+            if (!viewers.contains(player.asAudience()) && getComponentRendered().isUsePlayerSlots()) {
+                //FakeInventory.setFakeInventoryOfPlayer(player);
+            }
         }
 
         synchronized (inventoryUpdateWhitelist) {
@@ -289,7 +237,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
                 if (itemAtCursor != null) {
                     if (couldOpen && !itemAtCursor.getType().isEmpty() && !getComponentRendered().isUsePlayerSlots()) {
                         player.getInventory().removeItem(itemAtCursor);
-                        player.setCursorItem(itemAtCursor);
+                        player.getCursorProperty().set(itemAtCursor);
                     }
                 }
                 viewers.add(player.asAudience());
@@ -304,37 +252,11 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     }
 
     @Override
-    public Set<Audience> getViewers() {
+    public synchronized Set<Audience> getViewers() {
         return super.getViewers();
     }
 
-    private class FrontEndRenderer extends Thread {
-
-        private final LinkedBlockingQueue<Runnable> updateQueue = new LinkedBlockingQueue<>();
-        private boolean running = true;
-
-        public void stopRenderer() {
-            this.running = false;
-        }
-
-        public void offer(Runnable runnable) {
-            updateQueue.offer(runnable);
-        }
-
-        @Override
-        public void run() {
-            try {
-                while (running) {
-                    Runnable update = updateQueue.take();
-                    update.run();
-                }
-            } catch (Throwable e) {
-                Logger.getLogger(FrontEndRenderer.class.getSimpleName()).log(Level.SEVERE, "An error occured while rendering the active gui " + getComponentRendered().key().asString(), e);
-            }
-        }
-    }
-
-    private static class PlayerGUIData {
+    public static class PlayerGUIData {
         public static void trackCurrentActiveGUI(MCCPlayer player, @Nullable ActiveGUI activeGUI) {
             if (activeGUI != null) {
                 player.getTempData().storeData("active_gui", activeGUI);

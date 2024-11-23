@@ -5,7 +5,6 @@ import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
-import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.jetbrains.annotations.Nullable;
 
 public interface MCCBrewingStandContainer extends MCCContainer<MCCBlockContainerSource> {

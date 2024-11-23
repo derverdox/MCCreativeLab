@@ -15,6 +15,7 @@ public class ConversionCache<V> {
     public <A, T extends A, F> void put(Class<A> apiType, Class<T> implType, Class<F> nativeType, V value) {
         apiToImpls.computeIfAbsent(apiType, aClass -> new LinkedList<>()).addFirst(implType);
         nativeToImpls.computeIfAbsent(nativeType, aClass -> new LinkedList<>()).addFirst(implType);
+
         apiToNative.put(apiType, nativeType);
 
         implToValue.put(implType, value);

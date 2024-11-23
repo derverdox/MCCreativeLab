@@ -18,8 +18,9 @@ public interface MCCItemStack {
      * @param editor            the editor
      * @param <R>               the generic data type
      * @param <T>               the component data type
+     * @return the same item but with changed components
      */
-    <R, T extends MCCDataComponentType<R>> void edit(T dataComponentType, Consumer<ItemComponentEditor<R, T>> editor);
+    <R, T extends MCCDataComponentType<R>> MCCItemStack edit(T dataComponentType, Consumer<ItemComponentEditor<R, T>> editor);
 
     /**
      * Edits an item component and returns a result. Can also be used as a getter.
@@ -30,6 +31,15 @@ public interface MCCItemStack {
      * @param <T>               the component data type
      */
     <R, T extends MCCDataComponentType<R>> R editAndGet(T dataComponentType, Function<ItemComponentEditor<R, T>, R> editor);
+
+    /**
+     * Edits an item component and returns a result. Can also be used as a getter.
+     *
+     * @param dataComponentType the component type
+     * @param <R>               the generic data type
+     * @param <T>               the component data type
+     */
+    <R, T extends MCCDataComponentType<R>> R get(T dataComponentType);
 
     /**
      * Gets the amount of this item stack.

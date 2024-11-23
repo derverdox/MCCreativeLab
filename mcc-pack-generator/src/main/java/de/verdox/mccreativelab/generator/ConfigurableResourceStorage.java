@@ -1,7 +1,8 @@
 package de.verdox.mccreativelab.generator;
 
-import de.verdox.mccreativelab.MCCreativeLabExtension;
-import de.verdox.vserializer.util.gson.JsonUtil;
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.json.JsonSerializerContext;
 import net.kyori.adventure.key.Key;
 import org.apache.commons.io.FileUtils;
 
@@ -9,38 +10,50 @@ import java.io.File;
 import java.io.IOException;
 
 public class ConfigurableResourceStorage<C extends CustomPack<C>> {
+    private final File templateFolder;
+    private final File dataFolder;
 
-    static void deleteTemplateFolder() throws IOException {
-        File parentFolder = new File(MCCreativeLabExtension.getInstance().getDataFolder()+"/template");
-        if(parentFolder.isDirectory())
+    public ConfigurableResourceStorage(File templateFolder, File dataFolder){
+        this.templateFolder = templateFolder;
+        this.dataFolder = dataFolder;
+    }
+
+    public void deleteTemplateFolder() throws IOException {
+        File parentFolder = new File(templateFolder + "/template");
+        if (parentFolder.isDirectory())
             FileUtils.deleteDirectory(parentFolder);
     }
 
-    void loadResourceFromStorage(ConfigurableResource<C> configurableResource) throws IOException {
-        File serialized = getFileOfResource(configurableResource);
+    public <T extends Resource<C>> void loadResourceFromStorage(T resource) throws IOException {
+        if(resource.getSerializer() == null){
+            return;
+        }
+        JsonSerializerContext serializerContext = new JsonSerializerContext();
+        Serializer<Resource<C>> serializer = resource.getSerializer();
+        SerializationElement serializationElement = serializerContext.readFromFile(getFileOfResource(resource));
 
-        JsonUtil.writeJsonObjectToFile(configurableResource.serializeToJson(), getTemplateFileOfResource(configurableResource));
+        serializer.updateLiveObjectFromJson(resource, serializationElement);
 
-        if(fileExists(configurableResource))
-            configurableResource.deserializeFromJson(JsonUtil.readJsonFromFile(serialized));
+        serializerContext.writeToFile(serializer.serialize(serializerContext, resource), getTemplateFileOfResource(resource));
+
+/*        if (fileExists(resource))
+            configurableResource.deserializeFromJson(JsonUtil.readJsonFromFile(serialized));*/
     }
 
-    private boolean fileExists(ConfigurableResource<C> configurableResource) {
-        return getFileOfResource(configurableResource).exists();
+    private <T extends Resource<C>> boolean fileExists(T resource) {
+        return getFileOfResource(resource).exists();
     }
 
-    private File getFileOfResource(ConfigurableResource<C> configurableResource) {
-        File parentFolder = MCCreativeLabExtension.getInstance().getDataFolder();
-        String type = configurableResource.getClass().getSimpleName();
-        Key namespacedKey = configurableResource.getKey();
-        return new File(parentFolder, type + "/" + namespacedKey.getNamespace() + "/" + namespacedKey.getKey() + ".json");
+    private <T extends Resource<C>>  File getFileOfResource(T resource) {
+        String type = resource.getClass().getSimpleName();
+        Key namespacedKey = resource.getKey();
+        return new File(dataFolder, type + "/" + namespacedKey.namespace() + "/" + namespacedKey.key() + ".json");
     }
 
-    private File getTemplateFileOfResource(ConfigurableResource<C> configurableResource){
-        File parentFolder = new File(MCCreativeLabExtension.getInstance().getDataFolder()+"/template");
-        String type = configurableResource.getClass().getSimpleName();
-        Key namespacedKey = configurableResource.getKey();
-        return new File(parentFolder, type + "/" + namespacedKey.getNamespace() + "/" + namespacedKey.getKey() + ".json");
+    private <T extends Resource<C>> File getTemplateFileOfResource(T resource) {
+        String type = resource.getClass().getSimpleName();
+        Key namespacedKey = resource.getKey();
+        return new File(dataFolder, type + "/" + namespacedKey.namespace() + "/" + namespacedKey.key() + ".json");
 
     }
 }

@@ -2,8 +2,8 @@ package de.verdox.mccreativelab.wrapper.types;
 
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.sounds.SoundEvent;
 import java.util.Map;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.types.MCCArmorMaterial;
 import java.lang.String;
@@ -19,7 +19,7 @@ public interface MCCArmorMaterial extends MCCWrapped  {
 
 	public int getEnchantmentValue();
 
-	public MCCReference<SoundEvent> getEquipSound();
+	public MCCReference<MCCSound> getEquipSound();
 
 	public Supplier<Ingredient> getRepairIngredient();
 

@@ -1,24 +1,26 @@
-package de.verdox.mccreativelab.generator.resourcepack.types.gui.frontend;
+package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.ClickableItem;
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIClickAction;
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.PlayerGUIStack;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.event.MCCCancellable;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
-import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.platform.MCCTask;
+import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
+import net.kyori.adventure.audience.Audience;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public abstract class FrontEndBehavior {
     private static final long SHIFT_COOLDOWN_MILLIS = 20;
     private final ActiveGUI activeGUI;
     private long lastShift = System.currentTimeMillis();
+    private FrontEndRenderer frontEndRenderer;
+    private MCCTask updateTask;
 
 
     public FrontEndBehavior(ActiveGUI activeGUI) {
@@ -43,7 +45,7 @@ public abstract class FrontEndBehavior {
                 if (clickableItem.getBuilder().clearGUIStackAndClose) {
                     PlayerGUIStack.load(player).clear();
 
-                    player.closeCurrentInventory(MCCContainerCloseReason.CLOSE_CUSTOM_GUI);
+                    player.closeCurrentInventory(new MCCContainerCloseReason("close_active_gui"));
                 } else if (clickableItem.getBuilder().popGUIStack) {
                     PlayerGUIStack.load(player).popAndOpenLast(player, activeGUI);
                 }
@@ -120,9 +122,7 @@ public abstract class FrontEndBehavior {
             if (activeGUI.equals(ActiveGUI.PlayerGUIData.getCurrentActiveGUI(player))) {
                 ActiveGUI.PlayerGUIData.trackCurrentActiveGUI(player, null);
             }
-
-            FakeInventory.stopFakeInventoryOfPlayer(player);
-            player.updateInventory();
+            player.syncInventory();
         }
     }
 
@@ -133,23 +133,52 @@ public abstract class FrontEndBehavior {
                 return;
 
             //Bukkit.getLogger().info("Before opening " + getComponentRendered().getKey().asString() + " we must remove the player from " + currentActiveGUI.getComponentRendered().getKey().asString());
-            currentActiveGUI.frontEndBehavior.removePlayerFromGUI(player, MCCContainerCloseReason.OPEN_NEW);
+            removePlayerFromGUI(player, MCCContainerCloseReason.OPEN_NEW);
         }
 
         addPlayerToGUI(player);
     }
 
     private void addPlayerToGUI(MCCPlayer player) {
+        Set<Audience> viewers = activeGUI.getViewers();
         synchronized (viewers) {
             if (viewers.contains(player.asAudience()))
                 return;
             //Bukkit.getLogger().info("Adding player " + player.getName() + " to gui " + getComponentRendered().getKey().asString());
-            ActiveGUI.PlayerGUIData.trackCurrentActiveGUI(player, this);
-            viewers.add(player.asAudience());
+            ActiveGUI.PlayerGUIData.trackCurrentActiveGUI(player, activeGUI);
+            activeGUI.addToViewers(player.asAudience());
         }
-        startFrontEnd(getComponentRendered());
+        startFrontEnd();
         if (activeGUI.getComponentRendered().onOpen != null) {
-            activeGUI.getComponentRendered().onOpen.accept(this);
+            activeGUI.getComponentRendered().onOpen.accept(activeGUI);
+        }
+    }
+
+    private void startFrontEnd() {
+        if (updateTask != null && updateTask.isRunning())
+            return;
+
+        onFrontendRenderStart();
+
+        frontEndRenderer = new FrontEndRenderer(activeGUI);
+        frontEndRenderer.start();
+
+        updateTask = MCCPlatform.getInstance().getTaskManager().runTimerAsync(mccTask -> {
+            Set<Audience> viewers = activeGUI.getViewers();
+            synchronized (viewers) {
+                if (viewers.isEmpty()) {
+                    updateTask.cancel();
+                    onFrontendClose();
+                    frontEndRenderer.stopRenderer();
+                    return;
+                }
+            }
+            if (activeGUI.getComponentRendered().updateInterval > 0)
+                activeGUI.forceUpdate();
+        }, 0, activeGUI.getComponentRendered().updateInterval > 0 ? activeGUI.getComponentRendered().updateInterval * 50L : 1, TimeUnit.MILLISECONDS);
+
+        if (activeGUI.getComponentRendered().updateInterval < 0) {
+            MCCPlatform.getInstance().getTaskManager().runAsync(mccTask -> activeGUI.forceUpdate());
         }
     }
 
@@ -194,8 +223,8 @@ public abstract class FrontEndBehavior {
             }
 
             // Überprüfe, ob das Item im aktuellen Slot vom gleichen Typ und stapelbar ist
-            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.editAndGet()) {
-                int spaceLeft = currentSlotItem.getMaxStackSize() - currentSlotItem.getAmount();
+            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.get(MCCDataComponentTypes.MAX_STACK_SIZE.get())) {
+                int spaceLeft = currentSlotItem.get(MCCDataComponentTypes.MAX_STACK_SIZE.get()) - currentSlotItem.getAmount();
                 int amountToMove = Math.min(spaceLeft, itemStack.getAmount());
 
                 currentSlotItem.setAmount(currentSlotItem.getAmount() + amountToMove);

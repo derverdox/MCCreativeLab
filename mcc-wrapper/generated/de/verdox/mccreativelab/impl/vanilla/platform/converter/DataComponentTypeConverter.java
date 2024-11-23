@@ -42,10 +42,12 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations;
+import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSItemLore;
 import net.minecraft.world.item.Rarity;
 import net.kyori.adventure.key.Key;
 import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.component.ItemLore;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSLodestoneTracker;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSPotionContents;
 import net.minecraft.world.item.component.Unbreakable;
@@ -70,6 +72,7 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCResolvableProfile;
 import net.minecraft.network.chat.Component;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers;
 import de.verdox.mccreativelab.wrapper.types.MCCInstrument;
+import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import de.verdox.mccreativelab.wrapper.item.components.MCCPotionContents;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSResolvableProfile;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSArmorTrim;
@@ -99,6 +102,9 @@ public class DataComponentTypeConverter implements MCCConverter<DataComponentTyp
 		}
 		if(nativeType.equals(DataComponents.ITEM_NAME)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<Component>(){}, new TypeToken<net.kyori.adventure.text.Component>(){}, null));
+		}
+		if(nativeType.equals(DataComponents.LORE)) {
+			return done(new NMSDataComponentType<>(nativeType, new TypeToken<ItemLore>(){}, new TypeToken<MCCItemLore>(){}, () -> new NMSItemLore(null)));
 		}
 		if(nativeType.equals(DataComponents.RARITY)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<Rarity>(){}, new TypeToken<MCCRarity>(){}, null));

@@ -207,6 +207,8 @@ public interface MCCPlayerInventoryContainer extends MCCContainer<MCCEntityConta
      */
     public void setHeldItemSlot(@IntRange(from = 0, to = 8) int slot);
 
+    void sendFakeContents(MCCItemStack[] contents);
+
     @Override
     default boolean canBeOpened() {
         return false;

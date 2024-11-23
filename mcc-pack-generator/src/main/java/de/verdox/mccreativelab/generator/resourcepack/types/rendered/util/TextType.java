@@ -2,7 +2,6 @@ package de.verdox.mccreativelab.generator.resourcepack.types.rendered.util;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
-import net.kyori.adventure.key.Key;
 
 import java.util.HashMap;
 import java.util.Map;

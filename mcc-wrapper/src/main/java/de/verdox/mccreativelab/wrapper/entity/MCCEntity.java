@@ -2,7 +2,6 @@ package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
-import de.verdox.mccreativelab.wrapper.platform.TempData;
 import de.verdox.mccreativelab.wrapper.platform.TempDataHolder;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import net.kyori.adventure.audience.Audience;
@@ -51,7 +50,9 @@ public interface MCCEntity extends MCCKeyedWrapper, TempDataHolder, MCCWrapped {
      */
     void displayName(Component name);
 
-    CompletableFuture<Void> teleport(MCCLocation location);
+    default CompletableFuture<MCCEntity> teleport(MCCLocation location) {
+        return location.world().teleport(location, this);
+    }
 
     MCCLocation getLocation();
 }

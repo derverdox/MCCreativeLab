@@ -273,31 +273,13 @@ public class TypeHierarchyMap<V> implements Map<Class<?>, V> {
 
         @Override
         public @NotNull Set<Entry<Class<?>, V>> entrySet() {
-            Set<Entry<Class<?>, V>> result = new HashSet<>();
+            Map<Class<?>, V> result = new ConcurrentHashMap<>();
             if (this.value != null) {
-                result.add(new Entry<>() {
-                    private V value;
-
-                    @Override
-                    public Class<?> getKey() {
-                        return type;
-                    }
-
-                    @Override
-                    public V getValue() {
-                        return value;
-                    }
-
-                    @Override
-                    public V setValue(V value) {
-                        this.value = value;
-                        return value;
-                    }
-                });
+                result.put(this.type, this.value);
             }
 
-            childTypes.values().parallelStream().forEach(vHierarchyNode -> result.addAll(vHierarchyNode.entrySet()));
-            return result;
+            childTypes.values().parallelStream().forEach(result::putAll);
+            return result.entrySet();
         }
 
         @Override

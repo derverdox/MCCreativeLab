@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
@@ -50,16 +51,16 @@ public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> i
 			super(handle);
 		}
 	
-		public MCCReference<MobEffect> getEffect(){
+		public MCCReference<MCCEffectType> getEffect(){
 			var nms = getEffectFromImpl();
-			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MobEffect>>() {});
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCEffectType>>() {});
 		}
 	
 		private Holder<MobEffect> getEffectFromImpl(){
 			return handle == null ? null : handle.effect();
 		}
 	
-		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MobEffect> effect){
+		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MCCEffectType> effect){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(effect, new TypeToken<Holder<MobEffect>>() {});
 			var param1 = getDurationFromImpl();
 			return new NMSSuspiciousStewEffects.NMSEntry(new SuspiciousStewEffects.Entry(param0, param1));

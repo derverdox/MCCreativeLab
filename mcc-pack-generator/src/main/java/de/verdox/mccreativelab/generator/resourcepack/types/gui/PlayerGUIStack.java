@@ -17,7 +17,7 @@ public class PlayerGUIStack {
     private final Stack<StackElement> stack = new Stack<>();
     private final MCCPlayer player;
 
-    static PlayerGUIStack load(MCCPlayer player) {
+    public static PlayerGUIStack load(MCCPlayer player) {
         if (!player.getTempData().containsData("playerGUIStack"))
             player.getTempData().storeData("playerGUIStack", new PlayerGUIStack(player));
 

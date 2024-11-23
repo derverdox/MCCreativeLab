@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.CustomHud;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -108,7 +109,7 @@ public class CustomMenu extends ResourcePackResource {
         built = true;
     }
 
-    public ActiveMenu createMenuForPlayer(Audience player) {
+    public ActiveMenu createMenuForPlayer(MCCPlayer player) {
         return new ActiveMenu(player, this);
     }
 

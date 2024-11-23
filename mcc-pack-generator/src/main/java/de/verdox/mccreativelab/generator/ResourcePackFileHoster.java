@@ -1,9 +1,15 @@
 package de.verdox.mccreativelab.generator;
 
+import com.google.gson.JsonSerializer;
 import de.verdox.mccreativelab.config.ConfigValue;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.util.io.ZipUtil;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.platform.MCCResourcePack;
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.json.JsonSerializerContext;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -12,16 +18,11 @@ import net.kyori.adventure.text.Component;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
-import org.apache.commons.compress.compressors.FileNameUtil;
 import org.apache.commons.compress.utils.FileNameUtils;
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
@@ -29,7 +30,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,62 +37,54 @@ import java.util.stream.Stream;
 
 public class ResourcePackFileHoster {
     public static final Logger LOGGER = Logger.getLogger(ResourcePackFileHoster.class.getSimpleName());
-    
+
     public static final boolean WITH_HASHES = false;
     private HttpServer httpServer;
-    private final Map<String, ResourcePackInfo> availableResourcePacks = new HashMap<>();
+    private final Map<String, MCCResourcePack> availableResourcePacks = new HashMap<>();
 
-    private final ConfigValue.Enum<Mode> mode;
-    private final InternalWebServerSettings internalWebServerSettings;
-    private final SshUploadSettings sshUploadSettings;
-    private final ConfigValue.Boolean requireResourcePack;
-    private final ConfigValue.Boolean useHttps;
-    private final ConfigValue.String downloadUrl;
+    private final HostingSettings hostingSettings;
     private WebServerHandler webServerHandler;
     private SshResourcePackUpload sshResourcePackUpload;
 
-    public ResourcePackFileHoster() throws IOException, InvalidConfigurationException {
-        File configFile = new File(MCCreativeLabExtension.getInstance().getDataFolder() + "/config.yml");
+    public ResourcePackFileHoster(File srcDir) throws IOException {
+        File configFile = new File(srcDir + "/config.yml");
         configFile.getParentFile().mkdirs();
-        FileConfiguration config = MCCreativeLabExtension.getInstance().getConfig();
 
-        if (configFile.isFile())
-            config.load(configFile);
+        //TODO create new one
 
-        config.options().copyDefaults(true);
+        JsonSerializerContext serializerContext = new JsonSerializerContext();
+        Serializer<HostingSettings> serializer = null;
+        if(!configFile.exists()){
+            HostingSettings defaultSettings = new HostingSettings(Mode.INTERNAL_WEBSERVER, false, true, new InternalWebServerSettings("0.0.0.0", 8080, "0.0.0.0:8080"), new SshUploadSettings("", "", "", "", ""));
+            serializerContext.writeToFile(serializer.serialize(serializerContext, defaultSettings), configFile);
+        }
 
-        mode = new ConfigValue.Enum<>(config, Mode.class, "mode", Mode.INTERNAL_WEBSERVER);
-        internalWebServerSettings = new InternalWebServerSettings(config);
-        sshUploadSettings = new SshUploadSettings(config);
+        SerializationElement serializationElement = serializerContext.readFromFile(configFile);
 
-        this.downloadUrl = new ConfigValue.String(config, "download.url", "0.0.0.0:8080");
-        this.useHttps = new ConfigValue.Boolean(config, "download.https", false);
-        this.requireResourcePack = new ConfigValue.Boolean(config, "requireResourcePackOnJoin", true);
+        hostingSettings = serializer.deserialize(serializationElement);
 
-        config.save(configFile);
-
-        if (mode.read().equals(Mode.INTERNAL_WEBSERVER)) {
-            LOGGER.info("Starting ResourcePackFileHoster on " + internalWebServerSettings.hostName.read() + ":" + internalWebServerSettings.port.read());
+        if (hostingSettings.mode().equals(Mode.INTERNAL_WEBSERVER)) {
+            LOGGER.info("Starting ResourcePackFileHoster on " + hostingSettings.webServerSettings().hostName() + ":" + hostingSettings.webServerSettings().port());
             this.httpServer = Vertx.vertx().createHttpServer();
             this.httpServer.exceptionHandler(event -> LOGGER.warning("Exception happened in ResourcePackFileHoster: " + event.getLocalizedMessage()));
             webServerHandler = new WebServerHandler();
             this.httpServer.requestHandler(webServerHandler);
-            this.httpServer.listen(internalWebServerSettings.port.read(), internalWebServerSettings.hostName.read());
+            this.httpServer.listen(hostingSettings.webServerSettings().port(), hostingSettings.webServerSettings().hostName());
         } else {
             this.sshResourcePackUpload = new SshResourcePackUpload();
         }
     }
 
     public void closeAndWait() throws InterruptedException {
-        if (mode.read().equals(Mode.INTERNAL_WEBSERVER))
+        if (hostingSettings.mode().equals(Mode.INTERNAL_WEBSERVER))
             this.httpServer.close().result();
     }
 
-    public void sendResourcePackToPlayer(MCCPlayer player, ResourcePackFileHoster.ResourcePackInfo packInfo) {
+    public void sendResourcePackToPlayer(MCCPlayer player, MCCResourcePack packInfo) {
         String downloadURL = createDownloadUrl(packInfo.hash());
 
-        player.setResourcePack(packInfo.getUUID(), downloadURL, WITH_HASHES ? packInfo.hashBytes() : null, (Component) null, requireResourcePack.read());
-        LOGGER.info("Sending resource pack with url " + downloadURL + " to " + player.getUniqueId());
+        player.setResourcePack(packInfo.getUUID(), downloadURL, WITH_HASHES ? packInfo.hashBytes() : null, packInfo.prompt(), hostingSettings.requireResourcePack());
+        LOGGER.info("Sending resource pack with url " + downloadURL + " to " + player.getUUID());
     }
 
     public void createResourcePackZipFiles() throws IOException {
@@ -118,7 +110,7 @@ public class ResourcePackFileHoster {
                 try {
                     byte[] hashBytes = null;
                     String hash = "mcclab";
-                    if(WITH_HASHES){
+                    if (WITH_HASHES) {
                         LOGGER.info("Calculating sha1 hash of resource pack");
                         start = System.currentTimeMillis();
                         hashBytes = calculateSHA1(zipFile.getPath());
@@ -127,20 +119,17 @@ public class ResourcePackFileHoster {
                         LOGGER.info("Took " + end + " ms");
                     }
 
-                    ResourcePackInfo resourcePackInfo = new ResourcePackInfo(resourcePackName, zipFile, createDownloadUrl(hash), hash, hashBytes, true, null);
+                    MCCResourcePack resourcePackInfo = new MCCResourcePack(resourcePackName, zipFile, createDownloadUrl(hash), hash, hashBytes, true, null);
                     availableResourcePacks.put(hash, resourcePackInfo);
-                    if (mode.read().equals(Mode.INTERNAL_WEBSERVER)) {
+                    if (hostingSettings.mode().equals(Mode.INTERNAL_WEBSERVER)) {
                         if (WITH_HASHES)
                             LOGGER.info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName() + " with hash: " + hash);
                         else
                             LOGGER.info("MCCreativeLab: Hosting ResourcePack " + zipFile.getName());
-                    }
-                    else if (mode.read().equals(Mode.SSH_UPLOAD)) {
+                    } else if (hostingSettings.mode().equals(Mode.SSH_UPLOAD)) {
                         this.sshResourcePackUpload.upload();
                     }
-                    if(MCCreativeLabExtension.isServerSoftware()){
-                        Bukkit.getServer().setServerResourcePack(resourcePackInfo);
-                    }
+                    MCCPlatform.getInstance().setServerResourcePack(resourcePackInfo);
                 } catch (IOException | NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
@@ -149,13 +138,13 @@ public class ResourcePackFileHoster {
     }
 
     public String createDownloadUrl(String hash) {
-        String http = useHttps.read() ? "https" : "http";
+        String http = hostingSettings.useHttps() ? "https" : "http";
 
-        if (mode.read().equals(Mode.INTERNAL_WEBSERVER))
-            return http + "://" + this.downloadUrl.read() + "/" + hash;
-        else if (mode.read().equals(Mode.SSH_UPLOAD))
-            return http + "://" + this.downloadUrl.read();
-        throw new IllegalStateException("Mode not found: " + mode.read().name());
+        if (hostingSettings.mode().equals(Mode.INTERNAL_WEBSERVER))
+            return http + "://" + hostingSettings.webServerSettings().downloadUrl() + "/" + hash;
+        else if (hostingSettings.mode().equals(Mode.SSH_UPLOAD))
+            return http + "://" + hostingSettings.webServerSettings().downloadUrl();
+        throw new IllegalStateException("Mode not found: " + hostingSettings.mode().name());
     }
 
     private void deleteZipFiles() throws IOException {
@@ -199,61 +188,16 @@ public class ResourcePackFileHoster {
         return digest.digest();
     }
 
-    public record ResourcePackInfo(String resourcePackName, File file, String url, String hash, byte[] hashBytes, boolean isRequired, @javax.annotation.Nullable Component prompt) implements ResourcePack{
-        public UUID getUUID() {
-            return UUID.nameUUIDFromBytes(resourcePackName.getBytes(StandardCharsets.UTF_8));
-        }
+    private record HostingSettings(Mode mode, boolean useHttps, boolean requireResourcePack, InternalWebServerSettings webServerSettings,
+                                   SshUploadSettings sshUploadSettings) {}
 
-        @Override
-        public @NotNull UUID getId() {
-            return getUUID();
-        }
-
-        @Override
-        public @NotNull String getUrl() {
-            return url;
-        }
-
-        @Override
-        public @Nullable String getHash() {
-            return hash;
-        }
-
-        @Override
-        public @Nullable Component getPrompt() {
-            return prompt;
-        }
+    private record InternalWebServerSettings(String hostName, int port,
+                                             String downloadUrl) {
     }
 
-    private static class InternalWebServerSettings {
-        private final FileConfiguration fileConfiguration;
-        public final ConfigValue.String hostName;
-        public final ConfigValue.Integer port;
+    private record SshUploadSettings(String address, String user, String keyFilePath, String remotePath,
+                                     String remoteFingerPrintEd25519) {
 
-        public InternalWebServerSettings(FileConfiguration fileConfiguration) {
-
-            this.fileConfiguration = fileConfiguration;
-            this.hostName = new ConfigValue.String(fileConfiguration, "webserver.hostName", "0.0.0.0");
-            this.port = new ConfigValue.Integer(fileConfiguration, "webserver.port", 8080);
-        }
-    }
-
-    private static class SshUploadSettings {
-        private final FileConfiguration fileConfiguration;
-        public final ConfigValue.String address;
-        public final ConfigValue.String user;
-        public final ConfigValue.String keyFilePath;
-        public final ConfigValue.String remotePath;
-        public final ConfigValue.String remoteFingerPrintEd25519;
-
-        public SshUploadSettings(FileConfiguration fileConfiguration) {
-            this.fileConfiguration = fileConfiguration;
-            this.address = new ConfigValue.String(fileConfiguration, "sshUpload.address", "localhost");
-            this.remoteFingerPrintEd25519 = new ConfigValue.String(fileConfiguration, "sshUpload.remoteFingerprint.ed25519", "");
-            this.user = new ConfigValue.String(fileConfiguration, "sshUpload.user", "root");
-            this.keyFilePath = new ConfigValue.String(fileConfiguration, "sshUpload.keyFilePath", "privateKey");
-            this.remotePath = new ConfigValue.String(fileConfiguration, "sshUpload.remotePath", "/resourcePacks/MCCreativeLab.zip");
-        }
     }
 
     private class WebServerHandler implements Handler<HttpServerRequest> {
@@ -271,13 +215,13 @@ public class ResourcePackFileHoster {
                     event.response().end();
                     return;
                 }*/
-                ResourcePackInfo resourcePackInfo = availableResourcePacks.getOrDefault(hash, null);
+                MCCResourcePack resourcePackInfo = availableResourcePacks.getOrDefault(hash, null);
                 if (resourcePackInfo == null) {
                     LOGGER.warning("Someone requested a resource pack with hash " + hash + " that does not exist");
                     event.response().end();
                     return;
                 }
-                event.response().sendFile(resourcePackInfo.file.getAbsolutePath());
+                event.response().sendFile(resourcePackInfo.file().getAbsolutePath());
                 LOGGER.info("Sending resource pack with hash " + hash + " to " + event.remoteAddress());
             } finally {
 
@@ -306,8 +250,8 @@ public class ResourcePackFileHoster {
         public SshResourcePackUpload() throws IOException {
             //ssh.loadKnownHosts();
             LOGGER.info("Loading SSH Keys ");
-            keyProvider = ssh.loadKeys(sshUploadSettings.keyFilePath.read());
-            String fingerprint = sshUploadSettings.remoteFingerPrintEd25519.read();
+            keyProvider = ssh.loadKeys(hostingSettings.sshUploadSettings().keyFilePath());
+            String fingerprint = hostingSettings.sshUploadSettings().remoteFingerPrintEd25519();
             if (fingerprint.isEmpty())
                 ssh.addHostKeyVerifier(new PromiscuousVerifier());
             else
@@ -318,14 +262,14 @@ public class ResourcePackFileHoster {
         }
 
         public void upload() throws IOException {
-            ssh.connect(sshUploadSettings.address.read());
+            ssh.connect(hostingSettings.sshUploadSettings().address());
             try {
                 LOGGER.info("Authenticating public key...");
-                ssh.authPublickey(sshUploadSettings.user.read(), keyProvider);
-                for (Map.Entry<String, ResourcePackInfo> stringResourcePackInfoEntry : availableResourcePacks.entrySet()) {
-                    ResourcePackInfo resourcePackInfo = stringResourcePackInfoEntry.getValue();
-                    LOGGER.info("Uploading ResourcePack " + resourcePackInfo.file.getAbsolutePath() + " to " + sshUploadSettings.remotePath.read() + resourcePackInfo.file.getName());
-                    ssh.newSCPFileTransfer().upload(resourcePackInfo.file.getAbsolutePath(), sshUploadSettings.remotePath.read());
+                ssh.authPublickey(hostingSettings.sshUploadSettings().user(), keyProvider);
+                for (Map.Entry<String, MCCResourcePack> stringResourcePackInfoEntry : availableResourcePacks.entrySet()) {
+                    MCCResourcePack resourcePackInfo = stringResourcePackInfoEntry.getValue();
+                    LOGGER.info("Uploading ResourcePack " + resourcePackInfo.file().getAbsolutePath() + " to " + hostingSettings.sshUploadSettings().remotePath() + resourcePackInfo.file().getName());
+                    ssh.newSCPFileTransfer().upload(resourcePackInfo.file().getAbsolutePath(), hostingSettings.sshUploadSettings().remotePath());
                     LOGGER.info("Done...");
 
                 }
@@ -335,7 +279,7 @@ public class ResourcePackFileHoster {
         }
     }
 
-    private enum Mode {
+    private static enum Mode {
         INTERNAL_WEBSERVER,
         SSH_UPLOAD
     }

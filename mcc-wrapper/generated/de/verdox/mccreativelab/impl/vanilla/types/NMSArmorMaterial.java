@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
@@ -50,9 +51,9 @@ public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArm
 		return handle == null ? 0 : handle.enchantmentValue();
 	}
 
-	public MCCReference<SoundEvent> getEquipSound(){
+	public MCCReference<MCCSound> getEquipSound(){
 		var nms = getEquipSoundFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<SoundEvent>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCSound>>() {});
 	}
 
 	private Holder<SoundEvent> getEquipSoundFromImpl(){

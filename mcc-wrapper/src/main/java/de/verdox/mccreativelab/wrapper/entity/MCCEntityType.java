@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public interface MCCEntityType extends MCCKeyedWrapper {
-    default CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @Nullable Consumer<MCCEntity> callback){
-        return location.world().summon(location, callback);
+    default CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location){
+        return location.world().summon(location, this);
     }
 }

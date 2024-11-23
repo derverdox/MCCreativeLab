@@ -2,11 +2,14 @@ package de.verdox.mccreativelab.wrapper.platform;
 
 import de.verdox.mccreativelab.Singleton;
 import de.verdox.mccreativelab.conversion.ConversionService;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.event.MCCEvent;
 import de.verdox.mccreativelab.wrapper.inventory.factory.MCCContainerFactory;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -59,6 +62,10 @@ public interface MCCPlatform {
     List<MCCWorld> getWorlds();
 
     @Nullable MCCPlayer getOnlinePlayer(UUID uuid);
+
+    @NotNull List<MCCPlayer> getOnlinePlayers();
+
+    void setServerResourcePack(MCCResourcePack resourcePack);
 
     void init();
 }

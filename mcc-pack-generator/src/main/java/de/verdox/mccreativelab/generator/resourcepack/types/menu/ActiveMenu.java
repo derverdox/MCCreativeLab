@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.gro
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudText;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import io.vertx.core.impl.ConcurrentHashSet;
 import net.kyori.adventure.audience.Audience;
@@ -18,22 +19,22 @@ import java.util.function.Consumer;
 
 public class ActiveMenu {
     public static final Map<UUID, ActiveMenu> activeMenus = new HashMap<>();
-    private final Audience player;
+    private final MCCPlayer player;
     private final UUID playerUUID;
     private final CustomMenu customMenu;
     private final MenuBehaviour behaviour;
     private final Set<MenuState> enabledStates = new ConcurrentHashSet<>();
     private MCCItemStack activeBackgroundPicture;
 
-    ActiveMenu(Audience player, CustomMenu customMenu) {
+    ActiveMenu(MCCPlayer player, CustomMenu customMenu) {
         this.player = player;
-        this.playerUUID = GeneratorPlatformHelper.INSTANCE.get().getUUIDOfAudienceOrThrow(player);
+        this.playerUUID = GeneratorPlatformHelper.INSTANCE.get().getUUIDOfAudienceOrThrow(player.asAudience());
         this.customMenu = customMenu;
-        closeActiveMenu(player);
-        behaviour = new MenuBehaviour(MCCreativeLabExtension.getInstance(), player, this, this::execute, this::onEnd);
+        closeActiveMenu(player.asAudience());
+        behaviour = new MenuBehaviour(player, this, this::execute, this::onEnd);
         behaviour.start();
         if (customMenu.getMenuHud() != null)
-            GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player, customMenu.getMenuHud());
+            GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player.asAudience(), customMenu.getMenuHud());
         if (activeMenus.containsKey(playerUUID)) {
             activeMenus.get(playerUUID).close();
         }
@@ -65,19 +66,19 @@ public class ActiveMenu {
         return customMenu;
     }
 
-    public Audience getPlayer() {
+    public MCCPlayer getPlayer() {
         return player;
     }
 
     public void close() {
-        player.stopSound(SoundStop.source(Sound.Source.MASTER));
+        player.asAudience().stopSound(SoundStop.source(Sound.Source.MASTER));
         behaviour.close();
     }
 
     @Nullable
     public ActiveHud getActiveHud() {
         if (customMenu.getMenuHud() != null)
-            return GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player, customMenu.getMenuHud());
+            return GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player.asAudience(), customMenu.getMenuHud());
         return null;
     }
 
@@ -131,7 +132,7 @@ public class ActiveMenu {
             throw new NullPointerException("state id " + id + " does not exist");
         var state = customMenu.getStates().get(id);
         enableState(state);
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
 
     }
 
@@ -143,28 +144,28 @@ public class ActiveMenu {
         var state = customMenu.getStates().get(id);
         disableState(state);
         updateBackgroundPicture();
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
     }
 
     private void enableState(MenuState state) {
         state.getOnEnableState().accept(this);
         enabledStates.add(state);
         updateBackgroundPicture();
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
     }
 
     private void disableState(MenuState state) {
         enabledStates.remove(state);
         state.getOnDisableState().accept(this);
         updateBackgroundPicture();
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
     }
 
     private void execute(PlayerKeyInput keyInput, ActiveMenu activeMenu) {
         new HashSet<>(enabledStates).forEach(menuState -> menuState.getMenuOperationsOnKey(keyInput)
                                                                    .forEach(consumer -> consumer.accept(activeMenu)));
         updateBackgroundPicture();
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
     }
 
     private void onEnd() {
@@ -172,7 +173,7 @@ public class ActiveMenu {
             this.customMenu.getOnClose().accept(this);
         hideEverything();
         if (customMenu.getMenuHud() != null)
-            GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().stopActiveHud(player, customMenu.getMenuHud());
+            GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().stopActiveHud(player.asAudience(), customMenu.getMenuHud());
         activeMenus.remove(playerUUID);
     }
 
@@ -184,7 +185,7 @@ public class ActiveMenu {
         if (activeHud == null)
             return;
         activeHud.hideAll();
-        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player);
+        GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().forceUpdate(player.asAudience());
     }
 }
 

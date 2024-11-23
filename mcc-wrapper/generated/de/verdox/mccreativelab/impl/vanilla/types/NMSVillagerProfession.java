@@ -8,6 +8,7 @@ import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.function.Predicate;
 import net.minecraft.world.item.Item;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -77,9 +78,9 @@ public class NMSVillagerProfession extends NMSHandle<VillagerProfession> impleme
 		return handle == null ? ImmutableSet.of() : handle.secondaryPoi();
 	}
 
-	public SoundEvent getWorkSound(){
+	public MCCSound getWorkSound(){
 		var nms = getWorkSoundFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCSound>() {});
 	}
 
 	private SoundEvent getWorkSoundFromImpl(){

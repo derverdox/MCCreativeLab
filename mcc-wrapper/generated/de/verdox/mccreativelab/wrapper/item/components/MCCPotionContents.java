@@ -1,11 +1,11 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import java.util.Optional;
 import java.lang.Integer;
 import net.minecraft.world.item.alchemy.Potion;
-import org.bukkit.potion.PotionEffect;
 
 public interface MCCPotionContents extends MCCItemComponent  {
 
@@ -17,8 +17,8 @@ public interface MCCPotionContents extends MCCItemComponent  {
 
 	public MCCPotionContents withCustomColor(Optional<Integer> customColor);
 
-	public List<PotionEffect> getCustomEffects();
+	public List<MCCEffect> getCustomEffects();
 
-	public MCCPotionContents withCustomEffects(List<PotionEffect> customEffects);
+	public MCCPotionContents withCustomEffects(List<MCCEffect> customEffects);
 
 }

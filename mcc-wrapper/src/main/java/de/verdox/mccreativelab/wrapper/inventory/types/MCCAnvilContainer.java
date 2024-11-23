@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.wrapper.inventory.types;
 
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;

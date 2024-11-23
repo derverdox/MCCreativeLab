@@ -1,13 +1,15 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 
 public enum PlayerKeyInput {
+    SNEAK,
+    SPRINT,
     LEFT_CLICK,
     RIGHT_CLICK,
     SCROLL_UP,
     SCROLL_DOWN,
     SPACE,
-    W,
-    A,
-    S,
-    D;
+    FORWARD,
+    LEFT,
+    BACKWARD,
+    RIGHT;
 }

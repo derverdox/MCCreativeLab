@@ -1,13 +1,13 @@
 package de.verdox.mccreativelab.wrapper.types;
 
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.sounds.SoundEvent;
 import net.kyori.adventure.text.Component;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 
 public interface MCCJukeboxSong extends MCCWrapped  {
 
-	public MCCReference<SoundEvent> getSoundEvent();
+	public MCCReference<MCCSound> getSoundEvent();
 
 	public Component getDescription();
 

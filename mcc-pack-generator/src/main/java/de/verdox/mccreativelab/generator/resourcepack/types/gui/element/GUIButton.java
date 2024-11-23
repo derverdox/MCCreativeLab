@@ -8,6 +8,8 @@ import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIClickAction;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIButton;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
 import de.verdox.mccreativelab.util.io.StringAlign;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +91,7 @@ public class GUIButton implements GUIElement {
     }
 
     public static class Builder {
-        private @NotNull ItemTextureData buttonItem = new ItemTextureData(Key.key("mccreativelab","dummy"), Material.STONE, 0, null, null);
+        private @NotNull ItemTextureData buttonItem = new ItemTextureData(Key.key("mccreativelab","dummy"), MCCItems.STONE.get(), 0, null, null);
         private final int startIndex;
         private @Nullable Asset<CustomResourcePack> buttonTexture;
         private int xSize = 1;

@@ -1,7 +1,10 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.LanguageInfo;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translatable;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +34,12 @@ public class GUIUtil {
         .withAdditionalTranslation(LanguageInfo.GERMAN, "Vorherige Seite")
         .withAdditionalTranslation(LanguageInfo.ENGLISH_US, "Previous page");
 
-    public static void install() {
-        MCCreativeLabExtension.getCustomResourcePack().getLanguageStorage().addTranslation(CURRENT_PAGE);
-        MCCreativeLabExtension.getCustomResourcePack().getLanguageStorage().addTranslation(NEXT_PAGE);
-        MCCreativeLabExtension.getCustomResourcePack().getLanguageStorage().addTranslation(PREVIOUS_PAGE);
-        MCCreativeLabExtension.getCustomResourcePack().getLanguageStorage().addTranslation(LEFT);
-        MCCreativeLabExtension.getCustomResourcePack().getLanguageStorage().addTranslation(RIGHT);
+    public static void install(CustomResourcePack customResourcePack) {
+        customResourcePack.getLanguageStorage().addTranslation(CURRENT_PAGE);
+        customResourcePack.getLanguageStorage().addTranslation(NEXT_PAGE);
+        customResourcePack.getLanguageStorage().addTranslation(PREVIOUS_PAGE);
+        customResourcePack.getLanguageStorage().addTranslation(LEFT);
+        customResourcePack.getLanguageStorage().addTranslation(RIGHT);
     }
 
     public abstract static class GUIElementProvider<T> {
@@ -76,7 +79,7 @@ public class GUIUtil {
         public final void enable(ActiveGUI activeGUI, Collection<T> elements) {
             this.enabled = true;
             renderIntoGUI(activeGUI, elements);
-            if(!this.enabled)
+            if (!this.enabled)
                 onEnable(activeGUI, elements);
         }
     }
@@ -84,11 +87,15 @@ public class GUIUtil {
     public static class HorizontalGUIPagination<T> extends GUIElementProvider<T> {
         private final int lastPageIndex;
         private final int nextPageIndex;
+        private final MCCItemStack leftArrow;
+        private final MCCItemStack rightArrow;
 
-        public HorizontalGUIPagination(TriFunction<ActiveGUI, Integer, T, ClickableItem> itemCreator, int lastPageIndex, int nextPageIndex, int... slotsForElements) {
+        public HorizontalGUIPagination(TriFunction<ActiveGUI, Integer, T, ClickableItem> itemCreator, int lastPageIndex, int nextPageIndex, MCCItemStack leftArrow, MCCItemStack rightArrow, int... slotsForElements) {
             super(itemCreator, slotsForElements);
             this.lastPageIndex = lastPageIndex;
             this.nextPageIndex = nextPageIndex;
+            this.leftArrow = leftArrow;
+            this.rightArrow = rightArrow;
         }
 
         @Override
@@ -153,13 +160,15 @@ public class GUIUtil {
         }
 
         private ClickableItem createNextPage(ActiveGUI activeGUI, Collection<T> elements) {
+
+
             return new ClickableItem.Builder()
-                .withItem(GUIButtons.ARROW_RIGHT.createItem())
-                .withItemMeta(itemMeta -> {
-                    int currentPage = getCurrentPage(activeGUI);
-                    itemMeta.itemName(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
-                    itemMeta.lore(List.of(NEXT_PAGE.asTranslatableComponent()));
-                })
+                .withItem(leftArrow.copy().
+                    edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
+                        int currentPage = getCurrentPage(activeGUI);
+                        editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
+                    }).
+                    edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(NEXT_PAGE.asTranslatableComponent())))))
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     int currentPage = getCurrentPage(activeGUI1);
                     int maxPages = getMaxPages(activeGUI, elements);
@@ -173,12 +182,12 @@ public class GUIUtil {
 
         private ClickableItem createPreviousPage(ActiveGUI activeGUI, Collection<T> elements) {
             return new ClickableItem.Builder()
-                .withItem(GUIButtons.ARROW_LEFT.createItem())
-                .withItemMeta(itemMeta -> {
-                    int currentPage = getCurrentPage(activeGUI);
-                    itemMeta.itemName(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
-                    itemMeta.lore(List.of(PREVIOUS_PAGE.asTranslatableComponent()));
-                })
+                .withItem(rightArrow.copy()
+                    .edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
+                        int currentPage = getCurrentPage(activeGUI);
+                        editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
+                    })
+                    .edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(PREVIOUS_PAGE.asTranslatableComponent())))))
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     int currentPage = getCurrentPage(activeGUI1);
                     if (!hasPreviousPage(activeGUI, elements))
@@ -199,12 +208,16 @@ public class GUIUtil {
         private final int scrollToLeftIndex;
         private final int scrollToRightIndex;
         private final int selectionIndex;
+        private final MCCItemStack leftArrow;
+        private final MCCItemStack rightArrow;
 
-        public HorizontalGUIScroller(TriFunction<ActiveGUI, Integer, T, ClickableItem> itemCreator, int scrollToLeftIndex, int scrollToRightIndex, int selectionIndex, int... slotsForElements) {
+        public HorizontalGUIScroller(TriFunction<ActiveGUI, Integer, T, ClickableItem> itemCreator, int scrollToLeftIndex, int scrollToRightIndex, int selectionIndex, MCCItemStack leftArrow, MCCItemStack rightArrow, int... slotsForElements) {
             super(itemCreator, slotsForElements);
             this.scrollToLeftIndex = scrollToLeftIndex;
             this.scrollToRightIndex = scrollToRightIndex;
             this.selectionIndex = selectionIndex;
+            this.leftArrow = leftArrow;
+            this.rightArrow = rightArrow;
         }
 
         @Override
@@ -257,7 +270,7 @@ public class GUIUtil {
         }
 
         private void setSkipIndex(ActiveGUI activeGUI, int skipIndex) {
-            if(skipIndex < 0)
+            if (skipIndex < 0)
                 skipIndex = 0;
             activeGUI.addTemporaryData("skipIndex", skipIndex);
         }
@@ -272,8 +285,7 @@ public class GUIUtil {
 
         private ClickableItem createScrollLeftButton(Collection<T> elements) {
             return new ClickableItem.Builder()
-                .withItem(GUIButtons.ARROW_LEFT.createItem())
-                .withItemMeta(itemMeta -> itemMeta.itemName(LEFT.asTranslatableComponent()))
+                .withItem(leftArrow.copy().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(LEFT.asTranslatableComponent())))
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     setSkipIndex(activeGUI1, getSkipIndex(activeGUI1) - 1);
                     renderIntoGUI(activeGUI1, elements);
@@ -283,8 +295,7 @@ public class GUIUtil {
 
         private ClickableItem createScrollRightButton(Collection<T> elements) {
             return new ClickableItem.Builder()
-                .withItem(GUIButtons.ARROW_RIGHT.createItem())
-                .withItemMeta(itemMeta -> itemMeta.itemName(RIGHT.asTranslatableComponent()))
+                .withItem(rightArrow.copy().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(RIGHT.asTranslatableComponent())))
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     setSkipIndex(activeGUI1, getSkipIndex(activeGUI1) + 1);
                     renderIntoGUI(activeGUI1, elements);

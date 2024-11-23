@@ -1,22 +1,17 @@
 package de.verdox.mccreativelab.impl.vanilla.inventory;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import de.verdox.mccreativelab.wrapper.annotations.MCCReflective;
 import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCContainerSource;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,149 +21,119 @@ import java.util.Set;
 
 public abstract class NMSContainer<T extends MCCContainerSource, A extends AbstractContainerMenu> extends NMSHandle<A> implements MCCContainer<T> {
 
-    private final ConversionService service = MCCPlatform.getInstance().getConversionService();
-
-    protected final Container container;
+    protected final NMSMenuLessContainer<T> implContainer;
 
     public NMSContainer(A abstractContainerMenu) {
         super(abstractContainerMenu);
-        this.container = getNMSContainer(abstractContainerMenu);
+        this.implContainer = new NMSMenuLessContainer<>(getNMSContainer(abstractContainerMenu));
     }
 
     protected abstract Container getNMSContainer(A abstractContainerMenu);
 
     @Override
     public void setItem(int index, @Nullable MCCItemStack stack) {
-        if(stack == null || stack.isEmpty()){
-            this.container.setItem(index, ItemStack.EMPTY);
-            return;
-        }
-        this.container.setItem(index, service.unwrap(stack, new TypeToken<>() {}));
+        implContainer.setItem(index, stack);
     }
 
     @Override
     public MCCItemStack getItem(int index) {
-        //TODO: Nullable? Or Empty MCCItemStack
-        return service.wrap(this.container.getItem(index), new TypeToken<>() {});
+        return implContainer.getItem(index);
     }
 
     @Override
     public void removeItem(int index) {
-        setItem(index, null);
+        implContainer.removeItem(index);
     }
 
     @Override
     public boolean contains(MCCItemType mccItemType) {
-        //TODO: Use caching for better lookups
-        return false;
+        return implContainer.contains(mccItemType);
     }
 
     @Override
     public boolean contains(MCCItemType mccItemType, int amount) {
-        return false;
+        return implContainer.contains(mccItemType, amount);
     }
 
     @Override
     public boolean containsAtLeast(MCCItemType mccItemType, int amount) {
-        return false;
+        return implContainer.containsAtLeast(mccItemType, amount);
     }
 
     @Override
     public boolean contains(MCCItemStack mccItemStack) {
-        return false;
+        return implContainer.contains(mccItemStack);
     }
 
     @Override
     public boolean contains(MCCItemStack mccItemStack, int amount) {
-        return false;
+        return implContainer.contains(mccItemStack, amount);
     }
 
     @Override
     public boolean containsAtLeast(MCCItemStack mccItemStack, int amount) {
-        return false;
+        return implContainer.containsAtLeast(mccItemStack, amount);
     }
 
     @Override
     public void setTitle(Component component) {
-
+        implContainer.setTitle(component);
     }
 
     @Override
     public Component getTitle() {
-        return null;
+        return implContainer.getTitle();
     }
 
     @Override
     public @NotNull HashMap<Integer, MCCItemStack> addItem(@NotNull MCCItemStack... items) throws IllegalArgumentException {
-        return null;
+        return implContainer.addItem(items);
     }
 
     @Override
     public @NotNull HashMap<Integer, MCCItemStack> removeItem(@NotNull MCCItemStack... items) throws IllegalArgumentException {
-        return null;
+        return implContainer.removeItem(items);
     }
 
     @Override
     public MCCItemStack[] getContent() {
-        //TODO: Nullable? Or Empty MCCItemStack
-        //TODO: If we use caching we could also cache the array here.
-
-        return null;
+        return implContainer.getContent();
     }
 
     //TODO: If we use caching we could also cache the array here.
     @Override
     public void setContents(MCCItemStack[] items) {
-
+        implContainer.setContents(items);
     }
 
     @Override
     public @NotNull HashMap<Integer, ? extends MCCItemStack> all(@NotNull MCCItemType material) throws IllegalArgumentException {
-        return null;
+        return implContainer.all(material);
     }
 
     @Override
     public @NotNull HashMap<Integer, ? extends MCCItemStack> all(@Nullable MCCItemStack item) {
-        return null;
+        return implContainer.all(item);
     }
 
     @Override
     public void clear() {
-
+        implContainer.clear();
     }
 
     @Override
     public void close() {
-        for (ContainerViewer viewer : getViewers()) {
-            viewer.closeCurrentInventory(MCCContainerCloseReason.CLOSED_BY_SERVER);
-        }
+        implContainer.close();
     }
 
     @Override
     public Set<ContainerViewer> getViewers() {
-        return Set.of();
+        return implContainer.getViewers();
     }
 
     @Override
     public @NotNull Iterator<MCCItemStack> iterator() {
-        return new Iterator<>() {
-            int currentIndex;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < container.getContainerSize();
-            }
-
-            @Override
-            public MCCItemStack next() {
-                return getItem(currentIndex++);
-            }
-
-            @Override
-            public void remove() {
-                removeItem(currentIndex);
-            }
-        };
+        return implContainer.iterator();
     }
 
     @MCCReflective

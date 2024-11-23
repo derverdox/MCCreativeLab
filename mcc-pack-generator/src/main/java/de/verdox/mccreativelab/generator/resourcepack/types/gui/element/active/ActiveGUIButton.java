@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.GUIButto
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudText;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.typed.MCCSounds;
 import net.kyori.adventure.sound.Sound;
 
 import java.util.function.Consumer;
@@ -44,7 +45,7 @@ public class ActiveGUIButton extends ActiveGUIElement<GUIButton> {
     public void onClick(GUIClickAction inventoryClickEvent, int clickedX, int clickedY) {
         if (guiElement.getOnClick() != null)
             guiElement.getOnClick().accept(inventoryClickEvent, activeGUI);
-        inventoryClickEvent.getClickerAsAudience().playSound(Sound.sound().type(org.bukkit.Sound.UI_BUTTON_CLICK.key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
+        inventoryClickEvent.getClickerAsAudience().playSound(Sound.sound().type(MCCSounds.UI_BUTTON_CLICK.key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
     }
 
     private void hideOtherButtons() {

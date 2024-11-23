@@ -19,6 +19,17 @@ class TypeHierarchyMapTests {
     }
 
     @Test
+    void test() {
+        TypeHierarchyMap<String> map = new TypeHierarchyMap<>();
+        map.put(Number.class, "Number");
+        map.put(Integer.class, "Integer");
+
+        for (Map.Entry<Class<?>, String> classStringEntry : map.entrySet()) {
+            System.out.println(classStringEntry);
+        }
+    }
+
+    @Test
     void testHierarchyResolution() {
         TypeHierarchyMap<String> map = new TypeHierarchyMap<>();
         map.put(Number.class, "Number");

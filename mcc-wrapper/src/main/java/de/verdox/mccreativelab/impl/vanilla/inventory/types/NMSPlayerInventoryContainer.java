@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSMenuLessContainer;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSPlayerInventoryContainer extends NMSMenuLessContainer<MCCEntityContainerSource<MCCPlayer>> implements MCCPlayerInventoryContainer {
-
+    public static final MCCConverter<Inventory, NMSPlayerInventoryContainer> CONVERTER = converter(NMSPlayerInventoryContainer.class, Inventory.class, NMSPlayerInventoryContainer::new, o -> (Inventory) o.getHandle());
 
     public NMSPlayerInventoryContainer(Inventory playerInventory) {
         super(playerInventory);
@@ -27,8 +28,8 @@ public class NMSPlayerInventoryContainer extends NMSMenuLessContainer<MCCEntityC
 
     @Override
     public @NotNull MCCItemStack @NotNull [] getArmorContents() {
-        MCCItemStack[] armorContents = new MCCItemStack[((Inventory) container).armor.size()];
-        for (ItemStack itemStack : ((Inventory) container).armor) {
+        MCCItemStack[] armorContents = new MCCItemStack[((Inventory) handle).armor.size()];
+        for (ItemStack itemStack : ((Inventory) handle).armor) {
             armorContents = MCCPlatform.getInstance().getConversionService().wrap(itemStack, new TypeToken<MCCItemStack[]>() {});
         }
         return armorContents;
@@ -43,7 +44,7 @@ public class NMSPlayerInventoryContainer extends NMSMenuLessContainer<MCCEntityC
             case FEET -> setItem(getSize() - 5, item);
             case MAINHAND -> setItem(this.getHeldItemSlot(), item);
             case OFFHAND ->
-                this.setSlots(new MCCItemStack[]{item}, ((Inventory) container).items.size() + ((Inventory) container).armor.size(), ((Inventory) container).offhand.size());
+                this.setSlots(new MCCItemStack[]{item}, ((Inventory) handle).items.size() + ((Inventory) handle).armor.size(), ((Inventory) handle).offhand.size());
             case ANY -> {
                 if (item != null) {
                     addItem(item);
@@ -56,31 +57,36 @@ public class NMSPlayerInventoryContainer extends NMSMenuLessContainer<MCCEntityC
     public @NotNull MCCItemStack getItem(@NotNull MCCEquipmentSlotGroup slot) {
         return switch (slot) {
             case HEAD -> getItem(getSize() - 2);
-            case CHEST -> getItem(getSize() - 3);
+            case CHEST, ARMOR, BODY -> getItem(getSize() - 3);
             case LEGS -> getItem(getSize() - 4);
             case FEET -> getItem(getSize() - 5);
-            case MAINHAND -> getItem(this.getHeldItemSlot());
+            case MAINHAND, HAND -> getItem(this.getHeldItemSlot());
             case OFFHAND ->
-                MCCPlatform.getInstance().getConversionService().wrap((((Inventory) container).offhand.get(0)), new TypeToken<>() {});
+                MCCPlatform.getInstance().getConversionService().wrap((((Inventory) handle).offhand.get(0)), new TypeToken<>() {});
             case ANY -> getItemInMainHand();
         };
     }
 
     @Override
     public void setArmorContents(@Nullable MCCItemStack[] items) {
-        this.setSlots(items, ((Inventory) container).items.size(), ((Inventory) container).armor.size());
+        this.setSlots(items, ((Inventory) handle).items.size(), ((Inventory) handle).armor.size());
     }
 
     @Override
     public int getHeldItemSlot() {
-        return ((Inventory) container).selected;
+        return ((Inventory) handle).selected;
     }
 
     @Override
     public void setHeldItemSlot(@IntRange(from = 0, to = 8) int slot) {
         Preconditions.checkArgument(slot >= 0 && slot < Inventory.getSelectionSize(), "Slot (%s) is not between 0 and %s inclusive", slot, Inventory.getSelectionSize() - 1);
-        ((Inventory) container).selected = slot;
-        ((ServerPlayer) ((Inventory) container).player).connection.send(new ClientboundSetCarriedItemPacket(slot));
+        ((Inventory) handle).selected = slot;
+        ((ServerPlayer) ((Inventory) handle).player).connection.send(new ClientboundSetCarriedItemPacket(slot));
+    }
+
+    @Override
+    public void sendFakeContents(MCCItemStack[] contents) {
+
     }
 
     @Override

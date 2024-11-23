@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
@@ -32,7 +33,7 @@ public class ClickableItem {
     public static class Builder {
         private BiConsumer<GUIClickAction, ActiveGUI> onClick = (inventoryClickEvent, activeGUI) -> {
         };
-        private MCCItemStack item = MCCreativeLabExtension.getCustomResourcePack().getEmptyItem().createItem();
+        private MCCItemStack item = CustomResourcePack.EMPTY_ITEM.createItem();
         public boolean popGUIStack = false;
         public boolean clearGUIStackAndClose = false;
 
@@ -60,7 +61,7 @@ public class ClickableItem {
         public Builder createCopy() {
             var copy = new Builder();
             copy.onClick = this.onClick;
-            copy.item = this.item.clone();
+            copy.item = this.item.copy();
             copy.popGUIStack = this.popGUIStack;
             copy.clearGUIStackAndClose = this.clearGUIStackAndClose;
             return copy;
@@ -72,9 +73,9 @@ public class ClickableItem {
         }
 
         public Builder openGUI(Supplier<CustomGUIBuilder> supplyGUI){
-            return withClick((inventoryClickEvent, activeGUI) -> {
+            return withClick((clickAction, activeGUI) -> {
                 CustomGUIBuilder customGUIBuilder = supplyGUI.get();
-                customGUIBuilder.asNestedGUI((Player) inventoryClickEvent.getEntityClicking(), activeGUI, activeGUI::copyTemporaryDataFromGUI);
+                customGUIBuilder.asNestedGUI(clickAction.getEntityClicking(), activeGUI, activeGUI::copyTemporaryDataFromGUI);
             });
         }
 

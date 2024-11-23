@@ -3,9 +3,9 @@ package de.verdox.mccreativelab.wrapper.types;
 import de.verdox.mccreativelab.wrapper.types.MCCPoiType;
 import com.google.common.collect.ImmutableSet;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.sounds.SoundEvent;
 import java.util.function.Predicate;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import java.lang.String;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
@@ -22,6 +22,6 @@ public interface MCCVillagerProfession extends MCCWrapped  {
 
 	public ImmutableSet<MCCBlockType> getSecondaryPoi();
 
-	public SoundEvent getWorkSound();
+	public MCCSound getWorkSound();
 
 }
