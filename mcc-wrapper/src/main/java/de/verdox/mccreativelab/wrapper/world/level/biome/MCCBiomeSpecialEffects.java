@@ -12,7 +12,7 @@ public class MCCBiomeSpecialEffects {
     private final int skyColor;
     private final Optional<Integer> foliageColorOverride;
     private final Optional<Integer> grassColorOverride;
-    private final MCCGrassColorModifier grassColorModifier;
+    private final GrassColorModifier grassColorModifier;
 
     public MCCBiomeSpecialEffects(
         int fogColor,
@@ -21,7 +21,7 @@ public class MCCBiomeSpecialEffects {
         final int skyColor,
         Optional<Integer> foliageColor,
         Optional<Integer> grassColor,
-        MCCGrassColorModifier grassColorModifier
+        GrassColorModifier grassColorModifier
     ) {
         this.fogColor = fogColor;
         this.waterColor = waterColor;
@@ -88,16 +88,25 @@ public class MCCBiomeSpecialEffects {
     }
 
     /**
+     * Gets the grass color modifier of the biome
+     *
+     * @return the grass color modifier
+     */
+    public GrassColorModifier getGrassColorModifier() {
+        return grassColorModifier;
+    }
+
+    /**
      * Enum for grass color modifiers
      */
-    public enum MCCGrassColorModifier {
+    public enum GrassColorModifier {
         NONE("none"),
         DARK_FOREST("dark_forest"),
         SWAMP("swamp"),;
 
         private final String name;
 
-        MCCGrassColorModifier(String name) {
+        GrassColorModifier(String name) {
             this.name = name;
         }
 
