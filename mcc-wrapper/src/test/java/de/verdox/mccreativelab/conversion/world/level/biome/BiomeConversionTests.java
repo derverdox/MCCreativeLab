@@ -1,4 +1,4 @@
-package de.verdox.mccreativelab.conversion;
+package de.verdox.mccreativelab.conversion.world.level.biome;
 
 import de.verdox.mccreativelab.TestBase;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
