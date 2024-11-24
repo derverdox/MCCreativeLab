@@ -6,10 +6,7 @@ import de.verdox.mccreativelab.wrapper.world.level.biome.MCCBiome;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
-import net.minecraft.world.level.biome.BiomeSpecialEffects;
-import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.biome.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +28,9 @@ public class BiomeConversionTests extends TestBase {
                         .grassColorOverride(21)
                         .ambientLoopSound(
                                 Holder.direct(SoundEvent.createFixedRangeEvent(ResourceLocation.fromNamespaceAndPath("minecraft", "ambient.loop"), 1))
-                        ).build()
+                        ).ambientAdditionsSound(
+                        new AmbientAdditionsSettings(Holder.direct(SoundEvent.createFixedRangeEvent(ResourceLocation.fromNamespaceAndPath("minecraft", "ambient.additions"), 1)), 1)
+                    ).build()
                 )
                 .mobSpawnSettings(MobSpawnSettings.EMPTY)
                 .generationSettings(BiomeGenerationSettings.EMPTY)
@@ -48,5 +47,6 @@ public class BiomeConversionTests extends TestBase {
         assert mccBiome.getSpecialEffects().getGrassColorOverride().get().equals(mcBiome.getSpecialEffects().getGrassColorOverride().get());
         assert mccBiome.getTemperatureModifier().name().equals(mcBiome.climateSettings.temperatureModifier().name());
         assert mccBiome.getAmbientLoop().get().get().range() == mcBiome.getAmbientLoop().get().value().getRange(1); // TODO: fix - Cannot invoke "de.verdox.mccreativelab.wrapper.world.MCCSound.range()" because the return value of "de.verdox.mccreativelab.wrapper.registry.MCCReference.get()" is null
+        assert mccBiome.getAmbientAdditions().get().sound().get().range() == mcBiome.getAmbientAdditions().get().getSoundEvent().value().getRange(1);
     }
 }
