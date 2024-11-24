@@ -47,6 +47,6 @@ public class BiomeConversionTests extends TestBase {
         assert mccBiome.getSpecialEffects().getSkyColor() == mcBiome.getSpecialEffects().getSkyColor();
         assert mccBiome.getSpecialEffects().getGrassColorOverride().get().equals(mcBiome.getSpecialEffects().getGrassColorOverride().get());
         assert mccBiome.getTemperatureModifier().name().equals(mcBiome.climateSettings.temperatureModifier().name());
-        assert mccBiome.getAmbientLoop().get().get().range() == mcBiome.getAmbientLoop().get().value().getRange(1);
+        assert mccBiome.getAmbientLoop().get().get().range() == mcBiome.getAmbientLoop().get().value().getRange(1); // TODO: fix - Cannot invoke "de.verdox.mccreativelab.wrapper.world.MCCSound.range()" because the return value of "de.verdox.mccreativelab.wrapper.registry.MCCReference.get()" is null
     }
 }

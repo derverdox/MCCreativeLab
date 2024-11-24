@@ -26,7 +26,7 @@ public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
     public NMSBiome(Biome handle) {
         super(handle);
     }
-    
+
     @Override
     public Boolean hasPrecipitation() {
         return getHandle().hasPrecipitation();
@@ -66,9 +66,6 @@ public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
     @Override
     public Optional<MCCReference<MCCSound>> getAmbientLoop() {
         Optional<Holder<SoundEvent>> ambientLoop = getHandle().getAmbientLoop();
-
-        System.out.printf("ambient present: %s", ambientLoop.isPresent());
-
         return ambientLoop.map(soundEventHolder -> new NMSReference<>(Holder.direct(new NMSSound(soundEventHolder.value()))));
     }
 }
