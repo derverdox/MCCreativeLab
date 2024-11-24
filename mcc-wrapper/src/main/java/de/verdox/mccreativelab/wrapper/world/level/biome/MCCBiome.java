@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.wrapper.world.level.biome;
 
 import de.verdox.mccreativelab.wrapper.core.MCCBlockPos;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
+import de.verdox.mccreativelab.wrapper.sounds.MCCMusic;
 import de.verdox.mccreativelab.wrapper.world.MCCSound;
 
 import java.util.Optional;
@@ -48,17 +49,23 @@ public interface MCCBiome {
      */
     TemperatureModifier getTemperatureModifier();
 
-    // TODO: Optional<Holder<SoundEvent>> getAmbientLoop()
-
     /**
      * Gets the ambient loop of the biome
      * @return the ambient loop
      */
     Optional<MCCReference<MCCSound>> getAmbientLoop();
 
-    // TODO: Optional<AmbientAdditionsSettings> getAmbientAdditions()
+    /**
+     * Gets the ambient additions of the biome
+     * @return the ambient additions
+     */
+    Optional<MCCAmbientAdditionsSettings> getAmbientAdditions();
 
-    // TODO: Optional<Music> getBackgroundMusic()
+    /**
+     * Gets the background music of the biome
+     * @return the background music
+     */
+    Optional<MCCMusic> getBackgroundMusic();
 
     /**
      * Enum for temperature modifiers
