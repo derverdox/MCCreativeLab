@@ -24,7 +24,6 @@ public interface MCCRegistries {
     // Advancement
     // Enchantment
     // DimensionType
-    // Biome
     // ArmorMaterial
     // DecoratedPotPattern
     // VillagerType
