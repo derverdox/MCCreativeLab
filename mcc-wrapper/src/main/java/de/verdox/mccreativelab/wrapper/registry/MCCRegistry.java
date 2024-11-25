@@ -140,6 +140,17 @@ public interface MCCRegistry<T> extends MCCWrapped {
     Optional<MCCReference<T>> getReference(int rawId);
 
     /**
+     * Gets the reference associated with the provided id
+     *
+     * @param value the id
+     * @return the reference as optional
+     */
+    default Optional<MCCReference<T>> getReference(T value){
+        MCCTypedKey<T> key = getTypedKey(value).get();
+        return getReference(key);
+    }
+
+    /**
      * Gets the reference associated with the provided key
      *
      * @param key the key

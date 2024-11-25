@@ -20,9 +20,9 @@ public interface TypedKeyFactory {
      * @param <T>         the generic wrapped type
      * @return the typed key
      */
-    <T extends MCCWrapped> MCCTypedKey<T> getKey(Key key, Key registryKey, TypeToken<T> type);
+    <T> MCCTypedKey<T> getKey(Key key, Key registryKey, TypeToken<T> type);
 
-    <T extends MCCWrapped> MCCTag<T> createTag(Key key, Key registryKey, TypeToken<T> type);
+    <T> MCCTag<T> createTag(Key key, Key registryKey, TypeToken<T> type);
 
-    <T extends MCCWrapped> MCCReferenceSet<T> createImmutableSetWithoutKey(List<MCCRegistry<T>> references);
+    <T> MCCReferenceSet<T> createImmutableSetWithoutKey(List<MCCRegistry<T>> references);
 }

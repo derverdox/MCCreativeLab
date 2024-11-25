@@ -1,7 +1,9 @@
 package de.verdox.mccreativelab.wrapper.item;
 
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
+import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import net.kyori.adventure.text.Component;
 
 import java.util.function.Consumer;
@@ -40,6 +42,8 @@ public interface MCCItemStack {
      * @param <T>               the component data type
      */
     <R, T extends MCCDataComponentType<R>> R get(T dataComponentType);
+
+    boolean hasDataComponentType(MCCDataComponentType<?> type);
 
     /**
      * Gets the amount of this item stack.
@@ -118,5 +122,11 @@ public interface MCCItemStack {
      */
     MCCItemStack copy();
 
+    boolean isCorrectToolForDrops(MCCBlockState blockState);
+
+    float getDestroySpeed(MCCBlockState mccBlockState);
+
     boolean isEmpty();
+
+    int getEnchantmentLevel(MCCEnchantment mccEnchantment);
 }

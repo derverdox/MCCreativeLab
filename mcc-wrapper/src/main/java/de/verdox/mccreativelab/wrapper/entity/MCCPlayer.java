@@ -1,12 +1,16 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.world.Weather;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.UUID;
 
@@ -20,8 +24,6 @@ public interface MCCPlayer extends MCCLivingEntity, ContainerViewer {
      * @return the inventory
      */
     MCCPlayerInventoryContainer getInventory();
-
-    void resetPlayerWeather();
 
     void syncInventory();
 
@@ -88,5 +90,24 @@ public interface MCCPlayer extends MCCLivingEntity, ContainerViewer {
      */
     boolean isOnline();
 
-    void setResourcePack(UUID uuid, String downloadURL, byte[] bytes, @Nullable Component prompt, boolean required);
+    /**
+     * Sets the resource pack of a player
+     *
+     * @param uuid        the uuid of the resource pack
+     * @param downloadURL the download url of the resource pack
+     * @param hashBytes   the hash bytes of the resource pack
+     * @param prompt      the prompt to show to the player
+     * @param required    whether the resource pack is required on this server
+     */
+    void setResourcePack(UUID uuid, String downloadURL, byte[] hashBytes, @Nullable Component prompt, boolean required);
+
+    /**
+     * Sends block damage to this player at a specified location
+     * @param location location of the block with the damage state
+     * @param progress the damage state
+     * @param entityId The id of the effect
+     */
+    void sendBlockDamage(@NotNull MCCLocation location, @Range(from = 0, to = 1) float progress, int entityId);
+
+    void breakBlock(MCCBlock block);
 }

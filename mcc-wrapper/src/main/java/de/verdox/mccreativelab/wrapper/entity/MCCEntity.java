@@ -55,4 +55,34 @@ public interface MCCEntity extends MCCKeyedWrapper, TempDataHolder, MCCWrapped {
     }
 
     MCCLocation getLocation();
+
+    int getEntityID();
+
+    boolean isCrouching();
+    boolean isAlwaysTicking();
+    boolean isAttackable();
+    boolean isCurrentlyGlowing();
+    boolean isFreezing();
+    boolean isFullyFrozen();
+    boolean isIgnoringBlockTriggers();
+    boolean isInBubbleColumn();
+    boolean isInLava();
+    boolean isInLiquid();
+    boolean isInWall();
+    boolean isInWater();
+    boolean isInWaterOrBubble();
+    boolean isInWaterOrRain();
+    boolean isInWaterOrRainOrBubble();
+    boolean isNoGravity();
+    boolean isOnFire();
+    boolean isOnRails();
+    boolean isPickable();
+    boolean isPushable();
+    boolean isShiftKeyDown();
+    boolean isSprinting();
+    boolean isSteppingCarefully();
+    boolean isSwimming();
+    boolean isTicking();
+    boolean isUnderwater();
+    boolean isOnGround();
 }

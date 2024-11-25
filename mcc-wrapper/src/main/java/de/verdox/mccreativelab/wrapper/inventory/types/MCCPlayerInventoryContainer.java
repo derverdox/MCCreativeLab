@@ -1,10 +1,10 @@
 package de.verdox.mccreativelab.wrapper.inventory.types;
 
+import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCEntityContainerSource;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
-import de.verdox.mccreativelab.wrapper.item.components.MCCEquipmentSlotGroup;
 import org.checkerframework.common.value.qual.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

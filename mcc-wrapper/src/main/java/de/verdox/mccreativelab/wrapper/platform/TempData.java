@@ -25,6 +25,13 @@ public class TempData {
         return type.cast(cache.get(key));
     }
 
+    public @Nullable <T> T getData(String key){
+        if(!containsData(key))
+            return null;
+        return (T) cache.get(key);
+    }
+
+
     public boolean containsData(String key){
         return cache.containsKey(key);
     }
