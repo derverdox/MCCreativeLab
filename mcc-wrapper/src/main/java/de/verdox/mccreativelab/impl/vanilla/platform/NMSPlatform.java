@@ -3,35 +3,43 @@ package de.verdox.mccreativelab.impl.vanilla.platform;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.ConversionServiceImpl;
+import de.verdox.mccreativelab.conversion.converter.EnumConverter;
+import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockSoundGroup;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.entity.*;
 import de.verdox.mccreativelab.impl.vanilla.inventory.types.*;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemType;
+import de.verdox.mccreativelab.impl.vanilla.platform.converter.AttributeModifierConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
+import de.verdox.mccreativelab.impl.vanilla.platform.converter.SoundConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.factory.NMSTypedKeyFactory;
 import de.verdox.mccreativelab.impl.vanilla.registry.*;
-import de.verdox.mccreativelab.impl.vanilla.world.NMSSound;
 import de.verdox.mccreativelab.impl.vanilla.world.NMSWorld;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.*;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.types.*;
+import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
 import de.verdox.mccreativelab.wrapper.platform.MCCResourcePack;
 import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
-import de.verdox.mccreativelab.wrapper.event.MCCEvent;
 import de.verdox.mccreativelab.wrapper.inventory.factory.MCCContainerFactory;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTaskManager;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +54,7 @@ public class NMSPlatform implements MCCPlatform {
     public NMSPlatform() {
         //GeneratedConverters.init(conversionService);
         conversionService.registerPlatformType(MCCBlockState.class, NMSBlockState.CONVERTER);
+        conversionService.registerPlatformType(MCCBlockSoundGroup.class, NMSBlockSoundGroup.CONVERTER);
         conversionService.registerPlatformType(MCCBlockType.class, NMSBlockType.CONVERTER);
         conversionService.registerPlatformType(MCCEntity.class, NMSEntity.CONVERTER);
         conversionService.registerPlatformType(MCCAttribute.class, NMSAttribute.CONVERTER);
@@ -53,11 +62,14 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCItemStack.class, NMSItemStack.CONVERTER);
         conversionService.registerPlatformType(MCCItemType.class, NMSItemType.CONVERTER);
         conversionService.registerPlatformType(MCCWorld.class, NMSWorld.CONVERTER);
-        conversionService.registerPlatformType(MCCSound.class, NMSSound.CONVERTER);
         conversionService.registerPlatformType(MCCEffectType.class, NMSEffectType.CONVERTER);
         conversionService.registerPlatformType(MCCEffect.class, NMSEffect.CONVERTER);
+        conversionService.registerPlatformType(MCCPlayer.class, NMSPlayer.CONVERTER);
+        conversionService.registerPlatformType(MCCAttributeMap.class, NMSAttributeMap.CONVERTER);
 
         conversionService.registerPlatformType(Key.class, new ResourceLocationConverter());
+        conversionService.registerPlatformType(Sound.class, new SoundConverter());
+        conversionService.registerPlatformType(MCCAttributeModifier.class, new AttributeModifierConverter());
         conversionService.registerPlatformType(MCCTypedKey.class, NMSTypedKey.CONVERTER);
         conversionService.registerPlatformType(MCCReference.class, NMSReference.CONVERTER);
         conversionService.registerPlatformType(MCCTag.class, NMSTag.CONVERTER);
@@ -66,6 +78,7 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
 
         registerContainerTypes();
+        registerEnumConverters();
     }
 
     @Override
@@ -74,32 +87,47 @@ public class NMSPlatform implements MCCPlatform {
     }
 
     @Override
-    public MCCContainerFactory getContainerFactory() {
+    public @NotNull MCCBlockHardnessSettings getBlockHardnessSettings() {
+        throw new OperationNotPossibleOnNMS();
+    }
+
+    @Override
+    public @NotNull MCCBlockSoundSettings getBlockSoundSettings() {
+        throw new OperationNotPossibleOnNMS();
+    }
+
+    @Override
+    public @NotNull MCCFurnaceSettings getFurnaceSettings() {
+        throw new OperationNotPossibleOnNMS();
+    }
+
+    @Override
+    public int getPublicTick() {
+        return MinecraftServer.currentTick;
+    }
+
+    @Override
+    public @NotNull MCCContainerFactory getContainerFactory() {
         return null;
     }
 
     @Override
-    public MCCTaskManager getTaskManager() {
+    public @NotNull MCCTaskManager getTaskManager() {
         return null;
     }
 
     @Override
-    public TypedKeyFactory getTypedKeyFactory() {
+    public @NotNull TypedKeyFactory getTypedKeyFactory() {
         return typedKeyFactory;
     }
 
     @Override
-    public ConversionService getConversionService() {
+    public @NotNull ConversionService getConversionService() {
         return conversionService;
     }
 
     @Override
-    public void callEvent(MCCEvent mccEvent) {
-
-    }
-
-    @Override
-    public List<MCCWorld> getWorlds() {
+    public @NotNull List<MCCWorld> getWorlds() {
         List<MCCWorld> worlds = new LinkedList<>();
         MinecraftServer.getServer().getAllLevels().forEach(serverLevel -> {
             worlds.add(getConversionService().wrap(serverLevel, new TypeToken<>() {}));
@@ -108,7 +136,7 @@ public class NMSPlatform implements MCCPlatform {
     }
 
     @Override
-    public @Nullable MCCPlayer getOnlinePlayer(UUID uuid) {
+    public @Nullable MCCPlayer getOnlinePlayer(@NotNull UUID uuid) {
         return null;
     }
 
@@ -118,7 +146,7 @@ public class NMSPlatform implements MCCPlatform {
     }
 
     @Override
-    public void setServerResourcePack(MCCResourcePack resourcePack) {
+    public void setServerResourcePack(@NotNull MCCResourcePack resourcePack) {
         throw new OperationNotPossibleOnNMS();
     }
 
@@ -135,5 +163,10 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCLecternContainer.class, NMSLecternContainer.CONVERTER);
         conversionService.registerPlatformType(MCCMerchantContainer.class, NMSMerchantContainer.CONVERTER);
         conversionService.registerPlatformType(MCCPlayerInventoryContainer.class, NMSPlayerInventoryContainer.CONVERTER);
+    }
+
+    private void registerEnumConverters(){
+        conversionService.registerPlatformType(MCCEquipmentSlot.class, new EnumConverter<>(EquipmentSlot.class, MCCEquipmentSlot.class));
+        conversionService.registerPlatformType(MCCEquipmentSlotGroup.class, new EnumConverter<>(net.minecraft.world.entity.EquipmentSlotGroup.class, MCCEquipmentSlotGroup.class));
     }
 }

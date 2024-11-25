@@ -10,7 +10,9 @@ import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import net.kyori.adventure.text.Component;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 
@@ -42,6 +44,11 @@ public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
     public <R, T extends MCCDataComponentType<R>> R get(T dataComponentType) {
         NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
         return nmsItemComponentEditor.get();
+    }
+
+    @Override
+    public boolean hasDataComponentType(MCCDataComponentType<?> type) {
+        return handle.has(conversionService.unwrap(type, new TypeToken<>() {}));
     }
 
     @Override
@@ -104,8 +111,23 @@ public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
     }
 
     @Override
+    public boolean isCorrectToolForDrops(MCCBlockState blockState) {
+        return false;
+    }
+
+    @Override
+    public float getDestroySpeed(MCCBlockState mccBlockState) {
+        return 0;
+    }
+
+    @Override
     public boolean isEmpty() {
         return getHandle().isEmpty();
+    }
+
+    @Override
+    public int getEnchantmentLevel(MCCEnchantment mccEnchantment) {
+        return 0;
     }
 
     @Override

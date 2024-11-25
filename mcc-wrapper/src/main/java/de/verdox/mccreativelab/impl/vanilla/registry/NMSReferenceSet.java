@@ -27,12 +27,12 @@ public class NMSReferenceSet<T> extends NMSHandle<HolderSet<?>> implements MCCRe
 
     @Override
     public int size() {
-        return 0;
+        return handle.size();
     }
 
     @Override
     public boolean contains(MCCReference<T> reference) {
-        return false;
+        return handle.contains(conversionService.unwrap(reference, new TypeToken<Holder>() {}));
     }
 
     @Override
@@ -67,6 +67,17 @@ public class NMSReferenceSet<T> extends NMSHandle<HolderSet<?>> implements MCCRe
 
     @Override
     public @NotNull Iterator<MCCReference<T>> iterator() {
-        return null;
+        Iterator<? extends Holder<?>> iter = handle.iterator();
+        return new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public MCCReference<T> next() {
+                return conversionService.wrap(iter.next(), new TypeToken<>() {});
+            }
+        };
     }
 }
