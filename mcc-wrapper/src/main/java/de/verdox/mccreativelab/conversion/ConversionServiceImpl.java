@@ -30,7 +30,7 @@ public class ConversionServiceImpl implements ConversionService {
             .map(mccConverter -> mccConverter.wrap(nativeObject))
             .filter(objectConversionResult -> objectConversionResult.result().isDone())
             .map(MCCConverter.ConversionResult::value)
-            .findAny().orElse(null);
+            .findAny().orElseThrow(() -> new IllegalArgumentException("Could not find a converter to wrap the native type "+nativeObject+" ("+nativeObject.getClass().getCanonicalName()+"). Make sure that you have registered a converter for the given object type."));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ConversionServiceImpl implements ConversionService {
             .map(mccConverter -> mccConverter.unwrap(apiObject))
             .filter(objectConversionResult -> objectConversionResult.result().isDone())
             .map(MCCConverter.ConversionResult::value)
-            .findAny().orElse(null);
+            .findAny().orElseThrow(() -> new IllegalArgumentException("Could not find a converter to wrap the api type "+apiObject+" ("+apiObject.getClass().getCanonicalName()+"). Make sure that you have registered a converter for the given object type."));
     }
 
     @Override

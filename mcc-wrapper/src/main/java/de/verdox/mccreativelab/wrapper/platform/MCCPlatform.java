@@ -2,6 +2,9 @@ package de.verdox.mccreativelab.wrapper.platform;
 
 import de.verdox.mccreativelab.Singleton;
 import de.verdox.mccreativelab.conversion.ConversionService;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
+import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
@@ -39,33 +42,83 @@ public interface MCCPlatform {
      *
      * @return the container factory
      */
-    MCCContainerFactory getContainerFactory();
+    @NotNull MCCContainerFactory getContainerFactory();
 
     /**
      * Returns the task manager of this platform
      *
      * @return the task manager
      */
-    MCCTaskManager getTaskManager();
+    @NotNull MCCTaskManager getTaskManager();
 
     /**
      * Returns the typed key factory of this platform
      *
      * @return the factory
      */
-    TypedKeyFactory getTypedKeyFactory();
+    @NotNull TypedKeyFactory getTypedKeyFactory();
 
-    ConversionService getConversionService();
+    /**
+     * Returns the conversion service of this platform
+     *
+     * @return the conversion service
+     */
+    @NotNull ConversionService getConversionService();
 
-    void callEvent(MCCEvent mccEvent);
+    /**
+     * Returns all worlds that are loaded on this minecraft platform
+     *
+     * @return the list of worlds loaded
+     */
+    @NotNull List<MCCWorld> getWorlds();
 
-    List<MCCWorld> getWorlds();
+    /**
+     * Gets an online player by his uuid. Returns null if the server is not online.
+     *
+     * @param uuid the uuid of the player
+     * @return the player or null
+     */
+    @Nullable MCCPlayer getOnlinePlayer(@NotNull UUID uuid);
 
-    @Nullable MCCPlayer getOnlinePlayer(UUID uuid);
-
+    /**
+     * Returns a list of all online players
+     *
+     * @return the list of online players
+     */
     @NotNull List<MCCPlayer> getOnlinePlayers();
 
-    void setServerResourcePack(MCCResourcePack resourcePack);
+    /**
+     * Sets the server resource pack on this server
+     *
+     * @param resourcePack the server resource pack
+     */
+    void setServerResourcePack(@NotNull MCCResourcePack resourcePack);
 
+    /**
+     * Must be called after instantiating the platform object. Else the platform might not work as expected
+     */
     void init();
+
+    /**
+     * Returns the block hardness settings of this platform
+     *
+     * @return the block hardness settings
+     */
+    @NotNull MCCBlockHardnessSettings getBlockHardnessSettings();
+
+    /**
+     * Returns the block sound settings of this platform
+     *
+     * @return the block sound settings
+     */
+    @NotNull MCCBlockSoundSettings getBlockSoundSettings();
+
+    /**
+     * Returns the furnace settings of this platform
+     *
+     * @return the furnace settings
+     */
+    @NotNull MCCFurnaceSettings getFurnaceSettings();
+
+    int getPublicTick();
 }

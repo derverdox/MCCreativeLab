@@ -36,7 +36,7 @@ public class WrapperInterfaceGenerator extends AbstractClassGenerator {
     }
 
     private WrappedClass generateWrapper(Class<?> nmsClass, String apiPackage, String implPackage, boolean isInnerClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, DynamicType wrapperParentClass, boolean withSetters) {
-        String interfaceName = prefix + nmsClass.getSimpleName();
+        String interfaceName = isInnerClass ? nmsClass.getSimpleName() : prefix + nmsClass.getSimpleName();
         String implName = implPrefix + nmsClass.getSimpleName();
         interfaceBuilder.withPackage(apiPackage);
         if (wrapperParentClass != null)

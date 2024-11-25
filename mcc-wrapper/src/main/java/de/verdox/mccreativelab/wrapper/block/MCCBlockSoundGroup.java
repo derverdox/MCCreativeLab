@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.block;
 
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import net.kyori.adventure.sound.Sound;
 
 /**
@@ -8,7 +9,7 @@ import net.kyori.adventure.sound.Sound;
  * <p>
  * Take a look at the minecraft block sound groups in the <a href="https://minecraft.wiki/w/Category:Block_sounds">Minecraft Wiki</a>
  */
-public interface MCCBlockSoundGroup extends MCCKeyedWrapper {
+public interface MCCBlockSoundGroup extends MCCWrapped {
 
     /**
      * Get the volume these sounds are played at.

@@ -154,9 +154,9 @@ public class NMSDimensionType extends NMSHandle<DimensionType> implements MCCDim
 		return handle == null ? 0 : handle.ambientLight();
 	}
 
-	public MCCDimensionType.MCCMonsterSettings getMonsterSettings(){
+	public MCCDimensionType.MonsterSettings getMonsterSettings(){
 		var nms = getMonsterSettingsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCDimensionType.MCCMonsterSettings>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCDimensionType.MonsterSettings>() {});
 	}
 
 	private DimensionType.MonsterSettings getMonsterSettingsFromImpl(){
@@ -164,7 +164,7 @@ public class NMSDimensionType extends NMSHandle<DimensionType> implements MCCDim
 	}
 
 
-	public static class NMSMonsterSettings extends NMSHandle<DimensionType.MonsterSettings> implements MCCDimensionType.MCCMonsterSettings  {
+	public static class NMSMonsterSettings extends NMSHandle<DimensionType.MonsterSettings> implements MCCDimensionType.MonsterSettings  {
 	
 		public static final MCCConverter<DimensionType.MonsterSettings, NMSDimensionType.NMSMonsterSettings> CONVERTER  = converter(NMSDimensionType.NMSMonsterSettings.class, DimensionType.MonsterSettings.class, NMSDimensionType.NMSMonsterSettings::new, NMSHandle::getHandle);
 

@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
@@ -12,12 +13,15 @@ import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.world.Weather;
 import net.kyori.adventure.text.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -33,11 +37,6 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
     @Override
     public MCCPlayerInventoryContainer getInventory() {
         return MCCPlatform.getInstance().getConversionService().wrap(handle.getInventory(), new TypeToken<>() {});
-    }
-
-    @Override
-    public void resetPlayerWeather() {
-
     }
 
     @Override
@@ -128,6 +127,16 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
 
     @Override
     public void setResourcePack(UUID uuid, String downloadURL, byte[] bytes, @Nullable Component prompt, boolean required) {
+
+    }
+
+    @Override
+    public void sendBlockDamage(@NotNull MCCLocation location, @Range(from = 0, to = 1) float progress, int entityId) {
+
+    }
+
+    @Override
+    public void breakBlock(MCCBlock block) {
 
     }
 

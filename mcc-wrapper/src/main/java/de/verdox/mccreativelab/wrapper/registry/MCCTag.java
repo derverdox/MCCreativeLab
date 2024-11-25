@@ -39,4 +39,9 @@ public interface MCCTag<T> extends Keyed, MCCWrapped {
     default MCCReferenceSet<T> getValues() {
         return getRegistry().getOrCreateTag(this);
     }
+
+    default boolean contains(T value){
+        MCCReference<T> referenceOfValue = getRegistry().wrapAsReference(value);
+        return getValues().contains(referenceOfValue);
+    }
 }

@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import de.verdox.mccreativelab.wrapper.item.components.MCCEquipmentSlotGroup;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
@@ -16,8 +15,9 @@ import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
+import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
+import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import de.verdox.mccreativelab.wrapper.item.components.MCCAttributeModifier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers> implements MCCItemAttributeModifiers  {
@@ -28,24 +28,24 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 		super(handle);
 	}
 
-	public MCCItemAttributeModifiers.MCCBuilder createMCCBuilder(){
+	public MCCItemAttributeModifiers.Builder createBuilder(){
 		return new NMSBuilder(null);
 	}
 
-	public MCCItemAttributeModifiers.MCCEntry createMCCEntry(){
+	public MCCItemAttributeModifiers.Entry createEntry(){
 		return new NMSEntry(null);
 	}
 
-	public List<MCCItemAttributeModifiers.MCCEntry> getModifiers(){
+	public List<MCCItemAttributeModifiers.Entry> getModifiers(){
 		var nms = getModifiersFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCItemAttributeModifiers.MCCEntry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCItemAttributeModifiers.Entry>>() {});
 	}
 
 	private List<ItemAttributeModifiers.Entry> getModifiersFromImpl(){
 		return handle == null ? List.of() : handle.modifiers();
 	}
 
-	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.MCCEntry> modifiers){
+	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.Entry> modifiers){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(modifiers, new TypeToken<List<ItemAttributeModifiers.Entry>>() {});
 		var param1 = getShowInTooltipFromImpl();
 		return new NMSItemAttributeModifiers(new ItemAttributeModifiers(param0, param1));
@@ -67,7 +67,7 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 	}
 
 
-	public static class NMSBuilder extends NMSHandle<ItemAttributeModifiers.Builder> implements MCCItemAttributeModifiers.MCCBuilder  {
+	public static class NMSBuilder extends NMSHandle<ItemAttributeModifiers.Builder> implements MCCItemAttributeModifiers.Builder  {
 	
 		public static final MCCConverter<ItemAttributeModifiers.Builder, NMSItemAttributeModifiers.NMSBuilder> CONVERTER  = converter(NMSItemAttributeModifiers.NMSBuilder.class, ItemAttributeModifiers.Builder.class, NMSItemAttributeModifiers.NMSBuilder::new, NMSHandle::getHandle);
 
@@ -77,7 +77,7 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 	
 	}
 
-	public static class NMSEntry extends NMSHandle<ItemAttributeModifiers.Entry> implements MCCItemAttributeModifiers.MCCEntry  {
+	public static class NMSEntry extends NMSHandle<ItemAttributeModifiers.Entry> implements MCCItemAttributeModifiers.Entry  {
 	
 		public static final MCCConverter<ItemAttributeModifiers.Entry, NMSItemAttributeModifiers.NMSEntry> CONVERTER  = converter(NMSItemAttributeModifiers.NMSEntry.class, ItemAttributeModifiers.Entry.class, NMSItemAttributeModifiers.NMSEntry::new, NMSHandle::getHandle);
 
@@ -94,7 +94,7 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 			return handle == null ? null : handle.attribute();
 		}
 	
-		public MCCItemAttributeModifiers.MCCEntry withAttribute(MCCReference<MCCAttribute> attribute){
+		public MCCItemAttributeModifiers.Entry withAttribute(MCCReference<MCCAttribute> attribute){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(attribute, new TypeToken<Holder<Attribute>>() {});
 			var param1 = getModifierFromImpl();
 			var param2 = getSlotFromImpl();
@@ -110,7 +110,7 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 			return handle == null ? null : handle.modifier();
 		}
 	
-		public MCCItemAttributeModifiers.MCCEntry withModifier(MCCAttributeModifier modifier){
+		public MCCItemAttributeModifiers.Entry withModifier(MCCAttributeModifier modifier){
 			var param0 = getAttributeFromImpl();
 			var param1 = MCCPlatform.getInstance().getConversionService().unwrap(modifier, new TypeToken<AttributeModifier>() {});
 			var param2 = getSlotFromImpl();
@@ -126,7 +126,7 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 			return handle == null ? null : handle.slot();
 		}
 	
-		public MCCItemAttributeModifiers.MCCEntry withSlot(MCCEquipmentSlotGroup slot){
+		public MCCItemAttributeModifiers.Entry withSlot(MCCEquipmentSlotGroup slot){
 			var param0 = getAttributeFromImpl();
 			var param1 = getModifierFromImpl();
 			var param2 = MCCPlatform.getInstance().getConversionService().unwrap(slot, new TypeToken<EquipmentSlotGroup>() {});

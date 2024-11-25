@@ -13,6 +13,8 @@ public interface MCCEntityMultiProperty<T, E extends MCCEntity> {
 
     void add(T... newValues);
 
+    void addAllPossibilities();
+
     T get(int index);
 
     boolean contains(T value);

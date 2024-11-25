@@ -7,22 +7,22 @@ import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 
 public interface MCCSuspiciousStewEffects extends MCCItemComponent  {
 
-	public MCCSuspiciousStewEffects.MCCEntry createMCCEntry();
+	public MCCSuspiciousStewEffects.Entry createEntry();
 
-	public List<MCCSuspiciousStewEffects.MCCEntry> getEffects();
+	public List<MCCSuspiciousStewEffects.Entry> getEffects();
 
-	public MCCSuspiciousStewEffects withEffects(List<MCCSuspiciousStewEffects.MCCEntry> effects);
+	public MCCSuspiciousStewEffects withEffects(List<MCCSuspiciousStewEffects.Entry> effects);
 
 
-	public static interface MCCEntry  {
+	public static interface Entry  {
 	
 		public MCCReference<MCCEffectType> getEffect();
 	
-		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MCCEffectType> effect);
+		public MCCSuspiciousStewEffects.Entry withEffect(MCCReference<MCCEffectType> effect);
 	
 		public int getDuration();
 	
-		public MCCSuspiciousStewEffects.MCCEntry withDuration(int duration);
+		public MCCSuspiciousStewEffects.Entry withDuration(int duration);
 	
 	}
 }

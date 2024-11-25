@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.wrapper.block;
 
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -41,4 +42,10 @@ public interface MCCBlockState extends MCCKeyedWrapper {
      * @return the state as string
      */
     String toBlockDataString();
+
+    default boolean isPreferredTool(MCCBlockState blockState, MCCItemStack nmsItem) {
+        return !blockState.getBlockType().requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(blockState);
+    }
+
+    float getDestroySpeed(MCCItemStack mccItemStack, boolean considerEnchants);
 }

@@ -1,13 +1,16 @@
 package de.verdox.mccreativelab.impl.vanilla.platform;
 
 import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 
 import java.util.Objects;
 import java.util.function.Function;
 
 public class NMSHandle<T> {
     protected final T handle;
+    protected ConversionService conversionService = MCCPlatform.getInstance().getConversionService();
 
     public NMSHandle(T handle) {
         this.handle = handle;

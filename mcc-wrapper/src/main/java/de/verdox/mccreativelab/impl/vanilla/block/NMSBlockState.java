@@ -5,8 +5,10 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,37 @@ public class NMSBlockState extends NMSHandle<BlockState> implements MCCBlockStat
     @Override
     public String toBlockDataString() {
         return handle.toString();
+    }
+
+    @Override
+    public float getDestroySpeed(MCCItemStack mccItemStack, boolean considerEnchants) {
+        float speed = mccItemStack.getDestroySpeed(this);
+
+        if(speed > 1.0 && considerEnchants){
+            ItemStack nmsItemStack = MCCPlatform.getInstance().getConversionService().unwrap(mccItemStack, new TypeToken<>() {});
+            final net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute = net.minecraft.world.entity.ai.attributes.Attributes.MINING_EFFICIENCY;
+            // Logic sourced from AttributeInstance#calculateValue
+            final double initialBaseValue = attribute.value().getDefaultValue();
+            final org.apache.commons.lang3.mutable.MutableDouble modifiedBaseValue = new org.apache.commons.lang3.mutable.MutableDouble(initialBaseValue);
+            final org.apache.commons.lang3.mutable.MutableDouble baseValMul = new org.apache.commons.lang3.mutable.MutableDouble(1);
+            final org.apache.commons.lang3.mutable.MutableDouble totalValMul = new org.apache.commons.lang3.mutable.MutableDouble(1);
+
+            net.minecraft.world.item.enchantment.EnchantmentHelper.forEachModifier(
+                nmsItemStack, net.minecraft.world.entity.EquipmentSlot.MAINHAND, (attributeHolder, attributeModifier) -> {
+                    switch (attributeModifier.operation()) {
+                        case ADD_VALUE -> modifiedBaseValue.add(attributeModifier.amount());
+                        case ADD_MULTIPLIED_BASE -> baseValMul.add(attributeModifier.amount());
+                        case ADD_MULTIPLIED_TOTAL -> totalValMul.setValue(totalValMul.doubleValue() * (1D + attributeModifier.amount()));
+                    }
+                }
+            );
+
+            final double actualModifier = modifiedBaseValue.doubleValue() * baseValMul.doubleValue() * totalValMul.doubleValue();
+
+            speed += (float) attribute.value().sanitizeValue(actualModifier);
+        }
+
+        return speed;
     }
 
     @Override

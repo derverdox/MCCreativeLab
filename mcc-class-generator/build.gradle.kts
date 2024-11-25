@@ -1,3 +1,5 @@
+import io.papermc.paperweight.util.convertToPath
+
 plugins {
     id("java")
     id("io.papermc.paperweight.userdev") version "1.7.3"
@@ -25,6 +27,33 @@ sourceSets {
         java {
             srcDir("generated")
         }
+    }
+}
+
+tasks.register("runCodeGenerator") {
+    group = "CodeGen"
+    description = "First updates the wrapper files in the code gen then runs the code gen."
+
+    // Task aus otherModule ausführen
+    dependsOn(project(":mcc-wrapper").tasks.named("publishToMavenLocal"))
+
+    // Lokalen Task ausführen
+    dependsOn(tasks.named("runServer"))
+
+    doLast {
+        println("Tasks from otherModule and localProject executed!")
+    }
+}
+
+tasks.register("runCodeGeneratorNoUpdate") {
+    group = "CodeGen"
+    description = "Runs the code generator without updating the cached mcc wrapper files."
+
+    // Lokalen Task ausführen
+    dependsOn(tasks.named("runServer"))
+
+    doLast {
+        println("Tasks from otherModule and localProject executed!")
     }
 }
 

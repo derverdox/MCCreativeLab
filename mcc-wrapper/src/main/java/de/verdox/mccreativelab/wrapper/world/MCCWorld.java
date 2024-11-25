@@ -31,6 +31,8 @@ public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder {
         return getBlockDataAt((int) location.x(), (int) location.y(), (int) location.z());
     }
 
+    String getName();
+
     default MCCBlockType getBlockTypeAt(MCCLocation location) {
         if (!location.world().equals(this)) {
             throw new IllegalArgumentException("The provided location does not belong to this world.");

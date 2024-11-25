@@ -1,7 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.world.item.enchantment.Enchantment;
-import de.verdox.mccreativelab.wrapper.item.components.MCCEquipmentSlotGroup;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.kyori.adventure.text.Component;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSEnchantment;
 import java.util.Optional;
@@ -39,9 +39,9 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 		return handle == null ? null : handle.description();
 	}
 
-	public MCCEnchantment.MCCEnchantmentDefinition getDefinition(){
+	public MCCEnchantment.EnchantmentDefinition getDefinition(){
 		var nms = getDefinitionFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.MCCEnchantmentDefinition>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.EnchantmentDefinition>() {});
 	}
 
 	private Enchantment.EnchantmentDefinition getDefinitionFromImpl(){
@@ -67,7 +67,7 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	}
 
 
-	public static class NMSEnchantmentDefinition extends NMSHandle<Enchantment.EnchantmentDefinition> implements MCCEnchantment.MCCEnchantmentDefinition  {
+	public static class NMSEnchantmentDefinition extends NMSHandle<Enchantment.EnchantmentDefinition> implements MCCEnchantment.EnchantmentDefinition  {
 	
 		public static final MCCConverter<Enchantment.EnchantmentDefinition, NMSEnchantment.NMSEnchantmentDefinition> CONVERTER  = converter(NMSEnchantment.NMSEnchantmentDefinition.class, Enchantment.EnchantmentDefinition.class, NMSEnchantment.NMSEnchantmentDefinition::new, NMSHandle::getHandle);
 
@@ -149,7 +149,7 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	
 	}
 
-	public static class NMSCost extends NMSHandle<Enchantment.Cost> implements MCCEnchantment.MCCCost  {
+	public static class NMSCost extends NMSHandle<Enchantment.Cost> implements MCCEnchantment.Cost  {
 	
 		public static final MCCConverter<Enchantment.Cost, NMSEnchantment.NMSCost> CONVERTER  = converter(NMSEnchantment.NMSCost.class, Enchantment.Cost.class, NMSEnchantment.NMSCost::new, NMSHandle::getHandle);
 
@@ -177,7 +177,7 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	
 	}
 
-	public static class NMSBuilder extends NMSHandle<Enchantment.Builder> implements MCCEnchantment.MCCBuilder  {
+	public static class NMSBuilder extends NMSHandle<Enchantment.Builder> implements MCCEnchantment.Builder  {
 	
 		public static final MCCConverter<Enchantment.Builder, NMSEnchantment.NMSBuilder> CONVERTER  = converter(NMSEnchantment.NMSBuilder.class, Enchantment.Builder.class, NMSEnchantment.NMSBuilder::new, NMSHandle::getHandle);
 
@@ -185,9 +185,9 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 			super(handle);
 		}
 	
-		public MCCEnchantment.MCCEnchantmentDefinition getProperties(){
+		public MCCEnchantment.EnchantmentDefinition getProperties(){
 			var nms = getPropertiesFromImpl();
-			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.MCCEnchantmentDefinition>() {});
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.EnchantmentDefinition>() {});
 		}
 	
 		private Enchantment.EnchantmentDefinition getPropertiesFromImpl(){

@@ -12,6 +12,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -70,5 +71,146 @@ public class NMSEntity<T extends Entity> extends NMSHandle<T> implements MCCEnti
     @Override
     public TempData getTempData() {
         return NMSTempCache.get(getHandle());
+    }
+
+
+    @Override
+    public int getEntityID() {
+        return handle.getId();
+    }
+
+    @Override
+    public boolean isCrouching() {
+        return handle.isCrouching();
+    }
+
+    @Override
+    public boolean isAlwaysTicking() {
+        return handle.isAlwaysTicking();
+    }
+
+    @Override
+    public boolean isAttackable() {
+        return handle.isAttackable();
+    }
+
+    @Override
+    public boolean isCurrentlyGlowing() {
+        return handle.isCurrentlyGlowing();
+    }
+
+    @Override
+    public boolean isFreezing() {
+        return handle.isFreezing();
+    }
+
+    @Override
+    public boolean isFullyFrozen() {
+        return handle.isFullyFrozen();
+    }
+
+    @Override
+    public boolean isIgnoringBlockTriggers() {
+        return handle.isIgnoringBlockTriggers();
+    }
+
+    @Override
+    public boolean isInBubbleColumn() {
+        return handle.isInBubbleColumn();
+    }
+
+    @Override
+    public boolean isInLava() {
+        return handle.isInLava();
+    }
+
+    @Override
+    public boolean isInLiquid() {
+        return handle.isInLiquid();
+    }
+
+    @Override
+    public boolean isInWall() {
+        return handle.isInWall();
+    }
+
+    @Override
+    public boolean isInWater() {
+        return handle.isInWater();
+    }
+
+    @Override
+    public boolean isInWaterOrBubble() {
+        return handle.isInWaterOrBubble();
+    }
+
+    @Override
+    public boolean isInWaterOrRain() {
+        return handle.isInWaterOrRain();
+    }
+
+    @Override
+    public boolean isInWaterOrRainOrBubble() {
+        return handle.isInWaterRainOrBubble();
+    }
+
+    @Override
+    public boolean isNoGravity() {
+        return handle.isNoGravity();
+    }
+
+    @Override
+    public boolean isOnFire() {
+        return handle.isOnFire();
+    }
+
+    @Override
+    public boolean isOnRails() {
+        return handle.isOnRails();
+    }
+
+    @Override
+    public boolean isPickable() {
+        return handle.isPickable();
+    }
+
+    @Override
+    public boolean isPushable() {
+        return handle.isPushable();
+    }
+
+    @Override
+    public boolean isShiftKeyDown() {
+        return handle.isShiftKeyDown();
+    }
+
+    @Override
+    public boolean isSprinting() {
+        return handle.isSprinting();
+    }
+
+    @Override
+    public boolean isSteppingCarefully() {
+        return handle.isSteppingCarefully();
+    }
+
+    @Override
+    public boolean isSwimming() {
+        return handle.isSwimming();
+    }
+
+    @Override
+    public boolean isTicking() {
+        return handle.isTicking();
+    }
+
+    @Override
+    public boolean isUnderwater() {
+        return handle.isUnderWater();
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return handle.onGround();
     }
 }

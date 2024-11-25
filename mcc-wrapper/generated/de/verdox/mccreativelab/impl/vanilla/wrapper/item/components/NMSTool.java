@@ -27,20 +27,20 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 		super(handle);
 	}
 
-	public MCCTool.MCCRule createMCCRule(){
+	public MCCTool.Rule createRule(){
 		return new NMSRule(null);
 	}
 
-	public List<MCCTool.MCCRule> getRules(){
+	public List<MCCTool.Rule> getRules(){
 		var nms = getRulesFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCTool.MCCRule>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCTool.Rule>>() {});
 	}
 
 	private List<Tool.Rule> getRulesFromImpl(){
 		return handle == null ? List.of() : handle.rules();
 	}
 
-	public MCCTool withRules(List<MCCTool.MCCRule> rules){
+	public MCCTool withRules(List<MCCTool.Rule> rules){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(rules, new TypeToken<List<Tool.Rule>>() {});
 		var param1 = getDefaultMiningSpeedFromImpl();
 		var param2 = getDamagePerBlockFromImpl();
@@ -80,7 +80,7 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 	}
 
 
-	public static class NMSRule extends NMSHandle<Tool.Rule> implements MCCTool.MCCRule  {
+	public static class NMSRule extends NMSHandle<Tool.Rule> implements MCCTool.Rule  {
 	
 		public static final MCCConverter<Tool.Rule, NMSTool.NMSRule> CONVERTER  = converter(NMSTool.NMSRule.class, Tool.Rule.class, NMSTool.NMSRule::new, NMSHandle::getHandle);
 
@@ -97,7 +97,7 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 			return handle == null ? null : handle.blocks();
 		}
 	
-		public MCCTool.MCCRule withBlocks(MCCReferenceSet<MCCBlockType> blocks){
+		public MCCTool.Rule withBlocks(MCCReferenceSet<MCCBlockType> blocks){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(blocks, new TypeToken<HolderSet<Block>>() {});
 			var param1 = getSpeedFromImpl();
 			var param2 = getCorrectForDropsFromImpl();
@@ -113,7 +113,7 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 			return handle == null ? null : handle.speed();
 		}
 	
-		public MCCTool.MCCRule withSpeed(Optional<Float> speed){
+		public MCCTool.Rule withSpeed(Optional<Float> speed){
 			var param0 = getBlocksFromImpl();
 			var param1 = MCCPlatform.getInstance().getConversionService().unwrap(speed, new TypeToken<Optional<Float>>() {});
 			var param2 = getCorrectForDropsFromImpl();
@@ -129,7 +129,7 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 			return handle == null ? null : handle.correctForDrops();
 		}
 	
-		public MCCTool.MCCRule withCorrectForDrops(Optional<Boolean> correctForDrops){
+		public MCCTool.Rule withCorrectForDrops(Optional<Boolean> correctForDrops){
 			var param0 = getBlocksFromImpl();
 			var param1 = getSpeedFromImpl();
 			var param2 = MCCPlatform.getInstance().getConversionService().unwrap(correctForDrops, new TypeToken<Optional<Boolean>>() {});

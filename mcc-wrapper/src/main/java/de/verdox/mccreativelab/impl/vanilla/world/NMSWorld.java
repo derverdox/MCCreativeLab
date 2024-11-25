@@ -47,6 +47,11 @@ public class NMSWorld extends NMSHandle<ServerLevel> implements MCCWorld {
     }
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
     public void setBlock(@NotNull MCCBlockState mccBlockState, @NotNull MCCLocation location, boolean applyPhysics) {
 
     }

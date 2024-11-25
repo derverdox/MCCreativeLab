@@ -24,7 +24,7 @@ public interface MCCBlock extends MCCKeyedWrapper, TempDataHolder {
      * Returns the block data of this block.
      * @return the block data
      */
-    @NotNull MCCBlockState getBlockData();
+    @NotNull MCCBlockState getBlockState();
 
     /**
      * Returns the block type of this block

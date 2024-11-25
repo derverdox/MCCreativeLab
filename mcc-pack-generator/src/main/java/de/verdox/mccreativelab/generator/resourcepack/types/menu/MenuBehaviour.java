@@ -1,8 +1,6 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 
-import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
-import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.entity.player.Input;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
@@ -74,11 +72,8 @@ public class MenuBehaviour {
             player.getSwapHandsProperty().set(false);
             player.getInteractProperty().set(false);
             player.getPickupItemProperty().set(false);
-            // Make untargetable
-            player.setTargetable(null, false);
-            // Make invincible
-            player.setInvincible(null, true);
-
+            player.getUntargetableProperty().addAllPossibilities();
+            player.getDamageImmunityProperty().addAllPossibilities();
         }, 0L, 1L, TimeUnit.SECONDS);
 
         this.posUpdaterTask = MCCPlatform.getInstance().getTaskManager().runTimerAsync((task) -> {
@@ -121,12 +116,20 @@ public class MenuBehaviour {
     }
 
     public void close() {
-        player.getTimeProperty().sync();
-        player.resetPlayerWeather();
-
         player.getInventory().setHeldItemSlot(heldSlotBefore);
 
         player.syncInventory();
+
+        player.getTimeProperty().sync();
+        player.getWeatherProperty().sync();
+        player.getPickupItemProperty().sync();
+        player.getInventoryClickProperty().sync();
+        player.getInventoryInteractProperty().sync();
+        player.getSwapHandsProperty().sync();
+        player.getInteractProperty().sync();
+        player.getPickupItemProperty().sync();
+        player.getUntargetableProperty().sync();
+        player.getDamageImmunityProperty().sync();
 
         if (posUpdaterTask != null)
             posUpdaterTask.cancel();

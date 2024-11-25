@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
@@ -18,6 +17,7 @@ import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSArmorMaterial;
 import java.util.List;
 import net.minecraft.world.item.ArmorMaterial;
+import net.kyori.adventure.sound.Sound;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import java.util.Map;
@@ -51,9 +51,9 @@ public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArm
 		return handle == null ? 0 : handle.enchantmentValue();
 	}
 
-	public MCCReference<MCCSound> getEquipSound(){
+	public MCCReference<Sound> getEquipSound(){
 		var nms = getEquipSoundFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCSound>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<Sound>>() {});
 	}
 
 	private Holder<SoundEvent> getEquipSoundFromImpl(){
@@ -69,9 +69,9 @@ public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArm
 		return handle == null ? null : handle.repairIngredient();
 	}
 
-	public List<MCCArmorMaterial.MCCLayer> getLayers(){
+	public List<MCCArmorMaterial.Layer> getLayers(){
 		var nms = getLayersFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCArmorMaterial.MCCLayer>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCArmorMaterial.Layer>>() {});
 	}
 
 	private List<ArmorMaterial.Layer> getLayersFromImpl(){
@@ -97,7 +97,7 @@ public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArm
 	}
 
 
-	public static class NMSLayer extends NMSHandle<ArmorMaterial.Layer> implements MCCArmorMaterial.MCCLayer  {
+	public static class NMSLayer extends NMSHandle<ArmorMaterial.Layer> implements MCCArmorMaterial.Layer  {
 	
 		public static final MCCConverter<ArmorMaterial.Layer, NMSArmorMaterial.NMSLayer> CONVERTER  = converter(NMSArmorMaterial.NMSLayer.class, ArmorMaterial.Layer.class, NMSArmorMaterial.NMSLayer::new, NMSHandle::getHandle);
 

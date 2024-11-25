@@ -2,8 +2,8 @@ package de.verdox.mccreativelab.wrapper.typed;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
-import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import com.google.common.reflect.TypeToken;
 import net.kyori.adventure.key.Key;
 

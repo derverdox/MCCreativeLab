@@ -12,6 +12,7 @@ import de.verdox.mccreativelab.impl.vanilla.item.components.NMSDataComponentType
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
+import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemComponent;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -29,6 +30,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -158,9 +163,6 @@ public class ClassGenerator {
 
 
         WrapperInterfaceGenerator generator = new WrapperInterfaceGenerator(new File("../../mcc-wrapper/generated"), "MCC", "", "NMS", excludedTypes, EXCLUDED_PACKAGES);
-        generator.generateWrapper(AttributeModifier.class, "de.verdox.mccreativelab.wrapper.item.components", "de.verdox.mccreativelab.impl.vanilla.wrapper.item", null, true);
-        generator.generateWrapper(EquipmentSlotGroup.class, "de.verdox.mccreativelab.wrapper.item.components", "de.verdox.mccreativelab.impl.vanilla.wrapper.item", null, false);
-
         // Alle Felder der Klasse durchgehen
         for (Field field : dataComponentClass.getDeclaredFields()) {
             // Überprüfen, ob das Feld vom Typ DataComponentType ist
@@ -241,6 +243,12 @@ public class ClassGenerator {
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(SoundEvents.class, SoundEvent.class, Registries.SOUND_EVENT.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCSounds");
 
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Blocks.class, Block.class, Registries.BLOCK.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCBlocks");
+
+        typedKeyCollectionBuilder.generateForPlatformGroupingClass(BlockTags.class, TagKey.class, Registries.BLOCK.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCBlockTags");
+        typedKeyCollectionBuilder.generateForPlatformGroupingClass(ItemTags.class, TagKey.class, Registries.ITEM.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCItemTags");
+        //TODO
+        //typedKeyCollectionBuilder.generateForPlatformGroupingClass(EntityTypeTags.class, TagKey.class, Registries.ENTITY_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCEntityTags");
+
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(Items.class, Item.class, Registries.ITEM.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCItems");
         typedKeyCollectionBuilder.generateForPlatformGroupingClass(DataComponents.class, DataComponentType.class, Registries.DATA_COMPONENT_TYPE.location().getPath(), "de.verdox.mccreativelab.wrapper.typed", "MCCDataComponentTypes");
 

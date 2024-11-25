@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.wrapper.types;
 
 import net.minecraft.world.item.enchantment.Enchantment;
-import de.verdox.mccreativelab.wrapper.item.components.MCCEquipmentSlotGroup;
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.kyori.adventure.text.Component;
 import net.minecraft.core.component.DataComponentMap;
 import java.util.Optional;
@@ -15,14 +15,14 @@ public interface MCCEnchantment extends MCCWrapped  {
 
 	public Component getDescription();
 
-	public MCCEnchantment.MCCEnchantmentDefinition getDefinition();
+	public MCCEnchantment.EnchantmentDefinition getDefinition();
 
 	public MCCReferenceSet<MCCEnchantment> getExclusiveSet();
 
 	public DataComponentMap getEffects();
 
 
-	public static interface MCCEnchantmentDefinition  {
+	public static interface EnchantmentDefinition  {
 	
 		public MCCReferenceSet<MCCItemType> getSupportedItems();
 	
@@ -42,7 +42,7 @@ public interface MCCEnchantment extends MCCWrapped  {
 	
 	}
 
-	public static interface MCCCost  {
+	public static interface Cost  {
 	
 		public int getBase();
 	
@@ -50,9 +50,9 @@ public interface MCCEnchantment extends MCCWrapped  {
 	
 	}
 
-	public static interface MCCBuilder  {
+	public static interface Builder  {
 	
-		public MCCEnchantment.MCCEnchantmentDefinition getProperties();
+		public MCCEnchantment.EnchantmentDefinition getProperties();
 	
 	}
 }

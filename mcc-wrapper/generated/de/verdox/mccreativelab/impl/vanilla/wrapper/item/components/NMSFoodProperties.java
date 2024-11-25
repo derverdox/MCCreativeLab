@@ -25,11 +25,11 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 		super(handle);
 	}
 
-	public MCCFoodProperties.MCCPossibleEffect createMCCPossibleEffect(){
+	public MCCFoodProperties.PossibleEffect createPossibleEffect(){
 		return new NMSPossibleEffect(null);
 	}
 
-	public MCCFoodProperties.MCCBuilder createMCCBuilder(){
+	public MCCFoodProperties.Builder createBuilder(){
 		return new NMSBuilder(null);
 	}
 
@@ -128,16 +128,16 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 		return new NMSFoodProperties(new FoodProperties(param0, param1, param2, param3, param4, param5));
 	}
 
-	public List<MCCFoodProperties.MCCPossibleEffect> getEffects(){
+	public List<MCCFoodProperties.PossibleEffect> getEffects(){
 		var nms = getEffectsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCFoodProperties.MCCPossibleEffect>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCFoodProperties.PossibleEffect>>() {});
 	}
 
 	private List<FoodProperties.PossibleEffect> getEffectsFromImpl(){
 		return handle == null ? List.of() : handle.effects();
 	}
 
-	public MCCFoodProperties withEffects(List<MCCFoodProperties.MCCPossibleEffect> effects){
+	public MCCFoodProperties withEffects(List<MCCFoodProperties.PossibleEffect> effects){
 		var param0 = getNutritionFromImpl();
 		var param1 = getSaturationFromImpl();
 		var param2 = getCanAlwaysEatFromImpl();
@@ -148,7 +148,7 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 	}
 
 
-	public static class NMSPossibleEffect extends NMSHandle<FoodProperties.PossibleEffect> implements MCCFoodProperties.MCCPossibleEffect  {
+	public static class NMSPossibleEffect extends NMSHandle<FoodProperties.PossibleEffect> implements MCCFoodProperties.PossibleEffect  {
 	
 		public static final MCCConverter<FoodProperties.PossibleEffect, NMSFoodProperties.NMSPossibleEffect> CONVERTER  = converter(NMSFoodProperties.NMSPossibleEffect.class, FoodProperties.PossibleEffect.class, NMSFoodProperties.NMSPossibleEffect::new, NMSHandle::getHandle);
 
@@ -165,7 +165,7 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 			return handle == null ? null : handle.effect();
 		}
 	
-		public MCCFoodProperties.MCCPossibleEffect withEffect(MCCEffect effect){
+		public MCCFoodProperties.PossibleEffect withEffect(MCCEffect effect){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(effect, new TypeToken<MobEffectInstance>() {});
 			var param1 = getProbabilityFromImpl();
 			return new NMSFoodProperties.NMSPossibleEffect(new FoodProperties.PossibleEffect(param0, param1));
@@ -180,7 +180,7 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 			return handle == null ? 0 : handle.probability();
 		}
 	
-		public MCCFoodProperties.MCCPossibleEffect withProbability(float probability){
+		public MCCFoodProperties.PossibleEffect withProbability(float probability){
 			var param0 = getEffectFromImpl();
 			var param1 = probability;
 			return new NMSFoodProperties.NMSPossibleEffect(new FoodProperties.PossibleEffect(param0, param1));
@@ -188,7 +188,7 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 	
 	}
 
-	public static class NMSBuilder extends NMSHandle<FoodProperties.Builder> implements MCCFoodProperties.MCCBuilder  {
+	public static class NMSBuilder extends NMSHandle<FoodProperties.Builder> implements MCCFoodProperties.Builder  {
 	
 		public static final MCCConverter<FoodProperties.Builder, NMSFoodProperties.NMSBuilder> CONVERTER  = converter(NMSFoodProperties.NMSBuilder.class, FoodProperties.Builder.class, NMSFoodProperties.NMSBuilder::new, NMSHandle::getHandle);
 

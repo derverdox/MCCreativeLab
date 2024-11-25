@@ -1,8 +1,12 @@
 package de.verdox.mccreativelab.wrapper.block;
 
+import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -43,4 +47,20 @@ public interface MCCBlockType extends MCCKeyedWrapper {
      * @return the sound group
      */
     MCCBlockSoundGroup getSoundGroup();
+
+    List<MCCItemStack> getDrops(MCCBlockState blockState, MCCLocation locationOfBlock ,@Nullable MCCEntity entity, @Nullable MCCItemStack tool);
+
+    void dropResources(MCCBlockState blockState, MCCLocation locationOfBlock);
+
+    float getExplosionResistance();
+    float getHardness();
+    float getFriction();
+    float getJumpFactor();
+    float getSpeedFactor();
+    boolean isRandomlyTicking();
+    boolean requiresCorrectToolForDrops();
+
+    //TODO: 
+    // - Piston Push Reaction
+    // - Light Level
 }

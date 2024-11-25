@@ -18,17 +18,17 @@ import java.util.List;
 
 public class NMSTypedKeyFactory implements TypedKeyFactory {
     @Override
-    public <T extends MCCWrapped> MCCTypedKey<T> getKey(Key key, Key registryKey, TypeToken<T> type) {
+    public <T> MCCTypedKey<T> getKey(Key key, Key registryKey, TypeToken<T> type) {
         return new NMSTypedKey<>(key, registryKey);
     }
 
     @Override
-    public <T extends MCCWrapped> MCCTag<T> createTag(Key key, Key registryKey, TypeToken<T> type) {
+    public <T> MCCTag<T> createTag(Key key, Key registryKey, TypeToken<T> type) {
         return new NMSTag<>(key, registryKey);
     }
 
     @Override
-    public <T extends MCCWrapped> MCCReferenceSet<T> createImmutableSetWithoutKey(List<MCCRegistry<T>> references) {
+    public <T> MCCReferenceSet<T> createImmutableSetWithoutKey(List<MCCRegistry<T>> references) {
         List<? extends Holder<?>> list = MCCPlatform.getInstance().getConversionService().unwrap(references, new TypeToken<>(){});
         HolderSet<?> holders = HolderSet.direct(list.toArray(Holder[]::new));
         return MCCPlatform.getInstance().getConversionService().wrap(holders, new TypeToken<>() {});

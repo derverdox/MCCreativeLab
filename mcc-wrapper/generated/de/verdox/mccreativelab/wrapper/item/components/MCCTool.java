@@ -10,11 +10,11 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCTool;
 
 public interface MCCTool extends MCCItemComponent  {
 
-	public MCCTool.MCCRule createMCCRule();
+	public MCCTool.Rule createRule();
 
-	public List<MCCTool.MCCRule> getRules();
+	public List<MCCTool.Rule> getRules();
 
-	public MCCTool withRules(List<MCCTool.MCCRule> rules);
+	public MCCTool withRules(List<MCCTool.Rule> rules);
 
 	public float getDefaultMiningSpeed();
 
@@ -25,19 +25,19 @@ public interface MCCTool extends MCCItemComponent  {
 	public MCCTool withDamagePerBlock(int damagePerBlock);
 
 
-	public static interface MCCRule  {
+	public static interface Rule  {
 	
 		public MCCReferenceSet<MCCBlockType> getBlocks();
 	
-		public MCCTool.MCCRule withBlocks(MCCReferenceSet<MCCBlockType> blocks);
+		public MCCTool.Rule withBlocks(MCCReferenceSet<MCCBlockType> blocks);
 	
 		public Optional<Float> getSpeed();
 	
-		public MCCTool.MCCRule withSpeed(Optional<Float> speed);
+		public MCCTool.Rule withSpeed(Optional<Float> speed);
 	
 		public Optional<Boolean> getCorrectForDrops();
 	
-		public MCCTool.MCCRule withCorrectForDrops(Optional<Boolean> correctForDrops);
+		public MCCTool.Rule withCorrectForDrops(Optional<Boolean> correctForDrops);
 	
 	}
 }
