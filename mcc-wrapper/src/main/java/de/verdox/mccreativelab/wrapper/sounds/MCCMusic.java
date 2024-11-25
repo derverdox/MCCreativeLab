@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.sounds;
 
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
+import net.kyori.adventure.sound.Sound;
 
 /**
  * Represents a Music
@@ -12,7 +12,7 @@ import de.verdox.mccreativelab.wrapper.world.MCCSound;
  * @param replaceCurrentMusic if the music should replace the current music
  */
 public record MCCMusic(
-    MCCReference<MCCSound> sound,
+    MCCReference<Sound> sound,
     int minDelay,
     int maxDelay,
     boolean replaceCurrentMusic
@@ -24,7 +24,7 @@ public record MCCMusic(
      * @return the sound
      */
     @Override
-    public MCCReference<MCCSound> sound() {
+    public MCCReference<Sound> sound() {
         return sound;
     }
 

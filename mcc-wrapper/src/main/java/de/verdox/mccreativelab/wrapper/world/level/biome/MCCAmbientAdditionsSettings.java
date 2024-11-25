@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.world.level.biome;
 
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
+import net.kyori.adventure.sound.Sound;
 
 /**
  * Represents the ambient additions of a biome
@@ -9,7 +9,7 @@ import de.verdox.mccreativelab.wrapper.world.MCCSound;
  * @param sound the sound of the ambient addition
  * @param tickChance the chance of the ambient addition
  */
-public record MCCAmbientAdditionsSettings(MCCReference<MCCSound> sound, double tickChance) {
+public record MCCAmbientAdditionsSettings(MCCReference<Sound> sound, double tickChance) {
 
     /**
      * Gets the sound of the ambient addition
@@ -17,7 +17,7 @@ public record MCCAmbientAdditionsSettings(MCCReference<MCCSound> sound, double t
      * @return the sound
      */
     @Override
-    public MCCReference<MCCSound> sound() {
+    public MCCReference<Sound> sound() {
         return sound;
     }
 

@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.wrapper.world.level.biome;
 import de.verdox.mccreativelab.wrapper.core.MCCBlockPos;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.sounds.MCCMusic;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
+import net.kyori.adventure.sound.Sound;
 
 import java.util.Optional;
 
@@ -53,7 +53,7 @@ public interface MCCBiome {
      * Gets the ambient loop of the biome
      * @return the ambient loop
      */
-    Optional<MCCReference<MCCSound>> getAmbientLoop();
+    Optional<MCCReference<Sound>> getAmbientLoop();
 
     /**
      * Gets the ambient additions of the biome
