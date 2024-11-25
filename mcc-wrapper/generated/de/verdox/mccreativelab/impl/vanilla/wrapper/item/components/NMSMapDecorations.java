@@ -25,26 +25,26 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 		super(handle);
 	}
 
-	public MCCMapDecorations.MCCEntry createMCCEntry(){
+	public MCCMapDecorations.Entry createEntry(){
 		return new NMSEntry(null);
 	}
 
-	public Map<String, MCCMapDecorations.MCCEntry> getDecorations(){
+	public Map<String, MCCMapDecorations.Entry> getDecorations(){
 		var nms = getDecorationsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<String, MCCMapDecorations.MCCEntry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<String, MCCMapDecorations.Entry>>() {});
 	}
 
 	private Map<String, MapDecorations.Entry> getDecorationsFromImpl(){
 		return handle == null ? Map.of() : handle.decorations();
 	}
 
-	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.MCCEntry> decorations){
+	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.Entry> decorations){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(decorations, new TypeToken<Map<String, MapDecorations.Entry>>() {});
 		return new NMSMapDecorations(new MapDecorations(param0));
 	}
 
 
-	public static class NMSEntry extends NMSHandle<MapDecorations.Entry> implements MCCMapDecorations.MCCEntry  {
+	public static class NMSEntry extends NMSHandle<MapDecorations.Entry> implements MCCMapDecorations.Entry  {
 	
 		public static final MCCConverter<MapDecorations.Entry, NMSMapDecorations.NMSEntry> CONVERTER  = converter(NMSMapDecorations.NMSEntry.class, MapDecorations.Entry.class, NMSMapDecorations.NMSEntry::new, NMSHandle::getHandle);
 
@@ -61,7 +61,7 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 			return handle == null ? null : handle.type();
 		}
 	
-		public MCCMapDecorations.MCCEntry withType(MCCReference<MapDecorationType> type){
+		public MCCMapDecorations.Entry withType(MCCReference<MapDecorationType> type){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(type, new TypeToken<Holder<MapDecorationType>>() {});
 			var param1 = getXFromImpl();
 			var param2 = getZFromImpl();
@@ -78,7 +78,7 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 			return handle == null ? 0 : handle.x();
 		}
 	
-		public MCCMapDecorations.MCCEntry withX(double x){
+		public MCCMapDecorations.Entry withX(double x){
 			var param0 = getTypeFromImpl();
 			var param1 = x;
 			var param2 = getZFromImpl();
@@ -95,7 +95,7 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 			return handle == null ? 0 : handle.z();
 		}
 	
-		public MCCMapDecorations.MCCEntry withZ(double z){
+		public MCCMapDecorations.Entry withZ(double z){
 			var param0 = getTypeFromImpl();
 			var param1 = getXFromImpl();
 			var param2 = z;
@@ -112,7 +112,7 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 			return handle == null ? 0 : handle.rotation();
 		}
 	
-		public MCCMapDecorations.MCCEntry withRotation(float rotation){
+		public MCCMapDecorations.Entry withRotation(float rotation){
 			var param0 = getTypeFromImpl();
 			var param1 = getXFromImpl();
 			var param2 = getZFromImpl();

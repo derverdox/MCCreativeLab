@@ -1,42 +1,44 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
 import java.util.List;
+import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
+import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
 
 public interface MCCItemAttributeModifiers extends MCCItemComponent  {
 
-	public MCCItemAttributeModifiers.MCCBuilder createMCCBuilder();
+	public MCCItemAttributeModifiers.Builder createBuilder();
 
-	public MCCItemAttributeModifiers.MCCEntry createMCCEntry();
+	public MCCItemAttributeModifiers.Entry createEntry();
 
-	public List<MCCItemAttributeModifiers.MCCEntry> getModifiers();
+	public List<MCCItemAttributeModifiers.Entry> getModifiers();
 
-	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.MCCEntry> modifiers);
+	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.Entry> modifiers);
 
 	public boolean getShowInTooltip();
 
 	public MCCItemAttributeModifiers withShowInTooltip(boolean showInTooltip);
 
 
-	public static interface MCCBuilder  {
+	public static interface Builder  {
 	
 	}
 
-	public static interface MCCEntry  {
+	public static interface Entry  {
 	
 		public MCCReference<MCCAttribute> getAttribute();
 	
-		public MCCItemAttributeModifiers.MCCEntry withAttribute(MCCReference<MCCAttribute> attribute);
+		public MCCItemAttributeModifiers.Entry withAttribute(MCCReference<MCCAttribute> attribute);
 	
 		public MCCAttributeModifier getModifier();
 	
-		public MCCItemAttributeModifiers.MCCEntry withModifier(MCCAttributeModifier modifier);
+		public MCCItemAttributeModifiers.Entry withModifier(MCCAttributeModifier modifier);
 	
 		public MCCEquipmentSlotGroup getSlot();
 	
-		public MCCItemAttributeModifiers.MCCEntry withSlot(MCCEquipmentSlotGroup slot);
+		public MCCItemAttributeModifiers.Entry withSlot(MCCEquipmentSlotGroup slot);
 	
 	}
 }

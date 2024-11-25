@@ -39,7 +39,7 @@ public class NMSGameEvent extends NMSHandle<GameEvent> implements MCCGameEvent  
 	}
 
 
-	public static class NMSListenerInfo extends NMSHandle<GameEvent.ListenerInfo> implements MCCGameEvent.MCCListenerInfo  {
+	public static class NMSListenerInfo extends NMSHandle<GameEvent.ListenerInfo> implements MCCGameEvent.ListenerInfo  {
 	
 		public static final MCCConverter<GameEvent.ListenerInfo, NMSGameEvent.NMSListenerInfo> CONVERTER  = converter(NMSGameEvent.NMSListenerInfo.class, GameEvent.ListenerInfo.class, NMSGameEvent.NMSListenerInfo::new, NMSHandle::getHandle);
 
@@ -129,7 +129,7 @@ public class NMSGameEvent extends NMSHandle<GameEvent> implements MCCGameEvent  
 	
 	}
 
-	public static class NMSContext extends NMSHandle<GameEvent.Context> implements MCCGameEvent.MCCContext  {
+	public static class NMSContext extends NMSHandle<GameEvent.Context> implements MCCGameEvent.Context  {
 	
 		public static final MCCConverter<GameEvent.Context, NMSGameEvent.NMSContext> CONVERTER  = converter(NMSGameEvent.NMSContext.class, GameEvent.Context.class, NMSGameEvent.NMSContext::new, NMSHandle::getHandle);
 

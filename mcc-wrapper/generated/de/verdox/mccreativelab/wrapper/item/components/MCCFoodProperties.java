@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface MCCFoodProperties extends MCCItemComponent  {
 
-	public MCCFoodProperties.MCCPossibleEffect createMCCPossibleEffect();
+	public MCCFoodProperties.PossibleEffect createPossibleEffect();
 
-	public MCCFoodProperties.MCCBuilder createMCCBuilder();
+	public MCCFoodProperties.Builder createBuilder();
 
 	public int getNutrition();
 
@@ -32,24 +32,24 @@ public interface MCCFoodProperties extends MCCItemComponent  {
 
 	public MCCFoodProperties withUsingConvertsTo(Optional<MCCItemStack> usingConvertsTo);
 
-	public List<MCCFoodProperties.MCCPossibleEffect> getEffects();
+	public List<MCCFoodProperties.PossibleEffect> getEffects();
 
-	public MCCFoodProperties withEffects(List<MCCFoodProperties.MCCPossibleEffect> effects);
+	public MCCFoodProperties withEffects(List<MCCFoodProperties.PossibleEffect> effects);
 
 
-	public static interface MCCPossibleEffect  {
+	public static interface PossibleEffect  {
 	
 		public MCCEffect getEffect();
 	
-		public MCCFoodProperties.MCCPossibleEffect withEffect(MCCEffect effect);
+		public MCCFoodProperties.PossibleEffect withEffect(MCCEffect effect);
 	
 		public float getProbability();
 	
-		public MCCFoodProperties.MCCPossibleEffect withProbability(float probability);
+		public MCCFoodProperties.PossibleEffect withProbability(float probability);
 	
 	}
 
-	public static interface MCCBuilder  {
+	public static interface Builder  {
 	
 	}
 }

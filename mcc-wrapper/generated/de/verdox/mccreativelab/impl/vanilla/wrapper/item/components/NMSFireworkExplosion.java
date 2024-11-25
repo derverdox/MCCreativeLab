@@ -21,16 +21,16 @@ public class NMSFireworkExplosion extends NMSHandle<FireworkExplosion> implement
 		super(handle);
 	}
 
-	public MCCFireworkExplosion.MCCShape getShape(){
+	public MCCFireworkExplosion.Shape getShape(){
 		var nms = getShapeFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCFireworkExplosion.MCCShape>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCFireworkExplosion.Shape>() {});
 	}
 
 	private FireworkExplosion.Shape getShapeFromImpl(){
 		return handle == null ? null : handle.shape();
 	}
 
-	public MCCFireworkExplosion withShape(MCCFireworkExplosion.MCCShape shape){
+	public MCCFireworkExplosion withShape(MCCFireworkExplosion.Shape shape){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(shape, new TypeToken<FireworkExplosion.Shape>() {});
 		var param1 = getColorsFromImpl();
 		var param2 = getFadeColorsFromImpl();

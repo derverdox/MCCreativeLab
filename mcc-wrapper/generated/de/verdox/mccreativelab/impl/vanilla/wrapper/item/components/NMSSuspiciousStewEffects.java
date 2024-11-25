@@ -24,26 +24,26 @@ public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> i
 		super(handle);
 	}
 
-	public MCCSuspiciousStewEffects.MCCEntry createMCCEntry(){
+	public MCCSuspiciousStewEffects.Entry createEntry(){
 		return new NMSEntry(null);
 	}
 
-	public List<MCCSuspiciousStewEffects.MCCEntry> getEffects(){
+	public List<MCCSuspiciousStewEffects.Entry> getEffects(){
 		var nms = getEffectsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCSuspiciousStewEffects.MCCEntry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCSuspiciousStewEffects.Entry>>() {});
 	}
 
 	private List<SuspiciousStewEffects.Entry> getEffectsFromImpl(){
 		return handle == null ? List.of() : handle.effects();
 	}
 
-	public MCCSuspiciousStewEffects withEffects(List<MCCSuspiciousStewEffects.MCCEntry> effects){
+	public MCCSuspiciousStewEffects withEffects(List<MCCSuspiciousStewEffects.Entry> effects){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(effects, new TypeToken<List<SuspiciousStewEffects.Entry>>() {});
 		return new NMSSuspiciousStewEffects(new SuspiciousStewEffects(param0));
 	}
 
 
-	public static class NMSEntry extends NMSHandle<SuspiciousStewEffects.Entry> implements MCCSuspiciousStewEffects.MCCEntry  {
+	public static class NMSEntry extends NMSHandle<SuspiciousStewEffects.Entry> implements MCCSuspiciousStewEffects.Entry  {
 	
 		public static final MCCConverter<SuspiciousStewEffects.Entry, NMSSuspiciousStewEffects.NMSEntry> CONVERTER  = converter(NMSSuspiciousStewEffects.NMSEntry.class, SuspiciousStewEffects.Entry.class, NMSSuspiciousStewEffects.NMSEntry::new, NMSHandle::getHandle);
 
@@ -60,7 +60,7 @@ public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> i
 			return handle == null ? null : handle.effect();
 		}
 	
-		public MCCSuspiciousStewEffects.MCCEntry withEffect(MCCReference<MCCEffectType> effect){
+		public MCCSuspiciousStewEffects.Entry withEffect(MCCReference<MCCEffectType> effect){
 			var param0 = MCCPlatform.getInstance().getConversionService().unwrap(effect, new TypeToken<Holder<MobEffect>>() {});
 			var param1 = getDurationFromImpl();
 			return new NMSSuspiciousStewEffects.NMSEntry(new SuspiciousStewEffects.Entry(param0, param1));
@@ -75,7 +75,7 @@ public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> i
 			return handle == null ? 0 : handle.duration();
 		}
 	
-		public MCCSuspiciousStewEffects.MCCEntry withDuration(int duration){
+		public MCCSuspiciousStewEffects.Entry withDuration(int duration){
 			var param0 = getEffectFromImpl();
 			var param1 = duration;
 			return new NMSSuspiciousStewEffects.NMSEntry(new SuspiciousStewEffects.Entry(param0, param1));

@@ -14,7 +14,7 @@ public interface MCCGameEvent extends MCCWrapped  {
 	public int getNotificationRadius();
 
 
-	public static interface MCCListenerInfo  {
+	public static interface ListenerInfo  {
 	
 		public MCCReference<MCCGameEvent> getArg0();
 	
@@ -28,7 +28,7 @@ public interface MCCGameEvent extends MCCWrapped  {
 	
 	}
 
-	public static interface MCCContext  {
+	public static interface Context  {
 	
 		public MCCEntity getSourceEntity();
 	

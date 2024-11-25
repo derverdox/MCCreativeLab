@@ -1,9 +1,9 @@
 package de.verdox.mccreativelab.wrapper.types;
 
 import java.util.List;
+import net.kyori.adventure.sound.Sound;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import java.util.Map;
-import de.verdox.mccreativelab.wrapper.world.MCCSound;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.types.MCCArmorMaterial;
 import java.lang.String;
@@ -19,18 +19,18 @@ public interface MCCArmorMaterial extends MCCWrapped  {
 
 	public int getEnchantmentValue();
 
-	public MCCReference<MCCSound> getEquipSound();
+	public MCCReference<Sound> getEquipSound();
 
 	public Supplier<Ingredient> getRepairIngredient();
 
-	public List<MCCArmorMaterial.MCCLayer> getLayers();
+	public List<MCCArmorMaterial.Layer> getLayers();
 
 	public float getToughness();
 
 	public float getKnockbackResistance();
 
 
-	public static interface MCCLayer  {
+	public static interface Layer  {
 	
 		public Key getId();
 	

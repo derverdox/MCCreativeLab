@@ -4,9 +4,9 @@ import it.unimi.dsi.fastutil.ints.IntList;
 
 public interface MCCFireworkExplosion extends MCCItemComponent  {
 
-	public MCCFireworkExplosion.MCCShape getShape();
+	public MCCFireworkExplosion.Shape getShape();
 
-	public MCCFireworkExplosion withShape(MCCFireworkExplosion.MCCShape shape);
+	public MCCFireworkExplosion withShape(MCCFireworkExplosion.Shape shape);
 
 	public IntList getColors();
 
@@ -25,7 +25,7 @@ public interface MCCFireworkExplosion extends MCCItemComponent  {
 	public MCCFireworkExplosion withHasTwinkle(boolean hasTwinkle);
 
 
-	public static enum MCCShape  {
+	public static enum Shape  {
 	
 		SMALL_BALL,
 		LARGE_BALL,

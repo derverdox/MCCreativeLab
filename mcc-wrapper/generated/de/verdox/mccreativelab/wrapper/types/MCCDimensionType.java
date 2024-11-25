@@ -37,10 +37,10 @@ public interface MCCDimensionType extends MCCWrapped  {
 
 	public float getAmbientLight();
 
-	public MCCDimensionType.MCCMonsterSettings getMonsterSettings();
+	public MCCDimensionType.MonsterSettings getMonsterSettings();
 
 
-	public static interface MCCMonsterSettings  {
+	public static interface MonsterSettings  {
 	
 		public boolean getPiglinSafe();
 	

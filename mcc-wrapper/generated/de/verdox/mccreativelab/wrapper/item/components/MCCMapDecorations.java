@@ -8,30 +8,30 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations;
 
 public interface MCCMapDecorations extends MCCItemComponent  {
 
-	public MCCMapDecorations.MCCEntry createMCCEntry();
+	public MCCMapDecorations.Entry createEntry();
 
-	public Map<String, MCCMapDecorations.MCCEntry> getDecorations();
+	public Map<String, MCCMapDecorations.Entry> getDecorations();
 
-	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.MCCEntry> decorations);
+	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.Entry> decorations);
 
 
-	public static interface MCCEntry  {
+	public static interface Entry  {
 	
 		public MCCReference<MapDecorationType> getType();
 	
-		public MCCMapDecorations.MCCEntry withType(MCCReference<MapDecorationType> type);
+		public MCCMapDecorations.Entry withType(MCCReference<MapDecorationType> type);
 	
 		public double getX();
 	
-		public MCCMapDecorations.MCCEntry withX(double x);
+		public MCCMapDecorations.Entry withX(double x);
 	
 		public double getZ();
 	
-		public MCCMapDecorations.MCCEntry withZ(double z);
+		public MCCMapDecorations.Entry withZ(double z);
 	
 		public float getRotation();
 	
-		public MCCMapDecorations.MCCEntry withRotation(float rotation);
+		public MCCMapDecorations.Entry withRotation(float rotation);
 	
 	}
 }
