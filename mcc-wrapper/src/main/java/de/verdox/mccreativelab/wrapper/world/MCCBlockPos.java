@@ -1,4 +1,4 @@
-package de.verdox.mccreativelab.wrapper.core;
+package de.verdox.mccreativelab.wrapper.world;
 
 /**
  * Describes a block position
