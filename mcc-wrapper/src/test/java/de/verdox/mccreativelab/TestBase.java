@@ -13,6 +13,6 @@ public class TestBase {
         Bootstrap.bootStrap();
         Bootstrap.validate();
         if(!MCCPlatform.INSTANCE.isSetup())
-            MCCPlatform.INSTANCE.setup(new NMSPlatform());
+            MCCPlatform.INSTANCE.setup(new NMSPlatform(), MCCPlatform::init);
     }
 }
