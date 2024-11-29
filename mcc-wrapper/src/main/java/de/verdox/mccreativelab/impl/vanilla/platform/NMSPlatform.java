@@ -50,11 +50,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class NMSPlatform implements MCCPlatform {
-    private final NMSTypedKeyFactory typedKeyFactory = new NMSTypedKeyFactory();
-    private final ConversionService conversionService = new ConversionServiceImpl();
+    protected final NMSTypedKeyFactory typedKeyFactory;
+    protected final ConversionService conversionService;
 
     public NMSPlatform() {
+        this.typedKeyFactory = new NMSTypedKeyFactory();
+        this.conversionService = new ConversionServiceImpl();
         //GeneratedConverters.init(conversionService);
+    }
+
+    @Override
+    public void init() {
         conversionService.registerPlatformType(MCCBlockState.class, NMSBlockState.CONVERTER);
         conversionService.registerPlatformType(MCCBlockSoundGroup.class, NMSBlockSoundGroup.CONVERTER);
         conversionService.registerPlatformType(MCCBlockType.class, NMSBlockType.CONVERTER);
@@ -82,11 +88,6 @@ public class NMSPlatform implements MCCPlatform {
 
         registerContainerTypes();
         registerEnumConverters();
-    }
-
-    @Override
-    public void init() {
-
     }
 
     @Override
