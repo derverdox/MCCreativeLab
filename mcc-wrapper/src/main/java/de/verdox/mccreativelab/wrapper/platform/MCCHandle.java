@@ -1,18 +1,17 @@
-package de.verdox.mccreativelab.impl.vanilla.platform;
+package de.verdox.mccreativelab.wrapper.platform;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-public class NMSHandle<T> {
+public class MCCHandle<T> {
     protected final T handle;
     protected ConversionService conversionService = MCCPlatform.getInstance().getConversionService();
 
-    public NMSHandle(T handle) {
+    public MCCHandle(T handle) {
         this.handle = handle;
     }
 
@@ -72,8 +71,8 @@ public class NMSHandle<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NMSHandle<?> nmsHandle = (NMSHandle<?>) o;
-        return Objects.equals(handle, nmsHandle.handle);
+        MCCHandle<?> MCCHandle = (MCCHandle<?>) o;
+        return Objects.equals(handle, MCCHandle.handle);
     }
 
     @Override
@@ -81,9 +80,9 @@ public class NMSHandle<T> {
         return Objects.hashCode(handle);
     }
 
-    protected <T> T readFieldFromHandle(String fieldName, TypeToken<T> type){
+    protected <R> R readFieldFromHandle(String fieldName, TypeToken<R> type){
         try {
-            return (T) getHandle().getClass().getDeclaredField(fieldName).get(getHandle());
+            return (R) getHandle().getClass().getDeclaredField(fieldName).get(getHandle());
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

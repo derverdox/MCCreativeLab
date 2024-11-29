@@ -1,8 +1,7 @@
 package de.verdox.mccreativelab.wrapper;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import net.kyori.adventure.key.Keyed;
-
-import java.util.Objects;
 
 /**
  * A wrapper that holds a native platform

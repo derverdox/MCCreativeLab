@@ -1,23 +1,24 @@
 package de.verdox.mccreativelab.impl.paper.platform;
 
+import de.verdox.mccreativelab.conversion.converter.EnumConverter;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperBlockHardnessSettings;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperBlockSoundSettings;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperFurnaceSettings;
 import de.verdox.mccreativelab.impl.paper.entity.PaperAttributeInstance;
 import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitCraftConverters;
+import de.verdox.mccreativelab.impl.paper.platform.converter.CraftBlockStateConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.block.MCCCapturedBlockState;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
-import de.verdox.mccreativelab.wrapper.entity.MCCAttributeInstance;
-import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
-import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
-import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.world.MCCLocation;
-import de.verdox.mccreativelab.wrapper.world.MCCWorld;
+import de.verdox.mccreativelab.wrapper.entity.*;
 import org.bukkit.Bukkit;
+import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,17 +30,20 @@ public class PaperPlatform extends NMSPlatform {
 
     public PaperPlatform(JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
-        getConversionService().registerPlatformType(MCCWorld.class, BukkitCraftConverters.WORLD);
-        getConversionService().registerPlatformType(MCCEntity.class, BukkitCraftConverters.ENTITY);
-        getConversionService().registerPlatformType(MCCEntityType.class, BukkitCraftConverters.ENTITY_TYPE);
-        getConversionService().registerPlatformType(MCCLocation.class, BukkitCraftConverters.LOCATION);
-        getConversionService().registerPlatformType(MCCBlock.class, BukkitCraftConverters.BLOCK);
-        getConversionService().registerPlatformType(MCCBlockType.class, BukkitCraftConverters.BLOCK_TYPE);
-        getConversionService().registerPlatformType(MCCItemType.class, BukkitCraftConverters.ITEM_TYPE);
-        getConversionService().registerPlatformType(MCCAttributeInstance.class, PaperAttributeInstance.CONVERTER);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        BukkitCraftConverters.init();
+        conversionService.registerPlatformType(MCCAttributeInstance.class, PaperAttributeInstance.CONVERTER);
+        conversionService.registerPlatformType(MCCCapturedBlockState.class, new CraftBlockStateConverter());
+        conversionService.registerPlatformType(MCCEquipmentSlot.class, new EnumConverter<>(EquipmentSlot.class, MCCEquipmentSlot.class));
+        conversionService.registerPlatformType(MCCBlockFace.class, new EnumConverter<>(BlockFace.class, MCCBlockFace.class));
     }
 
     public void enableListeners() {
+        paperFurnaceSettings.initVanillaBurnDurations();
         Bukkit.getPluginManager().registerEvents(paperBlockHardnessSettings, javaPlugin);
         Bukkit.getPluginManager().registerEvents(paperFurnaceSettings, javaPlugin);
         Bukkit.getPluginManager().registerEvents(blockSoundSettings, javaPlugin);

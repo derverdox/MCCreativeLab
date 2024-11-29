@@ -1,8 +1,11 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;
 import de.verdox.mccreativelab.wrapper.world.MCCDamageType;
+import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import org.jetbrains.annotations.Nullable;
 
 public interface MCCLivingEntity extends MCCEntity {

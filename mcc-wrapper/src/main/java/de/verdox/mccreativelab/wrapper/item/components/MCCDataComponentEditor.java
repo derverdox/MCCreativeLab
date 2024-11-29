@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * @param <R> the generic type of the component
  * @param <T> the component type
  */
-public interface ItemComponentEditor<R, T extends MCCDataComponentType<R>> {
+public interface MCCDataComponentEditor<R, T extends MCCDataComponentType<R>> {
 
     /**
      * Reads the value from the component

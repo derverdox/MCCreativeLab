@@ -23,7 +23,7 @@ public class PaperFurnaceSettings implements MCCFurnaceSettings, Listener {
     private final Map<MCCItemType, Integer> smoker = new HashMap<>();
     private final Map<MCCItemType, Integer> blastFurnace = new HashMap<>();
 
-    public PaperFurnaceSettings() {
+    public void initVanillaBurnDurations() {
         addFurnaceFuel(MCCItems.LAVA_BUCKET.get(), 20000);
         addFurnaceFuel(MCCItems.COAL_BLOCK.get(), 16000);
         addFurnaceFuel(MCCItems.BLAZE_ROD.get(), 2400);

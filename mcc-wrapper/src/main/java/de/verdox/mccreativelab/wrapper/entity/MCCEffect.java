@@ -1,9 +1,11 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@MCCInstantiationSource(sourceClasses = MCCEffectType.class)
 public interface MCCEffect {
 
     MCCEffectType getType();

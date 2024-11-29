@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import net.kyori.adventure.key.Key;
 

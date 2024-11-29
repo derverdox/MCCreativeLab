@@ -296,7 +296,7 @@ public class PaperBlockHardnessSettings implements MCCBlockHardnessSettings, Lis
 
     private static float getDestroySpeed(MCCPlayer player, MCCBlock mccBlock) {
         MCCItemStack hand = player.getInventory().getItemInMainHand();
-        float destroySpeed = mccBlock.getBlockState().getDestroySpeed(hand, true);
+        float destroySpeed = mccBlock.getBlockState().getDestroySpeed(player, hand, true);
 
         // Haste effect
         if (player.hasActiveEffect(MCCEffects.DIG_SPEED.get()))

@@ -1,11 +1,13 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
+import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import de.verdox.mccreativelab.wrapper.world.Weather;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;

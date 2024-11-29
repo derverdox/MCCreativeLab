@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.paper.entity;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.entity.NMSAttributeInstance;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
 public class PaperAttributeInstance extends NMSAttributeInstance {
-    public static final MCCConverter<AttributeInstance, PaperAttributeInstance> CONVERTER = converter(PaperAttributeInstance.class, AttributeInstance.class, PaperAttributeInstance::new, NMSHandle::getHandle);
+    public static final MCCConverter<AttributeInstance, PaperAttributeInstance> CONVERTER = converter(PaperAttributeInstance.class, AttributeInstance.class, PaperAttributeInstance::new, MCCHandle::getHandle);
 
     public PaperAttributeInstance(AttributeInstance handle) {
         super(handle);

@@ -1,7 +1,8 @@
 package de.verdox.mccreativelab.wrapper.block;
 
-import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
+import de.verdox.mccreativelab.wrapper.annotations.MCCBuiltIn;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import net.kyori.adventure.sound.Sound;
 
 /**
@@ -9,6 +10,8 @@ import net.kyori.adventure.sound.Sound;
  * <p>
  * Take a look at the minecraft block sound groups in the <a href="https://minecraft.wiki/w/Category:Block_sounds">Minecraft Wiki</a>
  */
+@MCCInstantiationSource(sourceClasses = MCCBlockType.class)
+@MCCBuiltIn(syncState = MCCBuiltIn.SyncState.NOT_SYNCED)
 public interface MCCBlockSoundGroup extends MCCWrapped {
 
     /**
@@ -36,33 +39,33 @@ public interface MCCBlockSoundGroup extends MCCWrapped {
      *
      * @return the sound
      */
-    Sound getHitSound();
+    Sound hitSound();
 
     /**
      * Returns the sound when an entity steps on this block
      *
      * @return the sound
      */
-    Sound getStepSound();
+    Sound stepSound();
 
     /**
      * Returns the sound when the block is broken
      *
      * @return the sound
      */
-    Sound getBreakSound();
+    Sound breakSound();
 
     /**
      * Returns the sound when the block is placed
      *
      * @return the sound
      */
-    Sound getPlaceSound();
+    Sound placeSound();
 
     /**
      * Returns the sound when the block falls
      *
      * @return the sound
      */
-    Sound getFallSound();
+    Sound fallSound();
 }

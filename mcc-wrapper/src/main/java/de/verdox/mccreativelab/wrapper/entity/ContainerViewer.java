@@ -1,8 +1,10 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
+import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 

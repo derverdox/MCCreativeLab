@@ -8,12 +8,10 @@ import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.registry.MCCTag;
 import de.verdox.mccreativelab.wrapper.typed.MCCBlockTags;
 import de.verdox.mccreativelab.wrapper.util.DataHolderPredicate;
 import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import net.kyori.adventure.sound.Sound;
-import net.minecraft.tags.TagKey;
 import org.bukkit.GameEvent;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -53,7 +51,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
         }
         MCCBlockSoundGroup blockSoundGroup = getSoundGroup(block.getBlockType());
 
-        Sound soundToPlay = Sound.sound(blockSoundGroup.getHitSound())
+        Sound soundToPlay = Sound.sound(blockSoundGroup.hitSound())
             .source(net.kyori.adventure.sound.Sound.Source.BLOCK)
             .volume(0.15F)
             .pitch(blockSoundGroup.getPitch() * 0.3F)
@@ -68,7 +66,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
         }
         MCCBlockSoundGroup blockSoundGroup = getSoundGroup(block.getBlockType());
 
-        Sound soundToPlay = Sound.sound(blockSoundGroup.getBreakSound())
+        Sound soundToPlay = Sound.sound(blockSoundGroup.breakSound())
             .source(net.kyori.adventure.sound.Sound.Source.BLOCK)
             .volume((blockSoundGroup.getVolume() + 1.0F) / 2.0F)
             .pitch(blockSoundGroup.getPitch() * 0.8F)
@@ -82,7 +80,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
         }
         MCCBlockSoundGroup blockSoundGroup = getSoundGroup(block.getBlockType());
 
-        Sound soundToPlay = Sound.sound(blockSoundGroup.getPlaceSound())
+        Sound soundToPlay = Sound.sound(blockSoundGroup.placeSound())
             .source(net.kyori.adventure.sound.Sound.Source.BLOCK)
             .volume((blockSoundGroup.getVolume() + 1.0F) / 2.0F)
             .pitch(blockSoundGroup.getPitch() * 0.8F)
@@ -96,7 +94,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
         }
         MCCBlockSoundGroup blockSoundGroup = getSoundGroup(block.getBlockType());
 
-        Sound soundToPlay = Sound.sound(blockSoundGroup.getFallSound())
+        Sound soundToPlay = Sound.sound(blockSoundGroup.fallSound())
             .source(net.kyori.adventure.sound.Sound.Source.BLOCK)
             .volume((blockSoundGroup.getVolume() + 1.0F) / 2.0F)
             .pitch(blockSoundGroup.getPitch() * 0.8F)
@@ -114,7 +112,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
 
         // Running on carpet / snow / -> play the sound of the block below the snow block
         if(MCCBlockTags.COMBINATION_STEP_SOUND_BLOCKS.get().contains(block.getBlockType())){
-            MCCBlock blockProducingSound = block.getLocation().below().getBlock();
+            MCCBlock blockProducingSound = block.getLocation().below().getBlockNow();
             blockSoundGroup = getSoundGroup(blockProducingSound.getBlockType());
             volume = (blockSoundGroup.getVolume() + 1.0F) / 3.0F;
             pitch = blockSoundGroup.getPitch() * 0.8F;
@@ -124,7 +122,7 @@ public class PaperBlockSoundSettings implements MCCBlockSoundSettings, Listener 
             volume = (blockSoundGroup.getVolume() + 1.0F) / 2.0F;
             pitch = blockSoundGroup.getPitch() * 0.8F;
         }
-        Sound soundToPlay = Sound.sound(blockSoundGroup.getStepSound())
+        Sound soundToPlay = Sound.sound(blockSoundGroup.stepSound())
             .source(net.kyori.adventure.sound.Sound.Source.BLOCK)
             .volume(volume)
             .pitch(pitch)

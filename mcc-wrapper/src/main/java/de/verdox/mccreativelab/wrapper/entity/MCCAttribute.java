@@ -1,10 +1,15 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
+import de.verdox.mccreativelab.wrapper.annotations.MCCBuiltIn;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
+import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 
 /**
  * Represents an entity attribute
  */
+@MCCInstantiationSource(sourceClasses = {MCCReference.class})
+@MCCBuiltIn(syncState = MCCBuiltIn.SyncState.PARTIALLY_SYNCED)
 public interface MCCAttribute extends MCCWrapped {
 
     /**

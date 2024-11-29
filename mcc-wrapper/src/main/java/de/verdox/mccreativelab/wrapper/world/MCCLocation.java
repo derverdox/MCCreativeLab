@@ -4,8 +4,15 @@ import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public record MCCLocation(MCCWorld world, double x, double y, double z, float yaw, float pitch) implements MCCWrapped {
+
+    public static final int CHUNK_X_LENGTH = 16;
+    public static final int CHUNK_Z_LENGTH = 16;
+
     public MCCLocation(MCCWorld world, double x, double y, double z) {
         this(world, x, y, z, 0, 0);
     }
@@ -34,8 +41,53 @@ public record MCCLocation(MCCWorld world, double x, double y, double z, float ya
         return new MCCLocation(this.world(), this.x(), this.y(), this.z() - 1, this.yaw(), this.pitch());
     }
 
-    public MCCBlock getBlock(){
+    public CompletableFuture<MCCBlock> getBlock(){
         return world().getBlockAt(this);
+    }
+
+    @Nullable
+    public MCCBlock getBlockNow(){
+        return world().getBlockAt(this).getNow(null);
+    }
+
+    public int toChunkBlockLocalX() {
+        return Math.floorMod(blockX(), CHUNK_X_LENGTH);
+    }
+
+    public int toChunkBlockLocalY() {
+        return blockY();
+    }
+
+    public int toChunkBlockLocalZ() {
+        return Math.floorMod(blockZ(), CHUNK_Z_LENGTH);
+    }
+
+    public int getChunkX(){
+        return calculateChunkX(blockX());
+    }
+
+    public int getChunkZ(){
+        return calculateChunkZ(blockZ());
+    }
+
+    public static int calculateChunkX(int globalX){
+        return globalX / 16;
+    }
+
+    public static int calculateChunkZ(int globalZ){
+        return globalZ / 16;
+    }
+
+    public int blockX(){
+        return (int) x();
+    }
+
+    public int blockY(){
+        return (int) y();
+    }
+
+    public int blockZ(){
+        return (int) z();
     }
 
     public double distanceSquared(@NotNull MCCLocation o) {
