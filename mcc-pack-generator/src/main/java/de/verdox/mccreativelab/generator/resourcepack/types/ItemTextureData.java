@@ -9,7 +9,6 @@ import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
 import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
 import de.verdox.vserializer.util.gson.JsonArrayBuilder;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
