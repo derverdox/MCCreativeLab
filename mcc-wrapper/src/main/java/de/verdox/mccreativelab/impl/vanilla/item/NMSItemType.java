@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.item;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import net.kyori.adventure.key.Key;
@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-public class NMSItemType extends NMSHandle<Item> implements MCCItemType {
-    public static final MCCConverter<Item, NMSItemType> CONVERTER = converter(NMSItemType.class, Item.class, NMSItemType::new, NMSHandle::getHandle);
+public class NMSItemType extends MCCHandle<Item> implements MCCItemType {
+    public static final MCCConverter<Item, NMSItemType> CONVERTER = converter(NMSItemType.class, Item.class, NMSItemType::new, MCCHandle::getHandle);
 
     public NMSItemType(Item handle) {
         super(handle);

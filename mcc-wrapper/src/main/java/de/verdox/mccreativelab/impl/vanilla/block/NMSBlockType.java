@@ -2,28 +2,25 @@ package de.verdox.mccreativelab.impl.vanilla.block;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NMSBlockType extends NMSHandle<Block> implements MCCBlockType {
-    public static final MCCConverter<Block, NMSBlockType> CONVERTER = converter(NMSBlockType.class, Block.class, NMSBlockType::new, NMSHandle::getHandle);
+public class NMSBlockType extends MCCHandle<Block> implements MCCBlockType {
+    public static final MCCConverter<Block, NMSBlockType> CONVERTER = converter(NMSBlockType.class, Block.class, NMSBlockType::new, MCCHandle::getHandle);
 
     public NMSBlockType(Block handle) {
         super(handle);
@@ -35,18 +32,13 @@ public class NMSBlockType extends NMSHandle<Block> implements MCCBlockType {
     }
 
     @Override
-    public MCCBlockSoundGroup getSoundGroup() {
+    public MCCBlockState getDefaultState() {
         return null;
     }
 
     @Override
-    public List<MCCItemStack> getDrops(MCCBlockState blockState, MCCLocation locationOfBlock, @Nullable MCCEntity entity, @Nullable MCCItemStack tool) {
-        return List.of();
-    }
-
-    @Override
-    public void dropResources(MCCBlockState blockState, MCCLocation locationOfBlock) {
-
+    public MCCBlockSoundGroup getSoundGroup() {
+        return null;
     }
 
     @Override

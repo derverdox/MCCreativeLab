@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSMenuLessChildContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.recipe.MCCMerchantRecipe;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class NMSMerchantContainer extends NMSContainer<MCCEntityContainerSource<MCCEntity>, MerchantMenu> implements MCCMerchantContainer {
-    public static final MCCConverter<MerchantMenu, NMSMerchantContainer> CONVERTER = converter(NMSMerchantContainer.class, MerchantMenu.class, NMSMerchantContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<MerchantMenu, NMSMerchantContainer> CONVERTER = converter(NMSMerchantContainer.class, MerchantMenu.class, NMSMerchantContainer::new, MCCHandle::getHandle);
 
     public NMSMerchantContainer(MerchantMenu abstractContainerMenu) {
         super(abstractContainerMenu);

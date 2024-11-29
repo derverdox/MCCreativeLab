@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.inventory.MCCEnchantmentOffer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCEnchantingTableContainer;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSEnchantingTableContainer extends NMSContainer<MCCBlockContainerSource, EnchantmentMenu> implements MCCEnchantingTableContainer {
-    public static final MCCConverter<EnchantmentMenu, NMSEnchantingTableContainer> CONVERTER = converter(NMSEnchantingTableContainer.class, EnchantmentMenu.class, NMSEnchantingTableContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<EnchantmentMenu, NMSEnchantingTableContainer> CONVERTER = converter(NMSEnchantingTableContainer.class, EnchantmentMenu.class, NMSEnchantingTableContainer::new, MCCHandle::getHandle);
 
     public NMSEnchantingTableContainer(EnchantmentMenu abstractContainerMenu) {
         super(abstractContainerMenu);

@@ -2,13 +2,13 @@ package de.verdox.mccreativelab.impl.vanilla.block;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
 import net.kyori.adventure.sound.Sound;
 import net.minecraft.world.level.block.SoundType;
 
-public class NMSBlockSoundGroup extends NMSHandle<SoundType> implements MCCBlockSoundGroup {
-    public static final MCCConverter<SoundType, NMSBlockSoundGroup> CONVERTER = converter(NMSBlockSoundGroup.class, SoundType.class, NMSBlockSoundGroup::new, NMSHandle::getHandle);
+public class NMSBlockSoundGroup extends MCCHandle<SoundType> implements MCCBlockSoundGroup {
+    public static final MCCConverter<SoundType, NMSBlockSoundGroup> CONVERTER = converter(NMSBlockSoundGroup.class, SoundType.class, NMSBlockSoundGroup::new, MCCHandle::getHandle);
 
     public NMSBlockSoundGroup(SoundType handle) {
         super(handle);
@@ -25,27 +25,27 @@ public class NMSBlockSoundGroup extends NMSHandle<SoundType> implements MCCBlock
     }
 
     @Override
-    public Sound getHitSound() {
+    public Sound hitSound() {
         return conversionService.wrap(handle.getHitSound(), new TypeToken<>() {});
     }
 
     @Override
-    public Sound getStepSound() {
+    public Sound stepSound() {
         return conversionService.wrap(handle.getStepSound(), new TypeToken<>() {});
     }
 
     @Override
-    public Sound getBreakSound() {
+    public Sound breakSound() {
         return conversionService.wrap(handle.getBreakSound(), new TypeToken<>() {});
     }
 
     @Override
-    public Sound getPlaceSound() {
+    public Sound placeSound() {
         return conversionService.wrap(handle.getPlaceSound(), new TypeToken<>() {});
     }
 
     @Override
-    public Sound getFallSound() {
+    public Sound fallSound() {
         return conversionService.wrap(handle.getFallSound(), new TypeToken<>() {});
     }
 }

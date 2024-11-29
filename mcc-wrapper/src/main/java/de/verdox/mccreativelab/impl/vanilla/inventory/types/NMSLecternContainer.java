@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 import com.google.common.base.Preconditions;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCLecternContainer;
 import net.minecraft.world.Container;
@@ -11,7 +11,7 @@ import net.minecraft.world.inventory.LecternMenu;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 
 public class NMSLecternContainer extends NMSContainer<MCCBlockContainerSource, LecternMenu> implements MCCLecternContainer {
-    public static final MCCConverter<LecternMenu, NMSLecternContainer> CONVERTER = converter(NMSLecternContainer.class, LecternMenu.class, NMSLecternContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<LecternMenu, NMSLecternContainer> CONVERTER = converter(NMSLecternContainer.class, LecternMenu.class, NMSLecternContainer::new, MCCHandle::getHandle);
 
     public NMSLecternContainer(LecternMenu abstractContainerMenu) {
         super(abstractContainerMenu);

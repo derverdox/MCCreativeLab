@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttributeInstance;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class NMSAttributeInstance extends NMSHandle<AttributeInstance> implements MCCAttributeInstance {
+public class NMSAttributeInstance extends MCCHandle<AttributeInstance> implements MCCAttributeInstance {
     public NMSAttributeInstance(AttributeInstance handle) {
         super(handle);
     }

@@ -2,10 +2,9 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
-import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCLivingEntity;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
@@ -19,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class NMSEffectType extends NMSHandle<MobEffect> implements MCCEffectType {
-    public static final MCCConverter<MobEffect, NMSEffectType> CONVERTER = converter(NMSEffectType.class, MobEffect.class, NMSEffectType::new, NMSHandle::getHandle);
+public class NMSEffectType extends MCCHandle<MobEffect> implements MCCEffectType {
+    public static final MCCConverter<MobEffect, NMSEffectType> CONVERTER = converter(NMSEffectType.class, MobEffect.class, NMSEffectType::new, MCCHandle::getHandle);
 
     public NMSEffectType(MobEffect handle) {
         super(handle);

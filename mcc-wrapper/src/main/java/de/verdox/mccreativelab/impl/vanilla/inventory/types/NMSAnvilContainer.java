@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSMenuLessChildContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.ItemCombinerMenu;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSAnvilContainer extends NMSContainer<MCCBlockContainerSource, AnvilMenu> implements MCCAnvilContainer {
-    public static final MCCConverter<AnvilMenu, NMSAnvilContainer> CONVERTER = converter(NMSAnvilContainer.class, AnvilMenu.class, NMSAnvilContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<AnvilMenu, NMSAnvilContainer> CONVERTER = converter(NMSAnvilContainer.class, AnvilMenu.class, NMSAnvilContainer::new, MCCHandle::getHandle);
 
     public NMSAnvilContainer(AnvilMenu container) {
         super(container);

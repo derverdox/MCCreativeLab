@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSMenuLessChildContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCGrindstoneContainer;
@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 
 public class NMSGrindstoneContainer extends NMSContainer<MCCBlockContainerSource, GrindstoneMenu> implements MCCGrindstoneContainer {
-    public static final MCCConverter<GrindstoneMenu, NMSGrindstoneContainer> CONVERTER = converter(NMSGrindstoneContainer.class, GrindstoneMenu.class, NMSGrindstoneContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<GrindstoneMenu, NMSGrindstoneContainer> CONVERTER = converter(NMSGrindstoneContainer.class, GrindstoneMenu.class, NMSGrindstoneContainer::new, MCCHandle::getHandle);
 
     public NMSGrindstoneContainer(GrindstoneMenu abstractContainerMenu) {
         super(abstractContainerMenu);

@@ -1,6 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.inventory;
 
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.annotations.MCCReflective;
 import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public abstract class NMSContainer<T extends MCCContainerSource, A extends AbstractContainerMenu> extends NMSHandle<A> implements MCCContainer<T> {
+public abstract class NMSContainer<T extends MCCContainerSource, A extends AbstractContainerMenu> extends MCCHandle<A> implements MCCContainer<T> {
 
     protected final NMSMenuLessContainer<T> implContainer;
 

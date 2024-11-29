@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.world.chunk;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.annotations.MCCReflective;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -10,7 +10,7 @@ import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunkSection;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 
-public class NMSChunkSection extends NMSHandle<LevelChunkSection> implements MCCChunkSection {
+public class NMSChunkSection extends MCCHandle<LevelChunkSection> implements MCCChunkSection {
     private final ChunkAccess levelChunk;
     private final int sectionIndex;
     private final int chunkX;

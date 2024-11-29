@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.item.components;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.core.component.DataComponentType;
 
 public class DataComponentConverter implements MCCConverter<DataComponentType, NMSDataComponentType> {
@@ -19,7 +19,7 @@ public class DataComponentConverter implements MCCConverter<DataComponentType, N
 
     @Override
     public ConversionResult<DataComponentType> unwrap(NMSDataComponentType api) {
-        NMSHandle<DataComponentType<?>> handle = api;
+        MCCHandle<DataComponentType<?>> handle = api;
         return done(handle.getHandle());
     }
 

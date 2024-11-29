@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.annotations.MCCReflective;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttributeInstance;
@@ -18,8 +18,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.Map;
 
-public class NMSAttributeMap extends NMSHandle<AttributeMap> implements MCCAttributeMap {
-    public static final MCCConverter<AttributeMap, NMSAttributeMap> CONVERTER = converter(NMSAttributeMap.class, AttributeMap.class, NMSAttributeMap::new, NMSHandle::getHandle);
+public class NMSAttributeMap extends MCCHandle<AttributeMap> implements MCCAttributeMap {
+    public static final MCCConverter<AttributeMap, NMSAttributeMap> CONVERTER = converter(NMSAttributeMap.class, AttributeMap.class, NMSAttributeMap::new, MCCHandle::getHandle);
 
     public NMSAttributeMap(AttributeMap handle) {
         super(handle);

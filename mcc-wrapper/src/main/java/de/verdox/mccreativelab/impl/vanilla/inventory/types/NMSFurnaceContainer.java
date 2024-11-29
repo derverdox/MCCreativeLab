@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCFurnaceContainer;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSFurnaceContainer extends NMSContainer<MCCBlockContainerSource, AbstractFurnaceMenu> implements MCCFurnaceContainer {
-    public static final MCCConverter<AbstractFurnaceMenu, NMSFurnaceContainer> CONVERTER = converter(NMSFurnaceContainer.class, AbstractFurnaceMenu.class, NMSFurnaceContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<AbstractFurnaceMenu, NMSFurnaceContainer> CONVERTER = converter(NMSFurnaceContainer.class, AbstractFurnaceMenu.class, NMSFurnaceContainer::new, MCCHandle::getHandle);
 
     public NMSFurnaceContainer(AbstractFurnaceMenu abstractContainerMenu) {
         super(abstractContainerMenu);

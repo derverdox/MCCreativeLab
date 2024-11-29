@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.registry;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.registry.MCCReferenceSet;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class NMSReferenceSet<T> extends NMSHandle<HolderSet<?>> implements MCCReferenceSet<T> {
+public class NMSReferenceSet<T> extends MCCHandle<HolderSet<?>> implements MCCReferenceSet<T> {
     public static final MCCConverter<HolderSet, NMSReferenceSet> CONVERTER = converter(NMSReferenceSet.class, HolderSet.class, NMSReferenceSet::new, holderSet -> (HolderSet) holderSet.getHandle());
 
     public NMSReferenceSet(HolderSet<?> handle) {

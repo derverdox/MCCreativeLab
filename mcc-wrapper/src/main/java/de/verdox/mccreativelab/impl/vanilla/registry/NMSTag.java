@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.registry;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTag;
@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
 
-public class NMSTag<T> extends NMSHandle<TagKey<?>> implements MCCTag<T> {
+public class NMSTag<T> extends MCCHandle<TagKey<?>> implements MCCTag<T> {
     public static final MCCConverter<TagKey, NMSTag> CONVERTER = converter(NMSTag.class, TagKey.class, NMSTag::new, tag -> (TagKey) tag.getHandle());
 
     public NMSTag(Key key, Key registryKey) {

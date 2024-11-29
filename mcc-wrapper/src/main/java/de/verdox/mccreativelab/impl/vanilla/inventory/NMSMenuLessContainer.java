@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @param <T> The container source type
  */
-public class NMSMenuLessContainer<T extends MCCContainerSource> extends NMSHandle<Container> implements MCCContainer<T> {
+public class NMSMenuLessContainer<T extends MCCContainerSource> extends MCCHandle<Container> implements MCCContainer<T> {
     public static final MCCConverter<Container, NMSMenuLessContainer> CONVERTER = converter(NMSMenuLessContainer.class, Container.class, NMSMenuLessContainer::new, o -> (Container) o.getHandle());
 
     private final ConversionService service = MCCPlatform.getInstance().getConversionService();

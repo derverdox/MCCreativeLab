@@ -1,13 +1,13 @@
 package de.verdox.mccreativelab.impl.vanilla.item.components;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import net.minecraft.core.component.DataComponentType;
 
 import java.util.function.Supplier;
 
-public class NMSDataComponentType<N, T, I extends T> extends NMSHandle<DataComponentType<N>> implements MCCDataComponentType<T> {
+public class NMSDataComponentType<N, T, I extends T> extends MCCHandle<DataComponentType<N>> implements MCCDataComponentType<T> {
     private final TypeToken<N> nativeDataClass;
     private final TypeToken<T> apiDataClass;
     private final Supplier<I> defaultCreator;

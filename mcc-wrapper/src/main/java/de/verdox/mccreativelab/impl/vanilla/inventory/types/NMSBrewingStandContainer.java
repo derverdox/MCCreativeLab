@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.inventory.types;
 import com.google.common.base.Preconditions;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCBrewingStandContainer;
 import net.minecraft.world.Container;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import org.jetbrains.annotations.Range;
 
 public class NMSBrewingStandContainer extends NMSContainer<MCCBlockContainerSource, BrewingStandMenu> implements MCCBrewingStandContainer {
-    public static final MCCConverter<BrewingStandMenu, NMSBrewingStandContainer> CONVERTER = converter(NMSBrewingStandContainer.class, BrewingStandMenu.class, NMSBrewingStandContainer::new, NMSHandle::getHandle);
+    public static final MCCConverter<BrewingStandMenu, NMSBrewingStandContainer> CONVERTER = converter(NMSBrewingStandContainer.class, BrewingStandMenu.class, NMSBrewingStandContainer::new, MCCHandle::getHandle);
 
     public NMSBrewingStandContainer(BrewingStandMenu abstractContainerMenu) {
         super(abstractContainerMenu);

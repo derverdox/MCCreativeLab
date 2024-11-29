@@ -1,14 +1,14 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.jetbrains.annotations.Nullable;
 
-public class NMSEffect extends NMSHandle<MobEffectInstance> implements MCCEffect {
-    public static final MCCConverter<MobEffectInstance, NMSEffect> CONVERTER = converter(NMSEffect.class, MobEffectInstance.class, NMSEffect::new, NMSHandle::getHandle);
+public class NMSEffect extends MCCHandle<MobEffectInstance> implements MCCEffect {
+    public static final MCCConverter<MobEffectInstance, NMSEffect> CONVERTER = converter(NMSEffect.class, MobEffectInstance.class, NMSEffect::new, MCCHandle::getHandle);
 
     public NMSEffect(MobEffectInstance handle) {
         super(handle);

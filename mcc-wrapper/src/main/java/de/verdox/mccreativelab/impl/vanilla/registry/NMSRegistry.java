@@ -3,7 +3,7 @@ package de.verdox.mccreativelab.impl.vanilla.registry;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.*;
 import net.kyori.adventure.key.Key;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class NMSRegistry<T, R> extends NMSHandle<Registry<R>> implements MCCRegistry<T> {
+public class NMSRegistry<T, R> extends MCCHandle<Registry<R>> implements MCCRegistry<T> {
     public static final MCCConverter<Registry, NMSRegistry> CONVERTER = converter(NMSRegistry.class, Registry.class, NMSRegistry::new, registry -> (Registry) registry.getHandle());
     private final ConversionService conversionService;
 

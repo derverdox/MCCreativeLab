@@ -2,17 +2,16 @@ package de.verdox.mccreativelab.impl.vanilla.item;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.item.components.NMSItemComponentEditor;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.impl.vanilla.item.components.NMSMCCDataComponentEditor;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.item.components.ItemComponentEditor;
+import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentEditor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import net.kyori.adventure.text.Component;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,29 +19,29 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class NMSItemStack extends NMSHandle<ItemStack> implements MCCItemStack {
-    public static final MCCConverter<ItemStack, NMSItemStack> CONVERTER = converter(NMSItemStack.class, ItemStack.class, NMSItemStack::new, NMSHandle::getHandle);
+public class NMSItemStack extends MCCHandle<ItemStack> implements MCCItemStack {
+    public static final MCCConverter<ItemStack, NMSItemStack> CONVERTER = converter(NMSItemStack.class, ItemStack.class, NMSItemStack::new, MCCHandle::getHandle);
 
     public NMSItemStack(ItemStack handle) {
         super(handle);
     }
 
     @Override
-    public <R, T extends MCCDataComponentType<R>> MCCItemStack edit(T dataComponentType, Consumer<ItemComponentEditor<R, T>> editor) {
-        NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
+    public <R, T extends MCCDataComponentType<R>> MCCItemStack edit(T dataComponentType, Consumer<MCCDataComponentEditor<R, T>> editor) {
+        NMSMCCDataComponentEditor<R,T> nmsItemComponentEditor = new NMSMCCDataComponentEditor<>(handle, dataComponentType);
         editor.accept(nmsItemComponentEditor);
         return this;
     }
 
     @Override
-    public <R, T extends MCCDataComponentType<R>> R editAndGet(T dataComponentType, Function<ItemComponentEditor<R, T>, R> editor) {
-        NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
+    public <R, T extends MCCDataComponentType<R>> R editAndGet(T dataComponentType, Function<MCCDataComponentEditor<R, T>, R> editor) {
+        NMSMCCDataComponentEditor<R,T> nmsItemComponentEditor = new NMSMCCDataComponentEditor<>(handle, dataComponentType);
         return editor.apply(nmsItemComponentEditor);
     }
 
     @Override
     public <R, T extends MCCDataComponentType<R>> R get(T dataComponentType) {
-        NMSItemComponentEditor<R,T> nmsItemComponentEditor = new NMSItemComponentEditor<>(handle, dataComponentType);
+        NMSMCCDataComponentEditor<R,T> nmsItemComponentEditor = new NMSMCCDataComponentEditor<>(handle, dataComponentType);
         return nmsItemComponentEditor.get();
     }
 

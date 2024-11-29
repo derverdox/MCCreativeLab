@@ -1,24 +1,35 @@
 package de.verdox.mccreativelab.impl.vanilla.world.chunk;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
-import de.verdox.mccreativelab.wrapper.block.MCCBlock;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunkSection;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import org.checkerframework.checker.index.qual.NonNegative;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class NMSChunk extends NMSHandle<ChunkAccess> implements MCCChunk {
+public class NMSChunk extends MCCHandle<ChunkAccess> implements MCCChunk {
     public NMSChunk(ChunkAccess handle) {
         super(handle);
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return false;
+    }
+
+    @Override
+    public MCCWorld getWorld() {
+        return null;
     }
 
     @Override
@@ -57,11 +68,6 @@ public class NMSChunk extends NMSHandle<ChunkAccess> implements MCCChunk {
     }
 
     @Override
-    public MCCBlock getBlockAt(int localX, int localY, int localZ) {
-        return null;
-    }
-
-    @Override
     public int getAmountChunkSections() {
         return handle.getSections().length;
     }
@@ -79,5 +85,10 @@ public class NMSChunk extends NMSHandle<ChunkAccess> implements MCCChunk {
     public MCCChunkSection getChunkSectionByIndex(int index) {
         LevelChunkSection levelChunkSection = handle.getSection(index);
         return new NMSChunkSection(handle, levelChunkSection, index, getX(), getZ());
+    }
+
+    @Override
+    public MCCChunkSection getChunkSectionByGlobalYCoordinate(@NonNegative int index) {
+        return null;
     }
 }

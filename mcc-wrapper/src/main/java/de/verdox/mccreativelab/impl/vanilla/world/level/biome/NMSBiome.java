@@ -2,8 +2,8 @@ package de.verdox.mccreativelab.impl.vanilla.world.level.biome;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
-import de.verdox.mccreativelab.wrapper.core.MCCBlockPos;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
+import de.verdox.mccreativelab.wrapper.world.MCCBlockPos;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.sounds.MCCMusic;
 import de.verdox.mccreativelab.wrapper.world.level.biome.MCCAmbientAdditionsSettings;
@@ -22,8 +22,8 @@ import java.util.Optional;
 /**
  * Class representing the native Minecraft Biome implementing the MCCBiome interface
  */
-public class NMSBiome extends NMSHandle<Biome> implements MCCBiome {
-    public static final MCCConverter<Biome, NMSBiome> CONVERTER = converter(NMSBiome.class, Biome.class, NMSBiome::new, NMSHandle::getHandle);
+public class NMSBiome extends MCCHandle<Biome> implements MCCBiome {
+    public static final MCCConverter<Biome, NMSBiome> CONVERTER = converter(NMSBiome.class, Biome.class, NMSBiome::new, MCCHandle::getHandle);
 
     public NMSBiome(Biome handle) {
         super(handle);

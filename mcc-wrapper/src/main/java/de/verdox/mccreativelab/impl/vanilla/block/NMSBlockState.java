@@ -2,18 +2,24 @@ package de.verdox.mccreativelab.impl.vanilla.block;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class NMSBlockState extends NMSHandle<BlockState> implements MCCBlockState {
-    public static final MCCConverter<BlockState, NMSBlockState> CONVERTER = converter(NMSBlockState.class, BlockState.class, NMSBlockState::new, NMSHandle::getHandle);
+import java.util.Collection;
+import java.util.List;
+
+public class NMSBlockState extends MCCHandle<BlockState> implements MCCBlockState {
+    public static final MCCConverter<BlockState, NMSBlockState> CONVERTER = converter(NMSBlockState.class, BlockState.class, NMSBlockState::new, MCCHandle::getHandle);
 
     public NMSBlockState(BlockState handle) {
         super(handle);
@@ -30,7 +36,7 @@ public class NMSBlockState extends NMSHandle<BlockState> implements MCCBlockStat
     }
 
     @Override
-    public float getDestroySpeed(MCCItemStack mccItemStack, boolean considerEnchants) {
+    public float getDestroySpeed(MCCPlayer player, MCCItemStack mccItemStack, boolean considerEnchants) {
         float speed = mccItemStack.getDestroySpeed(this);
 
         if(speed > 1.0 && considerEnchants){
@@ -58,6 +64,11 @@ public class NMSBlockState extends NMSHandle<BlockState> implements MCCBlockStat
         }
 
         return speed;
+    }
+
+    @Override
+    public @NotNull List<MCCItemStack> getDrops(@Nullable MCCEntity entity, @Nullable MCCItemStack tool) {
+        return List.of();
     }
 
     @Override

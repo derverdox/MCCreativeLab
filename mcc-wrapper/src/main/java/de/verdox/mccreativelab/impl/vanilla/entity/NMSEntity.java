@@ -1,9 +1,8 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSTempCache;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
+import de.verdox.mccreativelab.wrapper.platform.TempCache;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import de.verdox.mccreativelab.wrapper.platform.TempData;
@@ -12,15 +11,12 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class NMSEntity<T extends Entity> extends NMSHandle<T> implements MCCEntity {
+public class NMSEntity<T extends Entity> extends MCCHandle<T> implements MCCEntity {
     public static final MCCConverter<Entity, NMSEntity> CONVERTER = converter(NMSEntity.class, Entity.class, NMSEntity::new, nmsEntity -> (Entity) nmsEntity.getHandle());
 
 
@@ -70,7 +66,7 @@ public class NMSEntity<T extends Entity> extends NMSHandle<T> implements MCCEnti
 
     @Override
     public TempData getTempData() {
-        return NMSTempCache.get(getHandle());
+        return TempCache.get(getHandle());
     }
 
 

@@ -1,16 +1,14 @@
 package de.verdox.mccreativelab.impl.vanilla.registry;
 
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +21,7 @@ import java.util.Objects;
  *
  * @param <T> the api type
  */
-public class NMSTypedKey<T> extends NMSHandle<ResourceKey<?>> implements MCCTypedKey<T> {
+public class NMSTypedKey<T> extends MCCHandle<ResourceKey<?>> implements MCCTypedKey<T> {
     public static final MCCConverter<ResourceKey, NMSTypedKey> CONVERTER = converter(NMSTypedKey.class, ResourceKey.class, NMSTypedKey::new, resourceKey -> (ResourceKey) resourceKey.getHandle());
 
     public NMSTypedKey(Key key, Key registryKey) {
@@ -36,19 +34,13 @@ public class NMSTypedKey<T> extends NMSHandle<ResourceKey<?>> implements MCCType
 
     @Override
     public @Nullable T get() {
-        ConversionService conversionService = MCCPlatform.getInstance().getConversionService();
-        Object nativeFromRegistries = getNativeElementFromMinecraftRegistries();
-        return (T) conversionService.wrap(nativeFromRegistries);
-    }
-
-    public Object getNativeElementFromMinecraftRegistries() {
-        Registry<?> registry;
-        if (handle.registry().getPath().equals(Registries.ROOT_REGISTRY_NAME.getPath()))
-            registry = BuiltInRegistries.REGISTRY;
-        else
-            registry = BuiltInRegistries.REGISTRY.get(handle.registry());
-        Objects.requireNonNull(registry, "The registry with the key " + handle.registry() + " could not be found");
-        return registry.get(handle.location());
+        try{
+            return getAsReference().get();
+        }
+        catch (Throwable e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -58,7 +50,14 @@ public class NMSTypedKey<T> extends NMSHandle<ResourceKey<?>> implements MCCType
 
     @Override
     public MCCReference<T> getAsReference() {
-        Registry registry = BuiltInRegistries.REGISTRY.get(handle.registry());
+        Registry registry;
+        if(handle.registry().equals(ResourceLocation.tryBuild("minecraft","root"))) {
+            registry = BuiltInRegistries.REGISTRY;
+        }
+        else {
+            registry = BuiltInRegistries.REGISTRY.get(handle.registry());
+        }
+        Objects.requireNonNull(registry, "The registry "+handle.registry()+" could not be found.");
         registry.getHolderOrThrow(handle);
         var optional = registry.getHolder(handle.location());
         if (optional.isEmpty())
