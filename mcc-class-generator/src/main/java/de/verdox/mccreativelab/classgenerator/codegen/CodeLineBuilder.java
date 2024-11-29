@@ -53,7 +53,7 @@ public class CodeLineBuilder {
     public CodeLineBuilder appendParametersInBrackets(Parameter... parameters) {
         append("(");
         for (int i = 0; i < parameters.length; i++) {
-            parameters[i].write(this);
+            parameters[i].writeWithoutTypeName(this);
             if (i < parameters.length - 1)
                 append(", ");
         }

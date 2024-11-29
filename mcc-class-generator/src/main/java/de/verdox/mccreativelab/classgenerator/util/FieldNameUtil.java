@@ -3,17 +3,17 @@ public class FieldNameUtil{
 
     public static String capitalize(String s) {
         if (s == null || s.isEmpty()) {
-            return s; // Rückgabe des ursprünglichen Strings, falls er leer oder null ist
+            return s;
         }
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     public static String convert_FieldsToCamelCase(String s) {
         if (s == null || s.isEmpty()) {
-            return s; // Rückgabe des ursprünglichen Strings, falls er leer oder null ist
+            return s;
         }
 
-        // Wenn kein Unterstrich vorhanden ist, den String nur klein schreiben
+
         if (!s.contains("_")) {
             return s.toLowerCase();
         }

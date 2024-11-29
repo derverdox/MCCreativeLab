@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.classgenerator.conversion;
 import de.verdox.mccreativelab.classgenerator.AbstractClassGenerator;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
+import de.verdox.mccreativelab.classgenerator.codegen.expressions.Method;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.MethodCall;
@@ -52,17 +53,49 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
 
         classBuilder.implementsClasses(converterType);
 
-        classBuilder.withMethod("public", "wrap", DynamicType.of(MCCConverter.ConversionResult.class, false).withAddedGeneric(to),
-            methodCode -> wrappingMethodBuilder.wrapFunction(this, "nativeType", from, to, methodCode), new Parameter(from, "nativeType"));
+        classBuilder.withMethod(
+            new Method()
+                .name("wrap")
+                .type(DynamicType.of(MCCConverter.ConversionResult.class, false).withAddedGeneric(to))
+                .parameter(new Parameter(from, "nativeType"))
+                .code(code -> wrappingMethodBuilder.wrapFunction(this, "nativeType", from, to, code))
+        );
 
+        classBuilder.withMethod(
+            new Method()
+                .name("unwrap")
+                .type(DynamicType.of(MCCConverter.ConversionResult.class, false).withAddedGeneric(from))
+                .parameter(new Parameter(to, "platformImplType"))
+                .code(code -> wrappingMethodBuilder.unwrapFunction(this, "platformImplType", to, from, code))
+        );
+
+        classBuilder.withMethod(
+            new Method()
+                .name("apiImplementationClass")
+                .type(DynamicType.of(Class.class, false).withAddedGeneric(to))
+                .code(code -> code.append("return ").append(to.getTypeName()).append(".class;"))
+        );
+
+        classBuilder.withMethod(
+            new Method()
+                .name("nativeMinecraftType")
+                .type(DynamicType.of(Class.class, false).withAddedGeneric(from))
+                .code(code -> code.append("return ").append(from.getTypeName()).append(".class;"))
+        );
+
+/*        classBuilder.withMethod("public", "wrap", DynamicType.of(MCCConverter.ConversionResult.class, false).withAddedGeneric(to),
+            methodCode -> wrappingMethodBuilder.wrapFunction(this, "nativeType", from, to, methodCode), new Parameter(from, "nativeType"));*/
+
+/*
         classBuilder.withMethod("public", "unwrap", DynamicType.of(MCCConverter.ConversionResult.class, false).withAddedGeneric(from),
             methodCode -> wrappingMethodBuilder.unwrapFunction(this, "platformImplType", to, from, methodCode), new Parameter(to, "platformImplType"));
+*/
 
-        classBuilder.withMethod("public", "apiImplementationClass", DynamicType.of(Class.class, false).withAddedGeneric(to),
-            methodCode -> methodCode.append("return ").append(to.getTypeName()).append(".class;"));
+/*        classBuilder.withMethod("public", "apiImplementationClass", DynamicType.of(Class.class, false).withAddedGeneric(to),
+            methodCode -> methodCode.append("return ").append(to.getTypeName()).append(".class;"));*/
 
-        classBuilder.withMethod("public", "nativeMinecraftType", DynamicType.of(Class.class, false).withAddedGeneric(from),
-            methodCode -> methodCode.append("return ").append(from.getTypeName()).append(".class;"));
+/*        classBuilder.withMethod("public", "nativeMinecraftType", DynamicType.of(Class.class, false).withAddedGeneric(from),
+            methodCode -> methodCode.append("return ").append(from.getTypeName()).append(".class;"));*/
 
         //converterImportClass.includeImport(from);
         converterImportClass.includeImport(to);
@@ -76,7 +109,7 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
 
     public static void createNMSHandleConverter(ClassBuilder classBuilder, DynamicType nmsType, DynamicType implType, DynamicType apiType) {
         DynamicType converterType = DynamicType.of(MCCConverter.class, false).withAddedGeneric(nmsType).withAddedGeneric(implType);
-        MethodCall methodCall = new MethodCall("converter", code -> code.append(implType + ".class"), code -> code.append(nmsType).append(".class"), code -> code.append(implType).append("::new"), code -> code.append("NMSHandle::getHandle"));
+        MethodCall methodCall = new MethodCall("converter", code -> code.append(implType + ".class"), code -> code.append(nmsType).append(".class"), code -> code.append(implType).append("::new"), code -> code.append("MCCHandle::getHandle"));
         classBuilder.withField("public static final", converterType, "CONVERTER", methodCall);
         //converterImportClass.includeImport(nmsType);
         converterImportClass.includeImport(implType);
@@ -87,12 +120,19 @@ public class MCCConverterGenerator extends AbstractClassGenerator {
 
     public static void createGeneratedConvertersClass(File srcDir) throws IOException {
         converterImportClass.includeImport(DynamicType.of(MCCPlatform.class, false));
-        converterImportClass.withMethod("public static", "init", null, codeLineBuilder -> {
-            for (CodeExpression registerExpression : registerExpressions) {
-                registerExpression.write(codeLineBuilder);
-                codeLineBuilder.appendAndNewLine("");
-            }
-        }, new Parameter(DynamicType.of(ConversionService.class), "conversionService"));
+
+        converterImportClass.withMethod(
+            new Method()
+                .modifier("public static")
+                .name("init")
+                .code(code -> {
+                    for (CodeExpression registerExpression : registerExpressions) {
+                        registerExpression.write(code);
+                        code.appendAndNewLine("");
+                    }
+                })
+                .parameter(new Parameter(DynamicType.of(ConversionService.class), "conversionService"))
+        );
         converterImportClass.writeClassFile(srcDir);
     }
 

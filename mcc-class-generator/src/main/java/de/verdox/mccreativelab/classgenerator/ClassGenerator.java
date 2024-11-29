@@ -8,6 +8,7 @@ import de.verdox.mccreativelab.classgenerator.conversion.*;
 import de.verdox.mccreativelab.classgenerator.wrapper.WrappedClass;
 import de.verdox.mccreativelab.classgenerator.wrapper.WrappedClassRegistry;
 import de.verdox.mccreativelab.classgenerator.wrapper.WrapperInterfaceGenerator;
+import de.verdox.mccreativelab.impl.paper.platform.PaperPlatform;
 import de.verdox.mccreativelab.impl.vanilla.item.components.NMSDataComponentType;
 import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
@@ -129,16 +130,17 @@ public class ClassGenerator {
     public static void run() {
         LOGGER.info("Running class generator");
         try {
-            MCCPlatform.INSTANCE.setup(new NMSPlatform());
+            MCCPlatform.INSTANCE.setup(new NMSPlatform(), MCCPlatform::init);
             generateMCCItemComponentWrapper();
             generateMenuTypesClass();
             //converterGenerator.buildConverterInterface(GENERATION_DIR);
             //converterGenerator.buildWrapperAdapters(GENERATION_DIR);
             generateTypedKeys();
             createItemComponentConverters();
-            //generateEventClasses();
+
             //new EventDescriptionGenerator(GENERATION_DIR).generate(10);
             MCCConverterGenerator.createGeneratedConvertersClass(GENERATION_DIR);
+            generateEventClasses();
         } catch (IOException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

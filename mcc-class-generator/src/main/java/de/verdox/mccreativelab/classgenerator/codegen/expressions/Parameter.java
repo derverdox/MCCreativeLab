@@ -8,4 +8,8 @@ public record Parameter(DynamicType type, String name) implements CodeExpression
     public void write(CodeLineBuilder code) {
         code.append(type).append(" ").append(name);
     }
+
+    public void writeWithoutTypeName(CodeLineBuilder code){
+        code.append(name);
+    }
 }

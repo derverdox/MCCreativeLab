@@ -72,9 +72,20 @@ public interface WrapperGeneratorStrategy {
 
             String nmsGetterMethodName = getImplGetterMethodName(parameter);
 
-            interfaceBuilder.withAbstractMethod("public", apiGetterMethodName, parameterTypeSwapped);
+            interfaceBuilder.withMethod(
+                new Method()
+                    .name(apiGetterMethodName)
+                    .type(parameterTypeSwapped)
+            );
+
+
             if (withSetters) {
-                interfaceBuilder.withAbstractMethod("public", apiSetterMethodName, interfaceType, new Parameter(parameterTypeSwapped, parameter.getName()));
+                interfaceBuilder.withMethod(
+                    new Method()
+                        .name(apiSetterMethodName)
+                        .type(interfaceType)
+                        .parameter(new Parameter(parameterTypeSwapped, parameter.getName()))
+                );
             }
 
 
@@ -91,62 +102,81 @@ public interface WrapperGeneratorStrategy {
 
             if (generateGetterImpl) {
                 // Build public getter method
-                implBuilder.withMethod("public", apiGetterMethodName, parameterTypeSwapped, methodCode -> {
-                    methodCode.appendAndNewLine("var nms = " + nmsGetterMethodName + "();");
-                    if (!isParameterSwapped) {
-                        methodCode.appendAndNewLine("return nms;");
-                        return;
-                    }
 
-                    methodCode.append("return ");
-                    //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                    CodeExpression converterExpression = createImplToApiExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped);
-                    methodCode.append(converterExpression);
-                    methodCode.appendAndNewLine(";");
-                });
+                implBuilder.withMethod(
+                    new Method()
+                        .name(apiGetterMethodName)
+                        .type(parameterTypeSwapped)
+                        .code(code -> {
+                            code.appendAndNewLine("var nms = " + nmsGetterMethodName + "();");
+                            if (!isParameterSwapped) {
+                                code.appendAndNewLine("return nms;");
+                                return;
+                            }
 
-                // Build private ImplGetterMethod
-                implBuilder.withMethod("private", nmsGetterMethodName, DynamicType.of(parameter.getGenericType(), false), methodCode -> {
-                    if (nmsClass.isRecord()) {
-                        methodCode.append("return handle == null ? ");
-                        methodCode.append(notSwappedStandardValue);
-                        methodCode.append(" : handle.");
-                        methodCode.append(parameter.getName()).appendAndNewLine("();");
-                    } else {
-                        new ReflectiveFieldGetter("nms", nmsClass, parameter.parameter()).write(methodCode);
-                        methodCode.appendAndNewLine("return nms;");
-                    }
-                });
+                            code.append("return ");
+                            //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
+                            CodeExpression converterExpression = createImplToApiExpression("nms", parameterTypeNotSwapped, parameterTypeSwapped);
+                            code.append(converterExpression);
+                            code.appendAndNewLine(";");
+                        })
+                );
+
+                implBuilder.withMethod(
+                    new Method()
+                        .modifier("private")
+                        .name(nmsGetterMethodName)
+                        .type(DynamicType.of(parameter.getGenericType(), false))
+                        .code(code -> {
+                            if (nmsClass.isRecord()) {
+                                code.append("return handle == null ? ");
+                                code.append(notSwappedStandardValue);
+                                code.append(" : handle.");
+                                code.append(parameter.getName()).appendAndNewLine("();");
+                            } else {
+                                new ReflectiveFieldGetter("nms", nmsClass, parameter.parameter()).write(code);
+                                code.appendAndNewLine("return nms;");
+                            }
+                        })
+                );
             }
 
             if (withSetters) {
-                implBuilder.withMethod("public", apiSetterMethodName, interfaceType, codeLineBuilder -> {
-                    int counter = 0;
-                    Map<ParameterOrRecord, LocalVariableAssignment> variables = new LinkedHashMap<>();
 
-                    for (ParameterOrRecord param : parameters) {
-                        if (!param.equals(parameter)) {
+                implBuilder.withMethod(
+                    new Method()
+                        .name(apiSetterMethodName)
+                        .type(interfaceType)
+                        .parameter(new Parameter(parameterTypeSwapped, parameter.getName()))
+                        .code(code -> {
+                            int counter = 0;
+                            Map<ParameterOrRecord, LocalVariableAssignment> variables = new LinkedHashMap<>();
+
+                            for (ParameterOrRecord param : parameters) {
+                                if (!param.equals(parameter)) {
 
 
-                            variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(getImplGetterMethodName(param) + "()")));
-                            variables.get(param).write(codeLineBuilder);
-                            continue;
-                        }
+                                    variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(getImplGetterMethodName(param) + "()")));
+                                    variables.get(param).write(code);
+                                    continue;
+                                }
 
 
-                        if (isParameterSwapped) {
-                            //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
-                            CodeExpression conversionExpression = createApiToImplExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped);
-                            variables.put(param, new LocalVariableAssignment("param" + (counter++), conversionExpression));
-                        } else {
-                            variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(parameter.getName())));
-                        }
-                        variables.get(param).write(codeLineBuilder);
-                    }
-                    codeLineBuilder.append("return ");
-                    createInstantiationExpression(nmsClass, interfaceBuilder, implBuilder, variables).write(codeLineBuilder);
-                    codeLineBuilder.append(";");
-                }, new Parameter(parameterTypeSwapped, parameter.getName()));
+                                if (isParameterSwapped) {
+                                    //converterGenerator.requireGeneratorFunction(parameterTypeSwapped, parameterTypeNotSwapped);
+                                    CodeExpression conversionExpression = createApiToImplExpression(parameter.getName(), parameterTypeSwapped, parameterTypeNotSwapped);
+                                    variables.put(param, new LocalVariableAssignment("param" + (counter++), conversionExpression));
+                                } else {
+                                    variables.put(param, new LocalVariableAssignment("param" + (counter++), CodeExpression.create().with(parameter.getName())));
+                                }
+                                variables.get(param).write(code);
+                            }
+                            code.append("return ");
+                            createInstantiationExpression(nmsClass, interfaceBuilder, implBuilder, variables).write(code);
+                            code.append(";");
+                        })
+
+                );
             }
             implBuilder.includeImport(parameter.getGenericType());
         }

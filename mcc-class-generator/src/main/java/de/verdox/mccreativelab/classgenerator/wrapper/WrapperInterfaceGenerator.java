@@ -3,11 +3,13 @@ package de.verdox.mccreativelab.classgenerator.wrapper;
 import de.verdox.mccreativelab.classgenerator.AbstractClassGenerator;
 import de.verdox.mccreativelab.classgenerator.NMSMapper;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
+import de.verdox.mccreativelab.classgenerator.codegen.expressions.Constructor;
+import de.verdox.mccreativelab.classgenerator.codegen.expressions.Method;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.classgenerator.conversion.MCCConverterGenerator;
 import de.verdox.mccreativelab.classgenerator.wrapper.strategy.ClassGeneratorStrategy;
 import de.verdox.mccreativelab.classgenerator.wrapper.strategy.RecordGeneratorStrategy;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -17,7 +19,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class WrapperInterfaceGenerator extends AbstractClassGenerator {
-    public static final Logger LOGGER = Logger.getLogger(WrapperInterfaceGenerator.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(WrapperInterfaceGenerator.class.getSimpleName());
 
     private final String implPrefix;
 
@@ -85,10 +87,25 @@ public class WrapperInterfaceGenerator extends AbstractClassGenerator {
                 childClasses.add(childWrappedClass);
                 if (interfaceChild.getClassDescription().isEnum()) continue;
                 if (withSetters) {
-                    interfaceBuilder.withAbstractMethod("public", "create" + interfaceChild.getClassDescription().getClassName(), DynamicType.of(interfaceChild.getClassDescription(), false));
+
+                    interfaceBuilder.withMethod(
+                        new Method()
+                            .name( "create" + interfaceChild.getClassDescription().getClassName())
+                            .type(DynamicType.of(interfaceChild.getClassDescription(), false))
+                    );
+                    implBuilder.withMethod(
+                        new Method()
+                            .name("create" + interfaceChild.getClassDescription().getClassName())
+                            .type(DynamicType.of(interfaceChild.getClassDescription(), false))
+                            .code(code -> {
+                                code.append("return new " + childWrappedClass.implementation().getClassName() + "(null);");
+                            })
+                    );
+
+/*                    interfaceBuilder.withAbstractMethod("public", "create" + interfaceChild.getClassDescription().getClassName(), DynamicType.of(interfaceChild.getClassDescription(), false));
                     implBuilder.withMethod("public", "create" + interfaceChild.getClassDescription().getClassName(), DynamicType.of(interfaceChild.getClassDescription(), false), codeLineBuilder -> {
                         codeLineBuilder.append("return new " + childWrappedClass.implementation().getClassName() + "(null);");
-                    });
+                    });*/
                 }
             }
         }
@@ -138,12 +155,12 @@ public class WrapperInterfaceGenerator extends AbstractClassGenerator {
 
     private static void setupImplHeader(Class<?> nmsClass, String implPackage, boolean isInnerClass, ClassBuilder interfaceBuilder, ClassBuilder implBuilder, String implName, String interfaceName) {
         implBuilder.withHeader(isInnerClass ? "public static" : "public", ClassBuilder.ClassHeader.CLASS, implName, "");
-        implBuilder.extendsClasses(DynamicType.of(NMSHandle.class).withAddedGeneric(DynamicType.of(nmsClass, false)));
+        implBuilder.extendsClasses(DynamicType.of(MCCHandle.class).withAddedGeneric(DynamicType.of(nmsClass, false)));
         implBuilder.implementsClasses(DynamicType.of(interfaceBuilder.getClassDescription(), false));
         implBuilder.withPackage(implPackage);
         implBuilder.includeImport(interfaceBuilder.getClassDescription());
         implBuilder.includeImport(nmsClass);
-        implBuilder.includeImport(DynamicType.of(NMSHandle.class));
+        implBuilder.includeImport(DynamicType.of(MCCHandle.class));
         //implBuilder.includeImport(converterGenerator.getConverterClass());
 
         DynamicType implType = DynamicType.of(implBuilder.getClassDescription(), false);
@@ -151,9 +168,11 @@ public class WrapperInterfaceGenerator extends AbstractClassGenerator {
         MCCConverterGenerator.createNMSHandleConverter(implBuilder, DynamicType.of(nmsClass, false), implType, DynamicType.of(interfaceBuilder.getClassDescription(), false));
 
         //implBuilder.withField("private final", DynamicType.of(nmsClass, false), "handle", null);
-        implBuilder.withConstructor("public", constructorCode -> {
-            constructorCode.append("super(handle);");
-        }, new de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter(DynamicType.of(nmsClass, false), "handle"));
-        //implBuilder.withMethod("public", "getHandle", DynamicType.of(nmsClass, false), codeLineBuilder -> codeLineBuilder.append("return this.handle;"));
+
+        implBuilder.withConstructor(
+            new Constructor()
+                .parameter(new de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter(DynamicType.of(nmsClass, false), "handle")).code(code -> {
+                    code.append("super(handle);");
+                }));
     }
 }

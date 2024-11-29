@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class NMSMapper {
-    public static final Logger LOGGER = Logger.getLogger(NMSMapper.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(NMSMapper.class.getSimpleName());
 
     private static final Map<DynamicType, ClassSwap> SWAP_MAP = new HashMap<>();
 
@@ -50,17 +50,15 @@ public class NMSMapper {
 
     public static void register(DynamicType from, DynamicType to, boolean allowsGenerics) {
         if (SWAP_MAP.containsKey(from)) {
-            LOGGER.warning("The type " + from + " already has a mapping");
+            LOGGER.warning("The type " + from.getClassDescription() + " already has a mapping");
             return;
         }
         ClassSwap classSwap = new ClassSwap(to, allowsGenerics);
         SWAP_MAP.put(from, classSwap);
-        LOGGER.warning("Registered class generation mapping from " + from + " to " + to);
+        LOGGER.warning("Registered mapping from " + from.getClassDescription()+ " to " + to.getClassDescription());
     }
 
     static {
-        if (!MCCPlatform.INSTANCE.isSetup())
-            MCCPlatform.INSTANCE.setup(new NMSPlatform());
         for (ConversionService.ClassPair classPair : MCCPlatform.getInstance().getConversionService().getAllKnownClassPairs()) {
             register(classPair.nativeType(), classPair.apiType());
         }

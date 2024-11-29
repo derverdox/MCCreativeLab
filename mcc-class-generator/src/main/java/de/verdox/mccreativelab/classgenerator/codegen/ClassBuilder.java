@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClassBuilder {
+public class ClassBuilder implements JavaDocElement<ClassBuilder> {
     public static final Logger LOGGER = Logger.getLogger(ClassBuilder.class.getName());
     private String packageName;
     private String classModifier;
@@ -35,6 +35,7 @@ public class ClassBuilder {
     private boolean isInnerClass;
     private ClassBuilder parent;
     private int depth = 0;
+    private JavaDocExpression javaDoc;
 
     public ClassBuilder withPackage(String packageName) {
         this.packageName = packageName;
@@ -105,7 +106,10 @@ public class ClassBuilder {
         for (DynamicType dynamicType : dynamicTypes) {
             if (!dynamicType.getClassDescription().isInterface())
                 throw new IllegalArgumentException(dynamicType + " is not an interface");
-            implementsList.add(dynamicType);
+            if (!implementsList.contains(dynamicType)) {
+                includeImport(dynamicType);
+                implementsList.add(dynamicType);
+            }
         }
         return this;
     }
@@ -114,7 +118,10 @@ public class ClassBuilder {
         for (DynamicType dynamicType : dynamicTypes) {
             if (dynamicType.getClassDescription().isInterface() && !this.getClassDescription().isInterface())
                 throw new IllegalArgumentException(this + " is not an interface so it cannot extend the interface " + dynamicType);
-            extendsList.add(dynamicType);
+            if (!extendsList.contains(dynamicType)) {
+                includeImport(dynamicType);
+                extendsList.add(dynamicType);
+            }
         }
         return this;
     }
@@ -124,60 +131,24 @@ public class ClassBuilder {
         return this;
     }
 
-    public ClassBuilder withMethod(String modifier, String name, @Nullable DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
-        Method method = new Method(modifier, name, returnType, content, parameters);
+    public ClassBuilder withMethod(Method method) {
         LOGGER.log(Level.FINER, "Including method " + method);
         methods.add(method);
 
-        if (returnType != null) {
-            includeImport(returnType);
+        if (method.type() != null) {
+            includeImport(method.type());
         }
-        for (Parameter parameter : parameters)
+        for (Parameter parameter : method.parameters())
             includeImport(parameter.type());
         return this;
     }
 
-    public ClassBuilder withMethod(String modifier, List<GenericDeclaration> genericDeclarations, String name, @Nullable DynamicType returnType, Consumer<CodeLineBuilder> content, Parameter... parameters) {
-        Method method = new Method(modifier, genericDeclarations, name, returnType, content, parameters);
-        LOGGER.log(Level.FINER, "Including method " + method);
-        methods.add(method);
-
-        if (returnType != null) {
-            includeImport(returnType);
-        }
-        for (Parameter parameter : parameters)
-            includeImport(parameter.type());
-        return this;
-    }
-
-    public ClassBuilder withAbstractMethod(String modifier, String name, DynamicType returnType, Parameter... parameters) {
-        Method method = new Method(modifier, name, returnType, null, parameters);
-        LOGGER.log(Level.FINER, "Including abstract method " + method);
-        methods.add(method);
-
-        includeImport(returnType);
-        for (Parameter parameter : parameters)
-            includeImport(parameter.type());
-        return this;
-    }
-
-    public ClassBuilder withAbstractMethod(String modifier, List<GenericDeclaration> genericDeclarations, String name, DynamicType returnType, Parameter... parameters) {
-        Method method = new Method(modifier, genericDeclarations, name, returnType, null, parameters);
-        LOGGER.log(Level.FINER, "Including abstract method " + method);
-        methods.add(method);
-
-        includeImport(returnType);
-        for (Parameter parameter : parameters)
-            includeImport(parameter.type());
-        return this;
-    }
-
-    public ClassBuilder withConstructor(String modifier, Consumer<CodeLineBuilder> content, Parameter... parameters) {
-        Constructor constructor = new Constructor(modifier, DynamicType.of(getClassDescription()), content, parameters);
+    public ClassBuilder withConstructor(Constructor constructor) {
         LOGGER.log(Level.FINER, "Including constructor constructor " + constructor);
+        constructor.type(DynamicType.of(getClassDescription(), false));
         constructors.add(constructor);
 
-        for (Parameter parameter : parameters)
+        for (Parameter parameter : constructor.parameters())
             includeImport(parameter.type());
         return this;
     }
@@ -269,6 +240,14 @@ public class ClassBuilder {
 
         code.append(packageBuilder);
         code.append(importBuilder);
+        CodeLineBuilder javaDocBuilder = new CodeLineBuilder(this, depth);
+        if (javaDoc != null) {
+            code.append("\n");
+            javaDocBuilder.append(javaDoc);
+        }
+
+        code.append(javaDocBuilder);
+
         code.append("\n");
         code.append(classTitleBuilder);
 
@@ -384,6 +363,17 @@ public class ClassBuilder {
         if (!canWriteSimple)
             imports.remove(new Import(type.getClassDescription()));
         return canWriteSimple;
+    }
+
+    @Override
+    public ClassBuilder javaDoc(JavaDocExpression javaDoc) {
+        this.javaDoc = javaDoc;
+        return this;
+    }
+
+    @Override
+    public JavaDocExpression javaDoc() {
+        return javaDoc;
     }
 
 

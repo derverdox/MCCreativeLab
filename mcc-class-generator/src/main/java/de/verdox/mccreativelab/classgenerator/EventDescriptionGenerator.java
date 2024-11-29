@@ -2,10 +2,7 @@ package de.verdox.mccreativelab.classgenerator;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.CodeExpression;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.ConstructorCall;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.GenericDeclaration;
-import de.verdox.mccreativelab.classgenerator.codegen.expressions.Parameter;
+import de.verdox.mccreativelab.classgenerator.codegen.expressions.*;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
 import de.verdox.mccreativelab.wrapper.event.EventArgument;
 import de.verdox.mccreativelab.wrapper.event.PlatformEventWrapper;
@@ -53,9 +50,19 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
         interfaceBuilder.withPackage("de.verdox.mccreativelab.wrapper.event.description");
         interfaceBuilder.withHeader("public", ClassBuilder.ClassHeader.INTERFACE, "EventDescription", "");
 
-        interfaceBuilder.withMethod("public static", List.of(new GenericDeclaration("T" + 0, null)), "with", DynamicType.of(builderClasses[0].getClassDescription()).withAddedGeneric(genericType(0)), code -> {
+        interfaceBuilder.withMethod(
+            new Method()
+                .modifier("public static")
+                .generic(new GenericDeclaration("T" + 0, null))
+                .name("with")
+                .type(DynamicType.of(builderClasses[0].getClassDescription()).withAddedGeneric(genericType(0)))
+                .code(code -> code.append("return ").append(new ConstructorCall(DynamicType.of(builderClasses[0].getClassDescription()), CodeExpression.create().with("t0"))).append(";"))
+                .parameter(new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(0)), "t" + (0)))
+        );
+
+/*        interfaceBuilder.withMethod("public static", List.of(new GenericDeclaration("T" + 0, null)), "with", DynamicType.of(builderClasses[0].getClassDescription()).withAddedGeneric(genericType(0)), code -> {
             code.append("return ").append(new ConstructorCall(DynamicType.of(builderClasses[0].getClassDescription()), CodeExpression.create().with("t0"))).append(";");
-        }, new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(0)), "t" + (0)));
+        }, new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(0)), "t" + (0)));*/
 
         interfaceBuilder.writeClassFile(srcDir);
 
@@ -83,7 +90,24 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
 
             createConstructorsAcceptingTypeTokens(argIndex, classBuilder);
 
-            classBuilder.withMethod("public", "get" + argIndex, DynamicType.of(EventArgument.class).withAddedGeneric(DynamicType.of("T" + argIndex)), code -> {
+            classBuilder.withMethod(
+                new Method()
+                    .name("get" + argIndex)
+                    .type(DynamicType.of(EventArgument.class).withAddedGeneric(DynamicType.of("T" + argIndex)))
+                    .code(code -> {
+                        code.appendAndNewLine("try {");
+                        code.increaseDepth(1);
+                        code.appendAndNewLine("return event.getArgument(t" + argIndex + ", " + argIndex + ");");
+                        code.increaseDepth(-1);
+                        code.appendAndNewLine("} catch (Throwable e) {");
+                        code.increaseDepth(1);
+                        code.appendAndNewLine("throw new IllegalStateException(\"An error occured while trying to get a variable of type \" + t" + argIndex + " + \" from \" + event.key(), e);");
+                        code.increaseDepth(-1);
+                        code.appendAndNewLine("}");
+                    })
+            );
+
+/*            classBuilder.withMethod("public", "get" + argIndex, DynamicType.of(EventArgument.class).withAddedGeneric(DynamicType.of("T" + argIndex)), code -> {
                 code.appendAndNewLine("try {");
                 code.increaseDepth(1);
                 code.appendAndNewLine("return event.getArgument(t" + argIndex + ", " + argIndex + ");");
@@ -93,7 +117,7 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
                 code.appendAndNewLine("throw new IllegalStateException(\"An error occured while trying to get a variable of type \" + t" + argIndex + " + \" from \" + event.key(), e);");
                 code.increaseDepth(-1);
                 code.appendAndNewLine("}");
-            });
+            });*/
 
 
             ClassBuilder builder = builderClasses[argIndex];
@@ -113,11 +137,15 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
         for (int c = 0; c < constructorParameters.length; c++) {
             constructorParameters[c] = new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(c)), "t" + c);
         }
-        builder.withConstructor("public", code -> {
-            for (int arg = 0; arg < constructorParameters.length; arg++) {
-                code.appendAndNewLine("this." + "t" + arg + " = " + "t" + arg + ";");
-            }
-        }, constructorParameters);
+
+        builder.withConstructor(
+            new Constructor()
+                .parameter(constructorParameters)
+                .code(code -> {
+                    for (int arg = 0; arg < constructorParameters.length; arg++) {
+                        code.appendAndNewLine("this." + "t" + arg + " = " + "t" + arg + ";");
+                    }
+                }));
 
         if (argIndex + 1 < builderClasses.length) {
             createBuilderConcatenationMethods(argIndex, builder, builderClasses);
@@ -125,7 +153,22 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
 
         DynamicType typeWithGenerics = createTypeWithGenerics(descriptionClasses[argIndex], argIndex, false);
 
-        builder.withMethod("public", "build", typeWithGenerics, code -> {
+        builder.withMethod(
+            new Method()
+                .name("build")
+                .type(typeWithGenerics)
+                .parameter(new Parameter(DynamicType.of(PlatformEventWrapper.class, false), "event"))
+                .code(code -> {
+                    CodeExpression[] types = new CodeExpression[argIndex + 1];
+                    for (int i1 = 0; i1 < types.length; i1++) {
+                        types[i1] = CodeExpression.create().with("t" + i1);
+                    }
+
+                    code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
+                })
+        );
+
+/*        builder.withMethod("public", "build", typeWithGenerics, code -> {
 
             CodeExpression[] types = new CodeExpression[argIndex + 1];
             for (int i1 = 0; i1 < types.length; i1++) {
@@ -133,7 +176,7 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
             }
 
             code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
-        }, new Parameter(DynamicType.of(PlatformEventWrapper.class, false), "event"));
+        }, new Parameter(DynamicType.of(PlatformEventWrapper.class, false), "event"));*/
     }
 
     private static DynamicType createTypeWithGenerics(ClassBuilder classBuilder, int argIndex, boolean includeNextType) {
@@ -153,7 +196,40 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
 
         DynamicType typeWithGenerics = createTypeWithGenerics(builderClasses[argIndex + 1], argIndex, true);
 
-        builder.withMethod("public", generics, "with", typeWithGenerics, code -> {
+        builder.withMethod(
+            new Method()
+                .name("with")
+                .generic(generics)
+                .type(typeWithGenerics)
+                .parameter(new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)))
+                .code(code -> {
+                    CodeExpression[] types = new CodeExpression[argIndex + 2];
+                    for (int i1 = 0; i1 < types.length; i1++) {
+                        types[i1] = CodeExpression.create().with("t" + i1);
+                    }
+
+                    code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
+                })
+        );
+
+        builder.withMethod(
+            new Method()
+                .name("with")
+                .type(typeWithGenerics)
+                .generic(generics)
+                .parameter(new Parameter(DynamicType.of(Class.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)))
+                .code(code -> {
+                    CodeExpression[] types = new CodeExpression[argIndex + 2];
+                    for (int i1 = 0; i1 < types.length - 1; i1++) {
+                        types[i1] = CodeExpression.create().with("t" + i1);
+                    }
+                    types[types.length - 1] = CodeExpression.create().with("TypeToken.of(" + "t" + (types.length - 1) + ")");
+
+                    code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
+                })
+        );
+
+/*        builder.withMethod("public", generics, "with", typeWithGenerics, code -> {
 
             CodeExpression[] types = new CodeExpression[argIndex + 2];
             for (int i1 = 0; i1 < types.length; i1++) {
@@ -161,9 +237,9 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
             }
 
             code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
-        }, new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)));
+        }, new Parameter(DynamicType.of(TypeToken.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)));*/
 
-        builder.withMethod("public", generics, "with", typeWithGenerics, code -> {
+/*        builder.withMethod("public", generics, "with", typeWithGenerics, code -> {
 
             CodeExpression[] types = new CodeExpression[argIndex + 2];
             for (int i1 = 0; i1 < types.length - 1; i1++) {
@@ -172,7 +248,7 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
             types[types.length - 1] = CodeExpression.create().with("TypeToken.of(" + "t" + (types.length - 1) + ")");
 
             code.append("return ").append(new ConstructorCall(typeWithGenerics, types)).append(";");
-        }, new Parameter(DynamicType.of(Class.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)));
+        }, new Parameter(DynamicType.of(Class.class).withAddedGeneric(genericType(argIndex + 1)), "t" + (argIndex + 1)));*/
     }
 
     private static void createConstructorsAcceptingTypeTokens(int argIndex, ClassBuilder classBuilder) {
@@ -182,32 +258,34 @@ public class EventDescriptionGenerator extends AbstractClassGenerator {
         }
 
 
-
-        classBuilder.withConstructor("public", code -> {
-            if (argIndex > 0) {
-                code.append("super(");
-            }
-
-            for (int arg = 0; arg < constructorParameters.length; arg++) {
-                Parameter parameter = constructorParameters[arg];
-                if (constructorParameters.length > 1) {
-                    if (arg <= constructorParameters.length - 2) {
-                        code.append(parameter.name());
+        classBuilder.withConstructor(
+            new Constructor()
+                .parameter(constructorParameters)
+                .code(code -> {
+                    if (argIndex > 0) {
+                        code.append("super(");
                     }
 
-                    if (arg < constructorParameters.length - 2) {
-                        code.append(", ");
-                    }
+                    for (int arg = 0; arg < constructorParameters.length; arg++) {
+                        Parameter parameter = constructorParameters[arg];
+                        if (constructorParameters.length > 1) {
+                            if (arg <= constructorParameters.length - 2) {
+                                code.append(parameter.name());
+                            }
 
-                    if (arg == constructorParameters.length - 2) {
-                        code.appendAndNewLine(");");
+                            if (arg < constructorParameters.length - 2) {
+                                code.append(", ");
+                            }
+
+                            if (arg == constructorParameters.length - 2) {
+                                code.appendAndNewLine(");");
+                            }
+                        }
+                        if (arg == constructorParameters.length - 1) {
+                            code.append("this." + "t" + arg + " = " + "t" + arg + ";");
+                        }
                     }
-                }
-                if (arg == constructorParameters.length - 1) {
-                    code.append("this." + "t" + arg + " = " + "t" + arg + ";");
-                }
-            }
-        }, constructorParameters);
+                }));
     }
 
     private static @NotNull DynamicType genericType(int argIndex) {

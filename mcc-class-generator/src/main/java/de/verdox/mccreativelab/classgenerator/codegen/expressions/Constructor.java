@@ -2,36 +2,59 @@ package de.verdox.mccreativelab.classgenerator.codegen.expressions;
 
 import de.verdox.mccreativelab.classgenerator.codegen.CodeLineBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
-public record Constructor(String modifier, DynamicType constructorType,
-                          @Nullable Consumer<CodeLineBuilder> content,
-                          Parameter... parameters) implements CodeExpression {
+public class Constructor extends Method {
 
-    @Override
-    public void write(CodeLineBuilder code) {
-        code.increaseDepth(1);
+    public Constructor(){
 
-        code.append(modifier).append(" ").append(constructorType.getClassDescription().getClassName()).append(" (");
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            parameter.write(code);
-            if (i < parameters.length - 1)
-                code.append(", ");
-        }
-        code.append(")");
-        if (content != null) {
-            code.appendAndNewLine("{");
-            code.increaseDepth(1);
-            content.accept(code);
-            code.increaseDepth(-1);
-            code.appendAndNewLine("}");
-        } else
-            code.appendAndNewLine(";");
-        code.increaseDepth(-1);
-        code.appendAndNewLine("");
     }
 
+    @Override
+    public Constructor generic(GenericDeclaration... declarations) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Constructor name(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Constructor type(DynamicType type) {
+        super.type(type);
+        return this;
+    }
+
+    @Override
+    public Constructor modifier(String modifier) {
+        super.modifier(modifier);
+        return this;
+    }
+
+    @Override
+    public Constructor javaDoc(JavaDocExpression javaDoc) {
+        super.javaDoc(javaDoc);
+        return this;
+    }
+
+    @Override
+    public Constructor code(Consumer<CodeLineBuilder> content) {
+        super.code(content);
+        return this;
+    }
+
+    @Override
+    public Constructor parameter(Parameter... parameters) {
+        super.parameter(parameters);
+        return this;
+    }
+
+    @Override
+    protected void writeType(CodeLineBuilder code) {
+        Objects.requireNonNull(type());
+        code.append(type().getClassDescription().getClassName());
+    }
 }
