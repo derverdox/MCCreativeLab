@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.conversion;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -16,19 +17,19 @@ public interface ConversionService {
 
     boolean isApiTypeKnown(Class<?> apiType);
 
-    default <F, T> T wrap(F objectToWrap, TypeToken<T> apiTypeToConvertTo) {
+    default <F, T> T wrap(@Nullable F objectToWrap, TypeToken<T> apiTypeToConvertTo) {
         return (T) wrap(objectToWrap);
     }
 
-    default <F, T> T wrap(F objectToWrap, Class<T> apiTypeToConvertTo) {
+    default <F, T> T wrap(@Nullable F objectToWrap, Class<T> apiTypeToConvertTo) {
         return (T) wrap(objectToWrap);
     }
 
-    default <F, T> F unwrap(T objectToUnwrap, TypeToken<F> nativePlatformType) {
+    default <F, T> F unwrap(@Nullable T objectToUnwrap, TypeToken<F> nativePlatformType) {
         return (F) unwrap(objectToUnwrap);
     }
 
-    default <F, T> F unwrap(T objectToUnwrap, Class<F> nativePlatformType) {
+    default <F, T> F unwrap(@Nullable T objectToUnwrap, Class<F> nativePlatformType) {
         return (F) unwrap(objectToUnwrap);
     }
 

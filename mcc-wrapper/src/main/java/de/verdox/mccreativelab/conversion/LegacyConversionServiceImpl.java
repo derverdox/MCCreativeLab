@@ -49,10 +49,10 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
     public <A, T extends A, F> void registerPlatformType(Class<A> apiType, MCCConverter<F, T> converter) {
         if (apiType.equals(converter.apiImplementationClass()))
             throw new IllegalArgumentException("The provided converter must use an implementation (platform type) of the provided api type " + apiType + ". Else register a direct converter.");
-        if(apiTypesToDirectConverters.containsKey(apiType))
-            throw new IllegalArgumentException("The api type "+apiType+" is already used by a direct converter that converts "+apiType+" <-> "+apiTypesToDirectConverters.get(apiType).nativeMinecraftType());
-        if(nativeTypesToDirectConverters.containsKey(converter.nativeMinecraftType()))
-            throw new IllegalArgumentException("The native type "+converter.nativeMinecraftType()+" is already used by a direct converter that converts "+apiType+" <-> "+nativeTypesToDirectConverters.get(converter.nativeMinecraftType()).nativeMinecraftType());
+        if (apiTypesToDirectConverters.containsKey(apiType))
+            throw new IllegalArgumentException("The api type " + apiType + " is already used by a direct converter that converts " + apiType + " <-> " + apiTypesToDirectConverters.get(apiType).nativeMinecraftType());
+        if (nativeTypesToDirectConverters.containsKey(converter.nativeMinecraftType()))
+            throw new IllegalArgumentException("The native type " + converter.nativeMinecraftType() + " is already used by a direct converter that converts " + apiType + " <-> " + nativeTypesToDirectConverters.get(converter.nativeMinecraftType()).nativeMinecraftType());
 
         ClassPair classPair = new ClassPair(apiType, converter.nativeMinecraftType());
         registeredConverters.put(classPair, converter);
@@ -156,13 +156,13 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
     @Override
     public <A> Class<?> findNativeClassForPlatformType(Class<A> platformType) {
         // This condition is only true if platformType = apiType -> direct converter
-        if(apiTypesToDirectConverters.containsKey(platformType))
+        if (apiTypesToDirectConverters.containsKey(platformType))
             return apiTypesToDirectConverters.get(platformType).nativeMinecraftType();
-        else if(implClassesToNativeClasses.containsKey(platformType))
+        else if (implClassesToNativeClasses.containsKey(platformType))
             return implClassesToNativeClasses.get(platformType);
         else {
             for (Class<?> aClass : apiTypesToDirectConverters.keySet()) {
-                if(aClass.isAssignableFrom(platformType)){
+                if (aClass.isAssignableFrom(platformType)) {
                     apiTypesToDirectConverters.put(platformType, apiTypesToDirectConverters.get(aClass));
                     return apiTypesToDirectConverters.get(aClass).nativeMinecraftType();
                 }
@@ -174,7 +174,7 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
     @Nullable
     @Override
     public <A> Class<?> findAPITypeForNativeClass(Class<A> nativeType) {
-        if(directNativeTypesToApiTypes.containsKey(nativeType))
+        if (directNativeTypesToApiTypes.containsKey(nativeType))
             return directNativeTypesToApiTypes.get(nativeType);
 
         return nativeClassesToApiClasses.getOrDefault(nativeType, null);
@@ -182,11 +182,11 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
 
     @Override
     public <A> Class<?> findAPIClassForImplClass(Class<A> implType) {
-        if(implClassesToApiClasses.containsKey(implType))
+        if (implClassesToApiClasses.containsKey(implType))
             return implClassesToApiClasses.get(implType);
         else {
             for (Class<?> aClass : apiTypesToDirectConverters.keySet()) {
-                if(aClass.isAssignableFrom(implType)){
+                if (aClass.isAssignableFrom(implType)) {
                     implClassesToApiClasses.put(implType, aClass);
                     return aClass;
                 }
@@ -197,7 +197,10 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
 
     @Override
     @NotNull
-    public <F, T> T wrap(F objectToWrap, TypeToken<T> apiTypeToConvertTo) {
+    public <F, T> T wrap(@Nullable F objectToWrap, TypeToken<T> apiTypeToConvertTo) {
+        if (objectToWrap == null) {
+            return null;
+        }
         if (apiTypesToDirectConverters.containsKey(apiTypeToConvertTo.getRawType())) {
             var converter = (MCCConverter<F, T>) apiTypesToDirectConverters.get(apiTypeToConvertTo.getRawType());
             var directResult = converter.wrap(objectToWrap);
@@ -241,7 +244,10 @@ public class LegacyConversionServiceImpl implements LegacyConversionService {
     }
 
     @Override
-    public <F, T> F unwrap(T objectToUnwrap, TypeToken<F> nativeTypeToConvertTo) {
+    public <F, T> F unwrap(@Nullable T objectToUnwrap, TypeToken<F> nativeTypeToConvertTo) {
+        if (objectToUnwrap == null) {
+            return null;
+        }
         if (nativeTypesToDirectConverters.containsKey(nativeTypeToConvertTo.getRawType())) {
             var converter = (MCCConverter<F, T>) nativeTypesToDirectConverters.get(nativeTypeToConvertTo.getRawType());
             var directResult = converter.unwrap(objectToUnwrap);
