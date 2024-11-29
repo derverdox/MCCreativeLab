@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
@@ -8,7 +9,6 @@ import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSSuspiciousStewEffects;
 import java.util.List;
@@ -16,11 +16,11 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.effect.MobEffect;
 
-public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> implements MCCSuspiciousStewEffects  {
+public class NMSSuspiciousStewEffects extends MCCHandle<SuspiciousStewEffects> implements MCCSuspiciousStewEffects  {
 
-	public static final MCCConverter<SuspiciousStewEffects, NMSSuspiciousStewEffects> CONVERTER  = converter(NMSSuspiciousStewEffects.class, SuspiciousStewEffects.class, NMSSuspiciousStewEffects::new, NMSHandle::getHandle);
+	public static final MCCConverter<SuspiciousStewEffects, NMSSuspiciousStewEffects> CONVERTER  = converter(NMSSuspiciousStewEffects.class, SuspiciousStewEffects.class, NMSSuspiciousStewEffects::new, MCCHandle::getHandle);
 
-	public NMSSuspiciousStewEffects (SuspiciousStewEffects handle){
+	public NMSSuspiciousStewEffects(SuspiciousStewEffects handle){
 		super(handle);
 	}
 
@@ -43,11 +43,11 @@ public class NMSSuspiciousStewEffects extends NMSHandle<SuspiciousStewEffects> i
 	}
 
 
-	public static class NMSEntry extends NMSHandle<SuspiciousStewEffects.Entry> implements MCCSuspiciousStewEffects.Entry  {
+	public static class NMSEntry extends MCCHandle<SuspiciousStewEffects.Entry> implements MCCSuspiciousStewEffects.Entry  {
 	
-		public static final MCCConverter<SuspiciousStewEffects.Entry, NMSSuspiciousStewEffects.NMSEntry> CONVERTER  = converter(NMSSuspiciousStewEffects.NMSEntry.class, SuspiciousStewEffects.Entry.class, NMSSuspiciousStewEffects.NMSEntry::new, NMSHandle::getHandle);
+		public static final MCCConverter<SuspiciousStewEffects.Entry, NMSSuspiciousStewEffects.NMSEntry> CONVERTER  = converter(NMSSuspiciousStewEffects.NMSEntry.class, SuspiciousStewEffects.Entry.class, NMSSuspiciousStewEffects.NMSEntry::new, MCCHandle::getHandle);
 
-		public NMSEntry (SuspiciousStewEffects.Entry handle){
+		public NMSEntry(SuspiciousStewEffects.Entry handle){
 			super(handle);
 		}
 	

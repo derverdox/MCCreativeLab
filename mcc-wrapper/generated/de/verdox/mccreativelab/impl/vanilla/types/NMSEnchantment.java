@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.world.item.enchantment.Enchantment;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -12,7 +13,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
@@ -22,11 +22,11 @@ import java.util.Optional;
 import de.verdox.mccreativelab.wrapper.registry.MCCReferenceSet;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
-public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchantment  {
+public class NMSEnchantment extends MCCHandle<Enchantment> implements MCCEnchantment  {
 
-	public static final MCCConverter<Enchantment, NMSEnchantment> CONVERTER  = converter(NMSEnchantment.class, Enchantment.class, NMSEnchantment::new, NMSHandle::getHandle);
+	public static final MCCConverter<Enchantment, NMSEnchantment> CONVERTER  = converter(NMSEnchantment.class, Enchantment.class, NMSEnchantment::new, MCCHandle::getHandle);
 
-	public NMSEnchantment (Enchantment handle){
+	public NMSEnchantment(Enchantment handle){
 		super(handle);
 	}
 
@@ -67,11 +67,11 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	}
 
 
-	public static class NMSEnchantmentDefinition extends NMSHandle<Enchantment.EnchantmentDefinition> implements MCCEnchantment.EnchantmentDefinition  {
+	public static class NMSEnchantmentDefinition extends MCCHandle<Enchantment.EnchantmentDefinition> implements MCCEnchantment.EnchantmentDefinition  {
 	
-		public static final MCCConverter<Enchantment.EnchantmentDefinition, NMSEnchantment.NMSEnchantmentDefinition> CONVERTER  = converter(NMSEnchantment.NMSEnchantmentDefinition.class, Enchantment.EnchantmentDefinition.class, NMSEnchantment.NMSEnchantmentDefinition::new, NMSHandle::getHandle);
+		public static final MCCConverter<Enchantment.EnchantmentDefinition, NMSEnchantment.NMSEnchantmentDefinition> CONVERTER  = converter(NMSEnchantment.NMSEnchantmentDefinition.class, Enchantment.EnchantmentDefinition.class, NMSEnchantment.NMSEnchantmentDefinition::new, MCCHandle::getHandle);
 
-		public NMSEnchantmentDefinition (Enchantment.EnchantmentDefinition handle){
+		public NMSEnchantmentDefinition(Enchantment.EnchantmentDefinition handle){
 			super(handle);
 		}
 	
@@ -149,11 +149,11 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	
 	}
 
-	public static class NMSCost extends NMSHandle<Enchantment.Cost> implements MCCEnchantment.Cost  {
+	public static class NMSCost extends MCCHandle<Enchantment.Cost> implements MCCEnchantment.Cost  {
 	
-		public static final MCCConverter<Enchantment.Cost, NMSEnchantment.NMSCost> CONVERTER  = converter(NMSEnchantment.NMSCost.class, Enchantment.Cost.class, NMSEnchantment.NMSCost::new, NMSHandle::getHandle);
+		public static final MCCConverter<Enchantment.Cost, NMSEnchantment.NMSCost> CONVERTER  = converter(NMSEnchantment.NMSCost.class, Enchantment.Cost.class, NMSEnchantment.NMSCost::new, MCCHandle::getHandle);
 
-		public NMSCost (Enchantment.Cost handle){
+		public NMSCost(Enchantment.Cost handle){
 			super(handle);
 		}
 	
@@ -177,11 +177,11 @@ public class NMSEnchantment extends NMSHandle<Enchantment> implements MCCEnchant
 	
 	}
 
-	public static class NMSBuilder extends NMSHandle<Enchantment.Builder> implements MCCEnchantment.Builder  {
+	public static class NMSBuilder extends MCCHandle<Enchantment.Builder> implements MCCEnchantment.Builder  {
 	
-		public static final MCCConverter<Enchantment.Builder, NMSEnchantment.NMSBuilder> CONVERTER  = converter(NMSEnchantment.NMSBuilder.class, Enchantment.Builder.class, NMSEnchantment.NMSBuilder::new, NMSHandle::getHandle);
+		public static final MCCConverter<Enchantment.Builder, NMSEnchantment.NMSBuilder> CONVERTER  = converter(NMSEnchantment.NMSBuilder.class, Enchantment.Builder.class, NMSEnchantment.NMSBuilder::new, MCCHandle::getHandle);
 
-		public NMSBuilder (Enchantment.Builder handle){
+		public NMSBuilder(Enchantment.Builder handle){
 			super(handle);
 		}
 	

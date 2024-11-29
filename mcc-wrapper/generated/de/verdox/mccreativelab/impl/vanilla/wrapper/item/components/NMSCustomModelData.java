@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -12,11 +12,11 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSCustomModelData;
 import java.util.ArrayList;
 
-public class NMSCustomModelData extends NMSHandle<CustomModelData> implements MCCCustomModelData  {
+public class NMSCustomModelData extends MCCHandle<CustomModelData> implements MCCCustomModelData  {
 
-	public static final MCCConverter<CustomModelData, NMSCustomModelData> CONVERTER  = converter(NMSCustomModelData.class, CustomModelData.class, NMSCustomModelData::new, NMSHandle::getHandle);
+	public static final MCCConverter<CustomModelData, NMSCustomModelData> CONVERTER  = converter(NMSCustomModelData.class, CustomModelData.class, NMSCustomModelData::new, MCCHandle::getHandle);
 
-	public NMSCustomModelData (CustomModelData handle){
+	public NMSCustomModelData(CustomModelData handle){
 		super(handle);
 	}
 

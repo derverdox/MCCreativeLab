@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
+import java.util.List;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import java.util.Optional;

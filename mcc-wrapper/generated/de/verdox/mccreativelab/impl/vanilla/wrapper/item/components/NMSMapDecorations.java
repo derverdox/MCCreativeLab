@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -7,7 +8,6 @@ import java.util.Set;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSMapDecorations;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -17,11 +17,11 @@ import java.lang.String;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations;
 import net.minecraft.world.item.component.MapDecorations;
 
-public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCMapDecorations  {
+public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCMapDecorations  {
 
-	public static final MCCConverter<MapDecorations, NMSMapDecorations> CONVERTER  = converter(NMSMapDecorations.class, MapDecorations.class, NMSMapDecorations::new, NMSHandle::getHandle);
+	public static final MCCConverter<MapDecorations, NMSMapDecorations> CONVERTER  = converter(NMSMapDecorations.class, MapDecorations.class, NMSMapDecorations::new, MCCHandle::getHandle);
 
-	public NMSMapDecorations (MapDecorations handle){
+	public NMSMapDecorations(MapDecorations handle){
 		super(handle);
 	}
 
@@ -44,11 +44,11 @@ public class NMSMapDecorations extends NMSHandle<MapDecorations> implements MCCM
 	}
 
 
-	public static class NMSEntry extends NMSHandle<MapDecorations.Entry> implements MCCMapDecorations.Entry  {
+	public static class NMSEntry extends MCCHandle<MapDecorations.Entry> implements MCCMapDecorations.Entry  {
 	
-		public static final MCCConverter<MapDecorations.Entry, NMSMapDecorations.NMSEntry> CONVERTER  = converter(NMSMapDecorations.NMSEntry.class, MapDecorations.Entry.class, NMSMapDecorations.NMSEntry::new, NMSHandle::getHandle);
+		public static final MCCConverter<MapDecorations.Entry, NMSMapDecorations.NMSEntry> CONVERTER  = converter(NMSMapDecorations.NMSEntry.class, MapDecorations.Entry.class, NMSMapDecorations.NMSEntry::new, MCCHandle::getHandle);
 
-		public NMSEntry (MapDecorations.Entry handle){
+		public NMSEntry(MapDecorations.Entry handle){
 			super(handle);
 		}
 	

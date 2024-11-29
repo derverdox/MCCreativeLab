@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.resources.ResourceLocation;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.Item;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSTrimPattern;
 import java.util.List;
@@ -19,11 +19,11 @@ import net.minecraft.world.item.armortrim.TrimPattern;
 import net.kyori.adventure.key.Key;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
-public class NMSTrimPattern extends NMSHandle<TrimPattern> implements MCCTrimPattern  {
+public class NMSTrimPattern extends MCCHandle<TrimPattern> implements MCCTrimPattern  {
 
-	public static final MCCConverter<TrimPattern, NMSTrimPattern> CONVERTER  = converter(NMSTrimPattern.class, TrimPattern.class, NMSTrimPattern::new, NMSHandle::getHandle);
+	public static final MCCConverter<TrimPattern, NMSTrimPattern> CONVERTER  = converter(NMSTrimPattern.class, TrimPattern.class, NMSTrimPattern::new, MCCHandle::getHandle);
 
-	public NMSTrimPattern (TrimPattern handle){
+	public NMSTrimPattern(TrimPattern handle){
 		super(handle);
 	}
 

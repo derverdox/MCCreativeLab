@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import it.unimi.dsi.fastutil.ints.IntList;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSFireworkExplosion;
@@ -13,11 +13,11 @@ import com.google.common.reflect.TypeToken;
 import net.minecraft.world.item.component.FireworkExplosion;
 import java.util.ArrayList;
 
-public class NMSFireworkExplosion extends NMSHandle<FireworkExplosion> implements MCCFireworkExplosion  {
+public class NMSFireworkExplosion extends MCCHandle<FireworkExplosion> implements MCCFireworkExplosion  {
 
-	public static final MCCConverter<FireworkExplosion, NMSFireworkExplosion> CONVERTER  = converter(NMSFireworkExplosion.class, FireworkExplosion.class, NMSFireworkExplosion::new, NMSHandle::getHandle);
+	public static final MCCConverter<FireworkExplosion, NMSFireworkExplosion> CONVERTER  = converter(NMSFireworkExplosion.class, FireworkExplosion.class, NMSFireworkExplosion::new, MCCHandle::getHandle);
 
-	public NMSFireworkExplosion (FireworkExplosion handle){
+	public NMSFireworkExplosion(FireworkExplosion handle){
 		super(handle);
 	}
 

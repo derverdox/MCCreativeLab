@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
@@ -7,19 +8,18 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.resources.ResourceKey;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSSeededContainerLoot;
 import java.util.List;
-import de.verdox.mccreativelab.wrapper.item.components.MCCSeededContainerLoot;
 import net.minecraft.world.item.component.SeededContainerLoot;
+import de.verdox.mccreativelab.wrapper.item.components.MCCSeededContainerLoot;
 import net.minecraft.world.level.storage.loot.LootTable;
 
-public class NMSSeededContainerLoot extends NMSHandle<SeededContainerLoot> implements MCCSeededContainerLoot  {
+public class NMSSeededContainerLoot extends MCCHandle<SeededContainerLoot> implements MCCSeededContainerLoot  {
 
-	public static final MCCConverter<SeededContainerLoot, NMSSeededContainerLoot> CONVERTER  = converter(NMSSeededContainerLoot.class, SeededContainerLoot.class, NMSSeededContainerLoot::new, NMSHandle::getHandle);
+	public static final MCCConverter<SeededContainerLoot, NMSSeededContainerLoot> CONVERTER  = converter(NMSSeededContainerLoot.class, SeededContainerLoot.class, NMSSeededContainerLoot::new, MCCHandle::getHandle);
 
-	public NMSSeededContainerLoot (SeededContainerLoot handle){
+	public NMSSeededContainerLoot(SeededContainerLoot handle){
 		super(handle);
 	}
 

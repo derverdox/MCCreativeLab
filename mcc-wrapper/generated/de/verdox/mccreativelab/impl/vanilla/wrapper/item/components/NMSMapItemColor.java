@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import net.minecraft.world.item.component.MapItemColor;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -12,11 +12,11 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapItemColor;
 import java.util.ArrayList;
 
-public class NMSMapItemColor extends NMSHandle<MapItemColor> implements MCCMapItemColor  {
+public class NMSMapItemColor extends MCCHandle<MapItemColor> implements MCCMapItemColor  {
 
-	public static final MCCConverter<MapItemColor, NMSMapItemColor> CONVERTER  = converter(NMSMapItemColor.class, MapItemColor.class, NMSMapItemColor::new, NMSHandle::getHandle);
+	public static final MCCConverter<MapItemColor, NMSMapItemColor> CONVERTER  = converter(NMSMapItemColor.class, MapItemColor.class, NMSMapItemColor::new, MCCHandle::getHandle);
 
-	public NMSMapItemColor (MapItemColor handle){
+	public NMSMapItemColor(MapItemColor handle){
 		super(handle);
 	}
 

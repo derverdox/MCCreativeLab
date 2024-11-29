@@ -1,24 +1,24 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.resources.ResourceLocation;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
 import de.verdox.mccreativelab.wrapper.types.MCCPaintingVariant;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSPaintingVariant;
 import net.kyori.adventure.key.Key;
 
-public class NMSPaintingVariant extends NMSHandle<PaintingVariant> implements MCCPaintingVariant  {
+public class NMSPaintingVariant extends MCCHandle<PaintingVariant> implements MCCPaintingVariant  {
 
-	public static final MCCConverter<PaintingVariant, NMSPaintingVariant> CONVERTER  = converter(NMSPaintingVariant.class, PaintingVariant.class, NMSPaintingVariant::new, NMSHandle::getHandle);
+	public static final MCCConverter<PaintingVariant, NMSPaintingVariant> CONVERTER  = converter(NMSPaintingVariant.class, PaintingVariant.class, NMSPaintingVariant::new, MCCHandle::getHandle);
 
-	public NMSPaintingVariant (PaintingVariant handle){
+	public NMSPaintingVariant(PaintingVariant handle){
 		super(handle);
 	}
 

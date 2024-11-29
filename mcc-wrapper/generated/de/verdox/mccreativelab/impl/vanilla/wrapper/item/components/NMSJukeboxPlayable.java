@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCJukeboxPlayable;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.minecraft.world.item.JukeboxSong;
@@ -8,18 +9,17 @@ import java.util.Set;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSJukeboxPlayable;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.world.item.EitherHolder;
 import de.verdox.mccreativelab.wrapper.registry.MCCEitherReference;
 import net.minecraft.world.item.JukeboxPlayable;
 
-public class NMSJukeboxPlayable extends NMSHandle<JukeboxPlayable> implements MCCJukeboxPlayable  {
+public class NMSJukeboxPlayable extends MCCHandle<JukeboxPlayable> implements MCCJukeboxPlayable  {
 
-	public static final MCCConverter<JukeboxPlayable, NMSJukeboxPlayable> CONVERTER  = converter(NMSJukeboxPlayable.class, JukeboxPlayable.class, NMSJukeboxPlayable::new, NMSHandle::getHandle);
+	public static final MCCConverter<JukeboxPlayable, NMSJukeboxPlayable> CONVERTER  = converter(NMSJukeboxPlayable.class, JukeboxPlayable.class, NMSJukeboxPlayable::new, MCCHandle::getHandle);
 
-	public NMSJukeboxPlayable (JukeboxPlayable handle){
+	public NMSJukeboxPlayable(JukeboxPlayable handle){
 		super(handle);
 	}
 

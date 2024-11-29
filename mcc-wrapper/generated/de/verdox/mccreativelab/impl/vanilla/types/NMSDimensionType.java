@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.resources.ResourceLocation;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.registry.MCCTag;
@@ -8,7 +9,6 @@ import java.util.Set;
 import net.minecraft.world.level.dimension.DimensionType;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import net.minecraft.tags.TagKey;
 import java.util.OptionalLong;
@@ -20,11 +20,11 @@ import de.verdox.mccreativelab.wrapper.types.MCCDimensionType;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSDimensionType;
 import net.kyori.adventure.key.Key;
 
-public class NMSDimensionType extends NMSHandle<DimensionType> implements MCCDimensionType  {
+public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDimensionType  {
 
-	public static final MCCConverter<DimensionType, NMSDimensionType> CONVERTER  = converter(NMSDimensionType.class, DimensionType.class, NMSDimensionType::new, NMSHandle::getHandle);
+	public static final MCCConverter<DimensionType, NMSDimensionType> CONVERTER  = converter(NMSDimensionType.class, DimensionType.class, NMSDimensionType::new, MCCHandle::getHandle);
 
-	public NMSDimensionType (DimensionType handle){
+	public NMSDimensionType(DimensionType handle){
 		super(handle);
 	}
 
@@ -164,11 +164,11 @@ public class NMSDimensionType extends NMSHandle<DimensionType> implements MCCDim
 	}
 
 
-	public static class NMSMonsterSettings extends NMSHandle<DimensionType.MonsterSettings> implements MCCDimensionType.MonsterSettings  {
+	public static class NMSMonsterSettings extends MCCHandle<DimensionType.MonsterSettings> implements MCCDimensionType.MonsterSettings  {
 	
-		public static final MCCConverter<DimensionType.MonsterSettings, NMSDimensionType.NMSMonsterSettings> CONVERTER  = converter(NMSDimensionType.NMSMonsterSettings.class, DimensionType.MonsterSettings.class, NMSDimensionType.NMSMonsterSettings::new, NMSHandle::getHandle);
+		public static final MCCConverter<DimensionType.MonsterSettings, NMSDimensionType.NMSMonsterSettings> CONVERTER  = converter(NMSDimensionType.NMSMonsterSettings.class, DimensionType.MonsterSettings.class, NMSDimensionType.NMSMonsterSettings::new, MCCHandle::getHandle);
 
-		public NMSMonsterSettings (DimensionType.MonsterSettings handle){
+		public NMSMonsterSettings(DimensionType.MonsterSettings handle){
 			super(handle);
 		}
 	

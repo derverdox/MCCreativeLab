@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.lang.Float;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -8,7 +9,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCTool;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import net.minecraft.world.item.component.Tool;
 import java.util.List;
@@ -19,11 +19,11 @@ import de.verdox.mccreativelab.wrapper.registry.MCCReferenceSet;
 import net.minecraft.world.level.block.Block;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSTool;
 
-public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
+public class NMSTool extends MCCHandle<Tool> implements MCCTool  {
 
-	public static final MCCConverter<Tool, NMSTool> CONVERTER  = converter(NMSTool.class, Tool.class, NMSTool::new, NMSHandle::getHandle);
+	public static final MCCConverter<Tool, NMSTool> CONVERTER  = converter(NMSTool.class, Tool.class, NMSTool::new, MCCHandle::getHandle);
 
-	public NMSTool (Tool handle){
+	public NMSTool(Tool handle){
 		super(handle);
 	}
 
@@ -80,11 +80,11 @@ public class NMSTool extends NMSHandle<Tool> implements MCCTool  {
 	}
 
 
-	public static class NMSRule extends NMSHandle<Tool.Rule> implements MCCTool.Rule  {
+	public static class NMSRule extends MCCHandle<Tool.Rule> implements MCCTool.Rule  {
 	
-		public static final MCCConverter<Tool.Rule, NMSTool.NMSRule> CONVERTER  = converter(NMSTool.NMSRule.class, Tool.Rule.class, NMSTool.NMSRule::new, NMSHandle::getHandle);
+		public static final MCCConverter<Tool.Rule, NMSTool.NMSRule> CONVERTER  = converter(NMSTool.NMSRule.class, Tool.Rule.class, NMSTool.NMSRule::new, MCCHandle::getHandle);
 
-		public NMSRule (Tool.Rule handle){
+		public NMSRule(Tool.Rule handle){
 			super(handle);
 		}
 	

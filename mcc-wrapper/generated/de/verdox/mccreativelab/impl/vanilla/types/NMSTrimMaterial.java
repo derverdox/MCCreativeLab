@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSTrimMaterial;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
@@ -9,7 +10,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -21,11 +21,11 @@ import de.verdox.mccreativelab.wrapper.types.MCCArmorMaterial;
 import java.lang.String;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
-public class NMSTrimMaterial extends NMSHandle<TrimMaterial> implements MCCTrimMaterial  {
+public class NMSTrimMaterial extends MCCHandle<TrimMaterial> implements MCCTrimMaterial  {
 
-	public static final MCCConverter<TrimMaterial, NMSTrimMaterial> CONVERTER  = converter(NMSTrimMaterial.class, TrimMaterial.class, NMSTrimMaterial::new, NMSHandle::getHandle);
+	public static final MCCConverter<TrimMaterial, NMSTrimMaterial> CONVERTER  = converter(NMSTrimMaterial.class, TrimMaterial.class, NMSTrimMaterial::new, MCCHandle::getHandle);
 
-	public NMSTrimMaterial (TrimMaterial handle){
+	public NMSTrimMaterial(TrimMaterial handle){
 		super(handle);
 	}
 

@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSGameEvent;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -7,12 +8,11 @@ import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import net.minecraft.world.level.block.state.BlockState;
-import de.verdox.mccreativelab.wrapper.types.MCCGameEvent;
 import net.minecraft.world.level.gameevent.GameEvent;
+import de.verdox.mccreativelab.wrapper.types.MCCGameEvent;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -21,11 +21,11 @@ import net.minecraft.world.phys.Vec3;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import net.minecraft.world.level.gameevent.GameEventListener;
 
-public class NMSGameEvent extends NMSHandle<GameEvent> implements MCCGameEvent  {
+public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  {
 
-	public static final MCCConverter<GameEvent, NMSGameEvent> CONVERTER  = converter(NMSGameEvent.class, GameEvent.class, NMSGameEvent::new, NMSHandle::getHandle);
+	public static final MCCConverter<GameEvent, NMSGameEvent> CONVERTER  = converter(NMSGameEvent.class, GameEvent.class, NMSGameEvent::new, MCCHandle::getHandle);
 
-	public NMSGameEvent (GameEvent handle){
+	public NMSGameEvent(GameEvent handle){
 		super(handle);
 	}
 
@@ -39,11 +39,11 @@ public class NMSGameEvent extends NMSHandle<GameEvent> implements MCCGameEvent  
 	}
 
 
-	public static class NMSListenerInfo extends NMSHandle<GameEvent.ListenerInfo> implements MCCGameEvent.ListenerInfo  {
+	public static class NMSListenerInfo extends MCCHandle<GameEvent.ListenerInfo> implements MCCGameEvent.ListenerInfo  {
 	
-		public static final MCCConverter<GameEvent.ListenerInfo, NMSGameEvent.NMSListenerInfo> CONVERTER  = converter(NMSGameEvent.NMSListenerInfo.class, GameEvent.ListenerInfo.class, NMSGameEvent.NMSListenerInfo::new, NMSHandle::getHandle);
+		public static final MCCConverter<GameEvent.ListenerInfo, NMSGameEvent.NMSListenerInfo> CONVERTER  = converter(NMSGameEvent.NMSListenerInfo.class, GameEvent.ListenerInfo.class, NMSGameEvent.NMSListenerInfo::new, MCCHandle::getHandle);
 
-		public NMSListenerInfo (GameEvent.ListenerInfo handle){
+		public NMSListenerInfo(GameEvent.ListenerInfo handle){
 			super(handle);
 		}
 	
@@ -129,11 +129,11 @@ public class NMSGameEvent extends NMSHandle<GameEvent> implements MCCGameEvent  
 	
 	}
 
-	public static class NMSContext extends NMSHandle<GameEvent.Context> implements MCCGameEvent.Context  {
+	public static class NMSContext extends MCCHandle<GameEvent.Context> implements MCCGameEvent.Context  {
 	
-		public static final MCCConverter<GameEvent.Context, NMSGameEvent.NMSContext> CONVERTER  = converter(NMSGameEvent.NMSContext.class, GameEvent.Context.class, NMSGameEvent.NMSContext::new, NMSHandle::getHandle);
+		public static final MCCConverter<GameEvent.Context, NMSGameEvent.NMSContext> CONVERTER  = converter(NMSGameEvent.NMSContext.class, GameEvent.Context.class, NMSGameEvent.NMSContext::new, MCCHandle::getHandle);
 
-		public NMSContext (GameEvent.Context handle){
+		public NMSContext(GameEvent.Context handle){
 			super(handle);
 		}
 	

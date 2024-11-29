@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCResolvableProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -10,7 +11,6 @@ import com.google.common.reflect.TypeToken;
 import java.util.UUID;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSResolvableProfile;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import com.mojang.authlib.properties.PropertyMap;
@@ -18,11 +18,11 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import java.util.Optional;
 import java.lang.String;
 
-public class NMSResolvableProfile extends NMSHandle<ResolvableProfile> implements MCCResolvableProfile  {
+public class NMSResolvableProfile extends MCCHandle<ResolvableProfile> implements MCCResolvableProfile  {
 
-	public static final MCCConverter<ResolvableProfile, NMSResolvableProfile> CONVERTER  = converter(NMSResolvableProfile.class, ResolvableProfile.class, NMSResolvableProfile::new, NMSHandle::getHandle);
+	public static final MCCConverter<ResolvableProfile, NMSResolvableProfile> CONVERTER  = converter(NMSResolvableProfile.class, ResolvableProfile.class, NMSResolvableProfile::new, MCCHandle::getHandle);
 
-	public NMSResolvableProfile (ResolvableProfile handle){
+	public NMSResolvableProfile(ResolvableProfile handle){
 		super(handle);
 	}
 

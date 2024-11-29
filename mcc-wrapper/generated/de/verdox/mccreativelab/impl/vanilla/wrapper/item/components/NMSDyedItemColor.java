@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
 import de.verdox.mccreativelab.wrapper.item.components.MCCDyedItemColor;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSDyedItemColor;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -12,11 +12,11 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
 
-public class NMSDyedItemColor extends NMSHandle<DyedItemColor> implements MCCDyedItemColor  {
+public class NMSDyedItemColor extends MCCHandle<DyedItemColor> implements MCCDyedItemColor  {
 
-	public static final MCCConverter<DyedItemColor, NMSDyedItemColor> CONVERTER  = converter(NMSDyedItemColor.class, DyedItemColor.class, NMSDyedItemColor::new, NMSHandle::getHandle);
+	public static final MCCConverter<DyedItemColor, NMSDyedItemColor> CONVERTER  = converter(NMSDyedItemColor.class, DyedItemColor.class, NMSDyedItemColor::new, MCCHandle::getHandle);
 
-	public NMSDyedItemColor (DyedItemColor handle){
+	public NMSDyedItemColor(DyedItemColor handle){
 		super(handle);
 	}
 

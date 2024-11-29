@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
+import java.util.List;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 

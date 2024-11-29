@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.item.component.ItemLore;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -7,17 +8,16 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSItemLore;
 
-public class NMSItemLore extends NMSHandle<ItemLore> implements MCCItemLore  {
+public class NMSItemLore extends MCCHandle<ItemLore> implements MCCItemLore  {
 
-	public static final MCCConverter<ItemLore, NMSItemLore> CONVERTER  = converter(NMSItemLore.class, ItemLore.class, NMSItemLore::new, NMSHandle::getHandle);
+	public static final MCCConverter<ItemLore, NMSItemLore> CONVERTER  = converter(NMSItemLore.class, ItemLore.class, NMSItemLore::new, MCCHandle::getHandle);
 
-	public NMSItemLore (ItemLore handle){
+	public NMSItemLore(ItemLore handle){
 		super(handle);
 	}
 

@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLockCode;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -13,11 +13,11 @@ import com.google.common.reflect.TypeToken;
 import java.lang.String;
 import java.util.ArrayList;
 
-public class NMSLockCode extends NMSHandle<LockCode> implements MCCLockCode  {
+public class NMSLockCode extends MCCHandle<LockCode> implements MCCLockCode  {
 
-	public static final MCCConverter<LockCode, NMSLockCode> CONVERTER  = converter(NMSLockCode.class, LockCode.class, NMSLockCode::new, NMSHandle::getHandle);
+	public static final MCCConverter<LockCode, NMSLockCode> CONVERTER  = converter(NMSLockCode.class, LockCode.class, NMSLockCode::new, MCCHandle::getHandle);
 
-	public NMSLockCode (LockCode handle){
+	public NMSLockCode(LockCode handle){
 		super(handle);
 	}
 

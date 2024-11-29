@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
@@ -11,7 +12,6 @@ import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSItemAttri
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -20,11 +20,11 @@ import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers> implements MCCItemAttributeModifiers  {
+public class NMSItemAttributeModifiers extends MCCHandle<ItemAttributeModifiers> implements MCCItemAttributeModifiers  {
 
-	public static final MCCConverter<ItemAttributeModifiers, NMSItemAttributeModifiers> CONVERTER  = converter(NMSItemAttributeModifiers.class, ItemAttributeModifiers.class, NMSItemAttributeModifiers::new, NMSHandle::getHandle);
+	public static final MCCConverter<ItemAttributeModifiers, NMSItemAttributeModifiers> CONVERTER  = converter(NMSItemAttributeModifiers.class, ItemAttributeModifiers.class, NMSItemAttributeModifiers::new, MCCHandle::getHandle);
 
-	public NMSItemAttributeModifiers (ItemAttributeModifiers handle){
+	public NMSItemAttributeModifiers(ItemAttributeModifiers handle){
 		super(handle);
 	}
 
@@ -67,21 +67,21 @@ public class NMSItemAttributeModifiers extends NMSHandle<ItemAttributeModifiers>
 	}
 
 
-	public static class NMSBuilder extends NMSHandle<ItemAttributeModifiers.Builder> implements MCCItemAttributeModifiers.Builder  {
+	public static class NMSBuilder extends MCCHandle<ItemAttributeModifiers.Builder> implements MCCItemAttributeModifiers.Builder  {
 	
-		public static final MCCConverter<ItemAttributeModifiers.Builder, NMSItemAttributeModifiers.NMSBuilder> CONVERTER  = converter(NMSItemAttributeModifiers.NMSBuilder.class, ItemAttributeModifiers.Builder.class, NMSItemAttributeModifiers.NMSBuilder::new, NMSHandle::getHandle);
+		public static final MCCConverter<ItemAttributeModifiers.Builder, NMSItemAttributeModifiers.NMSBuilder> CONVERTER  = converter(NMSItemAttributeModifiers.NMSBuilder.class, ItemAttributeModifiers.Builder.class, NMSItemAttributeModifiers.NMSBuilder::new, MCCHandle::getHandle);
 
-		public NMSBuilder (ItemAttributeModifiers.Builder handle){
+		public NMSBuilder(ItemAttributeModifiers.Builder handle){
 			super(handle);
 		}
 	
 	}
 
-	public static class NMSEntry extends NMSHandle<ItemAttributeModifiers.Entry> implements MCCItemAttributeModifiers.Entry  {
+	public static class NMSEntry extends MCCHandle<ItemAttributeModifiers.Entry> implements MCCItemAttributeModifiers.Entry  {
 	
-		public static final MCCConverter<ItemAttributeModifiers.Entry, NMSItemAttributeModifiers.NMSEntry> CONVERTER  = converter(NMSItemAttributeModifiers.NMSEntry.class, ItemAttributeModifiers.Entry.class, NMSItemAttributeModifiers.NMSEntry::new, NMSHandle::getHandle);
+		public static final MCCConverter<ItemAttributeModifiers.Entry, NMSItemAttributeModifiers.NMSEntry> CONVERTER  = converter(NMSItemAttributeModifiers.NMSEntry.class, ItemAttributeModifiers.Entry.class, NMSItemAttributeModifiers.NMSEntry::new, MCCHandle::getHandle);
 
-		public NMSEntry (ItemAttributeModifiers.Entry handle){
+		public NMSEntry(ItemAttributeModifiers.Entry handle){
 			super(handle);
 		}
 	

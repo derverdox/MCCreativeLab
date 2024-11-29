@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.item.alchemy.PotionContents;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -13,17 +14,16 @@ import com.google.common.reflect.TypeToken;
 import java.lang.Integer;
 import net.minecraft.world.item.alchemy.Potion;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import java.util.Optional;
 
-public class NMSPotionContents extends NMSHandle<PotionContents> implements MCCPotionContents  {
+public class NMSPotionContents extends MCCHandle<PotionContents> implements MCCPotionContents  {
 
-	public static final MCCConverter<PotionContents, NMSPotionContents> CONVERTER  = converter(NMSPotionContents.class, PotionContents.class, NMSPotionContents::new, NMSHandle::getHandle);
+	public static final MCCConverter<PotionContents, NMSPotionContents> CONVERTER  = converter(NMSPotionContents.class, PotionContents.class, NMSPotionContents::new, MCCHandle::getHandle);
 
-	public NMSPotionContents (PotionContents handle){
+	public NMSPotionContents(PotionContents handle){
 		super(handle);
 	}
 

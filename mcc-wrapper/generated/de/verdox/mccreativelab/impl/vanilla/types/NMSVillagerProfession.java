@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import de.verdox.mccreativelab.wrapper.types.MCCPoiType;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.types.MCCVillagerProfession;
 import com.google.common.collect.ImmutableSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -12,7 +13,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -25,11 +25,11 @@ import java.lang.String;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSVillagerProfession;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
-public class NMSVillagerProfession extends NMSHandle<VillagerProfession> implements MCCVillagerProfession  {
+public class NMSVillagerProfession extends MCCHandle<VillagerProfession> implements MCCVillagerProfession  {
 
-	public static final MCCConverter<VillagerProfession, NMSVillagerProfession> CONVERTER  = converter(NMSVillagerProfession.class, VillagerProfession.class, NMSVillagerProfession::new, NMSHandle::getHandle);
+	public static final MCCConverter<VillagerProfession, NMSVillagerProfession> CONVERTER  = converter(NMSVillagerProfession.class, VillagerProfession.class, NMSVillagerProfession::new, MCCHandle::getHandle);
 
-	public NMSVillagerProfession (VillagerProfession handle){
+	public NMSVillagerProfession(VillagerProfession handle){
 		super(handle);
 	}
 

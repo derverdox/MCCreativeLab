@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.food.FoodProperties;
 import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
@@ -11,17 +12,16 @@ import java.util.Set;
 import net.minecraft.world.effect.MobEffectInstance;
 import com.google.common.reflect.TypeToken;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
 
-public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCFoodProperties  {
+public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCFoodProperties  {
 
-	public static final MCCConverter<FoodProperties, NMSFoodProperties> CONVERTER  = converter(NMSFoodProperties.class, FoodProperties.class, NMSFoodProperties::new, NMSHandle::getHandle);
+	public static final MCCConverter<FoodProperties, NMSFoodProperties> CONVERTER  = converter(NMSFoodProperties.class, FoodProperties.class, NMSFoodProperties::new, MCCHandle::getHandle);
 
-	public NMSFoodProperties (FoodProperties handle){
+	public NMSFoodProperties(FoodProperties handle){
 		super(handle);
 	}
 
@@ -148,11 +148,11 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 	}
 
 
-	public static class NMSPossibleEffect extends NMSHandle<FoodProperties.PossibleEffect> implements MCCFoodProperties.PossibleEffect  {
+	public static class NMSPossibleEffect extends MCCHandle<FoodProperties.PossibleEffect> implements MCCFoodProperties.PossibleEffect  {
 	
-		public static final MCCConverter<FoodProperties.PossibleEffect, NMSFoodProperties.NMSPossibleEffect> CONVERTER  = converter(NMSFoodProperties.NMSPossibleEffect.class, FoodProperties.PossibleEffect.class, NMSFoodProperties.NMSPossibleEffect::new, NMSHandle::getHandle);
+		public static final MCCConverter<FoodProperties.PossibleEffect, NMSFoodProperties.NMSPossibleEffect> CONVERTER  = converter(NMSFoodProperties.NMSPossibleEffect.class, FoodProperties.PossibleEffect.class, NMSFoodProperties.NMSPossibleEffect::new, MCCHandle::getHandle);
 
-		public NMSPossibleEffect (FoodProperties.PossibleEffect handle){
+		public NMSPossibleEffect(FoodProperties.PossibleEffect handle){
 			super(handle);
 		}
 	
@@ -188,11 +188,11 @@ public class NMSFoodProperties extends NMSHandle<FoodProperties> implements MCCF
 	
 	}
 
-	public static class NMSBuilder extends NMSHandle<FoodProperties.Builder> implements MCCFoodProperties.Builder  {
+	public static class NMSBuilder extends MCCHandle<FoodProperties.Builder> implements MCCFoodProperties.Builder  {
 	
-		public static final MCCConverter<FoodProperties.Builder, NMSFoodProperties.NMSBuilder> CONVERTER  = converter(NMSFoodProperties.NMSBuilder.class, FoodProperties.Builder.class, NMSFoodProperties.NMSBuilder::new, NMSHandle::getHandle);
+		public static final MCCConverter<FoodProperties.Builder, NMSFoodProperties.NMSBuilder> CONVERTER  = converter(NMSFoodProperties.NMSBuilder.class, FoodProperties.Builder.class, NMSFoodProperties.NMSBuilder::new, MCCHandle::getHandle);
 
-		public NMSBuilder (FoodProperties.Builder handle){
+		public NMSBuilder(FoodProperties.Builder handle){
 			super(handle);
 		}
 	

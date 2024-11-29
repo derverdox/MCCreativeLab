@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCArmorTrim;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
@@ -10,18 +11,17 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import java.lang.reflect.Field;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSArmorTrim;
 import java.util.ArrayList;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.armortrim.TrimPattern;
 
-public class NMSArmorTrim extends NMSHandle<ArmorTrim> implements MCCArmorTrim  {
+public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  {
 
-	public static final MCCConverter<ArmorTrim, NMSArmorTrim> CONVERTER  = converter(NMSArmorTrim.class, ArmorTrim.class, NMSArmorTrim::new, NMSHandle::getHandle);
+	public static final MCCConverter<ArmorTrim, NMSArmorTrim> CONVERTER  = converter(NMSArmorTrim.class, ArmorTrim.class, NMSArmorTrim::new, MCCHandle::getHandle);
 
-	public NMSArmorTrim (ArmorTrim handle){
+	public NMSArmorTrim(ArmorTrim handle){
 		super(handle);
 	}
 

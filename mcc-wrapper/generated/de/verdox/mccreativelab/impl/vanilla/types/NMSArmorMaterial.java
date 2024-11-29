@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.resources.ResourceLocation;
+import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -12,7 +13,6 @@ import java.util.function.Supplier;
 import java.util.ArrayList;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.crafting.Ingredient;
-import de.verdox.mccreativelab.impl.vanilla.platform.NMSHandle;
 import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSArmorMaterial;
 import java.util.List;
@@ -25,11 +25,11 @@ import de.verdox.mccreativelab.wrapper.types.MCCArmorMaterial;
 import java.lang.String;
 import net.kyori.adventure.key.Key;
 
-public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArmorMaterial  {
+public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArmorMaterial  {
 
-	public static final MCCConverter<ArmorMaterial, NMSArmorMaterial> CONVERTER  = converter(NMSArmorMaterial.class, ArmorMaterial.class, NMSArmorMaterial::new, NMSHandle::getHandle);
+	public static final MCCConverter<ArmorMaterial, NMSArmorMaterial> CONVERTER  = converter(NMSArmorMaterial.class, ArmorMaterial.class, NMSArmorMaterial::new, MCCHandle::getHandle);
 
-	public NMSArmorMaterial (ArmorMaterial handle){
+	public NMSArmorMaterial(ArmorMaterial handle){
 		super(handle);
 	}
 
@@ -97,11 +97,11 @@ public class NMSArmorMaterial extends NMSHandle<ArmorMaterial> implements MCCArm
 	}
 
 
-	public static class NMSLayer extends NMSHandle<ArmorMaterial.Layer> implements MCCArmorMaterial.Layer  {
+	public static class NMSLayer extends MCCHandle<ArmorMaterial.Layer> implements MCCArmorMaterial.Layer  {
 	
-		public static final MCCConverter<ArmorMaterial.Layer, NMSArmorMaterial.NMSLayer> CONVERTER  = converter(NMSArmorMaterial.NMSLayer.class, ArmorMaterial.Layer.class, NMSArmorMaterial.NMSLayer::new, NMSHandle::getHandle);
+		public static final MCCConverter<ArmorMaterial.Layer, NMSArmorMaterial.NMSLayer> CONVERTER  = converter(NMSArmorMaterial.NMSLayer.class, ArmorMaterial.Layer.class, NMSArmorMaterial.NMSLayer::new, MCCHandle::getHandle);
 
-		public NMSLayer (ArmorMaterial.Layer handle){
+		public NMSLayer(ArmorMaterial.Layer handle){
 			super(handle);
 		}
 	
