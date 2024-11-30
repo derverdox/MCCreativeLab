@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.item;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
@@ -21,7 +22,7 @@ public class NMSItemType extends MCCHandle<Item> implements MCCItemType {
 
     @Override
     public @NotNull MCCItemStack createItem() {
-        return new NMSItemStack(new ItemStack(this.handle));
+        return conversionService.wrap(new ItemStack(this.handle), new TypeToken<>() {});
     }
 
     @Override
