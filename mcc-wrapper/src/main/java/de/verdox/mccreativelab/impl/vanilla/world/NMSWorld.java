@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 public class NMSWorld extends MCCHandle<ServerLevel> implements MCCWorld {
     public static final MCCConverter<ServerLevel, NMSWorld> CONVERTER = converter(NMSWorld.class, ServerLevel.class, NMSWorld::new, MCCHandle::getHandle);
 
-
     public NMSWorld(ServerLevel handle) {
         super(handle);
     }
