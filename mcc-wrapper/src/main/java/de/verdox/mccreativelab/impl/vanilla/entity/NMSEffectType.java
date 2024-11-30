@@ -29,8 +29,7 @@ public class NMSEffectType extends MCCHandle<MobEffect> implements MCCEffectType
 
     @Override
     public @NotNull Key key() {
-        //TODO
-        return null;
+        return conversionService.wrap(BuiltInRegistries.MOB_EFFECT.getKey(handle), new TypeToken<>() {});
     }
 
     @Override
