@@ -38,7 +38,9 @@ public interface MCCLivingEntity extends MCCEntity {
      * @return the active effect or null
      */
     @Nullable
-    MCCEffect getActiveEffect(MCCEffectType effectType);
+    default MCCEffect getActiveEffect(MCCEffectType effectType) {
+        return effectType.getActiveEffect(this);
+    }
 
     /**
      * Checks if this entity has an active effect of the provided effect type
@@ -46,7 +48,9 @@ public interface MCCLivingEntity extends MCCEntity {
      * @param effectType the effect type
      * @return true if there is an active effect
      */
-    boolean hasActiveEffect(MCCEffectType effectType);
+    default boolean hasActiveEffect(MCCEffectType effectType) {
+        return effectType.hasActiveEffect(this);
+    }
 
     /**
      * Returns true if the entity is dead

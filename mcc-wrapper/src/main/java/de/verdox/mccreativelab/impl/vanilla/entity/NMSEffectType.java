@@ -7,7 +7,9 @@ import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import de.verdox.mccreativelab.wrapper.entity.MCCLivingEntity;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.typed.MCCRegistries;
 import net.kyori.adventure.key.Key;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -50,4 +52,14 @@ public class NMSEffectType extends MCCHandle<MobEffect> implements MCCEffectType
         return new NMSEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(resourceLocation).get(), duration, amplifier, ambient, particles, icon, hidden));
     }
 
+    @Override
+    public @Nullable MCCEffect getActiveEffect(MCCLivingEntity livingEntity) {
+        NMSLivingEntity<?> nmsLivingEntity = conversionService.unwrap(livingEntity, new TypeToken<>() {});
+        Holder<MobEffect> mobEffectHolder = MCCPlatform.getInstance().getConversionService().unwrap(MCCRegistries.EFFECT_TYPE_REGISTRY.get().getReference(this).get(), new TypeToken<>() {});
+        MobEffectInstance mobEffectInstance = nmsLivingEntity.getHandle().getEffect(mobEffectHolder);
+        if (mobEffectInstance == null) {
+            return null;
+        }
+        return MCCPlatform.getInstance().getConversionService().wrap(mobEffectHolder, new TypeToken<>() {});
+    }
 }
