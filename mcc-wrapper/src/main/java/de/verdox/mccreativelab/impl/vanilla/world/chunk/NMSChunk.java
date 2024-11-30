@@ -1,37 +1,36 @@
 package de.verdox.mccreativelab.impl.vanilla.world.chunk;
 
 import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunkSection;
-import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.checkerframework.checker.index.qual.NonNegative;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class NMSChunk extends MCCHandle<ChunkAccess> implements MCCChunk {
-    public NMSChunk(ChunkAccess handle) {
+public class NMSChunk extends MCCHandle<LevelChunk> implements MCCChunk {
+    public static final MCCConverter<LevelChunk, NMSChunk> CONVERTER = converter(NMSChunk.class, LevelChunk.class, NMSChunk::new, MCCHandle::getHandle);
+
+    public NMSChunk(LevelChunk handle) {
         super(handle);
     }
 
     @Override
     public boolean isLoaded() {
-        //TODO
-        return false;
+        return handle.loaded;
     }
 
     @Override
     public MCCWorld getWorld() {
-        //TODO
-        return null;
+        return conversionService.wrap(((ServerLevel) handle.getLevel()), new TypeToken<>() {});
     }
 
     @Override
@@ -57,16 +56,6 @@ public class NMSChunk extends MCCHandle<ChunkAccess> implements MCCChunk {
     @Override
     public List<MCCEntity> getEntitiesInChunk() {
         throw new OperationNotPossibleOnNMS();
-    }
-
-    @Override
-    public MCCBlockState getBlockDataAt(int localX, int localY, int localZ) {
-        return MCCPlatform.getInstance().getConversionService().wrap(handle.getBlockState(localX, localY, localZ), new TypeToken<>() {});
-    }
-
-    @Override
-    public MCCBlockType getBlockTypeAt(int localX, int localY, int localZ) {
-        return MCCPlatform.getInstance().getConversionService().wrap(handle.getBlockState(localX, localY, localZ).getBlock(), new TypeToken<>() {});
     }
 
     @Override
