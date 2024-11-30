@@ -14,6 +14,7 @@ import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import net.kyori.adventure.text.Component;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -111,14 +112,14 @@ public class NMSItemStack extends MCCHandle<ItemStack> implements MCCItemStack {
 
     @Override
     public boolean isCorrectToolForDrops(MCCBlockState blockState) {
-        //TODO
-        return false;
+        BlockState nmsBlockState = conversionService.unwrap(blockState, new TypeToken<>() {});
+        return handle.isCorrectToolForDrops(nmsBlockState);
     }
 
     @Override
-    public float getDestroySpeed(MCCBlockState mccBlockState) {
-        //TODO
-        return 0;
+    public float getDestroySpeed(MCCBlockState blockState) {
+        BlockState nmsBlockState = conversionService.unwrap(blockState, new TypeToken<>() {});
+        return handle.getDestroySpeed(nmsBlockState);
     }
 
     @Override
