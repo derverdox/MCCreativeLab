@@ -1,9 +1,11 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,43 +18,39 @@ public class NMSEffect extends MCCHandle<MobEffectInstance> implements MCCEffect
 
     @Override
     public MCCEffectType getType() {
-        //TODO
-        return null;
+        return conversionService.wrap(handle.getEffect(), new TypeToken<MCCReference<MCCEffectType>>() {}).get();
     }
 
     @Override
     public int getDuration() {
-        //TODO
-        return 0;
+        return handle.getDuration();
     }
 
     @Override
     public int getAmplifier() {
-        //TODO
-        return 0;
+        return handle.getAmplifier();
     }
 
     @Override
     public boolean isAmbient() {
-        //TODO
-        return false;
+        return handle.isAmbient();
     }
 
     @Override
     public boolean hasParticles() {
-        //TODO
-        return false;
+        return handle.isVisible();
     }
 
     @Override
     public boolean showsIcons() {
-        //TODO
-        return false;
+        return handle.showIcon();
     }
 
     @Override
     public @Nullable MCCEffect getHiddenEffect() {
-        //TODO
-        return null;
+        if (handle.hiddenEffect == null) {
+            return null;
+        }
+        return new NMSEffect(handle.hiddenEffect);
     }
 }
