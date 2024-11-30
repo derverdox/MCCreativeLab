@@ -12,6 +12,7 @@ import de.verdox.mccreativelab.impl.vanilla.inventory.types.*;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemType;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.AttributeModifierConverter;
+import de.verdox.mccreativelab.impl.vanilla.platform.converter.GeneratedConverters;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.SoundConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.factory.NMSTypedKeyFactory;
@@ -64,7 +65,6 @@ public class NMSPlatform implements MCCPlatform {
     public NMSPlatform() {
         this.typedKeyFactory = new NMSTypedKeyFactory();
         this.conversionService = new ConversionServiceImpl();
-        //GeneratedConverters.init(conversionService);
     }
 
     @Override
@@ -97,6 +97,7 @@ public class NMSPlatform implements MCCPlatform {
 
         registerContainerTypes();
         registerEnumConverters();
+        GeneratedConverters.init(conversionService);
     }
 
     @Override
