@@ -31,7 +31,7 @@ public class ActiveMenu {
         this.playerUUID = GeneratorPlatformHelper.INSTANCE.get().getUUIDOfAudienceOrThrow(player.asAudience());
         this.customMenu = customMenu;
         closeActiveMenu(player.asAudience());
-        behaviour = new MenuBehaviour(player, this, this::execute, this::onEnd);
+        behaviour = GeneratorPlatformHelper.INSTANCE.get().createMenuBehavior(this);
         behaviour.start();
         if (customMenu.getMenuHud() != null)
             GeneratorPlatformHelper.INSTANCE.get().getHudRenderer().getOrStartActiveHud(player.asAudience(), customMenu.getMenuHud());

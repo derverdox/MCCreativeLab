@@ -8,7 +8,6 @@ import de.verdox.mccreativelab.wrapper.registry.MCCReferenceSet;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTag;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
-import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.Holder;

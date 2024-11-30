@@ -6,9 +6,10 @@ import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translatable;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translation;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
 import de.verdox.mccreativelab.util.io.AssetUtil;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import de.verdox.vserializer.util.gson.JsonUtil;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -84,14 +85,13 @@ public class LanguageStorage {
         return byLanguageTranslations.get(languageInfo).content();
     }
 
-    public String translate(String key, Audience player) {
-        UUID uuid = GeneratorPlatformHelper.INSTANCE.get().getUUIDOfAudienceOrThrow(player);
-        String localeKey = GeneratorPlatformHelper.INSTANCE.get().getPlayerLocaleKey(uuid);
+    public String translate(String key, MCCPlayer player) {
+        String localeKey = player.getClientOption(MCCClientOption.LOCALE);
         LanguageInfo languageInfo = new LanguageInfo(localeKey, "", "", false);
         return translate(key, languageInfo);
     }
 
-    public TextComponent translateToComponent(String key, Audience player) {
+    public TextComponent translateToComponent(String key, MCCPlayer player) {
         return Component.text(translate(key, player));
     }
 

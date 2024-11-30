@@ -31,66 +31,76 @@ public class NMSWorld extends MCCHandle<ServerLevel> implements MCCWorld {
 
     @Override
     public String getName() {
-        return "";
+        return handle.serverLevelData.getLevelName();
     }
 
     @Override
     public void breakBlockNaturally(@Nullable MCCItemStack tool, boolean triggerEffect, boolean dropLoot, boolean dropExperience, boolean ignoreTool) {
-
+        //TODO
     }
 
     @Override
     public MCCEntity dropItemsNaturally(MCCLocation location, Collection<MCCItemStack> items, @Nullable Consumer<MCCEntity> dropCallback) {
+        //TODO
         return null;
     }
 
     @Override
     public CompletableFuture<MCCEntity> teleport(@NotNull MCCLocation location, @NotNull MCCEntity mccEntity) {
+        //TODO
         return null;
     }
 
     @Override
     public CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @NotNull MCCEntityType mccEntityType) {
+        //TODO
         return null;
     }
 
     @Override
     public CompletableFuture<MCCChunk> getOrLoadChunk(int x, int z) {
+        //TODO
         return null;
     }
 
     @Override
     public CompletableFuture<MCCChunk> getOrLoadChunk(MCCLocation location) {
+        //TODO
         return null;
     }
 
     @Override
     public @Nullable MCCChunk getChunkImmediately(int x, int z) {
+        //TODO
         return null;
     }
 
     @Override
     public @Nullable MCCChunk getChunkImmediately(MCCLocation location) {
+        //TODO
         return null;
     }
 
     @Override
     public Audience asAudience() {
+        //TODO
         return null;
     }
 
     @Override
     public UUID getUUID() {
+        //TODO
         return null;
     }
 
     @Override
     public void triggerBlockUpdate(MCCLocation location) {
-
+        //TODO
     }
 
     @Override
     public @NotNull Key key() {
+        //TODO
         return null;
     }
 

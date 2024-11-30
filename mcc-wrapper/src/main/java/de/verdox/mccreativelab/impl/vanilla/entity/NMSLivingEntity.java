@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.entity.*;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.typed.MCCEffects;
 import de.verdox.mccreativelab.wrapper.typed.MCCRegistries;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;

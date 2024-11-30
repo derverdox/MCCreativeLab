@@ -58,6 +58,7 @@ public class NMSMenuLessContainer<T extends MCCContainerSource> extends MCCHandl
 
     @Override
     public void removeItem(int index) {
+        //TODO
         setItem(index, null);
     }
 
@@ -69,46 +70,54 @@ public class NMSMenuLessContainer<T extends MCCContainerSource> extends MCCHandl
 
     @Override
     public boolean contains(MCCItemType mccItemType, int amount) {
+        //TODO
         return false;
     }
 
     @Override
     public boolean containsAtLeast(MCCItemType mccItemType, int amount) {
+        //TODO
         return false;
     }
 
     @Override
     public boolean contains(MCCItemStack mccItemStack) {
+        //TODO
         return false;
     }
 
     @Override
     public boolean contains(MCCItemStack mccItemStack, int amount) {
+        //TODO
         return false;
     }
 
     @Override
     public boolean containsAtLeast(MCCItemStack mccItemStack, int amount) {
+        //TODO
         return false;
     }
 
     @Override
     public void setTitle(Component component) {
-
+        //TODO
     }
 
     @Override
     public Component getTitle() {
+        //TODO
         return null;
     }
 
     @Override
     public @NotNull HashMap<Integer, MCCItemStack> addItem(@NotNull MCCItemStack... items) throws IllegalArgumentException {
+        //TODO
         return null;
     }
 
     @Override
     public @NotNull HashMap<Integer, MCCItemStack> removeItem(@NotNull MCCItemStack... items) throws IllegalArgumentException {
+        //TODO
         return null;
     }
 
@@ -123,22 +132,24 @@ public class NMSMenuLessContainer<T extends MCCContainerSource> extends MCCHandl
     //TODO: If we use caching we could also cache the array here.
     @Override
     public void setContents(MCCItemStack[] items) {
-
+        //TODO
     }
 
     @Override
     public @NotNull HashMap<Integer, ? extends MCCItemStack> all(@NotNull MCCItemType material) throws IllegalArgumentException {
+        //TODO
         return null;
     }
 
     @Override
     public @NotNull HashMap<Integer, ? extends MCCItemStack> all(@Nullable MCCItemStack item) {
+        //TODO
         return null;
     }
 
     @Override
     public void clear() {
-
+        //TODO
     }
 
     @Override
@@ -150,6 +161,7 @@ public class NMSMenuLessContainer<T extends MCCContainerSource> extends MCCHandl
 
     @Override
     public Set<ContainerViewer> getViewers() {
+        //TODO
         return Set.of();
     }
 

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-public class MenuBehaviour {
+public abstract class MenuBehaviour {
     private static final int tickCooldown = 3;
     private final MCCPlayer player;
     private final ActiveMenu activeMenu;
@@ -44,12 +44,8 @@ public class MenuBehaviour {
         }
 
         MCCItemStack[] fakeContents = new MCCItemStack[46];
-
         heldSlotBefore = player.getInventory().getHeldItemSlot();
-
         locationBefore = player.getLocation();
-
-
 
         player.getTempData().storeData("hasMenuOpen", false);
 

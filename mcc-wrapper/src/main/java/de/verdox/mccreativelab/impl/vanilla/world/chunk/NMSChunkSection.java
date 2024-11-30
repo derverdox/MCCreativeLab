@@ -86,12 +86,12 @@ public class NMSChunkSection extends MCCHandle<LevelChunkSection> implements MCC
 
     @Override
     public void enableBlockTicking() {
-
+        //TODO
     }
 
     @Override
     public void enableFluidTicking() {
-
+        //TODO
     }
 
     @Override

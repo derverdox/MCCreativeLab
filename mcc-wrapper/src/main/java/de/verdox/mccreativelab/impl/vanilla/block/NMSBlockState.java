@@ -68,6 +68,7 @@ public class NMSBlockState extends MCCHandle<BlockState> implements MCCBlockStat
 
     @Override
     public @NotNull List<MCCItemStack> getDrops(@Nullable MCCEntity entity, @Nullable MCCItemStack tool) {
+        //TODO
         return List.of();
     }
 

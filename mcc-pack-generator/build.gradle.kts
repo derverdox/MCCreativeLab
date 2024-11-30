@@ -12,8 +12,8 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":mcc-util"))
-    implementation(project(":mcc-wrapper"))
+    compileOnly(project(":mcc-util"))
+    compileOnly(project(":mcc-wrapper"))
     compileOnly("org.jetbrains:annotations:26.0.1")
     compileOnly("io.vertx:vertx-core:4.5.10")
     compileOnly("com.hierynomus:sshj:0.38.0")
@@ -30,6 +30,11 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+publishing {
+    publications.create<MavenPublication>("maven").from(components["java"]);
+    repositories.maven(repositories.mavenLocal())
 }
 
 tasks.test {

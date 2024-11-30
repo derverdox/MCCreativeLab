@@ -17,6 +17,7 @@ public class NMSEntityType extends MCCHandle<EntityType<?>> implements MCCEntity
 
     @Override
     public @NotNull Key key() {
+        //TODO
         return null;
     }
 }

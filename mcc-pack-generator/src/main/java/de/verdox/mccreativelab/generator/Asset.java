@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public record Asset<C extends CustomPack<C>>(Supplier<InputStream> assetInputStream, boolean installIfExists,
                                              @Nullable Consumer<File> installationCallback) {
-    private static Logger LOGGER = Logger.getLogger(Asset.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Asset.class.getName());
     public Asset(Supplier<InputStream> assetInputStream) {
         this(assetInputStream, true, null);
     }

@@ -16,36 +16,43 @@ public class NMSEffect extends MCCHandle<MobEffectInstance> implements MCCEffect
 
     @Override
     public MCCEffectType getType() {
+        //TODO
         return null;
     }
 
     @Override
     public int getDuration() {
+        //TODO
         return 0;
     }
 
     @Override
     public int getAmplifier() {
+        //TODO
         return 0;
     }
 
     @Override
     public boolean isAmbient() {
+        //TODO
         return false;
     }
 
     @Override
     public boolean hasParticles() {
+        //TODO
         return false;
     }
 
     @Override
     public boolean showsIcons() {
+        //TODO
         return false;
     }
 
     @Override
     public @Nullable MCCEffect getHiddenEffect() {
+        //TODO
         return null;
     }
 }

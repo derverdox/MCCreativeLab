@@ -26,41 +26,48 @@ public class NMSEntity<T extends Entity> extends MCCHandle<T> implements MCCEnti
 
     @Override
     public @NotNull MCCEntityType getType() {
+        //TODO
         return null;
     }
 
     @Override
     public Audience asAudience() {
+        //TODO
         return null;
     }
 
     @Override
     public UUID getUUID() {
+        //TODO
         return null;
     }
 
     @Override
     public Component displayName() {
+        //TODO
         return null;
     }
 
     @Override
     public void displayName(Component name) {
-
+        //TODO
     }
 
     @Override
     public CompletableFuture<MCCEntity> teleport(MCCLocation location) {
+        //TODO
         return null;
     }
 
     @Override
     public MCCLocation getLocation() {
+        //TODO
         return null;
     }
 
     @Override
     public @NotNull Key key() {
+        //TODO
         return getType().key();
     }
 

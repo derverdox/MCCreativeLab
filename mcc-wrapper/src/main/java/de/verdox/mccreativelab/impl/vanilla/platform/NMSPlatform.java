@@ -23,10 +23,12 @@ import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.*;
+import de.verdox.mccreativelab.wrapper.entity.player.MCCGameMode;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.types.*;
 import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
 import de.verdox.mccreativelab.wrapper.platform.MCCResourcePack;
+import de.verdox.mccreativelab.wrapper.platform.properties.MCCServerProperties;
 import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
@@ -36,12 +38,17 @@ import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTaskManager;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
+import de.verdox.mccreativelab.wrapper.world.MCCDifficulty;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import de.verdox.mccreativelab.wrapper.world.level.biome.MCCBiome;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.DedicatedServerProperties;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,12 +118,20 @@ public class NMSPlatform implements MCCPlatform {
     }
 
     @Override
+    public MCCServerProperties getServerProperties() {
+        DedicatedServer dedicatedServer = (DedicatedServer) MinecraftServer.getServer();
+        return new MCCServerProperties(dedicatedServer.getProperties().properties);
+    }
+
+    @Override
     public @NotNull MCCContainerFactory getContainerFactory() {
+        //TODO
         return null;
     }
 
     @Override
     public @NotNull MCCTaskManager getTaskManager() {
+        //TODO
         return null;
     }
 
@@ -172,5 +187,7 @@ public class NMSPlatform implements MCCPlatform {
     private void registerEnumConverters(){
         conversionService.registerPlatformType(MCCEquipmentSlot.class, new EnumConverter<>(EquipmentSlot.class, MCCEquipmentSlot.class));
         conversionService.registerPlatformType(MCCEquipmentSlotGroup.class, new EnumConverter<>(net.minecraft.world.entity.EquipmentSlotGroup.class, MCCEquipmentSlotGroup.class));
+        conversionService.registerPlatformType(MCCGameMode.class, new EnumConverter<>(GameType.class, MCCGameMode.class));
+        conversionService.registerPlatformType(MCCDifficulty.class, new EnumConverter<>(Difficulty.class, MCCDifficulty.class));
     }
 }

@@ -27,6 +27,7 @@ public class NMSEffectType extends MCCHandle<MobEffect> implements MCCEffectType
 
     @Override
     public @NotNull Key key() {
+        //TODO
         return null;
     }
 

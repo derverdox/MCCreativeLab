@@ -111,11 +111,13 @@ public class NMSItemStack extends MCCHandle<ItemStack> implements MCCItemStack {
 
     @Override
     public boolean isCorrectToolForDrops(MCCBlockState blockState) {
+        //TODO
         return false;
     }
 
     @Override
     public float getDestroySpeed(MCCBlockState mccBlockState) {
+        //TODO
         return 0;
     }
 
@@ -126,6 +128,7 @@ public class NMSItemStack extends MCCHandle<ItemStack> implements MCCItemStack {
 
     @Override
     public int getEnchantmentLevel(MCCEnchantment mccEnchantment) {
+        //TODO
         return 0;
     }
 

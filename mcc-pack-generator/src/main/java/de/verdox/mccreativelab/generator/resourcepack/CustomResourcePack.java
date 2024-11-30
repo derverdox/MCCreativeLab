@@ -15,7 +15,6 @@ import de.verdox.mccreativelab.generator.resourcepack.types.sound.SoundData;
 import de.verdox.mccreativelab.util.io.AssetUtil;
 import de.verdox.mccreativelab.util.io.ZipUtil;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
@@ -121,14 +120,14 @@ public class CustomResourcePack extends CustomPack<CustomResourcePack> {
 
     private void globalAssetInstallation() throws IOException {
         for (Map.Entry<MCCItemType, Set<ItemTextureData>> materialSetEntry : itemTextureDataPerMaterial.entrySet()) {
-            //TODO: Make sure that only vanilla types are used here
             MCCItemType material = materialSetEntry.getKey();
+            material.requireVanilla();
             Set<ItemTextureData> itemTextureDataSet = materialSetEntry.getValue();
             ItemTextureData.createVanillaModelFile(material, itemTextureDataSet, this);
         }
         for (Map.Entry<MCCBlockState, Set<AlternateBlockStateModel>> materialSetEntry : alternateBlockStateModels.entrySet()) {
-            //TODO: Make sure that only vanilla types are used here
             MCCBlockState material = materialSetEntry.getKey();
+            material.requireVanilla();
             Set<AlternateBlockStateModel> alternateBlockStateModels = materialSetEntry.getValue();
 
             JsonObject jsonObject = AlternateBlockStateModel.createBlockStateJson(alternateBlockStateModels);

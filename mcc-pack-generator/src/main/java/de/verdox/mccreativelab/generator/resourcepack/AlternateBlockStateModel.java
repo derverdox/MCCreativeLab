@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack;
 
 import com.google.gson.JsonObject;
+import de.verdox.mccreativelab.wrapper.annotations.MCCRequireVanillaElement;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import net.kyori.adventure.key.Key;
@@ -14,8 +15,9 @@ public class AlternateBlockStateModel extends ResourcePackResource {
     private final MCCBlockState blockData;
     private final Key alternativeModelKey;
 
-    public AlternateBlockStateModel(MCCBlockState blockData, Key alternativeModelKey) {
+    public AlternateBlockStateModel(@MCCRequireVanillaElement MCCBlockState blockData, Key alternativeModelKey) {
         super(blockData.key());
+        blockData.requireVanilla();
         this.blockData = blockData;
         this.alternativeModelKey = alternativeModelKey;
     }

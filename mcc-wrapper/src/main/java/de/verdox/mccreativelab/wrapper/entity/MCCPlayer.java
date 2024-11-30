@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
+import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
 import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
@@ -105,11 +106,14 @@ public interface MCCPlayer extends MCCLivingEntity, ContainerViewer {
 
     /**
      * Sends block damage to this player at a specified location
+     *
      * @param location location of the block with the damage state
      * @param progress the damage state
      * @param entityId The id of the effect
      */
     void sendBlockDamage(@NotNull MCCLocation location, @Range(from = 0, to = 1) float progress, int entityId);
 
-    void breakBlock(MCCBlock block);
+    boolean breakBlock(MCCBlock block);
+
+    <T> T getClientOption(MCCClientOption<T> type);
 }

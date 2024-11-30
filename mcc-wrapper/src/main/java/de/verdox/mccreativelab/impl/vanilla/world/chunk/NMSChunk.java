@@ -24,11 +24,13 @@ public class NMSChunk extends MCCHandle<ChunkAccess> implements MCCChunk {
 
     @Override
     public boolean isLoaded() {
+        //TODO
         return false;
     }
 
     @Override
     public MCCWorld getWorld() {
+        //TODO
         return null;
     }
 
@@ -89,6 +91,7 @@ public class NMSChunk extends MCCHandle<ChunkAccess> implements MCCChunk {
 
     @Override
     public MCCChunkSection getChunkSectionByGlobalYCoordinate(@NonNegative int index) {
+        //TODO
         return null;
     }
 }

@@ -5,18 +5,15 @@ import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
-import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
-import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
-import de.verdox.mccreativelab.wrapper.event.MCCEvent;
 import de.verdox.mccreativelab.wrapper.inventory.factory.MCCContainerFactory;
 import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
+import de.verdox.mccreativelab.wrapper.platform.properties.MCCServerProperties;
 import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -121,4 +118,6 @@ public interface MCCPlatform {
     @NotNull MCCFurnaceSettings getFurnaceSettings();
 
     int getPublicTick();
+
+    MCCServerProperties getServerProperties();
 }

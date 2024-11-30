@@ -1,7 +1,5 @@
 package de.verdox.mccreativelab.generator;
 
-import com.google.gson.JsonSerializer;
-import de.verdox.mccreativelab.config.ConfigValue;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.util.io.ZipUtil;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
@@ -14,7 +12,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
-import net.kyori.adventure.text.Component;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;

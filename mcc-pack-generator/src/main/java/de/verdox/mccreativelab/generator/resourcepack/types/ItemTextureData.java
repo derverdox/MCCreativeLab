@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
+import de.verdox.mccreativelab.wrapper.annotations.MCCRequireVanillaElement;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
@@ -35,11 +36,12 @@ public class ItemTextureData extends ResourcePackResource {
     private final boolean useVanillaTexture;
 
     public ItemTextureData(@NotNull Key namespacedKey,
-                           @NotNull MCCItemType material,
+                           @NotNull @MCCRequireVanillaElement MCCItemType material,
                            int customModelData,
                            @Nullable Asset<CustomResourcePack> pngFile,
                            @Nullable ModelType modelType, boolean useVanillaTexture) {
         super(namespacedKey);
+        material.requireVanilla();
         this.material = material;
         this.customModelData = customModelData;
         this.pngFile = pngFile;
@@ -48,14 +50,14 @@ public class ItemTextureData extends ResourcePackResource {
     }
 
     public ItemTextureData(@NotNull Key namespacedKey,
-                           @NotNull MCCItemType material,
+                           @NotNull @MCCRequireVanillaElement MCCItemType material,
                            @Nullable Asset<CustomResourcePack> pngFile,
                            @Nullable ModelType modelType, boolean useVanillaTexture) {
         this(namespacedKey, material, Math.abs(Hashing.sha256().hashString(namespacedKey.asString(), StandardCharsets.UTF_8).asInt()), pngFile, modelType, useVanillaTexture);
     }
 
     public ItemTextureData(@NotNull Key namespacedKey,
-                           @NotNull MCCItemType material,
+                           @NotNull @MCCRequireVanillaElement MCCItemType material,
                            int customModelData,
                            @Nullable Asset<CustomResourcePack> pngFile,
                            @Nullable ModelType modelType) {
@@ -63,7 +65,7 @@ public class ItemTextureData extends ResourcePackResource {
     }
 
     public ItemTextureData(@NotNull Key namespacedKey,
-                           @NotNull MCCItemType material,
+                           @NotNull @MCCRequireVanillaElement MCCItemType material,
                            @Nullable Asset<CustomResourcePack> pngFile,
                            @Nullable ModelType modelType) {
         this(namespacedKey, material, pngFile, modelType, false);
@@ -87,7 +89,8 @@ public class ItemTextureData extends ResourcePackResource {
         createModelFile(customPack);
     }
 
-    public static void createVanillaModelFile(MCCItemType material, Set<ItemTextureData> installedItems, CustomResourcePack customPack) {
+    public static void createVanillaModelFile(@MCCRequireVanillaElement MCCItemType material, Set<ItemTextureData> installedItems, CustomResourcePack customPack) {
+        material.requireVanilla();
         Key vanillaKey = Key.key(material.key().namespace(), "item/" + material.key().value());
         JsonObject jsonToWriteToFile = createModelJson(material, vanillaKey, null);
 
@@ -133,7 +136,8 @@ public class ItemTextureData extends ResourcePackResource {
         AssetUtil.createJsonAssetAndInstall(jsonToWriteToFile, customPack, key(), ResourcePackAssetTypes.MODELS);
     }
 
-    private static JsonObject createModelJson(MCCItemType material, Key key, @Nullable ModelType modelType) {
+    private static JsonObject createModelJson(@MCCRequireVanillaElement MCCItemType material, Key key, @Nullable ModelType modelType) {
+        material.requireVanilla();
         JsonObject jsonToWriteToFile = new JsonObject();
         if (modelType != null)
             modelType.modelCreator().accept(key, jsonToWriteToFile);

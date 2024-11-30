@@ -12,6 +12,12 @@ public interface MCCWrapped {
         return true;
     }
 
+    default void requireVanilla(){
+        if(!isVanilla()){
+            throw new UnsupportedOperationException("This operation is exclusive to native minecraft elements. Custom types are now allowed here.");
+        }
+    }
+
     /**
      * Checks if the two wrappers wrap the same element
      * @param mccWrapped the other wrapped element
