@@ -6,7 +6,7 @@ import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
-import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunkSection;
+import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Describes a block type and its block states
  */
-@MCCInstantiationSource(sourceClasses = MCCChunkSection.class)
+@MCCInstantiationSource(sourceClasses = MCCChunk.class)
 @MCCBuiltIn(syncState = MCCBuiltIn.SyncState.SYNCED, clientEntersErrorStateOnDesync = true)
 public interface MCCBlockType extends MCCKeyedWrapper {
 
