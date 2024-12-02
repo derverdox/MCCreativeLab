@@ -1,9 +1,8 @@
 package de.verdox.mccreativelab.util.player.inventory;
 
 import de.verdox.mccreativelab.world.item.FakeItem;
-import de.verdox.mccreativelab.wrapper.MCCItemType;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,14 +15,14 @@ public interface PlayerInventoryCacheStrategy {
      * @param slot - The slot of the new item
      * @param stack - The item
      */
-    void cacheItemInSlot(int slot, ItemStack stack);
+    void cacheItemInSlot(int slot, MCCItemStack stack);
 
     /**
      * Called when an old item is removed from cache
      * @param slot - The slot of the new item
      * @param stack - The item
      */
-    void removeSlotFromCache(int slot, ItemStack stack);
+    void removeSlotFromCache(int slot, MCCItemStack stack);
 
     class CachedAmounts implements PlayerInventoryCacheStrategy {
         private final Map<MCCItemType, Integer> cachedAmounts = new HashMap<>();
@@ -32,21 +31,17 @@ public interface PlayerInventoryCacheStrategy {
             return cachedAmounts.getOrDefault(mccItemType, 0);
         }
 
-        public int getAmount(Material material){
-            return getAmount(MCCItemType.of(material));
-        }
-
-        public int getAmount(ItemStack stack){
-            return getAmount(MCCItemType.of(stack));
+        public int getAmount(MCCItemStack stack){
+            return getAmount(stack.getType());
         }
 
         public int getAmount(FakeItem fakeItem){
-            return getAmount(MCCItemType.of(fakeItem));
+            return getAmount(fakeItem.asItemType());
         }
 
         @Override
-        public void cacheItemInSlot(int slot, ItemStack stack) {
-            MCCItemType type = MCCItemType.of(stack);
+        public void cacheItemInSlot(int slot, MCCItemStack stack) {
+            MCCItemType type = stack.getType();
             int newAmount = stack.getAmount();
             if (cachedAmounts.containsKey(type))
                 newAmount += cachedAmounts.get(type);
@@ -54,8 +49,8 @@ public interface PlayerInventoryCacheStrategy {
         }
 
         @Override
-        public void removeSlotFromCache(int slot, ItemStack stack) {
-            MCCItemType type = MCCItemType.of(stack);
+        public void removeSlotFromCache(int slot, MCCItemStack stack) {
+            MCCItemType type = stack.getType();
             if (!cachedAmounts.containsKey(type))
                 return;
             int newAmount = cachedAmounts.get(type);
@@ -72,14 +67,14 @@ public interface PlayerInventoryCacheStrategy {
         private final Map<Integer, MCCItemType> slotToDataMapping = new HashMap<>();
 
         @Override
-        public void cacheItemInSlot(int slot, ItemStack stack) {
-            MCCItemType mccItemType = MCCItemType.of(stack);
+        public void cacheItemInSlot(int slot, MCCItemStack stack) {
+            MCCItemType mccItemType = stack.getType();
             dataToSlotMapping.computeIfAbsent(mccItemType, v -> new HashSet<>()).add(slot);
             slotToDataMapping.put(slot, mccItemType);
         }
 
         @Override
-        public void removeSlotFromCache(int slot, ItemStack stack) {
+        public void removeSlotFromCache(int slot, MCCItemStack stack) {
             if (!slotToDataMapping.containsKey(slot))
                 return;
             MCCItemType mccItemType = slotToDataMapping.get(slot);

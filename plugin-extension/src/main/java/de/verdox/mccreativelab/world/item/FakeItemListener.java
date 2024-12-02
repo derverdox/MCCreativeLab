@@ -1,9 +1,10 @@
 package de.verdox.mccreativelab.world.item;
 
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.datapack.wrapper.elements.RecipeResult;
 import de.verdox.mccreativelab.registry.Reference;
-import de.verdox.mccreativelab.wrapper.MCCItemType;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -88,9 +89,9 @@ public class FakeItemListener implements Listener {
             if(matrix == null)
                 continue;
             if(repairedType == null)
-                repairedType = MCCItemType.of(matrix);
+                repairedType = BukkitAdapter.toItemType(matrix.getType());
             else {
-                if(!repairedType.isSame(matrix))
+                if(!repairedType.isSame(BukkitAdapter.to(matrix)))
                     break;
 
             }

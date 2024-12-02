@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * For example a player is breaking a stone block with an efficiency 5 diamond pickaxe.
  * The client now predicts a block damage, and maybe even breaks it client side while the server knows a different block hardness.
  */
+@Deprecated
 public class StartBlockBreakEvent extends BlockEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     private final Player player;

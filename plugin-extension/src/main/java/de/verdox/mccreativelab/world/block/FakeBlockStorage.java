@@ -43,104 +43,16 @@ public class FakeBlockStorage {
 
     public static boolean setFakeBlockState(Location location, @Nullable FakeBlock.FakeBlockState fakeBlockState, boolean updateBlockData, boolean forceLoad) {
         return FakeBlockContainer.setFakeBlockState(location, fakeBlockState, updateBlockData, forceLoad);
-/*        FakeBlockStorage fakeBlockStorage = MCCreativeLabExtension.getFakeBlockStorage();
-
-        int localX = PaletteUtil.worldXToPaletteXCoordinate(location.getBlockX());
-        int localY = PaletteUtil.worldYCoordinateToPaletteCoordinate(location.getWorld(), location.getBlockY());
-        int localZ = PaletteUtil.worldZToPaletteXCoordinate(location.getBlockZ());
-
-        long chunkKey = Chunk.getChunkKey(location);
-        World world = location.getWorld();
-        boolean isChunkLoaded = world.isChunkLoaded((int) chunkKey, (int) (chunkKey >> 32));
-
-        //TODO: Zusätzlich prüfen ob fake block palette geladen wurde  // Wenn nicht muss das hier gemacht werden
-        if (!isChunkLoaded) {
-            if (forceLoad)
-                location.getChunk().load(true);
-            else return false;
-        }
-
-        // We have 2 calls for setBlockData but do not want to trigger BlockPhysics twice!
-
-        FakeBlockPalettedContainer fakeBlockPaletteContainer = fakeBlockStorage.getFakeBlockPalette(world, chunkKey);
-        FakeBlock.FakeBlockState currentFakeBlockState = fakeBlockPaletteContainer.getData(localX, localY, localZ);
-
-        if (currentFakeBlockState != null) {
-            currentFakeBlockState.getFakeBlockDisplay().getFakeBlockVisualStrategy()
-                .removeFakeBlockDisplay(location.getBlock());
-            fakeBlockPaletteContainer.setData(fakeBlockState, localX, localY, localZ);
-            location.getBlock().tick();
-            if (updateBlockData && fakeBlockState == null && !location.getBlock().getType().equals(Material.AIR))
-                location.getBlock().setBlockData(Bukkit.createBlockData(Material.AIR));
-
-        } else fakeBlockPaletteContainer.setData(fakeBlockState, localX, localY, localZ);
-
-
-        if (fakeBlockState != null) {
-            fakeBlockState.getFakeBlockDisplay().getFakeBlockVisualStrategy().spawnFakeBlockDisplay(location.getBlock(), fakeBlockState);
-
-            if (updateBlockData && !location.getBlock().getBlockData().equals(fakeBlockState.getFakeBlockDisplay().getHitBox().getBlockData()))
-                location.getBlock().setBlockData(fakeBlockState.getFakeBlockDisplay().getHitBox().getBlockData());
-        }
-
-        BlockBreakSpeedModifier.stopBlockBreakAtBlock(location.getBlock());
-        return true;*/
     }
 
     public static @Nullable FakeBlock.FakeBlockState getFakeBlockState(Location location, boolean forceLoad) {
         return FakeBlockContainer.getFakeBlockState(location, forceLoad);
-/*
-        if (location.getBlockY() > location.getWorld().getMaxHeight()) {
-            Bukkit.getLogger().warning("Tried to read a fakeblockstate above world max height");
-            return null;
-        }
-        FakeBlockStorage fakeBlockStorage = MCCreativeLabExtension.getInstance().getFakeBlockStorage();
-
-        int localX = PaletteUtil.worldXToPaletteXCoordinate(location.getBlockX());
-        int localY = PaletteUtil.worldYCoordinateToPaletteCoordinate(location.getWorld(), location.getBlockY());
-        int localZ = PaletteUtil.worldXToPaletteXCoordinate(location.getBlockZ());
-
-        long chunkKey = Chunk.getChunkKey(location);
-        World world = location.getWorld();
-        boolean isChunkLoaded = world.isChunkLoaded((int) chunkKey, (int) (chunkKey >> 32));
-
-        //TODO: Zusätzlich prüfen ob fake block palette geladen wurde  // Wenn nicht muss das hier gemacht werden
-        if (!isChunkLoaded) {
-            if (forceLoad)
-                location.getChunk().load(true);
-            else {
-                return null;
-            }
-        }
-
-        FakeBlockPalettedContainer fakeBlockPaletteContainer = fakeBlockStorage.getFakeBlockPalette(world, chunkKey);
-        if (fakeBlockPaletteContainer == null)
-            throw new IllegalStateException("FakeBlockPaletteContainer was null - This is a bug");
-        return fakeBlockPaletteContainer.getData(localX, localY, localZ);*/
     }
 
     private final Map<ChunkEntry, FakeBlockPalettedContainer> fakeBlockPalettes = new ConcurrentHashMap<>();
 
     public FakeBlockStorage() {
     }
-
-/*    @Deprecated
-    public void saveAll() {
-        if(USE_NEW_IMPLEMENTATION)
-            return;
-        Bukkit.getLogger().info("FakeBlockStorage: saveAll");
-        for (World world : Bukkit.getWorlds()) {
-            save(world);
-        }
-    }
-
-    @Deprecated
-    void save(World world) {
-        if(USE_NEW_IMPLEMENTATION)
-            return;
-        for (Chunk loadedChunk : world.getLoadedChunks())
-            saveChunk(loadedChunk, loadedChunk.getPersistentDataContainer(), false);
-    }*/
 
     @Deprecated
     FakeBlockPalettedContainer getFakeBlockPalette(World world, long chunkKey) {
@@ -157,39 +69,6 @@ public class FakeBlockStorage {
         fakeBlockPalettes.put(chunkEntry, fakeBlockPaletteContainer);
         return fakeBlockPaletteContainer;
     }
-
-/*    @Deprecated
-    void loadChunk(WorldGenChunk chunk, PersistentDataContainer persistentDataContainer) {
-        if(USE_NEW_IMPLEMENTATION)
-            return;
-        ChunkEntry chunkEntry = new ChunkEntry(chunk.getWorld().getName(), chunk.getChunkKey());
-        FakeBlockPalettedContainer fakeBlockPaletteContainer = new FakeBlockPalettedContainer(FakeBlockRegistry.FAKE_BLOCK_STATE_ID_MAP, 16, PaletteUtil.getMaxYPaletteFromWorldLimits(chunk.getWorld()), 16);
-
-        if (persistentDataContainer.has(FAKE_BLOCK_PALETTE_KEY)) {
-            PersistentDataContainer fakeBlockPaletteNBT = persistentDataContainer.get(FAKE_BLOCK_PALETTE_KEY, PersistentDataType.TAG_CONTAINER);
-            if (fakeBlockPaletteNBT == null) {
-                Bukkit.getLogger()
-                    .warning("Corrupt fake block palette found for chunk " + chunk.getX() + " " + chunk.getZ() + " in world " + chunk
-                        .getWorld().getName());
-            } else
-                fakeBlockPaletteContainer.deSerialize(FAKE_BLOCK_PALETTE_KEY, persistentDataContainer);
-        }
-
-        fakeBlockPalettes.put(chunkEntry, fakeBlockPaletteContainer);
-    }
-
-    @Deprecated
-    void saveChunk(WorldGenChunk chunk, PersistentDataContainer persistentDataContainer, boolean unload) {
-        if(USE_NEW_IMPLEMENTATION)
-            return;
-        ChunkEntry chunkEntry = new ChunkEntry(chunk.getWorld().getName(), chunk.getChunkKey());
-        FakeBlockPalettedContainer fakeBlockPaletteContainer = fakeBlockPalettes.get(chunkEntry);
-        if (fakeBlockPaletteContainer == null)
-            return;
-        fakeBlockPaletteContainer.serialize(FAKE_BLOCK_PALETTE_KEY, persistentDataContainer);
-        if (unload)
-            fakeBlockPalettes.remove(chunkEntry);
-    }*/
 
     @Deprecated
     public static class FakeBlockPalettedContainer extends NBTPalettedContainer<FakeBlock.FakeBlockState> {

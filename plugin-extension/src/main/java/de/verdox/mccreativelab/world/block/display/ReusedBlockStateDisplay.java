@@ -1,5 +1,7 @@
 package de.verdox.mccreativelab.world.block.display;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.display.strategy.DummyBlockVisualStrategy;
 import de.verdox.mccreativelab.generator.Asset;
@@ -9,7 +11,10 @@ import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackReso
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.data.BlockData;
@@ -38,7 +43,7 @@ public class ReusedBlockStateDisplay extends FakeBlockDisplay {
     public void beforeResourceInstallation(CustomResourcePack customPack) {
         Map<String, NamespacedKey> textureNamesToKeyMapping = new HashMap<>();
         textures.forEach((s, customResourcePackAsset) -> {
-            NamespacedKey assetKey = new NamespacedKey(getKey().namespace(), "block/" + getKey().getKey() + "/" + s);
+            NamespacedKey assetKey = new NamespacedKey(key().namespace(), "block/" + key().value() + "/" + s);
             customPack.register(new AssetBasedResourcePackResource(assetKey, customResourcePackAsset, ResourcePackAssetTypes.TEXTURES, "png"));
             textureNamesToKeyMapping.put(s, assetKey);
         });
@@ -47,13 +52,13 @@ public class ReusedBlockStateDisplay extends FakeBlockDisplay {
                 textureNamesToKeyMapping.forEach((s, namespacedKey1) -> jsonObjectBuilder.add(s, namespacedKey1.toString()));
             });
         });
-        ItemTextureData itemTextureData = new ItemTextureData(getKeyOfFullDisplay(getKey()), getModelMaterial(), drawNewModelID(), null, modifiedModelType);
+        ItemTextureData itemTextureData = new ItemTextureData(getKeyOfFullDisplay(key()), getModelMaterial(), drawNewModelID(), null, modifiedModelType);
         customPack.register(itemTextureData);
-        customPack.register(new AlternateBlockStateModel(hitBox.getBlockData(), getKeyOfFullDisplay(getKey())));
+        customPack.register(new AlternateBlockStateModel(BukkitAdapter.to(hitBox.getBlockData()), getKeyOfFullDisplay(key())));
     }
 
-    private NamespacedKey getKeyOfFullDisplay(NamespacedKey namespacedKey) {
-        return new NamespacedKey(namespacedKey.namespace(), "block/" + namespacedKey.getKey() + "/display");
+    private NamespacedKey getKeyOfFullDisplay(Key key) {
+        return new NamespacedKey(key.namespace(), "block/" + key.value() + "/display");
     }
 
     @Override

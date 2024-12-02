@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab;
 
-import de.verdox.itemformat.BasicItemFormat;
 import de.verdox.mccreativelab.behaviour.RepairItemBehaviour;
 import de.verdox.mccreativelab.event.MCCreativeLabReloadEvent;
 import de.verdox.mccreativelab.features.legacy.LegacyFeatures;
@@ -9,9 +8,8 @@ import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.world.block.FakeBlockWorldHook;
 import de.verdox.mccreativelab.world.block.replaced.ReplacedBlocks;
 import de.verdox.mccreativelab.world.item.FakeItemRegistry;
-import de.verdox.mccreativelab.world.item.data.ItemDataContainer;
 import de.verdox.mccreativelab.world.sound.ReplacedSoundGroups;
-import de.verdox.mccreativelab.wrapper.MCCItemType;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.WorldCreator;
@@ -32,12 +30,9 @@ public class ServerSoftwareExclusives implements Listener {
     private static FakeBlockStorage fakeBlockStorage;
     private static LegacyFeatures legacyFeatures;
 
-    private ReplacedSoundGroups replacedSoundGroups;
-
     public void onLoad(){
         FAKE_BLOCK_REGISTRY = new FakeBlockRegistry();
         FAKE_ITEM_REGISTRY = new FakeItemRegistry();
-        replacedSoundGroups  = new ReplacedSoundGroups();
         fakeBlockStorage = new FakeBlockStorage();
         legacyFeatures = new LegacyFeatures();
         FakeBlockRegistry.setupFakeBlocks();
@@ -68,12 +63,15 @@ public class ServerSoftwareExclusives implements Listener {
         RepairItemBehaviour.REPAIR_ITEM_BEHAVIOUR.setBehaviour(new RepairItemBehaviour() {
             @Override
             public boolean canCombine(@NotNull ItemStack first, @NotNull ItemStack second) {
-                return MCCItemType.of(first).isSame(second);
+                MCCItemStack stack1 = BukkitAdapter.to(first);
+                MCCItemStack stack2 = BukkitAdapter.to(second);
+                return stack1.getType().isSame(stack2);
             }
 
             @Override
             public @NotNull ItemStack assemble(@NotNull ItemStack first, @NotNull ItemStack second) {
-                return MCCItemType.of(first).createItem();
+                MCCItemStack stack1 = BukkitAdapter.to(first);
+                return BukkitAdapter.from(stack1.getType().createItem());
             }
         });
     }
@@ -85,10 +83,7 @@ public class ServerSoftwareExclusives implements Listener {
     public void onServerLoad(ServerLoadEvent.LoadType loadType){
         if(loadType.equals(ServerLoadEvent.LoadType.STARTUP)){
             if(MCCreativeLabExtension.getFakeBlockRegistry().hasReusedAnyBlockStates()){
-                if(FakeBlockRegistry.USE_ALTERNATE_FAKE_BLOCK_ENGINE) {
-                    replacedSoundGroups.replaceGlassSoundGroup();
-                }
-                replacedSoundGroups.replaceWoodSoundGroup();
+                ReplacedSoundGroups.replaceWoodSoundGroup();
             }
             Bukkit.getLogger().info("ServerSoftware exclusive features started");
         }
@@ -123,9 +118,5 @@ public class ServerSoftwareExclusives implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void hookIntoWorld(WorldLoadEvent e){
         MCCreativeLab.setWorldHook(e.getWorld(), new FakeBlockWorldHook());
-    }
-
-    public ReplacedSoundGroups getReplacedSoundGroups() {
-        return replacedSoundGroups;
     }
 }

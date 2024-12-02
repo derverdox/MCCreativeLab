@@ -7,10 +7,11 @@ import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translation;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.RenderedElementBehavior;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.ScreenPosition;
 import de.verdox.mccreativelab.util.io.StringAlign;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
@@ -34,13 +35,15 @@ public class YesNoGui extends CustomGUIBuilder {
                 }
                 renderedGroupMultiLineText.setRawText(StringAlign.formatStringToLines(question, 30, StringAlign.Alignment.CENTER));
             }));
+
+        new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
     }
 
 
     public static class Builder {
         private String question;
-        private final ClickableItem.Builder yesButton = new ClickableItem.Builder(Material.LIME_DYE).withItemMeta(itemMeta -> itemMeta.displayName(Component.translatable(YES.key()))).closeGUI();
-        private final ClickableItem.Builder noButton = new ClickableItem.Builder(Material.RED_DYE).withItemMeta(itemMeta -> itemMeta.displayName(Component.translatable(NO.key()))).closeGUI();
+        private final ClickableItem.Builder yesButton = new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
+        private final ClickableItem.Builder noButton = new ClickableItem.Builder(MCCItems.RED_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(NO.key()))));
 
         public Builder withQuestion(String question) {
             this.question = question;
@@ -57,7 +60,7 @@ public class YesNoGui extends CustomGUIBuilder {
             return this;
         }
 
-        public void open(Player player) {
+        public void open(MCCPlayer player) {
             INSTANCE.createMenuForPlayer(player, activeGUI -> {
                 activeGUI.addTemporaryData("question", question);
 

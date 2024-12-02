@@ -1,5 +1,7 @@
 package de.verdox.mccreativelab.debug;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCUtil;
 import de.verdox.mccreativelab.MCCreativeLab;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
@@ -8,6 +10,8 @@ import de.verdox.mccreativelab.debug.vanilla.VillagerAI;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRendererImpl;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.ActiveMenu;
 import de.verdox.mccreativelab.world.item.data.ItemDataContainer;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,56 +52,11 @@ public class DebugCommand extends Command {
 
                     MCCUtil.getInstance().sendFakeInventoryContents(player, contents);
                 }
-            } 
-            else if(argument1.equals("customInv")){
-                if (sender instanceof Player player) {
-/*                    MCCreativeLab.openCustomContainerMenu(new CustomInventory() {
-                        @Override
-                        public Slot[] getSlots() {
-                            return new Slot[]{
-                                new Slot() {
-                                    @Override
-                                    public boolean isActive() {
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public boolean mayPlace(ItemStack stack) {
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public boolean mayPickUp(Player player) {
-                                        return false;
-                                    }
-                                }
-                            };
-                        }
-
-                        @Override
-                        public ItemStack quickMoveStack(Player player, int slot) {
-                            System.out.println("QUICK MOVE STACK "+slot);
-                            return new ItemStack(Material.STONE);
-                        }
-                    }, player, Component.empty());*/
-                }
             }
-            else if (argument1.equals("testTPAsync")) {
-
-                if (sender instanceof Player player) {
-
-                    Location location = new Location(
-                        player.getWorld(),
-                        player.getX() + ThreadLocalRandom.current().nextInt(5000, 20000),
-                        player.getY(),
-                        player.getZ() + ThreadLocalRandom.current().nextInt(5000, 20000)
-                    );
-                    player.teleportAsync(location);
-                }
-
-            } else if (argument1.equals("reload")) {
+            else if (argument1.equals("reload")) {
                 MCCreativeLabExtension.getInstance().reloadPlugin();
             } else if (argument1.equals("testai") && sender instanceof Player player) {
+
 
 
                 Villager villager = (Villager) player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
@@ -105,10 +64,13 @@ public class DebugCommand extends Command {
                     .addActivity(VillagerAI.workPackageBuilder(Villager.Profession.FARMER, 0.5f), true);
                 
             } else if (argument1.equals("menu") && sender instanceof Player player) {
-                if (ActiveMenu.hasActiveMenu(player))
+                if (ActiveMenu.hasActiveMenu(player)) {
                     ActiveMenu.closeActiveMenu(player);
-                else
-                    Debug.DEBUG_MENU.createMenuForPlayer(player);
+                }
+                else {
+                    MCCPlayer mccPlayer = BukkitAdapter.to(player);
+                    Debug.DEBUG_MENU.createMenuForPlayer(mccPlayer);
+                }
             } else if (argument1.equals("itemload") && sender instanceof Player player) {
                 ItemStack stack = player.getInventory().getItemInMainHand();
                 System.out.println("Before: " + stack);

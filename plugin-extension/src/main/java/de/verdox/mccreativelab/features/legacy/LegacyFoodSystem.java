@@ -1,12 +1,16 @@
 package de.verdox.mccreativelab.features.legacy;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
-import de.verdox.mccreativelab.wrapper.MCCItemType;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,7 +23,6 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
@@ -69,14 +72,10 @@ public class LegacyFoodSystem extends LegacyFeature {
         return this;
     }
 
-    public LegacyFoodSystem setHealAmountWhenEaten(Material material, double healAmount) {
-        return setHealAmountWhenEaten(MCCItemType.of(material), healAmount);
-    }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-            Bukkit.getScheduler()
-                  .runTask(MCCreativeLabExtension.getInstance(), () -> setAllowSprinting(e.getPlayer(), false));
+        Bukkit.getScheduler()
+            .runTask(MCCreativeLabExtension.getInstance(), () -> setAllowSprinting(e.getPlayer(), false));
     }
 
     @EventHandler
@@ -89,7 +88,7 @@ public class LegacyFoodSystem extends LegacyFeature {
         if (e.getNewEffect() == null)
             return;
         if (e.getNewEffect().getType().equals(PotionEffectType.HUNGER) || e.getNewEffect().getType()
-                                                                           .equals(PotionEffectType.SATURATION))
+            .equals(PotionEffectType.SATURATION))
             e.setCancelled(true);
     }
 
@@ -106,7 +105,8 @@ public class LegacyFoodSystem extends LegacyFeature {
 
     @EventHandler
     public void itemConsumeEvent(PlayerItemConsumeEvent e) {
-        double healAmount = healAmounts.getOrDefault(MCCItemType.of(e.getItem()), 0d);
+        MCCItemType mccItemType = BukkitAdapter.to(e.getItem()).getType();
+        double healAmount = healAmounts.getOrDefault(mccItemType, 0d);
         double maxHealth = e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         double newHealth = Math.min(maxHealth, e.getPlayer().getHealth() + healAmount);
         e.getPlayer().setHealth(newHealth);

@@ -9,8 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class FakeBlockDropExperienceEvent extends FakeBlockEvent implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     private final Entity causeOfBreak;

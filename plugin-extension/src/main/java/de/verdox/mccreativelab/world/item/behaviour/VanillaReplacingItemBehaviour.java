@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.InteractionResult;
 import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.behaviour.ItemBehaviour;
 import de.verdox.mccreativelab.behaviour.interaction.ItemStackInteraction;
+import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;

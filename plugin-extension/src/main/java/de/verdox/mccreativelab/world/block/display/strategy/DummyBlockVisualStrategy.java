@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.world.block.display.strategy;
 
 import de.verdox.mccreativelab.world.block.FakeBlock;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -11,7 +12,7 @@ public class DummyBlockVisualStrategy extends FakeBlockVisualStrategy<FakeBlockV
     public void spawnFakeBlockDisplay(Block block, FakeBlock.FakeBlockState fakeBlockState) {}
 
     @Override
-    public void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, BlockFace direction, BlockData neighbourBlockData) {}
+    public void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, MCCBlockFace direction, BlockData neighbourBlockData) {}
 
     @Override
     protected void loadItemDisplayAsBlockDisplay(PotentialItemDisplay potentialItemDisplay) {}

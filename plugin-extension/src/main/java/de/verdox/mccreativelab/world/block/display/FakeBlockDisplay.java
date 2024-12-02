@@ -3,6 +3,8 @@ package de.verdox.mccreativelab.world.block.display;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.display.strategy.FakeBlockVisualStrategy;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.data.BlockData;
@@ -35,8 +37,8 @@ public abstract class FakeBlockDisplay extends ResourcePackResource {
     protected int drawNewModelID(){
         return ID_COUNTER.getAndIncrement();
     }
-    protected Material getModelMaterial(){
-        return Material.BARRIER;
+    protected MCCItemType getModelMaterial(){
+        return MCCItems.BARRIER.get();
     }
 
     public interface Builder<T extends FakeBlockDisplay> {

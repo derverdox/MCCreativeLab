@@ -53,7 +53,7 @@ public class TransparentFullBlockEntityDisplay extends FakeBlockDisplay{
     @Override
     public void beforeResourceInstallation(CustomResourcePack customPack) throws IOException {
         textures.forEach((s, customResourcePackAsset) -> {
-            NamespacedKey assetKey = new NamespacedKey(getKey().namespace(), getKey().getKey() + "_" + s);
+            NamespacedKey assetKey = new NamespacedKey(key().namespace(), key().value() + "_" + s);
             customPack.register(new AssetBasedResourcePackResource(assetKey, customResourcePackAsset, ResourcePackAssetTypes.TEXTURES, "png"));
         });
         fullBlockFakeItem = new ItemTextureData(getKey(), getModelMaterial(), drawNewModelID(), null, modelType);

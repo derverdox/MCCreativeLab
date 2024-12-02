@@ -1,10 +1,8 @@
 package de.verdox.mccreativelab.registry;
 
-import com.google.gson.JsonObject;
 import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.Serializer;
 import de.verdox.vserializer.json.JsonSerializerContext;
-import de.verdox.vserializer.util.gson.JsonUtil;
 import org.bukkit.Keyed;
 import org.codehaus.plexus.util.FileUtils;
 

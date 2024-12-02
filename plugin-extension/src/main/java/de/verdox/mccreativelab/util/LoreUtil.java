@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.util;
 
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translation;
 import de.verdox.mccreativelab.util.io.StringAlign;
 import net.kyori.adventure.text.Component;
@@ -38,7 +39,7 @@ public class LoreUtil {
     public static ItemStack formatItem(Player player, ItemStack stack, Translation title, Translation description) {
         stack.editMeta(itemMeta -> {
             itemMeta.displayName(title.asTranslatableComponent());
-            createLore(description.translate(player));
+            createLore(description.translate(BukkitAdapter.to(player)));
         });
         return stack;
     }

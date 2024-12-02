@@ -1,5 +1,7 @@
 package de.verdox.mccreativelab.world.item;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.behaviour.ItemBehaviour;
@@ -7,15 +9,20 @@ import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translatable;
+import de.verdox.mccreativelab.impl.mcclab.item.MCCCustomItemType;
 import de.verdox.mccreativelab.recipe.CustomItemData;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.item.data.ItemDataContainer;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -91,6 +98,15 @@ public class FakeItem implements Keyed, ItemBehaviour {
         return CustomItemData.fromItemStack(stack).isSame(createItemStack());
     }
 
+
+    public @NotNull MCCItemStack createItem() {
+        return BukkitAdapter.to(createItemStack());
+    }
+
+    public @NotNull MCCItemType asItemType() {
+        return new MCCCustomItemType(this);
+    }
+
     public final ItemStack createItemStack() {
         ItemStack stack = new ItemStack(material);
         stack.editMeta((meta) -> {
@@ -98,16 +114,16 @@ public class FakeItem implements Keyed, ItemBehaviour {
                 metaConsumer.accept(meta);
 
             meta.setMaxStackSize(getMaxStackSize());
-            if(meta instanceof Damageable damageable && getMaxDamage() > 0)
+            if (meta instanceof Damageable damageable && getMaxDamage() > 0)
                 damageable.setMaxDamage(getMaxDamage());
             meta.setFireResistant(isFireResistant());
             meta.setCustomModelData(customModelData);
 
-            if(nameFormat != null)
+            if (nameFormat != null)
                 meta.itemName(nameFormat.apply(this.nameTranslation));
             else
                 meta.itemName(nameTranslation.asTranslatableComponent());
-            if(this.fakeItemProperties.foodProperties != null)
+            if (this.fakeItemProperties.foodProperties != null)
                 this.fakeItemProperties.foodProperties.apply(meta.getFood());
         });
         ItemDataContainer.from(stack);
@@ -125,15 +141,15 @@ public class FakeItem implements Keyed, ItemBehaviour {
 
     }
 
-    public int getMaxStackSize(){
+    public int getMaxStackSize() {
         return fakeItemProperties.maxStackSize;
     }
 
-    public int getMaxDamage(){
+    public int getMaxDamage() {
         return fakeItemProperties.maxDamage;
     }
 
-    public boolean isFireResistant(){
+    public boolean isFireResistant() {
         return fakeItemProperties.isFireResistant;
     }
 
@@ -209,7 +225,7 @@ public class FakeItem implements Keyed, ItemBehaviour {
             return this;
         }
 
-        public Builder<T> withNameFormat(Function<Translatable, Component> nameFormat){
+        public Builder<T> withNameFormat(Function<Translatable, Component> nameFormat) {
             this.nameFormat = nameFormat;
             return this;
         }
@@ -233,10 +249,12 @@ public class FakeItem implements Keyed, ItemBehaviour {
             //int customModelData = CustomModelDataProvider.drawCustomModelData(vanillaMaterial);
             // Generating customModelData with deterministic hash value of the item key
             ItemTextureData itemTextureData;
-            if (this.itemTextureData != null)
+            if (this.itemTextureData != null) {
                 itemTextureData = this.itemTextureData;
-            else
-                itemTextureData = new ItemTextureData(new NamespacedKey(namespacedKey.namespace(), "item/" + namespacedKey.value()), vanillaMaterial, texture, modelType, texture == null && modelType == null);
+            } else {
+                MCCItemType itemType = BukkitAdapter.toItemType(vanillaMaterial);
+                itemTextureData = new ItemTextureData(new NamespacedKey(namespacedKey.namespace(), "item/" + namespacedKey.value()), itemType, texture, modelType, texture == null && modelType == null);
+            }
             int customModelData = itemTextureData.getCustomModelData();
             T value = itemBuilder.get();
 
@@ -249,13 +267,14 @@ public class FakeItem implements Keyed, ItemBehaviour {
             if (this.fakeItemProperties != null && value.getFakeItemProperties() == null)
                 value.setFakeItemProperties(fakeItemProperties);
             if (this.itemMetaBuilder != null && value.getMetaConsumer() == null) value.setMetaConsumer(itemMetaBuilder);
-            if(this.nameFormat != null) value.setNameFormat(this.nameFormat);
+            if (this.nameFormat != null) value.setNameFormat(this.nameFormat);
 
             Objects.requireNonNull(namespacedKey);
             Objects.requireNonNull(vanillaMaterial);
 
             MCCreativeLabExtension.getCustomResourcePack().registerIfNotAlready(itemTextureData);
-            if (standardNameTranslation != null) MCCreativeLabExtension.getCustomResourcePack().addTranslation(standardNameTranslation);
+            if (standardNameTranslation != null)
+                MCCreativeLabExtension.getCustomResourcePack().addTranslation(standardNameTranslation);
 
             ItemBehaviour.ITEM_BEHAVIOUR.setBehaviour(new CustomItemData(vanillaMaterial, customModelData), value);
             return value;
@@ -391,7 +410,7 @@ public class FakeItem implements Keyed, ItemBehaviour {
             return effects;
         }
 
-        public void apply(FoodComponent foodComponent){
+        public void apply(FoodComponent foodComponent) {
             foodComponent.setCanAlwaysEat(canAlwaysEat);
             foodComponent.setEatSeconds(seconds);
             foodComponent.setNutrition(nutrition);
@@ -426,7 +445,7 @@ public class FakeItem implements Keyed, ItemBehaviour {
                 return this;
             }
 
-            public Builder withEatSeconds(float seconds){
+            public Builder withEatSeconds(float seconds) {
                 this.seconds = seconds;
                 return this;
             }

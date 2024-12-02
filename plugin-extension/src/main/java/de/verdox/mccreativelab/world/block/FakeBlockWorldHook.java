@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.world.block;
 
-import de.verdox.mccreativelab.behaviour.BlockBehaviour;
 import de.verdox.mccreativelab.behaviour.MCCWorldHook;
 import de.verdox.mccreativelab.world.block.behaviour.ReplaceVanillaBlockStatesBehaviour;
 import org.bukkit.block.Block;

@@ -7,7 +7,6 @@ import de.verdox.mccreativelab.util.PaletteUtil;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.util.nbt.NBTPersistent;
 import de.verdox.mccreativelab.util.storage.palette.NBTPalettedContainer;
-import de.verdox.mccreativelab.world.block.customhardness.BlockBreakSpeedModifier;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 
@@ -120,8 +119,7 @@ public class FakeBlockContainer implements NBTPersistent {
                 if (!location.getBlock().getBlockData().equals(fakeBlockState.getFakeBlockDisplay().getHitBox().getBlockData()))
                     location.getBlock().setBlockData(fakeBlockState.getFakeBlockDisplay().getHitBox().getBlockData());
             }
-
-            BlockBreakSpeedModifier.stopBlockBreakAtBlock(location.getBlock());
+            //TODO: Stop Fake Block Break Actions
         } finally {
             mccWorldHook.setBlockContext(location.getBlock(), null);
         }

@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.world.block.display.strategy.SolidFullBlockEntity
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,12 +23,12 @@ public class SolidFullBlockEntityDisplay extends FakeBlockDisplay{
     public static boolean isUsed() {
         return IS_USED;
     }
-    private final Map<BlockFace, Asset<CustomResourcePack>> texturesPerBlockFace;
-    private final Map<BlockFace, ItemTextureData.ModelType> modelsPerBlockFace;
-    private final Map<BlockFace, ItemTextureData> itemTextureDataPerBlockFace = new HashMap<>();
+    private final Map<MCCBlockFace, Asset<CustomResourcePack>> texturesPerBlockFace;
+    private final Map<MCCBlockFace, ItemTextureData.ModelType> modelsPerBlockFace;
+    private final Map<MCCBlockFace, ItemTextureData> itemTextureDataPerBlockFace = new HashMap<>();
     private final BlockData destroyParticleData;
 
-    private SolidFullBlockEntityDisplay(NamespacedKey namespacedKey, Map<BlockFace, Asset<CustomResourcePack>> texturesPerBlockFace, Map<BlockFace, ItemTextureData.ModelType> modelsPerBlockFace, BlockData destroyParticleData) {
+    private SolidFullBlockEntityDisplay(NamespacedKey namespacedKey, Map<MCCBlockFace, Asset<CustomResourcePack>> texturesPerBlockFace, Map<MCCBlockFace, ItemTextureData.ModelType> modelsPerBlockFace, BlockData destroyParticleData) {
         super(namespacedKey, SolidFullBlockEntityBasedDisplayStrategy.INSTANCE, FakeBlock.FakeBlockHitbox.SOLID_BLOCK);
         this.texturesPerBlockFace = texturesPerBlockFace;
         this.modelsPerBlockFace = modelsPerBlockFace;
@@ -49,18 +50,18 @@ public class SolidFullBlockEntityDisplay extends FakeBlockDisplay{
     public void beforeResourceInstallation(CustomResourcePack customPack) throws IOException {
         texturesPerBlockFace.forEach((face, customResourcePackAsset) -> {
             ItemTextureData.ModelType modelType = modelsPerBlockFace.get(face);
-            NamespacedKey faceKey = getKeyOfFaceTexture(new NamespacedKey(key().namespace(), "item/fake_block/" + key().getKey()), face);
+            NamespacedKey faceKey = getKeyOfFaceTexture(new NamespacedKey(key().namespace(), "item/fake_block/" + key()), face);
             ItemTextureData itemTextureData = new ItemTextureData(faceKey, getModelMaterial(), drawNewModelID(), customResourcePackAsset, modelType);
             itemTextureDataPerBlockFace.put(face, itemTextureData);
             customPack.register(itemTextureData);
         });
     }
 
-    public Map<BlockFace, ItemTextureData> getItemTextureDataPerBlockFace() {
+    public Map<MCCBlockFace, ItemTextureData> getItemTextureDataPerBlockFace() {
         return itemTextureDataPerBlockFace;
     }
 
-    private NamespacedKey getKeyOfFaceTexture(NamespacedKey namespacedKey, BlockFace face) {
+    private NamespacedKey getKeyOfFaceTexture(NamespacedKey namespacedKey, MCCBlockFace face) {
         return new NamespacedKey(namespacedKey.namespace(), namespacedKey.getKey() + "/face/" + face.name().toLowerCase(Locale.ROOT));
     }
 
@@ -70,12 +71,12 @@ public class SolidFullBlockEntityDisplay extends FakeBlockDisplay{
     }
 
     public static class Builder implements FakeBlockDisplay.Builder<SolidFullBlockEntityDisplay>{
-        private static final List<BlockFace> validFaces = List.of(BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-        private final Map<BlockFace, Asset<CustomResourcePack>> texturesPerBlockFace = new HashMap<>();
-        private final Map<BlockFace, ItemTextureData.ModelType> modelsPerBlockFace = new HashMap<>();
+        private static final List<MCCBlockFace> validFaces = List.of(MCCBlockFace.UP, MCCBlockFace.DOWN, MCCBlockFace.NORTH, MCCBlockFace.EAST, MCCBlockFace.SOUTH, MCCBlockFace.WEST);
+        private final Map<MCCBlockFace, Asset<CustomResourcePack>> texturesPerBlockFace = new HashMap<>();
+        private final Map<MCCBlockFace, ItemTextureData.ModelType> modelsPerBlockFace = new HashMap<>();
         private BlockData destroyParticleData = Bukkit.createBlockData(Material.STONE);
 
-        public Builder withTexture(BlockFace face, Asset<CustomResourcePack> blockTexture) {
+        public Builder withTexture(MCCBlockFace face, Asset<CustomResourcePack> blockTexture) {
             if (!validFaces.contains(face)) {
                 Bukkit.getLogger().warning("Cannot add texture for block face " + face + ". Allowed faces are: " + validFaces);
                 return this;
@@ -87,13 +88,13 @@ public class SolidFullBlockEntityDisplay extends FakeBlockDisplay{
         }
 
         public Builder withTopAndBottomTexture(Asset<CustomResourcePack> blockTexture) {
-            withTexture(BlockFace.UP, blockTexture);
-            withTexture(BlockFace.DOWN, blockTexture);
+            withTexture(MCCBlockFace.UP, blockTexture);
+            withTexture(MCCBlockFace.DOWN, blockTexture);
             return this;
         }
 
         public Builder withFullBlockTexture(Asset<CustomResourcePack> blockTexture) {
-            for (BlockFace validFace : validFaces)
+            for (MCCBlockFace validFace : validFaces)
                 withTexture(validFace, blockTexture);
             return this;
         }
@@ -104,10 +105,10 @@ public class SolidFullBlockEntityDisplay extends FakeBlockDisplay{
         }
 
         public Builder withSideTexture(Asset<CustomResourcePack> blockTexture) {
-            withTexture(BlockFace.NORTH, blockTexture);
-            withTexture(BlockFace.EAST, blockTexture);
-            withTexture(BlockFace.SOUTH, blockTexture);
-            withTexture(BlockFace.WEST, blockTexture);
+            withTexture(MCCBlockFace.NORTH, blockTexture);
+            withTexture(MCCBlockFace.EAST, blockTexture);
+            withTexture(MCCBlockFace.SOUTH, blockTexture);
+            withTexture(MCCBlockFace.WEST, blockTexture);
             return this;
         }
 

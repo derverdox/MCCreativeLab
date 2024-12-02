@@ -1,8 +1,8 @@
 package de.verdox.mccreativelab.world.block;
 
 import com.google.gson.JsonObject;
-import de.verdox.mccreativelab.Wrappers;
 import de.verdox.mccreativelab.behaviour.BlockBehaviour;
+import de.verdox.mccreativelab.impl.mcclab.block.MCCCustomBlockSoundGroup;
 import de.verdox.mccreativelab.world.block.display.FakeBlockDisplay;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntity;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntityStorage;
@@ -19,6 +19,9 @@ import de.verdox.mccreativelab.generator.resourcepack.ResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 import de.verdox.mccreativelab.generator.resourcepack.types.ModelFile;
 import de.verdox.mccreativelab.generator.resourcepack.types.sound.SoundData;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
+import de.verdox.mccreativelab.wrapper.typed.MCCBlocks;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.PistonMoveReaction;
@@ -37,9 +40,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class FakeBlock implements Keyed, BlockBehaviour {
     private final FakeBlockState[] fakeBlockStates;
@@ -82,7 +85,7 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
         return true;
     }
 
-    public float getDestroySpeed(@NotNull FakeBlockState fakeBlockState, @NotNull Player player, @Nullable ItemStack stack){
+    public float getDestroySpeed(@NotNull FakeBlockState fakeBlockState, @NotNull Player player, @Nullable ItemStack stack) {
         return 1f;
     }
 
@@ -90,25 +93,27 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
         return new ArrayList<>();
     }
 
-    protected int getExperienceToDrop(Block block, FakeBlockState fakeBlockState, @Nullable Entity causeOfExperienceDrop, @Nullable ItemStack toolUsed, boolean ignoreTool){
+    protected int getExperienceToDrop(Block block, FakeBlockState fakeBlockState, @Nullable Entity causeOfExperienceDrop, @Nullable ItemStack toolUsed, boolean ignoreTool) {
         return 0;
     }
 
     /**
      * Returns whether this {@link FakeBlock} has a {@link de.verdox.mccreativelab.world.block.entity.FakeBlockEntity}
+     *
      * @return true if it has a block entity
      */
-    public final boolean hasBlockEntity(){
+    public final boolean hasBlockEntity() {
         return getFakeBlockEntityType() != null;
     }
 
     /**
      * Returns the block entity type if hasBlockEntity returns true.
      * If hasBlockEntity is false this method will never be called.
+     *
      * @return The FakeBlockEntityType
      */
     @NotNull
-    public FakeBlockEntityType<?> getFakeBlockEntityType(){
+    public FakeBlockEntityType<?> getFakeBlockEntityType() {
         return null;
     }
 
@@ -119,6 +124,7 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
     public void remove(Location location, boolean withEffects, boolean dropLoot, @Nullable Entity causeOfBreak) {
         remove(location, withEffects, dropLoot, causeOfBreak, null, true);
     }
+
     public void remove(Location location, boolean withEffects, boolean dropLoot, @Nullable Entity causeOfBreak, @Nullable ItemStack tool, boolean ignoreTool) {
         remove(location, withEffects, dropLoot, true, causeOfBreak, tool, ignoreTool);
     }
@@ -129,39 +135,39 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
             return;
         if (withEffects)
             FakeBlockUtil.simulateBlockBreakWithParticlesAndSound(fakeBlockState, location.getBlock());
-        if(dropLoot)
+        if (dropLoot)
             dropBlockLoot(location, fakeBlockState, causeOfBreak, tool, ignoreTool);
-        if(dropExperience)
+        if (dropExperience)
             dropBlockExperience(location, fakeBlockState, causeOfBreak, tool, ignoreTool);
         removeBlockEntity(location);
         FakeBlockStorage.setFakeBlockState(location, null, false);
     }
 
     private void removeBlockEntity(Location location) {
-        if(hasBlockEntity()){
+        if (hasBlockEntity()) {
             FakeBlockEntity fakeBlockEntity = FakeBlockEntityStorage.getFakeBlockEntityAt(location.getBlock());
-            if(fakeBlockEntity != null)
+            if (fakeBlockEntity != null)
                 fakeBlockEntity.getMarkerEntity().remove();
         }
     }
 
-    public void dropBlockLoot(Location location, FakeBlockState fakeBlockState, @Nullable Entity causeOfBreak, @Nullable ItemStack tool, boolean ignoreTool){
+    public void dropBlockLoot(Location location, FakeBlockState fakeBlockState, @Nullable Entity causeOfBreak, @Nullable ItemStack tool, boolean ignoreTool) {
         List<ItemStack> itemsToDrop = new ArrayList<>(fakeBlockState.getFakeBlock().drawLoot(location.getBlock(), fakeBlockState, causeOfBreak, tool, ignoreTool));
-        if(itemsToDrop.isEmpty())
+        if (itemsToDrop.isEmpty())
             return;
         FakeBlockDropItemsEvent fakeBlockDropItemsEvent = new FakeBlockDropItemsEvent(location.getBlock(), fakeBlockState, itemsToDrop, causeOfBreak, tool, ignoreTool);
-        if(!fakeBlockDropItemsEvent.callEvent())
+        if (!fakeBlockDropItemsEvent.callEvent())
             return;
         for (ItemStack stack : fakeBlockDropItemsEvent.getItems())
             location.getBlock().getWorld().dropItemNaturally(location, stack.clone());
     }
 
-    public void dropBlockExperience(Location location, FakeBlockState fakeBlockState, @Nullable Entity causeOfBreak, @Nullable ItemStack tool, boolean ignoreTool){
+    public void dropBlockExperience(Location location, FakeBlockState fakeBlockState, @Nullable Entity causeOfBreak, @Nullable ItemStack tool, boolean ignoreTool) {
         int experience = fakeBlockState.getFakeBlock().getExperienceToDrop(location.getBlock(), fakeBlockState, causeOfBreak, tool, ignoreTool);
-        if(experience == 0)
+        if (experience == 0)
             return;
         FakeBlockDropExperienceEvent fakeBlockDropItemsEvent = new FakeBlockDropExperienceEvent(location.getBlock(), fakeBlockState, experience, causeOfBreak, tool, ignoreTool);
-        if(!fakeBlockDropItemsEvent.callEvent())
+        if (!fakeBlockDropItemsEvent.callEvent())
             return;
         location.getBlock().getWorld().spawnEntity(location.getBlock().getLocation(), EntityType.EXPERIENCE_ORB, CreatureSpawnEvent.SpawnReason.DEFAULT, entity -> {
             ExperienceOrb experienceOrb = (ExperienceOrb) entity;
@@ -299,9 +305,10 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
             /**
              * This is needed if you alter the fertilizeAction because spigot will call the event afterward and reset the block states.
              * Here we prevent the event entirely.
+             *
              * @return The builder
              */
-            public Builder preventFertilizeEvent(){
+            public Builder preventFertilizeEvent() {
                 this.blockedEventsByDefault.add(BlockFertilizeEvent.class);
                 return this;
             }
@@ -311,7 +318,7 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
                 return this;
             }
 
-            public Builder withVanillaBlockSound(BlockData blockSound){
+            public Builder withVanillaBlockSound(BlockData blockSound) {
                 this.vanillaBlockSound = blockSound;
                 return this;
             }
@@ -344,13 +351,17 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
         private final SoundData placeSound;
         private final SoundData fallSound;
 
-        public FakeBlockSoundGroup(@NotNull NamespacedKey namespacedKey, SoundData hitSound, SoundData stepSound, SoundData breakSound, SoundData placeSound, SoundData fallSound) {
+        public FakeBlockSoundGroup(@NotNull NamespacedKey namespacedKey, @Nullable SoundData hitSound, @Nullable SoundData stepSound, @Nullable SoundData breakSound, @Nullable SoundData placeSound, @Nullable SoundData fallSound) {
             super(namespacedKey);
             this.hitSound = hitSound;
             this.stepSound = stepSound;
             this.breakSound = breakSound;
             this.placeSound = placeSound;
             this.fallSound = fallSound;
+        }
+
+        public FakeBlockSoundGroup(@Nullable SoundData hitSound, @Nullable SoundData stepSound, @Nullable SoundData breakSound, @Nullable SoundData placeSound, @Nullable SoundData fallSound) {
+            this(new NamespacedKey("mcc", "fake_block_sound_group_no_parent_"+ ThreadLocalRandom.current().nextInt(10000)), hitSound, stepSound, breakSound, placeSound, fallSound);
         }
 
         @Override
@@ -362,8 +373,18 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
             customPack.registerNullable(fallSound);
         }
 
-        public Wrappers.SoundGroup asSoundGroup() {
-            return Wrappers.of(Wrappers.of(hitSound), Wrappers.of(stepSound), Wrappers.of(breakSound), Wrappers.of(placeSound), Wrappers.of(fallSound));
+        public MCCBlockSoundGroup asMCCBlockSoundGroup() {
+            Sound.Source source = Sound.Source.BLOCK;
+            float volume = 1;
+            float pitch = 1;
+            MCCBlockSoundGroup backup = MCCBlocks.STONE.get().getSoundGroup();
+            return new MCCCustomBlockSoundGroup(
+                hitSound != null ? hitSound.asSound(source, volume, pitch) : backup.hitSound(),
+                stepSound != null ? stepSound.asSound(source, volume, pitch): backup.stepSound(),
+                breakSound != null ? breakSound.asSound(source, volume, pitch): backup.breakSound(),
+                placeSound != null ? placeSound.asSound(source, volume, pitch): backup.placeSound(),
+                fallSound != null ? fallSound.asSound(source, volume, pitch): backup.fallSound()
+            );
         }
 
         @Override
@@ -474,6 +495,7 @@ public abstract class FakeBlock implements Keyed, BlockBehaviour {
         private float speedFactor = 1.0F;
         private float jumpFactor = 1.0F;
         private boolean immutable;
+
         FakeBlockProperties() {
 
         }

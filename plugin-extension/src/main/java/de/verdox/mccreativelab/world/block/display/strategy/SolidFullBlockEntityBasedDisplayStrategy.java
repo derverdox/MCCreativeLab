@@ -3,15 +3,16 @@ package de.verdox.mccreativelab.world.block.display.strategy;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.display.SolidFullBlockEntityDisplay;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -30,16 +31,16 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         if(!(fakeBlockState.getFakeBlockDisplay() instanceof SolidFullBlockEntityDisplay solidFullBlockEntityDisplay))
             return;
         FakeBlockFaces fakeBlockFaces = getOrCreateFakeBlockDisplayData(block);
-        for (Map.Entry<BlockFace, ItemTextureData> blockFaceItemTextureDataEntry : solidFullBlockEntityDisplay.getItemTextureDataPerBlockFace().entrySet()) {
+        for (Map.Entry<MCCBlockFace, ItemTextureData> blockFaceItemTextureDataEntry : solidFullBlockEntityDisplay.getItemTextureDataPerBlockFace().entrySet()) {
             ItemTextureData itemTextureData = blockFaceItemTextureDataEntry.getValue();
-            BlockFace blockFace = blockFaceItemTextureDataEntry.getKey();
+            MCCBlockFace blockFace = blockFaceItemTextureDataEntry.getKey();
             ItemDisplay fakeBlockFace = createFakeBlockFace(blockFace, itemTextureData, block, fakeBlockState);
             fakeBlockFaces.saveBlockFaceDisplay(blockFace, fakeBlockFace);
         }
     }
 
     @Override
-    public void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, BlockFace direction, BlockData neighbourBlockData) {
+    public void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, MCCBlockFace direction, BlockData neighbourBlockData) {
         if(!(fakeBlockState.getFakeBlockDisplay() instanceof SolidFullBlockEntityDisplay solidFullBlockEntityDisplay))
             return;
         if (!neighbourBlockData.isOccluding())
@@ -55,9 +56,9 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         Block block = potentialItemDisplay.block();
         ItemDisplay itemDisplay = potentialItemDisplay.itemDisplay();
         FakeBlock.FakeBlockState fakeBlockState = potentialItemDisplay.storedFakeBlockState();
-        BlockFace blockFace = BlockFace.valueOf(itemDisplay.getPersistentDataContainer()
+        MCCBlockFace blockFace = MCCBlockFace.valueOf(itemDisplay.getPersistentDataContainer()
                                                            .getOrDefault(ITEM_DISPLAY_BLOCK_FACE_KEY, PersistentDataType.STRING, "SELF"));
-        if (blockFace.equals(BlockFace.SELF)) {
+        if (blockFace.equals(MCCBlockFace.SELF)) {
             safelyRemoveItemDisplay(itemDisplay);
             return;
         }
@@ -81,9 +82,10 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         return new FakeBlockFaces();
     }
 
-    private ItemDisplay createFakeBlockFace(BlockFace blockFace, ItemTextureData itemTextureData, Block block, FakeBlock.FakeBlockState fakeBlockState) {
+    private ItemDisplay createFakeBlockFace(MCCBlockFace blockFace, ItemTextureData itemTextureData, Block block, FakeBlock.FakeBlockState fakeBlockState) {
         Location blockCenter = block.getLocation().clone().add(0.5, 0.5, 0.5);
-        Location spawnLocation = blockCenter.clone().add(blockFace.getDirection().clone().multiply(0.5));
+        var dir = blockFace.getDirection().mul(0.5d);
+        Location spawnLocation = blockCenter.clone().add(new Vector(dir.x, dir.y, dir.z));
 
         ItemDisplay itemDisplay = (ItemDisplay) block.getWorld().spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY, CreatureSpawnEvent.SpawnReason.CUSTOM);
         setupItemDisplayNBT(itemDisplay, blockFace, itemTextureData, block, fakeBlockState);
@@ -91,7 +93,7 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         return itemDisplay;
     }
 
-    private void spawnFakeBlockFace(Block block, BlockFace blockFace, FakeBlock.FakeBlockState fakeBlockState, SolidFullBlockEntityDisplay solidFullBlockEntityDisplay) {
+    private void spawnFakeBlockFace(Block block, MCCBlockFace blockFace, FakeBlock.FakeBlockState fakeBlockState, SolidFullBlockEntityDisplay solidFullBlockEntityDisplay) {
         ItemTextureData itemTextureData = solidFullBlockEntityDisplay.getItemTextureDataPerBlockFace()
                                                         .getOrDefault(blockFace, null);
         if (itemTextureData == null)
@@ -104,21 +106,21 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         fakeBlockFaces.saveBlockFaceDisplay(blockFace, fakeBlockFace);
     }
 
-    private void removeFakeBlockFace(Block block, BlockFace blockFace) {
+    private void removeFakeBlockFace(Block block, MCCBlockFace blockFace) {
         FakeBlockFaces fakeBlockFaces = getFakeBlockDisplayData(block, false);
         if (fakeBlockFaces == null)
             return;
         fakeBlockFaces.removeBlockFaceAndDeSpawn(blockFace);
     }
 
-    private void setupItemDisplayNBT(ItemDisplay itemDisplay, BlockFace blockFace, ItemTextureData itemTextureData, Block block, FakeBlock.FakeBlockState fakeBlockState) {
+    private void setupItemDisplayNBT(ItemDisplay itemDisplay, MCCBlockFace blockFace, ItemTextureData itemTextureData, Block block, FakeBlock.FakeBlockState fakeBlockState) {
         setupItemDisplayNBT(itemDisplay, itemTextureData, block, fakeBlockState);
         itemDisplay.getPersistentDataContainer()
                    .set(ITEM_DISPLAY_BLOCK_FACE_KEY, PersistentDataType.STRING, blockFace.name());
     }
 
     protected static class FakeBlockFaces extends FakeBlockDisplayData{
-        private final Map<BlockFace, ItemDisplay> blockFaces = new HashMap<>();
+        private final Map<MCCBlockFace, ItemDisplay> blockFaces = new HashMap<>();
 
         FakeBlockFaces() {
         }
@@ -135,12 +137,12 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
         }
 
         @Nullable
-        public ItemDisplay getBlockFaceDisplay(BlockFace blockFace) {
+        public ItemDisplay getBlockFaceDisplay(MCCBlockFace blockFace) {
             Objects.requireNonNull(blockFace);
             return blockFaces.getOrDefault(blockFace, null);
         }
 
-        void saveBlockFaceDisplay(BlockFace blockFace, ItemDisplay itemDisplay) {
+        void saveBlockFaceDisplay(MCCBlockFace blockFace, ItemDisplay itemDisplay) {
             Objects.requireNonNull(blockFace);
             Objects.requireNonNull(itemDisplay);
             if (blockFaces.containsKey(blockFace))
@@ -148,7 +150,7 @@ public class SolidFullBlockEntityBasedDisplayStrategy extends FakeBlockVisualStr
             blockFaces.put(blockFace, itemDisplay);
         }
 
-        private void removeBlockFaceAndDeSpawn(BlockFace blockFace) {
+        private void removeBlockFaceAndDeSpawn(MCCBlockFace blockFace) {
             ItemDisplay itemDisplay = blockFaces.remove(blockFace);
             if (itemDisplay == null)
                 return;

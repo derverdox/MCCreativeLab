@@ -1,16 +1,20 @@
 package de.verdox.mccreativelab.world.block.display.strategy;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockFace;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.ItemDisplay;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -74,8 +78,8 @@ public abstract class FakeBlockVisualStrategy<T extends FakeBlockVisualStrategy.
         block.removeMetadata(FAKE_BLOCK_FACE_LINKING_KEY, MCCreativeLabExtension.getInstance());
     }
 
-    public abstract void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, BlockFace direction, BlockData neighbourBlockData);
-    protected void blockUpdateRemovalLogic(Block block, FakeBlock.FakeBlockState fakeBlockState, BlockFace direction, BlockData neighbourBlockData) {
+    public abstract void blockUpdate(Block block, FakeBlock.FakeBlockState fakeBlockState, MCCBlockFace direction, BlockData neighbourBlockData);
+    protected void blockUpdateRemovalLogic(Block block, FakeBlock.FakeBlockState fakeBlockState, MCCBlockFace direction, BlockData neighbourBlockData) {
 /*        Bukkit.getScheduler().runTaskLater(MCCreativeLabExtension.getInstance(), () -> {
             FakeBlock.FakeBlockState fakeBlockStateAfterUpdate = FakeBlockStorage.getFakeBlockState(block.getLocation(), false);
             if (fakeBlockStateAfterUpdate != null && fakeBlockState.getFakeBlock().equals(fakeBlockStateAfterUpdate.getFakeBlock()))
@@ -88,7 +92,7 @@ public abstract class FakeBlockVisualStrategy<T extends FakeBlockVisualStrategy.
 
     protected void setupItemDisplayNBT(ItemDisplay itemDisplay, ItemTextureData itemTextureData, Block block, FakeBlock.FakeBlockState fakeBlockState) {
         int fakeBlockID = MCCreativeLabExtension.getFakeBlockRegistry().getId(fakeBlockState.getFakeBlock().getKey());
-        itemDisplay.setItemStack(itemTextureData.createItem());
+        itemDisplay.setItemStack(BukkitAdapter.from(itemTextureData.createItem()));
 
         itemDisplay.getPersistentDataContainer()
             .set(ITEM_DISPLAY_LINKED_X, PersistentDataType.INTEGER, block.getX());

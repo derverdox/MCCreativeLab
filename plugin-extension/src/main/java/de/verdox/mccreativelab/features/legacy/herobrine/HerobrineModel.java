@@ -1,9 +1,14 @@
 package de.verdox.mccreativelab.features.legacy.herobrine;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.*;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitCraftConverters;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +54,7 @@ public class HerobrineModel extends ResourcePackResource {
 
     private ArmorStand spawnModelType(ModelPart modelPart, Location location) {
         ItemTextureData itemTextureData = modelParts.get(modelPart);
-        ItemStack stack = itemTextureData.createItem();
+        ItemStack stack = BukkitAdapter.from(itemTextureData.createItem());
         //Location spawnLoc = location.clone().add(modelPart.getXOffset(), modelPart.getYOffset(), modelPart.getZOffset());
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         armorStand.setInvisible(true);
@@ -90,7 +95,7 @@ public class HerobrineModel extends ResourcePackResource {
         ItemTextureData.ModelType modelType = createModel(modelPart, herobrineSkinTexture);
 
         return new ItemTextureData(new NamespacedKey("mccreativelab", "assets/herobrine/default/" + modelPart.name()
-                                                                                                      .toLowerCase()), Material.DISC_FRAGMENT_5, CustomModelDataProvider.drawCustomModelData(Material.DISC_FRAGMENT_5), null, modelType);
+                                                                                                      .toLowerCase()), MCCItems.DISC_FRAGMENT_5.get(), CustomModelDataProvider.drawCustomModelData(Material.DISC_FRAGMENT_5.key()), null, modelType);
     }
 
     private ItemTextureData.ModelType createModel(ModelPart modelPart, NamespacedKey herobrineSkinTexture) {

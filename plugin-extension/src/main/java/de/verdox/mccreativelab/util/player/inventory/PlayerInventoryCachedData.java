@@ -1,6 +1,11 @@
 package de.verdox.mccreativelab.util.player.inventory;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
+import de.verdox.mccreativelab.conversion.ConversionService;
+import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,36 +33,39 @@ public class PlayerInventoryCachedData {
             throw new IllegalStateException("PlayerInventoryCacheStrategy " + type.getName() + " not registered yet!");
         return function.apply(type.cast(playerInventoryCachedData.strategies.get(type)));
     }
+
     private final Map<Class<? extends PlayerInventoryCacheStrategy>, PlayerInventoryCacheStrategy> strategies = new HashMap<>();
+
     public PlayerInventoryCachedData() {
         REGISTERED_STRATEGIES.values().stream().map(Supplier::get)
-                             .forEach(playerInventoryCacheStrategy -> strategies.put(playerInventoryCacheStrategy.getClass(), playerInventoryCacheStrategy));
+            .forEach(playerInventoryCacheStrategy -> strategies.put(playerInventoryCacheStrategy.getClass(), playerInventoryCacheStrategy));
     }
 
-    void cacheItemInSlot(int slot, ItemStack stack) {
+    void cacheItemInSlot(int slot, MCCItemStack stack) {
         strategies.values()
-                  .forEach(playerInventoryCacheStrategy -> playerInventoryCacheStrategy.cacheItemInSlot(slot, stack));
+            .forEach(playerInventoryCacheStrategy -> playerInventoryCacheStrategy.cacheItemInSlot(slot, stack));
     }
 
-    private void removeFromCache(int slot, ItemStack stack) {
+    private void removeFromCache(int slot, MCCItemStack stack) {
         strategies.values()
-                  .forEach(playerInventoryCacheStrategy -> playerInventoryCacheStrategy.removeSlotFromCache(slot, stack));
+            .forEach(playerInventoryCacheStrategy -> playerInventoryCacheStrategy.removeSlotFromCache(slot, stack));
     }
 
     public static class Listener implements org.bukkit.event.Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent e) {
             e.getPlayer()
-             .setMetadata("cached_inventory_data", new FixedMetadataValue(MCCreativeLabExtension.getInstance(), new PlayerInventoryCachedData()));
+                .setMetadata("cached_inventory_data", new FixedMetadataValue(MCCreativeLabExtension.getInstance(), new PlayerInventoryCachedData()));
         }
 
         @EventHandler(priority = EventPriority.LOWEST)
         public void onInventorySlotChange(PlayerInventorySlotChangeEvent e) {
             PlayerInventoryCachedData playerInventoryCachedData = (PlayerInventoryCachedData) e.getPlayer()
-                                                                                               .getMetadata("cached_inventory_data")
-                                                                                               .get(0).value();
-            playerInventoryCachedData.removeFromCache(e.getSlot(), e.getOldItemStack());
-            playerInventoryCachedData.cacheItemInSlot(e.getSlot(), e.getNewItemStack());
+                .getMetadata("cached_inventory_data")
+                .get(0).value();
+            ;
+            playerInventoryCachedData.removeFromCache(e.getSlot(), BukkitAdapter.to(e.getOldItemStack()));
+            playerInventoryCachedData.cacheItemInSlot(e.getSlot(), BukkitAdapter.to(e.getNewItemStack()));
         }
     }
 

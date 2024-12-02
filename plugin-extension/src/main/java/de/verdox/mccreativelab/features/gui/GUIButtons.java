@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 
+import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
@@ -43,7 +44,7 @@ public class GUIButtons {
     }
 
     private static ItemTextureData registerButton(String packageID, String id) {
-        ItemTextureData itemTextureData = new ItemTextureData(new NamespacedKey(packageID.toLowerCase(Locale.ROOT), "item/gui/buttons/" + id), Material.STICK, new Asset<>("/gui/buttons/" + packageID + "/" + id + ".png"), ItemTextureData.ModelType.CLICKABLE_ITEM);
+        ItemTextureData itemTextureData = new ItemTextureData(new NamespacedKey(packageID.toLowerCase(Locale.ROOT), "item/gui/buttons/" + id), MCCItems.STICK.get(), new Asset<>("/gui/buttons/" + packageID + "/" + id + ".png"), ItemTextureData.ModelType.CLICKABLE_ITEM);
         MCCreativeLabExtension.getCustomResourcePack().register(itemTextureData);
         return itemTextureData;
     }

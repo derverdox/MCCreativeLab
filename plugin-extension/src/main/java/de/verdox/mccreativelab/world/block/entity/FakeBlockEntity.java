@@ -1,9 +1,7 @@
 package de.verdox.mccreativelab.world.block.entity;
 
-import de.verdox.mccreativelab.behaviour.entity.EntityBehaviour;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.util.nbt.NBTPersistent;
-import de.verdox.mccreativelab.world.block.FakeBlock;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

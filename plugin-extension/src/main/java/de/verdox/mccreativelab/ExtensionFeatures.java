@@ -6,10 +6,10 @@ import de.verdox.mccreativelab.generator.resourcepack.ResourcePackMapper;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIUtil;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRendererImpl;
-import de.verdox.mccreativelab.serialization.MCCSerializer;
 import de.verdox.mccreativelab.util.ComponentUtil;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCacheStrategy;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCachedData;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,17 +19,16 @@ import org.bukkit.event.server.ServerLoadEvent;
 public class ExtensionFeatures implements Listener {
     private static final HudRendererImpl hudRenderer = new HudRendererImpl();
     public void onLoad(){
-        MCCSerializer.init();
     }
 
     public void onEnable(){
         hudRenderer.start();
         ResourcePackMapper resourcePackMapper = MCCreativeLabExtension.getCustomResourcePack().getResourcePackMapper();
         MCCreativeLabExtension.registerRegistryLookupCommand("hud", resourcePackMapper.getHudsRegistry(), hudRenderer::getOrStartActiveHud);
-        MCCreativeLabExtension.registerRegistryLookupCommand("gui", resourcePackMapper.getGuiRegistry(), (player, customGUIBuilder) -> customGUIBuilder.createMenuForPlayer(player));
-        MCCreativeLabExtension.registerRegistryLookupCommand("menu", resourcePackMapper.getMenuRegistry(), (player, customMenu) -> customMenu.createMenuForPlayer(player));
+        MCCreativeLabExtension.registerRegistryLookupCommand("gui", resourcePackMapper.getGuiRegistry(), (player, customGUIBuilder) -> customGUIBuilder.createMenuForPlayer(BukkitAdapter.to(player)));
+        MCCreativeLabExtension.registerRegistryLookupCommand("menu", resourcePackMapper.getMenuRegistry(), (player, customMenu) -> customMenu.createMenuForPlayer(BukkitAdapter.to(player)));
         ComponentUtil.install();
-        GUIUtil.install();
+        GUIUtil.install(MCCreativeLabExtension.getCustomResourcePack());
 
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryCachedData.Listener(), MCCreativeLabExtension.getInstance());
         PlayerInventoryCachedData.register(PlayerInventoryCacheStrategy.CachedAmounts.class, PlayerInventoryCacheStrategy.CachedAmounts::new);
@@ -48,13 +47,12 @@ public class ExtensionFeatures implements Listener {
     public void onServerLoad(ServerLoadEvent.LoadType loadType){
         if(loadType.equals(ServerLoadEvent.LoadType.STARTUP)){
             if (MCCreativeLabExtension.getInstance().createResourcePack())
-                MCCreativeLabExtension.getInstance().getResourcePackFileHoster()
-                                      .sendDefaultResourcePackToPlayers(Bukkit.getOnlinePlayers());
+                MCCreativeLabExtension.getResourcePackFileHoster().sendDefaultResourcePackToPlayers(MCCPlatform.getInstance().getOnlinePlayers());
             Bukkit.getLogger().info("MCCreativeLabExtension started");
         }
         else {
             MCCreativeLabExtension.getInstance().buildPackAndZipFiles(true);
-            MCCreativeLabExtension.getInstance().getResourcePackFileHoster().sendDefaultResourcePackToPlayers(Bukkit.getOnlinePlayers());
+            MCCreativeLabExtension.getResourcePackFileHoster().sendDefaultResourcePackToPlayers(MCCPlatform.getInstance().getOnlinePlayers());
             Bukkit.getLogger().info("MCCreativeLabExtension reloaded");
         }
     }

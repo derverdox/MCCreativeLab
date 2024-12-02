@@ -1,6 +1,6 @@
 plugins {
     java
-    //id("io.papermc.paperweight.userdev") version "1.7.3"
+    id("io.papermc.paperweight.userdev") version "1.7.3"
 }
 
 description = "plugin-extension"
@@ -17,11 +17,13 @@ allprojects {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
     dependencies {
-        compileOnly(project(":mccreativelab-api"))
+        //compileOnly(project(":mccreativelab-api"))
         implementation(project(":mcc-util"))
+        implementation(project(":mcc-wrapper"))
+        implementation(project(":mcc-pack-generator"))
         implementation("de.verdox.vcore:Paper:1.0")
 
-        //paperweight.devBundle("de.verdox.mccreativelab", "1.21.1-R0.1-SNAPSHOT")
+        paperweight.devBundle("de.verdox.mccreativelab", "1.21.1-R0.1-SNAPSHOT")
 
         compileOnly("com.hierynomus:sshj:0.38.0")
         compileOnly("io.vertx:vertx-core:4.5.3")
@@ -50,7 +52,7 @@ allprojects {
         useJUnitPlatform()
     }
 
-    val jarPath = "../plugin-extension/build/libs/plugin-extension-$version.jar";
+    val jarPath = "../plugin-extension/build/libs/plugin-extension-$version-dev-all.jar";
 
     tasks {
         compileJava {
@@ -63,6 +65,7 @@ allprojects {
 
         named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
             archiveClassifier.set("") // Entfernt das "-all" Suffix
+            archiveVersion.set("$version")
         }
 
 

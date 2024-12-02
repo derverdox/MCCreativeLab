@@ -1,11 +1,8 @@
 package de.verdox.mccreativelab.world.block;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntity;
 import de.verdox.mccreativelab.world.block.entity.FakeBlockEntityStorage;
-import io.papermc.paper.event.player.PlayerArmSwingEvent;
-import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Interaction;
@@ -16,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.HopperInventorySearchEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.util.RayTraceResult;
 
 public class FakeBlockListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -63,13 +58,5 @@ public class FakeBlockListener implements Listener {
         fakeBlockState.getFakeBlock().dropBlockLoot(e.getBlock().getLocation(), fakeBlockState, e.getPlayer(), e.getPlayer().getInventory().getItemInMainHand(), false);
         fakeBlockState.getFakeBlock().dropBlockExperience(e.getBlock().getLocation(), fakeBlockState, e.getPlayer(), e.getPlayer().getInventory().getItemInMainHand(), false);
         e.setDropItems(false);
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void exposeFakeBlockEntityContainersToHoppers(HopperInventorySearchEvent e) {
-        FakeBlockEntity fakeBlockEntity = FakeBlockEntityStorage.getFakeBlockEntityAt(e.getSearchBlock());
-        if (fakeBlockEntity == null || fakeBlockEntity.getContainerOfEntity() == null)
-            return;
-        e.setInventory(fakeBlockEntity.getContainerOfEntity());
     }
 }
