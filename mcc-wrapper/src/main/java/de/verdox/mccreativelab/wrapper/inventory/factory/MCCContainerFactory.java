@@ -1,8 +1,10 @@
 package de.verdox.mccreativelab.wrapper.inventory.factory;
 
+import com.google.common.reflect.TypeToken;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
-import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
-import de.verdox.mccreativelab.wrapper.world.MCCLocation;
+import org.checkerframework.checker.index.qual.Positive;
 
 /**
  * Used to create containers of a specific menu type.
@@ -10,20 +12,22 @@ import de.verdox.mccreativelab.wrapper.world.MCCLocation;
  */
 public interface MCCContainerFactory {
     /**
-     * Used to create a container provider that resides at a specific location. This location must be in a loaded world in a loaded chunk but does not
-     * have to be in proximity to the players that open the menu. All players who access the inventory have the same view.
+     * Creates a simple container that stores item stacks
      *
-     * @param mccMenuType the menu type
-     * @param mccLocation the location
-     * @return the container provider
+     * @param size the size of the container
+     * @return the container
      */
-    ContainerProvider<?> createContainerProvider(MCCMenuType mccMenuType, MCCLocation mccLocation);
+    MCCContainer createSimpleContainer(@Positive int size);
 
     /**
-     * Creates a dummy provider that always provides the parameter container
+     * Creates a menu with the given container as input for a given player
      *
-     * @param existingContainer the existing container to provide
-     * @return the dummy provider
+     * @param menuType  the menu type
+     * @param container the container the menu should operate on
+     * @param player    the player the menu is constructed for
+     * @param <C>       the container type
+     * @param <M>       the menu type
+     * @return the constructed menu
      */
-    ContainerProvider<?> fromExistingContainer(MCCContainerMenu<?> existingContainer);
+    <C extends MCCContainer, M extends MCCContainerMenu<?, C>> M openMenuOnContainer(TypeToken<M> menuType, MCCPlayer player, C container);
 }
