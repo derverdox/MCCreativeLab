@@ -53,8 +53,8 @@ public interface MCCBlockState extends MCCKeyedWrapper {
      */
     String toBlockDataString();
 
-    default boolean isPreferredTool(MCCBlockState blockState, MCCItemStack nmsItem) {
-        return !blockState.getBlockType().requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(blockState);
+    default boolean isPreferredTool(MCCItemStack nmsItem) {
+        return !requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(this);
     }
 
     float getDestroySpeed(MCCPlayer player, MCCItemStack mccItemStack, boolean considerEnchants);
@@ -66,5 +66,20 @@ public interface MCCBlockState extends MCCKeyedWrapper {
      * @param tool   the tool used to break the block
      * @return the drops of this block as items
      */
-    @NotNull List<MCCItemStack> getDrops(@Nullable MCCEntity entity, @Nullable MCCItemStack tool);
+    @NotNull List<MCCItemStack> getDrops(@NotNull MCCLocation mccLocation, @Nullable MCCEntity entity, @Nullable MCCItemStack tool);
+
+
+    /**
+     * Returns if this block type is randomly ticking
+     *
+     * @return true if the block type is randomly ticking
+     */
+    boolean isRandomlyTicking();
+
+    /**
+     * Returns if this block type requires correct tools for drops
+     *
+     * @return true if the block type requires correct tools for drops
+     */
+    boolean requiresCorrectToolForDrops();
 }

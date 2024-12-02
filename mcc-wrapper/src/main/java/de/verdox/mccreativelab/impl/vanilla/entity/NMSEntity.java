@@ -1,23 +1,33 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
+import com.google.common.base.Preconditions;
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.entity.permission.MCCPermissionContainer;
+import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.platform.TempCache;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import de.verdox.mccreativelab.wrapper.platform.TempData;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.pointer.Pointers;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class NMSEntity<T extends Entity> extends MCCHandle<T> implements MCCEntity {
     public static final MCCConverter<Entity, NMSEntity> CONVERTER = converter(NMSEntity.class, Entity.class, NMSEntity::new, nmsEntity -> (Entity) nmsEntity.getHandle());
+
+    private final MCCPermissionContainer permissionContainer = new MCCPermissionContainer();
+    protected Pointers adventurePointer;
 
 
     public NMSEntity(T handle) {
@@ -26,48 +36,52 @@ public class NMSEntity<T extends Entity> extends MCCHandle<T> implements MCCEnti
 
     @Override
     public @NotNull MCCEntityType getType() {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public Audience asAudience() {
-        //TODO
-        return null;
+        return conversionService.wrap(handle.getType(), new TypeToken<>() {});
     }
 
     @Override
     public UUID getUUID() {
-        //TODO
-        return null;
+        return handle.getUUID();
     }
 
     @Override
     public Component displayName() {
-        //TODO
-        return null;
+        return conversionService.wrap(handle.getDisplayName(), new TypeToken<>() {});
     }
 
     @Override
     public void displayName(Component name) {
-        //TODO
+        throw new OperationNotPossibleOnNMS();
     }
 
     @Override
     public CompletableFuture<MCCEntity> teleport(MCCLocation location) {
-        //TODO
-        return null;
+        Objects.requireNonNull(location, "The teleport location cannot be null");
+        //TODO: Teleport Flags
+        location.checkFinite();
+        handle.stopRiding();
+
+        if (!getLocation().world().equals(location.world())) {
+            Preconditions.checkState(!handle.generation, "Cannot teleport entity to an other world during world generation");
+            CompletableFuture<MCCEntity> done = new CompletableFuture<>();
+            handle.changeDimension(new DimensionTransition(conversionService.unwrap(location.world(), new TypeToken<>() {}), new Vec3(location.x(), location.y(), location.z()), Vec3.ZERO, location.pitch(), location.yaw(), entity -> {
+                done.complete(this);
+            }));
+            return done;
+        } else {
+            handle.moveTo(location.x(), location.y(), location.z(), location.yaw(), location.pitch());
+            handle.setYHeadRot(location.yaw());
+        }
+        return CompletableFuture.completedFuture(this);
     }
 
     @Override
     public MCCLocation getLocation() {
-        //TODO
-        return null;
+        return new MCCLocation(conversionService.wrap(handle.level(), new TypeToken<>() {}), handle.position().x(), handle.position().y(), handle.position().z(), handle.getBukkitYaw(), handle.getXRot());
     }
 
     @Override
     public @NotNull Key key() {
-        //TODO
         return getType().key();
     }
 
@@ -215,5 +229,22 @@ public class NMSEntity<T extends Entity> extends MCCHandle<T> implements MCCEnti
     @Override
     public boolean isOnGround() {
         return handle.onGround();
+    }
+
+    @Override
+    public net.kyori.adventure.pointer.Pointers pointers() {
+        if (this.adventurePointer == null) {
+            this.adventurePointer = net.kyori.adventure.pointer.Pointers.builder()
+                .withDynamic(net.kyori.adventure.identity.Identity.DISPLAY_NAME, this::displayName)
+                .withDynamic(net.kyori.adventure.identity.Identity.UUID, this::getUUID)
+                .withStatic(net.kyori.adventure.permission.PermissionChecker.POINTER, permission -> getPermissions().permissionValue(permission))
+                .build();
+        }
+        return this.adventurePointer;
+    }
+
+    @Override
+    public MCCPermissionContainer getPermissions() {
+        return permissionContainer;
     }
 }

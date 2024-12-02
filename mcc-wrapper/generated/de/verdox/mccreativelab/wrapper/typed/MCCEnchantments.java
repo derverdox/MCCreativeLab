@@ -1,7 +1,6 @@
 package de.verdox.mccreativelab.wrapper.typed;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import com.google.common.reflect.TypeToken;
@@ -10,8 +9,6 @@ import net.kyori.adventure.key.Key;
 public class MCCEnchantments  {
 
 	public static final Key VANILLA_REGISTRY_KEY  = Key.key("minecraft", "enchantment");
-
-	public static final MCCTypedKey<MCCRegistry<MCCEnchantment>> VANILLA_REGISTRY  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "root"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});;
 
 	public static final MCCTypedKey<MCCEnchantment> PROTECTION  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "protection"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
 

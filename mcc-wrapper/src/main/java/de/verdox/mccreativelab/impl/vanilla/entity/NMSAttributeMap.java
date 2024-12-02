@@ -8,6 +8,7 @@ import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttributeInstance;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttributeMap;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.typed.MCCRegistries;
 import net.kyori.adventure.key.Key;
@@ -27,9 +28,9 @@ public class NMSAttributeMap extends MCCHandle<AttributeMap> implements MCCAttri
 
     @Override
     @MCCReflective
-    public void registerAttribute(MCCTypedKey<MCCAttribute> attribute) {
+    public void registerAttribute(MCCReference<MCCAttribute> attribute) {
         if (hasAttribute(attribute)) {
-            throw new IllegalArgumentException("The attribute " + attribute.key() + " is already registered");
+            throw new IllegalArgumentException("The attribute " + attribute + " is already registered");
         }
         try {
             Map<Holder<Attribute>, AttributeInstance> attributes = (Map<Holder<Attribute>, AttributeInstance>) AttributeMap.class.getField("attributes").get(handle);
@@ -41,35 +42,35 @@ public class NMSAttributeMap extends MCCHandle<AttributeMap> implements MCCAttri
     }
 
     @Override
-    public MCCAttributeInstance getAttributeInstance(MCCTypedKey<MCCAttribute> attribute) throws IllegalArgumentException {
+    public MCCAttributeInstance getAttributeInstance(MCCReference<MCCAttribute> attribute) throws IllegalArgumentException {
         if (!hasAttribute(attribute)) {
-            throw new IllegalArgumentException("The attribute " + attribute.key() + " is not registered");
+            throw new IllegalArgumentException("The attribute " + attribute + " is not registered");
         }
         return conversionService.wrap(handle.getInstance(toHolder(attribute)), new TypeToken<>() {});
     }
 
     @Override
-    public boolean hasAttribute(MCCTypedKey<MCCAttribute> attribute) {
+    public boolean hasAttribute(MCCReference<MCCAttribute> attribute) {
         return handle.hasAttribute(toHolder(attribute));
     }
 
     @Override
-    public boolean hasModifier(MCCTypedKey<MCCAttribute> attribute, Key modifierKey) {
+    public boolean hasModifier(MCCReference<MCCAttribute> attribute, Key modifierKey) {
         return handle.hasModifier(toHolder(attribute), conversionService.unwrap(modifierKey, new TypeToken<>() {}));
     }
 
     @Override
-    public double getValue(MCCTypedKey<MCCAttribute> attribute) {
+    public double getValue(MCCReference<MCCAttribute> attribute) {
         return handle.getValue(toHolder(attribute));
     }
 
     @Override
-    public double getBaseValue(MCCTypedKey<MCCAttribute> attribute) {
+    public double getBaseValue(MCCReference<MCCAttribute> attribute) {
         return handle.getBaseValue(toHolder(attribute));
     }
 
     @Override
-    public double getModifierValue(MCCTypedKey<MCCAttribute> attribute, Key modifierKey) {
+    public double getModifierValue(MCCReference<MCCAttribute> attribute, Key modifierKey) {
         return handle.getModifierValue(toHolder(attribute), conversionService.unwrap(modifierKey, new TypeToken<>() {}));
     }
 
@@ -85,7 +86,7 @@ public class NMSAttributeMap extends MCCHandle<AttributeMap> implements MCCAttri
         handle.assignBaseValues(attributeMap);
     }
 
-    private Holder<Attribute> toHolder(MCCTypedKey<MCCAttribute> attribute) {
-        return MCCPlatform.getInstance().getConversionService().unwrap(MCCRegistries.ATTRIBUTE_REGISTRY.get().getReference(attribute), new TypeToken<>() {});
+    private Holder<Attribute> toHolder(MCCReference<MCCAttribute> attribute) {
+        return MCCPlatform.getInstance().getConversionService().unwrap(attribute, new TypeToken<>() {});
     }
 }

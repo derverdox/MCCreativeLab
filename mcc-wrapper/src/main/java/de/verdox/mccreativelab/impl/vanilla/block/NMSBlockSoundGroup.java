@@ -48,4 +48,5 @@ public class NMSBlockSoundGroup extends MCCHandle<SoundType> implements MCCBlock
     public Sound fallSound() {
         return conversionService.wrap(handle.getFallSound(), new TypeToken<>() {});
     }
+
 }

@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.TestBase;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.typed.MCCBlocks;
 import net.kyori.adventure.key.Key;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;

@@ -2,7 +2,7 @@ package de.verdox.mccreativelab.wrapper.platform.properties;
 
 import java.util.Properties;
 
-public record MCCServerProperties(Properties properties) {
+public record MCCServerProperties(Properties properties, Runnable saveAction) {
     /**
      * Reads a value from the servers server property file
      *
@@ -10,7 +10,7 @@ public record MCCServerProperties(Properties properties) {
      * @param <T> the generic value type
      * @return the value
      */
-    public <T> T read(MCCPropertyKey<T> key){
+    public <T> T read(MCCPropertyKey<T> key) {
         return key.type().read(key.id(), properties);
     }
 
@@ -21,7 +21,11 @@ public record MCCServerProperties(Properties properties) {
      * @param value the new value
      * @param <T>   the generic value type
      */
-    public <T> void write(MCCPropertyKey<T> key, T value){
+    public <T> void write(MCCPropertyKey<T> key, T value) {
         key.type().write(key.id(), properties, value);
+    }
+
+    public void saveToFile() {
+        saveAction.run();
     }
 }

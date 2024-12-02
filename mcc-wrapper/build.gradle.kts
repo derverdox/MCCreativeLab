@@ -4,8 +4,7 @@ import java.net.URLClassLoader
 plugins {
     id("java")
     id("io.papermc.paperweight.userdev") version "1.7.3"
-    id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
-
+    id("xyz.jpenilla.run-paper") version "2.3.1" apply false // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = "de.verdox.mccreativelab"
@@ -116,9 +115,9 @@ tasks.test {
 }*/
 
 // Damit der Task vor dem Build ausgeführt wird
-tasks.named("build") {
+/*tasks.named("build") {
     dependsOn("checkMCCInstantiationSource")
-}
+}*/
 
 configure<PublishingExtension> {
     publications.create<MavenPublication>("maven") {

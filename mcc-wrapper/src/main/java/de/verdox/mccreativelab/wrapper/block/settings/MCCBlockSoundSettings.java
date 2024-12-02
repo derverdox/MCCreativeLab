@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.block.settings;
 
 import de.verdox.mccreativelab.wrapper.annotations.MCCLogic;
+import de.verdox.mccreativelab.wrapper.annotations.MCCRequireVanillaElement;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 
@@ -28,8 +29,16 @@ public interface MCCBlockSoundSettings {
 
     MCCBlockSoundGroup getSoundGroup(MCCBlockType mccBlockType);
 
-    default boolean hasCustomSoundGroup(MCCBlockType mccBlockType){
-        if(!mccBlockType.isVanilla()){
+    /**
+     * Used to swap vanilla block sound groups with custom ones.
+     *
+     * @param vanillaSoundGroup the vanilla sound group to change
+     * @param customSoundGroup  the custom sound group used to change
+     */
+    void swapVanillaSoundGroup(@MCCRequireVanillaElement MCCBlockSoundGroup vanillaSoundGroup, MCCBlockSoundGroup customSoundGroup);
+
+    default boolean hasCustomSoundGroup(MCCBlockType mccBlockType) {
+        if (!mccBlockType.isVanilla()) {
             return true;
         }
         return !mccBlockType.getSoundGroup().equals(getSoundGroup(mccBlockType));

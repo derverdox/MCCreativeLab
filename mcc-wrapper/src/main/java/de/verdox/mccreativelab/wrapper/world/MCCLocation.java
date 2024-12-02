@@ -101,4 +101,17 @@ public record MCCLocation(MCCWorld world, double x, double y, double z, float ya
 
         return NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z);
     }
+
+    /**
+     * Check if each component of this Location is finite.
+     *
+     * @throws IllegalArgumentException if any component is not finite
+     */
+    public void checkFinite() throws IllegalArgumentException {
+        NumberConversions.checkFinite(x, "x not finite");
+        NumberConversions.checkFinite(y, "y not finite");
+        NumberConversions.checkFinite(z, "z not finite");
+        NumberConversions.checkFinite(pitch, "pitch not finite");
+        NumberConversions.checkFinite(yaw, "yaw not finite");
+    }
 }

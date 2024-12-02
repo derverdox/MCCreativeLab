@@ -8,7 +8,8 @@ import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockSoundGroup;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.entity.*;
-import de.verdox.mccreativelab.impl.vanilla.inventory.types.*;
+import de.verdox.mccreativelab.impl.vanilla.inventory.types.container.NMSPlayerInventory;
+import de.verdox.mccreativelab.impl.vanilla.inventory.types.menu.*;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemType;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.AttributeModifierConverter;
@@ -27,9 +28,11 @@ import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.*;
 import de.verdox.mccreativelab.wrapper.entity.player.MCCGameMode;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
-import de.verdox.mccreativelab.wrapper.inventory.types.*;
+import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
+import de.verdox.mccreativelab.wrapper.inventory.types.menu.*;
 import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
 import de.verdox.mccreativelab.wrapper.platform.MCCResourcePack;
+import de.verdox.mccreativelab.wrapper.platform.properties.MCCPropertyKey;
 import de.verdox.mccreativelab.wrapper.platform.properties.MCCServerProperties;
 import de.verdox.mccreativelab.wrapper.registry.*;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
@@ -46,6 +49,7 @@ import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import de.verdox.mccreativelab.wrapper.world.level.biome.MCCBiome;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.Difficulty;
@@ -95,6 +99,7 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
         conversionService.registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
 
+        registerMenuTypes();
         registerContainerTypes();
         registerEnumConverters();
         GeneratedConverters.init(conversionService);
@@ -123,7 +128,12 @@ public class NMSPlatform implements MCCPlatform {
     @Override
     public MCCServerProperties getServerProperties() {
         DedicatedServer dedicatedServer = (DedicatedServer) MinecraftServer.getServer();
-        return new MCCServerProperties(dedicatedServer.getProperties().properties);
+        return new MCCServerProperties(dedicatedServer.getProperties().properties, () -> dedicatedServer.settings.forceSave());
+    }
+
+    @Override
+    public void shutdown() {
+        MinecraftServer.getServer().halt(false);
     }
 
     @Override
@@ -169,25 +179,48 @@ public class NMSPlatform implements MCCPlatform {
 
     @Override
     public void setServerResourcePack(@NotNull MCCResourcePack resourcePack) {
-        throw new OperationNotPossibleOnNMS();
+        String downloadUrl = getServerProperties().read(MCCPropertyKey.RESOURCE_PACK);
+        UUID packID = UUID.fromString(getServerProperties().read(MCCPropertyKey.RESOURCE_PACK_ID));
+
+        if (resourcePack.getUUID().equals(packID) && resourcePack.url().equals(downloadUrl)) {
+            return;
+        }
+        Component component = conversionService.unwrap(resourcePack.prompt(), new TypeToken<>() {});
+
+        getServerProperties().write(MCCPropertyKey.RESOURCE_PACK, resourcePack.url());
+        getServerProperties().write(MCCPropertyKey.RESOURCE_PACK_ID, resourcePack.getUUID().toString());
+        getServerProperties().write(MCCPropertyKey.RESOURCE_PACK_PROMPT, component.getString());
+        getServerProperties().write(MCCPropertyKey.RESOURCE_PACK_SHA1, resourcePack.hash());
+        getServerProperties().write(MCCPropertyKey.RESOURCE_PACK_REQUIRE, resourcePack.isRequired());
+        getServerProperties().saveAction();
+        shutdown();
     }
 
-    private void registerContainerTypes() {
-        conversionService.registerPlatformType(MCCAnvilContainer.class, NMSAnvilContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCBeaconContainer.class, NMSBeaconContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCBrewingStandContainer.class, NMSBrewingStandContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCCartographyTableContainer.class, NMSCartographyTableContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCChestContainer.class, NMSChestContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCCrafterContainer.class, NMSCrafterContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCEnchantingTableContainer.class, NMSEnchantingTableContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCFurnaceContainer.class, NMSFurnaceContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCGrindstoneContainer.class, NMSGrindstoneContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCLecternContainer.class, NMSLecternContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCMerchantContainer.class, NMSMerchantContainer.CONVERTER);
-        conversionService.registerPlatformType(MCCPlayerInventoryContainer.class, NMSPlayerInventoryContainer.CONVERTER);
+    private void registerMenuTypes() {
+        conversionService.registerPlatformType(MCCAnvilContainerMenu.class, NMSAnvilContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCBeaconContainerMenu.class, NMSBeaconContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCBrewingStandContainerMenu.class, NMSBrewingStandContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCCartographyTableContainerMenu.class, NMSCartographyTableContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCChestContainerMenu.class, NMSChestContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCCrafterContainerMenu.class, NMSCrafterContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCDispenserContainerMenu.class, NMSDispenserContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCEnchantingTableContainerMenu.class, NMSEnchantingTableContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCFurnaceContainerMenu.class, NMSFurnaceContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCGrindstoneContainerMenu.class, NMSGrindstoneContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCLecternContainerMenu.class, NMSLecternContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCMerchantContainerMenu.class, NMSMerchantContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCWorkBenchContainerMenu.class, NMSWorkBenchContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCHopperContainerMenu.class, NMSHopperContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCShulkerContainerMenu.class, NMSShulkerContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCStonecutterContainerMenu.class, NMSStoneCutterContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCSmithingContainerMenu.class, NMSSmithingContainerMenu.CONVERTER);
     }
 
-    private void registerEnumConverters(){
+    private void registerContainerTypes(){
+        conversionService.registerPlatformType(MCCPlayerInventory.class, NMSPlayerInventory.CONVERTER);
+    }
+
+    private void registerEnumConverters() {
         conversionService.registerPlatformType(MCCEquipmentSlot.class, new EnumConverter<>(EquipmentSlot.class, MCCEquipmentSlot.class));
         conversionService.registerPlatformType(MCCEquipmentSlotGroup.class, new EnumConverter<>(net.minecraft.world.entity.EquipmentSlotGroup.class, MCCEquipmentSlotGroup.class));
         conversionService.registerPlatformType(MCCGameMode.class, new EnumConverter<>(GameType.class, MCCGameMode.class));

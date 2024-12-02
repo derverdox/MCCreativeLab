@@ -56,7 +56,7 @@ public class NMSChunkSection extends MCCHandle<LevelChunkSection> implements MCC
 
     @Override
     public MCCBlockState setBlockState(int localX, int localY, int localZ, MCCBlockState state) {
-        if(!state.isVanilla()){
+        if (!state.isVanilla()) {
             throw new IllegalArgumentException("You can only provide vanilla block types here");
         }
         var service = MCCPlatform.getInstance().getConversionService();
@@ -71,27 +71,27 @@ public class NMSChunkSection extends MCCHandle<LevelChunkSection> implements MCC
     @Override
     @MCCReflective
     public void disableFluidTicking() {
-        //TODO: Reflective access to tickingBlockCount
-        // Subtract with a very low constant
-        // If reset -> add the very low constant (Max tickable blocks are 4096. Constant might be 4097)
+        short tickingFluidCount = readFieldFromHandle("tickingFluidCount", new TypeToken<>() {});
+        writeFieldInHandle("tickingFluidCount", tickingFluidCount - 4097);
     }
 
     @Override
     @MCCReflective
     public void disableBlockTicking() {
-        //TODO: Reflective access to tickingBlockCount
-        // Subtract with a very low constant
-        // If reset -> add the very low constant (Max tickable blocks are 4096. Constant might be 4097)
+        short tickingBlockCount = readFieldFromHandle("tickingBlockCount", new TypeToken<>() {});
+        writeFieldInHandle("tickingBlockCount", tickingBlockCount - 4097);
     }
 
     @Override
     public void enableBlockTicking() {
-        //TODO
+        short tickingBlockCount = readFieldFromHandle("tickingBlockCount", new TypeToken<>() {});
+        writeFieldInHandle("tickingBlockCount", tickingBlockCount + 4097);
     }
 
     @Override
     public void enableFluidTicking() {
-        //TODO
+        short tickingFluidCount = readFieldFromHandle("tickingFluidCount", new TypeToken<>() {});
+        writeFieldInHandle("tickingFluidCount", tickingFluidCount + 4097);
     }
 
     @Override

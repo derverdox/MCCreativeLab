@@ -1,27 +1,14 @@
 package de.verdox.mccreativelab.wrapper.inventory;
 
-import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
-import de.verdox.mccreativelab.wrapper.inventory.source.MCCContainerSource;
+import com.google.common.base.Preconditions;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Set;
 
-/**
- * Describes a minecraft inventory
- */
-public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCCItemStack> {
-    /**
-     * Gets the {@link MCCMenuType} of the container
-     *
-     * @return the type
-     */
-    MCCMenuType getType();
-
+public interface MCCContainer extends Iterable<MCCItemStack> {
     /**
      * Sets the {@link MCCItemStack} at the given container slot
      *
@@ -41,50 +28,99 @@ public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCC
     /**
      * Returns true if an item of the provided type is contained in the inventory
      *
-     * @param mccItemType the item type
+     * @param itemType the item type
      * @return true if the inventory contains the type
      */
-    boolean contains(MCCItemType mccItemType);
+    default boolean contains(MCCItemType itemType){
+        Preconditions.checkArgument(itemType != null, "itemType cannot be null");
+        for (MCCItemStack item : this.getContent()) {
+            if (item != null && item.getType() == itemType) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if an item of the provided type and amount is contained in the inventory
      *
-     * @param mccItemType the item type
+     * @param itemType the item type
      * @return true if the inventory contains the type
      */
-    boolean contains(MCCItemType mccItemType, int amount);
-
-    /**
-     * Returns true if an item of the provided type and amount is at least contained in the inventory
-     *
-     * @param mccItemType the item type
-     * @return true if the inventory contains the type
-     */
-    boolean containsAtLeast(MCCItemType mccItemType, int amount);
+    default boolean contains(MCCItemType itemType, int amount){
+        Preconditions.checkArgument(itemType != null, "itemType cannot be null");
+        if (amount <= 0) {
+            return true;
+        }
+        for (MCCItemStack item : this.getContent()) {
+            if (item != null && item.getType().equals(itemType)) {
+                if ((amount -= item.getAmount()) <= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if an item of the provided definition is contained in the inventory
      *
-     * @param mccItemStack the item type
+     * @param item the item type
      * @return true if the inventory contains the stack
      */
-    boolean contains(MCCItemStack mccItemStack);
+    default boolean contains(MCCItemStack item){
+        if (item == null || item.isEmpty()) {
+            return false;
+        }
+        for (MCCItemStack i : this.getContent()) {
+            if (item.equals(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if an item of the provided definition and amount is contained in the inventory
      *
-     * @param mccItemStack the item type
+     * @param item the item type
      * @return true if the inventory contains the stack
      */
-    boolean contains(MCCItemStack mccItemStack, int amount);
+    default boolean contains(MCCItemStack item, int amount){
+        if (item == null || item.isEmpty()) {
+            return false;
+        }
+        if (amount <= 0) {
+            return true;
+        }
+        for (MCCItemStack i : this.getContent()) {
+            if (item.equals(i) && --amount <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns true if an item of the provided definition and amount is at least contained in the inventory
      *
-     * @param mccItemStack the item type
+     * @param item the item type
      * @return true if the inventory contains the stack
      */
-    boolean containsAtLeast(MCCItemStack mccItemStack, int amount);
+    default boolean containsAtLeast(MCCItemStack item, int amount){
+        if (item == null || item.isEmpty()) {
+            return false;
+        }
+        if (amount <= 0) {
+            return true;
+        }
+        for (MCCItemStack i : this.getContent()) {
+            if (item.isSimilar(i) && (amount -= i.getAmount()) <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Removes the item from the slot
@@ -93,24 +129,7 @@ public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCC
      */
     void removeItem(int index);
 
-    /**
-     * Changes the title of the inventory and reopens it to all viewers
-     *
-     * @param component the new title of the inventory
-     */
-    void setTitle(Component component);
-
-    /**
-     * Returns the title of the container
-     *
-     * @return the title
-     */
-    Component getTitle();
-
-
-    default int getSize() {
-        return getType().containerSize();
-    }
+    int getSize();
 
     /**
      * Stores the given ItemStacks in the inventory. This will try to fill
@@ -177,7 +196,11 @@ public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCC
      * @throws IllegalArgumentException If the array has more items than the
      *                                  inventory.
      */
-    void setContents(MCCItemStack[] items);
+    default void setContents(MCCItemStack[] items) {
+        for (int i = 0; i < items.length; i++) {
+            setItem(i, items[i]);
+        }
+    }
 
     /**
      * Returns a HashMap with all slots and ItemStacks in the inventory with
@@ -210,33 +233,23 @@ public interface MCCContainer<T extends MCCContainerSource> extends Iterable<MCC
     HashMap<Integer, ? extends MCCItemStack> all(@Nullable MCCItemStack item);
 
     /**
+     * Returns the first empty index of the container
+     *
+     * @return the first empty index
+     */
+    int firstEmpty();
+
+    /**
+     * Returns the first index that contains the item
+     *
+     * @param stack            the stack
+     * @param checkItemAmounts whether the amount of the provided item should be considered for the search
+     * @return the found index
+     */
+    int first(MCCItemStack stack, boolean checkItemAmounts);
+
+    /**
      * Clears the inventory
      */
     void clear();
-
-    /**
-     * Closes the inventory for every viewer
-     */
-    void close();
-
-    /**
-     * Returns all viewers that currently view the container
-     *
-     * @return the viewers
-     */
-    Set<ContainerViewer> getViewers();
-
-    /**
-     * Returns true when this container has a GUI that can be opened by a player
-     *
-     * @return true if the container can be opened
-     */
-    boolean canBeOpened();
-
-    /**
-     * Returns the container source of this container. Might be null if the container was created by the server software instead of being from a real game element.
-     * @return the source or null if no source is available
-     */
-    @Nullable
-    T getSource();
 }

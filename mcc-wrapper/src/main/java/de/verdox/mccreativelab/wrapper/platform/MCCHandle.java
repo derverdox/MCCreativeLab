@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.ConversionService;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -80,9 +81,29 @@ public class MCCHandle<T> {
         return Objects.hashCode(handle);
     }
 
-    protected <R> R readFieldFromHandle(String fieldName, TypeToken<R> type){
+    protected <R> R readFieldFromHandle(String fieldName, TypeToken<R> type) {
+        return readFieldFromHandle(getHandle(), fieldName, type);
+    }
+
+    protected <R> void writeFieldInHandle(String fieldName, R value) {
+        writeFieldInHandle(getHandle(), fieldName, value);
+    }
+
+    public static <H, R> R readFieldFromHandle(H handle, String fieldName, TypeToken<R> type) {
         try {
-            return (R) getHandle().getClass().getDeclaredField(fieldName).get(getHandle());
+            Field field = handle.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (R) field.get(handle);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <H, R> void writeFieldInHandle(H handle, String fieldName, R value) {
+        try {
+            Field field = handle.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(handle, value);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

@@ -1,24 +1,24 @@
 package de.verdox.mccreativelab.wrapper.inventory.view;
 
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import net.kyori.adventure.text.Component;
 
 public class MCCContainerView {
     private final MCCPlayer mccPlayer;
-    private final MCCContainer<?> viewing;
+    private final MCCContainerMenu<?> viewing;
 
-    public MCCContainerView(MCCPlayer mccPlayer, MCCContainer<?> viewing) {
+    public MCCContainerView(MCCPlayer mccPlayer, MCCContainerMenu<?> viewing) {
         this.mccPlayer = mccPlayer;
         this.viewing = viewing;
     }
 
-    public MCCContainer<?> getTopInventory(){
+    public MCCContainerMenu<?> getTopInventory(){
         return viewing;
     }
 
-    public MCCContainer<?> getBottomInventory(){
+    public MCCContainerMenu<?> getBottomInventory(){
         return mccPlayer.getInventory();
     }
 

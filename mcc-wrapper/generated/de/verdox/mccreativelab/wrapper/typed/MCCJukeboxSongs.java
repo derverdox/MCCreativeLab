@@ -2,7 +2,6 @@ package de.verdox.mccreativelab.wrapper.typed;
 
 import de.verdox.mccreativelab.wrapper.types.MCCJukeboxSong;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import com.google.common.reflect.TypeToken;
 import net.kyori.adventure.key.Key;
@@ -10,8 +9,6 @@ import net.kyori.adventure.key.Key;
 public class MCCJukeboxSongs  {
 
 	public static final Key VANILLA_REGISTRY_KEY  = Key.key("minecraft", "jukebox_song");
-
-	public static final MCCTypedKey<MCCRegistry<MCCJukeboxSong>> VANILLA_REGISTRY  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "root"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});;
 
 	public static final MCCTypedKey<MCCJukeboxSong> THIRTEEN  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "13"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});
 

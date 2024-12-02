@@ -59,8 +59,17 @@ public interface MCCBlockType extends MCCKeyedWrapper {
      */
     MCCBlockSoundGroup getSoundGroup();
 
-    default List<MCCItemStack> getDrops(MCCBlockState blockState, @Nullable MCCEntity entity, @Nullable MCCItemStack tool) {
-        return blockState.getDrops(entity, tool);
+    /**
+     * Gets the drops of a block state at a location.
+     *
+     * @param blockState             the block state
+     * @param mccLocation            the location
+     * @param entityBreakingTheBlock the entity breaking the block
+     * @param tool                   the tool used to break the block
+     * @return the drops
+     */
+    default List<MCCItemStack> getDrops(MCCBlockState blockState, @NotNull MCCLocation mccLocation, @Nullable MCCEntity entityBreakingTheBlock, @Nullable MCCItemStack tool) {
+        return blockState.getDrops(mccLocation, entityBreakingTheBlock, tool);
     }
 
     /**
@@ -97,20 +106,6 @@ public interface MCCBlockType extends MCCKeyedWrapper {
      * @return the speed factor
      */
     float getSpeedFactor();
-
-    /**
-     * Returns if this block type is randomly ticking
-     *
-     * @return true if the block type is randomly ticking
-     */
-    boolean isRandomlyTicking();
-
-    /**
-     * Returns if this block type requires correct tools for drops
-     *
-     * @return true if the block type requires correct tools for drops
-     */
-    boolean requiresCorrectToolForDrops();
 
     //TODO: 
     // - Piston Push Reaction

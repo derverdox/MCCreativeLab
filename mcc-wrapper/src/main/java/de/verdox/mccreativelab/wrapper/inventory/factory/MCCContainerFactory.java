@@ -1,47 +1,29 @@
 package de.verdox.mccreativelab.wrapper.inventory.factory;
 
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
+import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 
 /**
  * Used to create containers of a specific menu type.
  * If custom menu types are registered their creation process needs to be registered to the container factory
  */
-public abstract class MCCContainerFactory {
-
-    private static final Map<MCCMenuType, ContainerFabricator> fabricators = new HashMap<>();
-
+public interface MCCContainerFactory {
     /**
-     * Used to create a container of a specific menu type
+     * Used to create a container provider that resides at a specific location. This location must be in a loaded world in a loaded chunk but does not
+     * have to be in proximity to the players that open the menu. All players who access the inventory have the same view.
      *
      * @param mccMenuType the menu type
-     * @param component   the title
-     * @return
+     * @param mccLocation the location
+     * @return the container provider
      */
-    public abstract MCCContainer createContainer(MCCMenuType mccMenuType, Component component);
+    ContainerProvider<?> createContainerProvider(MCCMenuType mccMenuType, MCCLocation mccLocation);
 
     /**
-     * Registers a container fabricator for a specific menu type.
+     * Creates a dummy provider that always provides the parameter container
      *
-     * @param mccMenuType         the menu type
-     * @param containerFabricator the fabricator
+     * @param existingContainer the existing container to provide
+     * @return the dummy provider
      */
-    public void registerFabricator(MCCMenuType mccMenuType, ContainerFabricator containerFabricator) {
-        fabricators.put(mccMenuType, containerFabricator);
-    }
-
-    /**
-     * Gets the fabricator for a specific menu type
-     *
-     * @param mccMenuType the menu type
-     * @return the fabricator or null if no fabricator was found
-     */
-    public @Nullable ContainerFabricator getFabricator(MCCMenuType mccMenuType) {
-        return fabricators.getOrDefault(mccMenuType, null);
-    }
+    ContainerProvider<?> fromExistingContainer(MCCContainerMenu<?> existingContainer);
 }

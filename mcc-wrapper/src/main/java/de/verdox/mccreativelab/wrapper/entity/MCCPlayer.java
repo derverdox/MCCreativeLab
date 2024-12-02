@@ -1,15 +1,14 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
-import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
-import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
+import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityMultiProperty;
 import de.verdox.mccreativelab.wrapper.util.MCCEntityProperty;
 import de.verdox.mccreativelab.wrapper.world.MCCLocation;
-import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import de.verdox.mccreativelab.wrapper.world.Weather;
+import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,13 +19,19 @@ import java.util.UUID;
 /**
  * Represents a player on a minecraft server
  */
-public interface MCCPlayer extends MCCLivingEntity, ContainerViewer {
+public interface MCCPlayer extends MCCLivingEntity, ContainerViewer, Identified {
+    @Override
+    default net.kyori.adventure.identity.@NotNull Identity identity() {
+        return net.kyori.adventure.identity.Identity.identity(this.getUUID());
+    }
     /**
      * Gets the inventory of the player
      *
      * @return the inventory
      */
-    MCCPlayerInventoryContainer getInventory();
+    MCCPlayerInventory getInventory();
+
+    String getPlayerName();
 
     void syncInventory();
 

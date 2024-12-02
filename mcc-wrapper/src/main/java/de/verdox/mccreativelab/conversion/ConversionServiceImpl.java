@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.conversion.converter.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public <A, T extends A, F> void registerPlatformType(Class<A> apiType, MCCConverter<F, T> converter) {
-        LOGGER.info("Registering converter for "+apiType.getSimpleName()+" ("+converter.nativeMinecraftType().getSimpleName()+" <-> "+converter.apiImplementationClass().getSimpleName()+")");
+        LOGGER.log(Level.FINER, "Registering converter for "+apiType.getSimpleName()+" ("+converter.nativeMinecraftType().getSimpleName()+" <-> "+converter.apiImplementationClass().getSimpleName()+")");
         conversionCache.put(apiType, converter.apiImplementationClass(), converter.nativeMinecraftType(), converter);
     }
 

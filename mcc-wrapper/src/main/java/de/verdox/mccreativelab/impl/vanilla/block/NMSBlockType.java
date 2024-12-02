@@ -6,16 +6,12 @@ import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockSoundGroup;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
-import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
-import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -33,12 +29,12 @@ public class NMSBlockType extends MCCHandle<Block> implements MCCBlockType {
 
     @Override
     public MCCBlockState getDefaultState() {
-        return null;
+        return new NMSBlockState(handle.defaultBlockState());
     }
 
     @Override
     public MCCBlockSoundGroup getSoundGroup() {
-        return null;
+        return new NMSBlockSoundGroup(handle.defaultBlockState().getSoundType());
     }
 
     @Override
@@ -64,16 +60,6 @@ public class NMSBlockType extends MCCHandle<Block> implements MCCBlockType {
     @Override
     public float getSpeedFactor() {
         return handle.getSpeedFactor();
-    }
-
-    @Override
-    public boolean isRandomlyTicking() {
-        return handle.getStateDefinition().any().isRandomlyTicking();
-    }
-
-    @Override
-    public boolean requiresCorrectToolForDrops() {
-        return handle.getStateDefinition().any().requiresCorrectToolForDrops();
     }
 
     @Override

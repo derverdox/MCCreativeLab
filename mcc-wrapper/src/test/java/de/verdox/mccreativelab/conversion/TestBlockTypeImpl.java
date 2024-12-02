@@ -63,16 +63,6 @@ public class TestBlockTypeImpl extends MCCHandle<StonecutterBlock> implements MC
     }
 
     @Override
-    public boolean isRandomlyTicking() {
-        return false;
-    }
-
-    @Override
-    public boolean requiresCorrectToolForDrops() {
-        return false;
-    }
-
-    @Override
     public @NotNull Key key() {
         return null;
     }

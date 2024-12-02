@@ -17,11 +17,14 @@ import java.util.Objects;
  */
 public final class MCCBlock implements MCCKeyedWrapper {
     private final MCCLocation location;
-    private final MCCChunk mccChunk;
+    private MCCChunk mccChunk;
 
-    public MCCBlock(MCCLocation location, MCCChunk mccChunk) {
+    public MCCBlock(MCCLocation location, @NotNull MCCChunk mccChunk) {
+        Objects.requireNonNull(location);
+        Objects.requireNonNull(mccChunk);
         this.location = location;
         this.mccChunk = mccChunk;
+
     }
 
     /**
@@ -41,7 +44,7 @@ public final class MCCBlock implements MCCKeyedWrapper {
      */
     @NotNull
     public MCCBlockState getBlockState() {
-        return mccChunk.getBlockDataAt(location);
+        return getOrLoadChunk().getBlockDataAt(location);
     }
 
     MCCCapturedBlockState captureBlock(){
@@ -55,7 +58,7 @@ public final class MCCBlock implements MCCKeyedWrapper {
      */
     @NotNull
     public MCCBlockType getBlockType() {
-        return mccChunk.getBlockTypeAt(location);
+        return getOrLoadChunk().getBlockTypeAt(location);
     }
 
     /**
@@ -67,11 +70,11 @@ public final class MCCBlock implements MCCKeyedWrapper {
      */
     @NotNull
     public Collection<MCCItemStack> getDrops(@Nullable MCCEntity entity, @Nullable MCCItemStack tool) {
-        return getBlockState().getDrops(entity, tool);
+        return getBlockState().getDrops(getLocation(), entity, tool);
     }
 
     public void dropBlockLoot(@Nullable MCCEntity entity, @Nullable MCCItemStack tool){
-        getLocation().world().dropItemsNaturally(getLocation(), getBlockState().getDrops(entity, tool));
+        getLocation().world().dropItemsNaturally(getLocation(), getBlockState().getDrops(getLocation(), entity, tool));
     }
 
     /**
@@ -83,7 +86,7 @@ public final class MCCBlock implements MCCKeyedWrapper {
      * @param ignoreTool     whether to ignore the tool
      */
     public void breakBlockNaturally(@Nullable MCCItemStack tool, boolean triggerEffect, boolean dropLoot, boolean dropExperience, boolean ignoreTool) {
-        mccChunk.getWorld().breakBlockNaturally(tool, triggerEffect, dropLoot, dropExperience, ignoreTool);
+        getLocation().world().breakBlockNaturally(tool, triggerEffect, dropLoot, dropExperience, ignoreTool);
     }
 
     /**
@@ -106,11 +109,19 @@ public final class MCCBlock implements MCCKeyedWrapper {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MCCBlock block = (MCCBlock) o;
-        return Objects.equals(location, block.location) && Objects.equals(mccChunk, block.mccChunk);
+        return Objects.equals(location, block.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, mccChunk);
+        return Objects.hashCode(location);
+    }
+
+    private MCCChunk getOrLoadChunk(){
+        if(this.mccChunk == null){
+            mccChunk = location.world().getChunkImmediately(location);
+            Objects.requireNonNull(mccChunk, "The chunk was not loaded");
+        }
+        return this.mccChunk;
     }
 }

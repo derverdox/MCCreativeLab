@@ -1,9 +1,11 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
+import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import net.kyori.adventure.key.Key;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +19,6 @@ public class NMSEntityType extends MCCHandle<EntityType<?>> implements MCCEntity
 
     @Override
     public @NotNull Key key() {
-        //TODO
-        return null;
+        return conversionService.wrap(BuiltInRegistries.ENTITY_TYPE.getKey(handle), new TypeToken<>() {});
     }
 }

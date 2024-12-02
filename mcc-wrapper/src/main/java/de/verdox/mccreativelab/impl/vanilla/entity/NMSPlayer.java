@@ -1,17 +1,18 @@
 package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.entity.player.client.NMSSkinParts;
 import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
+import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
 import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
-import de.verdox.mccreativelab.wrapper.inventory.types.MCCPlayerInventoryContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.properties.MCCPropertyKey;
@@ -21,6 +22,8 @@ import de.verdox.mccreativelab.wrapper.world.MCCLocation;
 import de.verdox.mccreativelab.wrapper.world.Weather;
 import net.kyori.adventure.text.Component;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket;
+import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.HumanoidArm;
@@ -32,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
@@ -43,13 +47,18 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
     }
 
     @Override
-    public MCCPlayerInventoryContainer getInventory() {
+    public MCCPlayerInventory getInventory() {
         return MCCPlatform.getInstance().getConversionService().wrap(handle.getInventory(), new TypeToken<>() {});
     }
 
     @Override
+    public String getPlayerName() {
+        return handle.getGameProfile().getName();
+    }
+
+    @Override
     public void syncInventory() {
-        //TODO
+        this.getHandle().containerMenu.sendAllDataToRemote();
     }
 
     @Override
@@ -77,8 +86,7 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
 
     @Override
     public MCCEntityProperty<Weather, MCCPlayer> getWeatherProperty() {
-        //TODO:
-        return null;
+        throw new OperationNotPossibleOnNMS();
     }
 
     @Override
@@ -135,7 +143,17 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
 
     @Override
     public void setResourcePack(UUID uuid, String downloadURL, byte[] bytes, @Nullable Component prompt, boolean required) {
-        //TODO
+        Preconditions.checkArgument(uuid != null, "Resource pack ID cannot be null");
+        Preconditions.checkArgument(downloadURL != null, "Resource pack URL cannot be null");
+
+        String hashStr = "";
+        if (bytes != null) {
+            Preconditions.checkArgument(bytes.length == 20, "Resource pack hash should be 20 bytes long but was %s", bytes.length);
+            hashStr = BaseEncoding.base16().lowerCase().encode(bytes);
+        }
+
+        getServerPlayer().connection.send(new ClientboundResourcePackPopPacket(Optional.empty()));
+        getServerPlayer().connection.send(new ClientboundResourcePackPushPacket(uuid, downloadURL, hashStr, required, Optional.ofNullable(conversionService.unwrap(prompt, new TypeToken<>() {}))));
     }
 
     @Override
@@ -187,18 +205,17 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
     }
 
     @Override
-    public boolean openContainer(MCCContainer mccContainer, Component title) {
-        //TODO
-        return false;
+    public boolean openContainer(MCCContainerMenu mccContainerMenu, Component title) {
+        //TODO: CraftMenus Klasse nachschauen.
     }
 
     @Override
     public void closeCurrentInventory(MCCContainerCloseReason closeReason) {
-        //TODO
+        handle.containerMenu = handle.inventoryMenu;
     }
 
     @Override
-    public @Nullable MCCContainer getCurrentlyViewedInventory() {
+    public @Nullable MCCContainerMenu getCurrentlyViewedInventory() {
         return null;
     }
 
@@ -218,5 +235,21 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
 
     private int getClientViewDistance() {
         return (getServerPlayer().requestedViewDistance() == 0) ? MCCPlatform.getInstance().getServerProperties().read(MCCPropertyKey.VIEW_DISTANCE) : getServerPlayer().requestedViewDistance();
+    }
+
+    @Override
+    public net.kyori.adventure.pointer.Pointers pointers() {
+        var locale = java.util.Objects.requireNonNullElse(net.kyori.adventure.translation.Translator.parseLocale(getServerPlayer().language), java.util.Locale.US); // Paper
+        if (this.adventurePointer == null) {
+            this.adventurePointer = net.kyori.adventure.pointer.Pointers.builder()
+                .withDynamic(net.kyori.adventure.identity.Identity.DISPLAY_NAME, this::displayName)
+                .withDynamic(net.kyori.adventure.identity.Identity.UUID, this::getUUID)
+                .withStatic(net.kyori.adventure.permission.PermissionChecker.POINTER, permission -> getPermissions().permissionValue(permission))
+                .withDynamic(net.kyori.adventure.identity.Identity.NAME, this::getPlayerName)
+                .withDynamic(net.kyori.adventure.identity.Identity.LOCALE, () -> locale)
+                .build();
+        }
+
+        return this.adventurePointer;
     }
 }

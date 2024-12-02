@@ -1,10 +1,8 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
-import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
-import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
-import de.verdox.mccreativelab.wrapper.world.MCCWorld;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +13,11 @@ public interface ContainerViewer extends MCCWrapped {
     /**
      * Opens a container with a respective title to the player.
      *
-     * @param mccContainer the container
+     * @param mccContainerMenu the container
      * @param title        the title
      * @return true if the container could be opened
      */
-    boolean openContainer(MCCContainer mccContainer, Component title);
+    boolean openContainer(MCCContainerMenu mccContainerMenu, Component title);
 
     /**
      * Closes the current inventory viewed by this player
@@ -32,5 +30,5 @@ public interface ContainerViewer extends MCCWrapped {
      * Returns the container currently viewed if available
      * @return the container or null if no container is viewed
      */
-    @Nullable MCCContainer getCurrentlyViewedInventory();
+    @Nullable MCCContainerMenu getCurrentlyViewedInventory();
 }

@@ -1,7 +1,6 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
-import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
-import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import net.kyori.adventure.key.Key;
 
 /**
@@ -14,7 +13,7 @@ public interface MCCAttributeMap {
      *
      * @param attribute the new attribute
      */
-    void registerAttribute(MCCTypedKey<MCCAttribute> attribute);
+    void registerAttribute(MCCReference<MCCAttribute> attribute);
 
     /**
      * Gets the attribute instance of a given attribute
@@ -23,7 +22,7 @@ public interface MCCAttributeMap {
      * @return true if the attribute is known
      * @throws IllegalArgumentException if the attribute is not known to this map
      */
-    MCCAttributeInstance getAttributeInstance(MCCTypedKey<MCCAttribute> attribute) throws IllegalArgumentException;
+    MCCAttributeInstance getAttributeInstance(MCCReference<MCCAttribute> attribute) throws IllegalArgumentException;
 
     /**
      * Checks if an attribute is known to this map
@@ -31,7 +30,7 @@ public interface MCCAttributeMap {
      * @param attribute the attribute
      * @return true if the attribute is known
      */
-    boolean hasAttribute(MCCTypedKey<MCCAttribute> attribute);
+    boolean hasAttribute(MCCReference<MCCAttribute> attribute);
 
     /**
      * Checks if a modifier key is known for a particular attribute
@@ -40,7 +39,7 @@ public interface MCCAttributeMap {
      * @param modifierKey the modifier key
      * @return true if the attribute is known
      */
-    boolean hasModifier(MCCTypedKey<MCCAttribute> attribute, Key modifierKey);
+    boolean hasModifier(MCCReference<MCCAttribute> attribute, Key modifierKey);
 
     /**
      * Gets the value of a particular attribute
@@ -48,7 +47,7 @@ public interface MCCAttributeMap {
      * @param attribute the attribute
      * @return the value
      */
-    double getValue(MCCTypedKey<MCCAttribute> attribute);
+    double getValue(MCCReference<MCCAttribute> attribute);
 
     /**
      * Gets the base value of a particular attribute
@@ -56,7 +55,7 @@ public interface MCCAttributeMap {
      * @param attribute the attribute
      * @return the value
      */
-    double getBaseValue(MCCTypedKey<MCCAttribute> attribute);
+    double getBaseValue(MCCReference<MCCAttribute> attribute);
 
     /**
      * Gets the modifier value of a modifier
@@ -65,7 +64,7 @@ public interface MCCAttributeMap {
      * @param modifierKey the modifier key
      * @return the value
      */
-    double getModifierValue(MCCTypedKey<MCCAttribute> attribute, Key modifierKey);
+    double getModifierValue(MCCReference<MCCAttribute> attribute, Key modifierKey);
 
     /**
      * Assigns all values from another attribute map to this map

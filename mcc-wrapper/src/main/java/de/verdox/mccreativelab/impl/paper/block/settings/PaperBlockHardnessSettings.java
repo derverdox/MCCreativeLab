@@ -290,7 +290,7 @@ public class PaperBlockHardnessSettings implements MCCBlockHardnessSettings, Lis
     private static float getBlockDestroyProgress(MCCPlayer player, float hardness, MCCBlock block) {
         MCCItemStack hand = player.getInventory().getItemInMainHand();
 
-        boolean hasCorrectToolForDrops = block.getBlockState().isPreferredTool(block.getBlockState(), hand);
+        boolean hasCorrectToolForDrops = block.getBlockState().isPreferredTool(hand);
         return getDestroySpeed(player, block) / hardness / (hasCorrectToolForDrops ? 30f : 100f);
     }
 

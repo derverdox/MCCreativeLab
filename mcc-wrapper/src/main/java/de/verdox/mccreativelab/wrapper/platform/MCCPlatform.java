@@ -120,4 +120,6 @@ public interface MCCPlatform {
     int getPublicTick();
 
     MCCServerProperties getServerProperties();
+
+    void shutdown();
 }

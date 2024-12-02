@@ -26,10 +26,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftEntityType;
+import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 import java.util.function.Function;
 
@@ -77,7 +79,7 @@ public class BukkitCraftConverters {
 
         @Override
         public ConversionResult<Location> unwrap(MCCLocation platformImplType) {
-
+            org.bukkit.entity.Entity livingEntity;
 
             return done(new Location(WORLD.unwrap(platformImplType.world()).value(), platformImplType.x(), platformImplType.y(), platformImplType.z(), platformImplType.yaw(), platformImplType.pitch()));
         }
@@ -97,7 +99,10 @@ public class BukkitCraftConverters {
 
         @Override
         public ConversionResult<MCCBlock> wrap(org.bukkit.block.Block nativeType) {
-            return done(new MCCBlock(LOCATION.wrap(nativeType.getLocation()).value(), null));
+            CraftBlock craftBlock = (CraftBlock) nativeType;
+            Player player;
+
+            return done(new MCCBlock(LOCATION.wrap(nativeType.getLocation()).value(), MCCPlatform.getInstance().getConversionService().wrap(nativeType.getChunk(), new TypeToken<>() {})));
         }
 
         @Override

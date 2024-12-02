@@ -7,11 +7,13 @@ import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
+import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.TempDataHolder;
 import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder {
+public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder, ForwardingAudience {
 
     default CompletableFuture<MCCBlockState> getBlockDataAt(int x, int y, int z) {
         return getOrLoadChunk(MCCLocation.calculateChunkX(x), MCCLocation.calculateChunkZ(z)).thenApply(mccChunk -> {
@@ -144,6 +146,13 @@ public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder {
         return dropItemsNaturally(location, items, null);
     }
 
+    /**
+     * Returns all players in this world
+     *
+     * @return the players
+     */
+    List<MCCPlayer> getPlayers();
+
     CompletableFuture<MCCEntity> teleport(@NotNull MCCLocation location, @NotNull MCCEntity mccEntity);
 
     CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location, @NotNull MCCEntityType mccEntityType);
@@ -156,9 +165,12 @@ public interface MCCWorld extends MCCKeyedWrapper, TempDataHolder {
 
     @Nullable MCCChunk getChunkImmediately(MCCLocation location);
 
-    Audience asAudience();
-
     UUID getUUID();
 
     void triggerBlockUpdate(MCCLocation location);
+
+    @Override
+    default Iterable<? extends net.kyori.adventure.audience.Audience> audiences() {
+        return this.getPlayers();
+    }
 }

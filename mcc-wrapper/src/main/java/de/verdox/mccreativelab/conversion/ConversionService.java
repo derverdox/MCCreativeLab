@@ -9,9 +9,9 @@ import java.util.Set;
 public interface ConversionService {
     <A, T extends A, F> void registerPlatformType(Class<A> apiType, MCCConverter<F, T> converter);
 
-    Object wrap(Object nativeObject);
+    <F,T> T wrap(F nativeObject);
 
-    Object unwrap(Object apiObject);
+    <F,T> F unwrap(T apiObject);
 
     boolean isNativeTypeKnown(Class<?> nativeType);
 
