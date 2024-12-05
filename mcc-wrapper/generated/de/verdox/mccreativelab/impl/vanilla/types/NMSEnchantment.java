@@ -1,5 +1,6 @@
 package de.verdox.mccreativelab.impl.vanilla.types;
 
+import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.entity.EquipmentSlotGroup;
