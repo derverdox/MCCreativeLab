@@ -1,13 +1,13 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import net.minecraft.world.item.JukeboxSong;
+import de.verdox.mccreativelab.wrapper.types.MCCJukeboxSong;
 import de.verdox.mccreativelab.wrapper.registry.MCCEitherReference;
 
 public interface MCCJukeboxPlayable extends MCCItemComponent  {
 
-	public MCCEitherReference<JukeboxSong> getSong();
+	public MCCEitherReference<MCCJukeboxSong> getSong();
 
-	public MCCJukeboxPlayable withSong(MCCEitherReference<JukeboxSong> song);
+	public MCCJukeboxPlayable withSong(MCCEitherReference<MCCJukeboxSong> song);
 
 	public boolean getShowInTooltip();
 

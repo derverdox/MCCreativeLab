@@ -36,16 +36,16 @@ public class NMSItemAttributeModifiers extends MCCHandle<ItemAttributeModifiers>
 		return new NMSEntry(null);
 	}
 
-	public List<MCCItemAttributeModifiers.Entry> getModifiers(){
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers.Entry> getModifiers(){
 		var nms = getModifiersFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCItemAttributeModifiers.Entry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers.Entry>>() {});
 	}
 
 	private List<ItemAttributeModifiers.Entry> getModifiersFromImpl(){
 		return handle == null ? List.of() : handle.modifiers();
 	}
 
-	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.Entry> modifiers){
+	public MCCItemAttributeModifiers withModifiers(List<de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers.Entry> modifiers){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(modifiers, new TypeToken<List<ItemAttributeModifiers.Entry>>() {});
 		var param1 = getShowInTooltipFromImpl();
 		return new NMSItemAttributeModifiers(new ItemAttributeModifiers(param0, param1));

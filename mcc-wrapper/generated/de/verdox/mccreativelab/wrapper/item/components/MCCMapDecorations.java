@@ -10,9 +10,9 @@ public interface MCCMapDecorations extends MCCItemComponent  {
 
 	public MCCMapDecorations.Entry createEntry();
 
-	public Map<String, MCCMapDecorations.Entry> getDecorations();
+	public Map<String, de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations.Entry> getDecorations();
 
-	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.Entry> decorations);
+	public MCCMapDecorations withDecorations(Map<String, de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations.Entry> decorations);
 
 
 	public static interface Entry  {

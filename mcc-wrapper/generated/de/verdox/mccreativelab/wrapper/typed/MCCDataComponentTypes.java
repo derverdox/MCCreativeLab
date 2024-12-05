@@ -19,10 +19,11 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCBlockItemStateProperti
 import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.item.components.MCCResolvableProfile;
 import de.verdox.mccreativelab.wrapper.item.components.MCCJukeboxPlayable;
-import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
+import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
 import de.verdox.mccreativelab.wrapper.item.components.MCCArmorTrim;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers;
+import de.verdox.mccreativelab.wrapper.types.MCCInstrument;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import de.verdox.mccreativelab.wrapper.item.components.MCCPotionContents;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLodestoneTracker;
@@ -80,6 +81,8 @@ public class MCCDataComponentTypes  {
 	public static final MCCReference<MCCDataComponentType<MCCSuspiciousStewEffects>> SUSPICIOUS_STEW_EFFECTS  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "suspicious_stew_effects"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCSuspiciousStewEffects>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<MCCArmorTrim>> TRIM  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "trim"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCArmorTrim>>(){}).getAsReference();
+
+	public static final MCCReference<MCCDataComponentType<MCCReference<MCCInstrument>>> INSTRUMENT  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "instrument"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCReference<MCCInstrument>>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<Integer>> OMINOUS_BOTTLE_AMPLIFIER  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "ominous_bottle_amplifier"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<Integer>>(){}).getAsReference();
 

@@ -29,16 +29,16 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 		return new NMSEntry(null);
 	}
 
-	public Map<String, MCCMapDecorations.Entry> getDecorations(){
+	public Map<String, de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations.Entry> getDecorations(){
 		var nms = getDecorationsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<String, MCCMapDecorations.Entry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<String, de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations.Entry>>() {});
 	}
 
 	private Map<String, MapDecorations.Entry> getDecorationsFromImpl(){
 		return handle == null ? Map.of() : handle.decorations();
 	}
 
-	public MCCMapDecorations withDecorations(Map<String, MCCMapDecorations.Entry> decorations){
+	public MCCMapDecorations withDecorations(Map<String, de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations.Entry> decorations){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(decorations, new TypeToken<Map<String, MapDecorations.Entry>>() {});
 		return new NMSMapDecorations(new MapDecorations(param0));
 	}

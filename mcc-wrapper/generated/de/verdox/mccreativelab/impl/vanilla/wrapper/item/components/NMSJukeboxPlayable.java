@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCJukeboxPlayable;
+import de.verdox.mccreativelab.wrapper.types.MCCJukeboxSong;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.minecraft.world.item.JukeboxSong;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
@@ -23,16 +24,16 @@ public class NMSJukeboxPlayable extends MCCHandle<JukeboxPlayable> implements MC
 		super(handle);
 	}
 
-	public MCCEitherReference<JukeboxSong> getSong(){
+	public MCCEitherReference<MCCJukeboxSong> getSong(){
 		var nms = getSongFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEitherReference<JukeboxSong>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEitherReference<MCCJukeboxSong>>() {});
 	}
 
 	private EitherHolder<JukeboxSong> getSongFromImpl(){
 		return handle == null ? null : handle.song();
 	}
 
-	public MCCJukeboxPlayable withSong(MCCEitherReference<JukeboxSong> song){
+	public MCCJukeboxPlayable withSong(MCCEitherReference<MCCJukeboxSong> song){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(song, new TypeToken<EitherHolder<JukeboxSong>>() {});
 		var param1 = getShowInTooltipFromImpl();
 		return new NMSJukeboxPlayable(new JukeboxPlayable(param0, param1));

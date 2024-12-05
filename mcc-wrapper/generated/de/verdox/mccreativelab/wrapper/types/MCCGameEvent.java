@@ -7,7 +7,6 @@ import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.types.MCCGameEvent;
-import net.minecraft.world.level.gameevent.GameEvent;
 
 public interface MCCGameEvent extends MCCWrapped  {
 
@@ -20,7 +19,7 @@ public interface MCCGameEvent extends MCCWrapped  {
 	
 		public Vec3 getArg1();
 	
-		public GameEvent.Context getArg2();
+		public MCCGameEvent.Context getArg2();
 	
 		public GameEventListener getArg3();
 	

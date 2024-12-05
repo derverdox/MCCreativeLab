@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.wrapper.types;
 
-import net.minecraft.world.item.enchantment.Enchantment;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.kyori.adventure.text.Component;
@@ -32,9 +31,9 @@ public interface MCCEnchantment extends MCCWrapped  {
 	
 		public int getMaxLevel();
 	
-		public Enchantment.Cost getMinCost();
+		public MCCEnchantment.Cost getMinCost();
 	
-		public Enchantment.Cost getMaxCost();
+		public MCCEnchantment.Cost getMaxCost();
 	
 		public int getAnvilCost();
 	

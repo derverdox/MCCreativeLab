@@ -7,14 +7,16 @@ import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
-import net.minecraft.world.item.armortrim.TrimMaterial;
 import java.lang.reflect.Field;
+import net.minecraft.world.item.armortrim.TrimMaterial;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSArmorTrim;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
+import de.verdox.mccreativelab.wrapper.types.MCCTrimMaterial;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import de.verdox.mccreativelab.wrapper.types.MCCTrimPattern;
 import net.minecraft.world.item.armortrim.TrimPattern;
 
 public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  {
@@ -25,9 +27,9 @@ public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  
 		super(handle);
 	}
 
-	public MCCReference<TrimMaterial> getMaterial(){
+	public MCCReference<MCCTrimMaterial> getMaterial(){
 		var nms = getMaterialFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<TrimMaterial>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCTrimMaterial>>() {});
 	}
 
 	private Holder<TrimMaterial> getMaterialFromImpl(){
@@ -41,16 +43,16 @@ public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  
 		return nms;
 	}
 
-	public MCCArmorTrim withMaterial(MCCReference<TrimMaterial> material){
+	public MCCArmorTrim withMaterial(MCCReference<MCCTrimMaterial> material){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(material, new TypeToken<Holder<TrimMaterial>>() {});
 		var param1 = getPatternFromImpl();
 		var param2 = getShowInTooltipFromImpl();
 		return new NMSArmorTrim(new ArmorTrim(param0, param1, param2));
 	}
 
-	public MCCReference<TrimPattern> getPattern(){
+	public MCCReference<MCCTrimPattern> getPattern(){
 		var nms = getPatternFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<TrimPattern>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCReference<MCCTrimPattern>>() {});
 	}
 
 	private Holder<TrimPattern> getPatternFromImpl(){
@@ -64,7 +66,7 @@ public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  
 		return nms;
 	}
 
-	public MCCArmorTrim withPattern(MCCReference<TrimPattern> pattern){
+	public MCCArmorTrim withPattern(MCCReference<MCCTrimPattern> pattern){
 		var param0 = getMaterialFromImpl();
 		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(pattern, new TypeToken<Holder<TrimPattern>>() {});
 		var param2 = getShowInTooltipFromImpl();

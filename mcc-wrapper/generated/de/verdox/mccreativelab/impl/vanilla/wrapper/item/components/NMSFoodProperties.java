@@ -128,16 +128,16 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 		return new NMSFoodProperties(new FoodProperties(param0, param1, param2, param3, param4, param5));
 	}
 
-	public List<MCCFoodProperties.PossibleEffect> getEffects(){
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties.PossibleEffect> getEffects(){
 		var nms = getEffectsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCFoodProperties.PossibleEffect>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties.PossibleEffect>>() {});
 	}
 
 	private List<FoodProperties.PossibleEffect> getEffectsFromImpl(){
 		return handle == null ? List.of() : handle.effects();
 	}
 
-	public MCCFoodProperties withEffects(List<MCCFoodProperties.PossibleEffect> effects){
+	public MCCFoodProperties withEffects(List<de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties.PossibleEffect> effects){
 		var param0 = getNutritionFromImpl();
 		var param1 = getSaturationFromImpl();
 		var param2 = getCanAlwaysEatFromImpl();

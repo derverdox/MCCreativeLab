@@ -13,9 +13,9 @@ public interface MCCItemAttributeModifiers extends MCCItemComponent  {
 
 	public MCCItemAttributeModifiers.Entry createEntry();
 
-	public List<MCCItemAttributeModifiers.Entry> getModifiers();
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers.Entry> getModifiers();
 
-	public MCCItemAttributeModifiers withModifiers(List<MCCItemAttributeModifiers.Entry> modifiers);
+	public MCCItemAttributeModifiers withModifiers(List<de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers.Entry> modifiers);
 
 	public boolean getShowInTooltip();
 

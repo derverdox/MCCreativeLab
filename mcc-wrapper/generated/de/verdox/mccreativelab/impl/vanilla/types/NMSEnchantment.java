@@ -5,10 +5,9 @@ import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import net.minecraft.core.HolderSet;
 import net.minecraft.world.item.Item;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentMap;
-import de.verdox.mccreativelab.wrapper.types.MCCEnchantment;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
@@ -22,7 +21,7 @@ import java.util.Optional;
 import de.verdox.mccreativelab.wrapper.registry.MCCReferenceSet;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
-public class NMSEnchantment extends MCCHandle<Enchantment> implements MCCEnchantment  {
+public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.mccreativelab.wrapper.types.MCCEnchantment  {
 
 	public static final MCCConverter<Enchantment, NMSEnchantment> CONVERTER  = converter(NMSEnchantment.class, Enchantment.class, NMSEnchantment::new, MCCHandle::getHandle);
 
@@ -111,18 +110,18 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements MCCEnchant
 			return handle == null ? 0 : handle.maxLevel();
 		}
 	
-		public Enchantment.Cost getMinCost(){
+		public MCCEnchantment.Cost getMinCost(){
 			var nms = getMinCostFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.Cost>() {});
 		}
 	
 		private Enchantment.Cost getMinCostFromImpl(){
 			return handle == null ? null : handle.minCost();
 		}
 	
-		public Enchantment.Cost getMaxCost(){
+		public MCCEnchantment.Cost getMaxCost(){
 			var nms = getMaxCostFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCEnchantment.Cost>() {});
 		}
 	
 		private Enchantment.Cost getMaxCostFromImpl(){

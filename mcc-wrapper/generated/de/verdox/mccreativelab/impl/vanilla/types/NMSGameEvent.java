@@ -79,9 +79,9 @@ public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  
 			return nms;
 		}
 	
-		public GameEvent.Context getArg2(){
+		public MCCGameEvent.Context getArg2(){
 			var nms = getArg2FromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<MCCGameEvent.Context>() {});
 		}
 	
 		private GameEvent.Context getArg2FromImpl(){

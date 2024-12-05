@@ -12,9 +12,9 @@ public interface MCCTool extends MCCItemComponent  {
 
 	public MCCTool.Rule createRule();
 
-	public List<MCCTool.Rule> getRules();
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCTool.Rule> getRules();
 
-	public MCCTool withRules(List<MCCTool.Rule> rules);
+	public MCCTool withRules(List<de.verdox.mccreativelab.wrapper.item.components.MCCTool.Rule> rules);
 
 	public float getDefaultMiningSpeed();
 

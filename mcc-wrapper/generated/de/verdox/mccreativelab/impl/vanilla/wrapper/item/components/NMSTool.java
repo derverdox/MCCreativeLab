@@ -31,16 +31,16 @@ public class NMSTool extends MCCHandle<Tool> implements MCCTool  {
 		return new NMSRule(null);
 	}
 
-	public List<MCCTool.Rule> getRules(){
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCTool.Rule> getRules(){
 		var nms = getRulesFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCTool.Rule>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<de.verdox.mccreativelab.wrapper.item.components.MCCTool.Rule>>() {});
 	}
 
 	private List<Tool.Rule> getRulesFromImpl(){
 		return handle == null ? List.of() : handle.rules();
 	}
 
-	public MCCTool withRules(List<MCCTool.Rule> rules){
+	public MCCTool withRules(List<de.verdox.mccreativelab.wrapper.item.components.MCCTool.Rule> rules){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(rules, new TypeToken<List<Tool.Rule>>() {});
 		var param1 = getDefaultMiningSpeedFromImpl();
 		var param2 = getDamagePerBlockFromImpl();

@@ -28,16 +28,16 @@ public class NMSSuspiciousStewEffects extends MCCHandle<SuspiciousStewEffects> i
 		return new NMSEntry(null);
 	}
 
-	public List<MCCSuspiciousStewEffects.Entry> getEffects(){
+	public List<de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects.Entry> getEffects(){
 		var nms = getEffectsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<MCCSuspiciousStewEffects.Entry>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<List<de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects.Entry>>() {});
 	}
 
 	private List<SuspiciousStewEffects.Entry> getEffectsFromImpl(){
 		return handle == null ? List.of() : handle.effects();
 	}
 
-	public MCCSuspiciousStewEffects withEffects(List<MCCSuspiciousStewEffects.Entry> effects){
+	public MCCSuspiciousStewEffects withEffects(List<de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects.Entry> effects){
 		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(effects, new TypeToken<List<SuspiciousStewEffects.Entry>>() {});
 		return new NMSSuspiciousStewEffects(new SuspiciousStewEffects(param0));
 	}

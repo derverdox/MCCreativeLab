@@ -1,18 +1,18 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
 import de.verdox.mccreativelab.wrapper.registry.MCCReference;
-import net.minecraft.world.item.armortrim.TrimMaterial;
-import net.minecraft.world.item.armortrim.TrimPattern;
+import de.verdox.mccreativelab.wrapper.types.MCCTrimMaterial;
+import de.verdox.mccreativelab.wrapper.types.MCCTrimPattern;
 
 public interface MCCArmorTrim extends MCCItemComponent  {
 
-	public MCCReference<TrimMaterial> getMaterial();
+	public MCCReference<MCCTrimMaterial> getMaterial();
 
-	public MCCArmorTrim withMaterial(MCCReference<TrimMaterial> material);
+	public MCCArmorTrim withMaterial(MCCReference<MCCTrimMaterial> material);
 
-	public MCCReference<TrimPattern> getPattern();
+	public MCCReference<MCCTrimPattern> getPattern();
 
-	public MCCArmorTrim withPattern(MCCReference<TrimPattern> pattern);
+	public MCCArmorTrim withPattern(MCCReference<MCCTrimPattern> pattern);
 
 	public boolean getShowInTooltip();
 
