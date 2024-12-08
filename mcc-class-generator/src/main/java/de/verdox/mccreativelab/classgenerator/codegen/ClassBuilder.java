@@ -171,8 +171,6 @@ public class ClassBuilder implements JavaDocElement<ClassBuilder> {
 
     public ClassBuilder includeImport(DynamicType dynamicType) {
         Objects.requireNonNull(dynamicType);
-        if (dynamicType.getClassDescription() == null)
-            return this;
         if (Objects.equals(packageName, dynamicType.getClassDescription().getPackageName()))
             return this;
         if (this.isInnerClass && this.parent != null) {
@@ -227,10 +225,12 @@ public class ClassBuilder implements JavaDocElement<ClassBuilder> {
 
         CodeLineBuilder importBuilder = new CodeLineBuilder(this, depth);
         for (Import anImport : imports) {
-            Objects.requireNonNull(anImport.classDescription().getClassName(), "No class name found for import: " + anImport);
-            Objects.requireNonNull(anImport.classDescription().getPackageName(), "No class name found for import: " + anImport);
-            if (anImport.classDescription().isPrimitiveType())
+            if (anImport.classDescription() == null) {
                 continue;
+            }
+            if (anImport.classDescription().isPrimitiveType()) {
+                continue;
+            }
             anImport.write(importBuilder);
         }
 

@@ -3,14 +3,12 @@ package de.verdox.mccreativelab.impl.vanilla.types;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.resources.ResourceLocation;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
+import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import de.verdox.mccreativelab.wrapper.types.MCCFrogVariant;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSFrogVariant;
 import net.kyori.adventure.key.Key;
 

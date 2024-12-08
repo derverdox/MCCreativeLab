@@ -10,10 +10,8 @@ import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
 import java.lang.Integer;
 import java.util.function.Supplier;
-import java.util.ArrayList;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.crafting.Ingredient;
-import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSArmorMaterial;
 import java.util.List;
 import net.minecraft.world.item.ArmorMaterial;
@@ -44,7 +42,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 
 	public int getEnchantmentValue(){
 		var nms = getEnchantmentValueFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getEnchantmentValueFromImpl(){
@@ -62,7 +60,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 
 	public Supplier<Ingredient> getRepairIngredient(){
 		var nms = getRepairIngredientFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Supplier<Ingredient>>() {});
 	}
 
 	private Supplier<Ingredient> getRepairIngredientFromImpl(){
@@ -80,7 +78,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 
 	public float getToughness(){
 		var nms = getToughnessFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getToughnessFromImpl(){
@@ -89,7 +87,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 
 	public float getKnockbackResistance(){
 		var nms = getKnockbackResistanceFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getKnockbackResistanceFromImpl(){
@@ -123,7 +121,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 	
 		public String getSuffix(){
 			var nms = getSuffixFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<String>() {});
 		}
 	
 		private String getSuffixFromImpl(){
@@ -139,7 +137,7 @@ public class NMSArmorMaterial extends MCCHandle<ArmorMaterial> implements MCCArm
 	
 		public boolean getDyeable(){
 			var nms = getDyeableFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 		}
 	
 		private boolean getDyeableFromImpl(){

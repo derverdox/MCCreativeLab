@@ -1,10 +1,11 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.event.MCCCancellable;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
+import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCTask;
@@ -15,23 +16,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public abstract class FrontEndBehavior {
+public abstract class GUIFrontEndBehavior {
     private static final long SHIFT_COOLDOWN_MILLIS = 20;
     private final ActiveGUI activeGUI;
     private long lastShift = System.currentTimeMillis();
     private FrontEndRenderer frontEndRenderer;
     private MCCTask updateTask;
 
-
-    public FrontEndBehavior(ActiveGUI activeGUI) {
+    public GUIFrontEndBehavior(ActiveGUI activeGUI) {
         this.activeGUI = activeGUI;
+    }
+
+    public ActiveGUI getActiveGUI() {
+        return activeGUI;
     }
 
     public void clickBehavior(GUIClickAction clickAction) {
         try {
             MCCPlayer player = clickAction.getEntityClicking();
             synchronized (activeGUI.getViewers()) {
-                if (!activeGUI.getViewers().contains(player.asAudience()))
+                if (!activeGUI.getViewers().contains(player))
                     return;
             }
 
@@ -90,7 +94,7 @@ public abstract class FrontEndBehavior {
 
     public void onDrag(MCCPlayer clicker, List<Integer> involvedSlots, MCCCancellable dragAction) {
         synchronized (activeGUI.getViewers()) {
-            if (!activeGUI.getViewers().contains(clicker.asAudience()))
+            if (!activeGUI.getViewers().contains(clicker))
                 return;
         }
         var rawSlotUsed = involvedSlots.stream().anyMatch(activeGUI.getComponentRendered()::isSlotBlocked);
@@ -98,25 +102,32 @@ public abstract class FrontEndBehavior {
             dragAction.setCancelled(true);
     }
 
-    public void onClose(MCCPlayer closingPlayer, MCCContainerCloseReason closeReason) {
+    /**
+     * Is called when the gui is closed. Returns true if the close was successful.
+     * @param closingPlayer the player viewing the gui
+     * @param closeReason the reason it is closed
+     * @return true if it was closed successfully
+     */
+    public boolean onClose(MCCPlayer closingPlayer, MCCContainerCloseReason closeReason) {
         synchronized (activeGUI.getViewers()) {
-            if (!activeGUI.getViewers().contains(closingPlayer.asAudience()))
-                return;
+            if (!activeGUI.getViewers().contains(closingPlayer))
+                return true;
         }
 
         // A player is in this update whitelist if we reopen the updated inventory to the player
         // Since this forced InventoryCloseEvent should not be
         synchronized (activeGUI.getInventoryUpdateWhitelist()) {
             if (activeGUI.getInventoryUpdateWhitelist().contains(closingPlayer.getUUID()))
-                return;
+                return false;
         }
         removePlayerFromGUI(closingPlayer, closeReason);
+        return true;
     }
 
     public void removePlayerFromGUI(MCCPlayer player, MCCContainerCloseReason reason) {
         synchronized (activeGUI.getViewers()) {
             //Bukkit.getLogger().info("Removing player " + player.getName() + " from gui " + getComponentRendered().getKey().asString());
-            activeGUI.getViewers().remove(player.asAudience());
+            activeGUI.getViewers().remove(player);
 
 
             if (activeGUI.equals(ActiveGUI.PlayerGUIData.getCurrentActiveGUI(player))) {
@@ -142,11 +153,11 @@ public abstract class FrontEndBehavior {
     private void addPlayerToGUI(MCCPlayer player) {
         Set<Audience> viewers = activeGUI.getViewers();
         synchronized (viewers) {
-            if (viewers.contains(player.asAudience()))
+            if (viewers.contains(player))
                 return;
             //Bukkit.getLogger().info("Adding player " + player.getName() + " to gui " + getComponentRendered().getKey().asString());
             ActiveGUI.PlayerGUIData.trackCurrentActiveGUI(player, activeGUI);
-            activeGUI.addToViewers(player.asAudience());
+            activeGUI.addToViewers(player);
         }
         startFrontEnd();
         if (activeGUI.getComponentRendered().onOpen != null) {
@@ -183,9 +194,10 @@ public abstract class FrontEndBehavior {
     }
 
     public abstract void onFrontendClose();
+
     public abstract void onFrontendRenderStart();
 
-    private void shiftItemToInventory(MCCContainer sourceInventory, MCCContainer targetInventory, int sourceSlot, Set<Integer> blockedSlots) {
+    private void shiftItemToInventory(MCCPlayerInventory sourceInventory, MCCContainer targetInventory, int sourceSlot, Set<Integer> blockedSlots) {
         int targetSlot = 0;
 
         MCCItemStack itemStack = sourceInventory.getItem(sourceSlot);

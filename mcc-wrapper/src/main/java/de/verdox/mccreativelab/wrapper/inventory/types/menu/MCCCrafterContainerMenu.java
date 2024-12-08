@@ -2,9 +2,10 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCPrivateContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCResultContainer;
 
-public interface MCCCrafterContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
+public interface MCCCrafterContainerMenu extends MCCPrivateContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
     /**
      * Checks if the given crafter slot is disabled.
      *

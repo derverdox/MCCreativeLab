@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.classgenerator;
 
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
+import net.minecraft.world.level.block.Block;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -23,24 +24,30 @@ public class AbstractClassGenerator {
         this.excludedPackages = excludedPackages;
     }
 
-    public boolean isForbiddenType(DynamicType dynamicType){
-        if(dynamicType.getClassDescription().getPackageName().contains("net.minecraft") && !NMSMapper.isSwapped(dynamicType.getClassDescription())) {
+    public boolean isForbiddenType(DynamicType dynamicType) {
+
+        boolean print = dynamicType.equals(DynamicType.of(Block.class, false));
+
+        if (dynamicType.getClassDescription().getPackageName().contains("de.verdox.mccreativelab")) {
+            return false;
+        }
+        if (dynamicType.getClassDescription().getPackageName().contains("net.minecraft") && !NMSMapper.isSwapped(dynamicType)) {
             return true;
         }
 
-        if(dynamicType.getRawType() != null && excludedTypes.contains(dynamicType.getRawType())) {
+        if (dynamicType.getRawType() != null && excludedTypes.contains(dynamicType.getRawType())) {
             return true;
         }
 
         for (DynamicType genericType : dynamicType.getGenericTypes()) {
-            if(isForbiddenType(genericType)) {
+            if (isForbiddenType(genericType)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isForbiddenType(Type type){
+    public boolean isForbiddenType(Type type) {
         return isForbiddenType(DynamicType.of(type, false));
     }
 }

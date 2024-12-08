@@ -25,6 +25,10 @@ public record MCCLocation(MCCWorld world, double x, double y, double z, float ya
         return new MCCLocation(this.world(), this.x(), this.y() - 1, this.z(), this.yaw(), this.pitch());
     }
 
+    public MCCLocation add(double x, double y, double z) {
+        return new MCCLocation(this.world(), this.x() + x, this.y() + y, this.z() + z, this.yaw(), this.pitch());
+    }
+
     public MCCLocation left() {
         return new MCCLocation(this.world(), this.x() - 1, this.y(), this.z(), this.yaw(), this.pitch());
     }
@@ -41,12 +45,12 @@ public record MCCLocation(MCCWorld world, double x, double y, double z, float ya
         return new MCCLocation(this.world(), this.x(), this.y(), this.z() - 1, this.yaw(), this.pitch());
     }
 
-    public CompletableFuture<MCCBlock> getBlock(){
+    public CompletableFuture<MCCBlock> getBlock() {
         return world().getBlockAt(this);
     }
 
     @Nullable
-    public MCCBlock getBlockNow(){
+    public MCCBlock getBlockNow() {
         return world().getBlockAt(this).getNow(null);
     }
 
@@ -62,31 +66,31 @@ public record MCCLocation(MCCWorld world, double x, double y, double z, float ya
         return Math.floorMod(blockZ(), CHUNK_Z_LENGTH);
     }
 
-    public int getChunkX(){
+    public int getChunkX() {
         return calculateChunkX(blockX());
     }
 
-    public int getChunkZ(){
+    public int getChunkZ() {
         return calculateChunkZ(blockZ());
     }
 
-    public static int calculateChunkX(int globalX){
+    public static int calculateChunkX(int globalX) {
         return globalX / 16;
     }
 
-    public static int calculateChunkZ(int globalZ){
+    public static int calculateChunkZ(int globalZ) {
         return globalZ / 16;
     }
 
-    public int blockX(){
+    public int blockX() {
         return (int) x();
     }
 
-    public int blockY(){
+    public int blockY() {
         return (int) y();
     }
 
-    public int blockZ(){
+    public int blockZ() {
         return (int) z();
     }
 

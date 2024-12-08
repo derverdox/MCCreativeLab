@@ -9,6 +9,7 @@ public class ConversionCache<V> {
     private final TypeHierarchyMap<List<Class<?>>> apiToImpls = new TypeHierarchyMap<>();
     private final TypeHierarchyMap<List<Class<?>>> nativeToImpls = new TypeHierarchyMap<>();
     private final TypeHierarchyMap<Class<?>> apiToNative = new TypeHierarchyMap<>();
+    private final TypeHierarchyMap<Class<?>> implToApi = new TypeHierarchyMap<>();
 
     private final TypeHierarchyMap<V> implToValue = new TypeHierarchyMap<>();
 
@@ -17,6 +18,7 @@ public class ConversionCache<V> {
         nativeToImpls.computeIfAbsent(nativeType, aClass -> new LinkedList<>()).addFirst(implType);
 
         apiToNative.put(apiType, nativeType);
+        implToApi.put(implType, apiType);
 
         implToValue.put(implType, value);
     }
@@ -30,8 +32,8 @@ public class ConversionCache<V> {
     }
 
     @NotNull
-    public Stream<V> getAllVariantsForNativeType(Object nativeType) {
-        List<Class<?>> foundImplTypes = nativeToImpls.get(nativeType.getClass());
+    public Stream<V> getAllVariantsForNativeType(Class<?> nativeType) {
+        List<Class<?>> foundImplTypes = nativeToImpls.get(nativeType);
         if(foundImplTypes == null) {
             return Stream.of();
         }
@@ -40,8 +42,8 @@ public class ConversionCache<V> {
     }
 
     @NotNull
-    public Stream<V> getAllVariantsForApiType(Object apiObject) {
-        List<Class<?>> foundImplTypes = apiToImpls.get(apiObject.getClass());
+    public Stream<V> getAllVariantsForApiType(Class<?> apiType) {
+        List<Class<?>> foundImplTypes = apiToImpls.get(apiType);
         if(foundImplTypes == null) {
             return Stream.of();
         }
@@ -50,6 +52,10 @@ public class ConversionCache<V> {
 
     Set<Map.Entry<Class<?>, Class<?>>> getApiToNativeMapping(){
         return apiToNative.entrySet();
+    }
+
+    TypeHierarchyMap<Class<?>> getImplToApi() {
+        return implToApi;
     }
 
     @Override

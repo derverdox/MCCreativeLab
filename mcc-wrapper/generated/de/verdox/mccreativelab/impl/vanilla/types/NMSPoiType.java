@@ -2,17 +2,15 @@ package de.verdox.mccreativelab.impl.vanilla.types;
 
 import de.verdox.mccreativelab.wrapper.types.MCCPoiType;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
+import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.impl.vanilla.types.NMSPoiType;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import java.util.Set;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import de.verdox.mccreativelab.impl.vanilla.types.NMSPoiType;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 
 public class NMSPoiType extends MCCHandle<PoiType> implements MCCPoiType  {
 
@@ -33,7 +31,7 @@ public class NMSPoiType extends MCCHandle<PoiType> implements MCCPoiType  {
 
 	public int getMaxTickets(){
 		var nms = getMaxTicketsFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getMaxTicketsFromImpl(){
@@ -42,7 +40,7 @@ public class NMSPoiType extends MCCHandle<PoiType> implements MCCPoiType  {
 
 	public int getValidRange(){
 		var nms = getValidRangeFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getValidRangeFromImpl(){

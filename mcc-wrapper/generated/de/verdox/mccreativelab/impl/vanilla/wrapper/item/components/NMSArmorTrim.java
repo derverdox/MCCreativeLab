@@ -10,8 +10,6 @@ import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSArmorTrim;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import de.verdox.mccreativelab.wrapper.types.MCCTrimMaterial;
@@ -75,7 +73,7 @@ public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  
 
 	public boolean getShowInTooltip(){
 		var nms = getShowInTooltipFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getShowInTooltipFromImpl(){
@@ -92,7 +90,7 @@ public class NMSArmorTrim extends MCCHandle<ArmorTrim> implements MCCArmorTrim  
 	public MCCArmorTrim withShowInTooltip(boolean showInTooltip){
 		var param0 = getMaterialFromImpl();
 		var param1 = getPatternFromImpl();
-		var param2 = showInTooltip;
+		var param2 = MCCPlatform.getInstance().getConversionService().unwrap(showInTooltip, new TypeToken<Boolean>() {});
 		return new NMSArmorTrim(new ArmorTrim(param0, param1, param2));
 	}
 

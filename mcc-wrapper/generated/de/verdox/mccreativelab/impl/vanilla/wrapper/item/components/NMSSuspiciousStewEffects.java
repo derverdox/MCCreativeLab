@@ -8,8 +8,6 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSSuspiciousStewEffects;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -68,7 +66,7 @@ public class NMSSuspiciousStewEffects extends MCCHandle<SuspiciousStewEffects> i
 	
 		public int getDuration(){
 			var nms = getDurationFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getDurationFromImpl(){
@@ -77,7 +75,7 @@ public class NMSSuspiciousStewEffects extends MCCHandle<SuspiciousStewEffects> i
 	
 		public MCCSuspiciousStewEffects.Entry withDuration(int duration){
 			var param0 = getEffectFromImpl();
-			var param1 = duration;
+			var param1 = MCCPlatform.getInstance().getConversionService().unwrap(duration, new TypeToken<Integer>() {});
 			return new NMSSuspiciousStewEffects.NMSEntry(new SuspiciousStewEffects.Entry(param0, param1));
 		}
 	

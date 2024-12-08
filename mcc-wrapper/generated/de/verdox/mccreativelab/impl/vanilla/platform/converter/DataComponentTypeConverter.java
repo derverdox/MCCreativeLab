@@ -12,13 +12,13 @@ import net.minecraft.world.item.component.CustomModelData;
 import java.lang.Integer;
 import de.verdox.mccreativelab.wrapper.item.components.MCCTool;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSSuspiciousStewEffects;
-import de.verdox.mccreativelab.wrapper.item.components.MCCRarity;
 import net.minecraft.core.Holder;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.item.Instrument;
 import de.verdox.mccreativelab.wrapper.item.components.MCCFireworkExplosion;
 import de.verdox.mccreativelab.impl.vanilla.item.components.NMSDataComponentType;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSUnbreakable;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.item.component.MapDecorations;
 import de.verdox.mccreativelab.wrapper.item.components.MCCBlockItemStateProperties;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSDyedItemColor;
@@ -76,7 +76,6 @@ import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import de.verdox.mccreativelab.wrapper.item.components.MCCPotionContents;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSResolvableProfile;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSArmorTrim;
-import de.verdox.mccreativelab.wrapper.item.components.MCCMapPostProcessing;
 import java.lang.Class;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSTool;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSMapItemColor;
@@ -107,7 +106,7 @@ public class DataComponentTypeConverter implements MCCConverter<DataComponentTyp
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<ItemLore>(){}, new TypeToken<MCCItemLore>(){}, () -> new NMSItemLore(null)));
 		}
 		if(nativeType.equals(DataComponents.RARITY)) {
-			return done(new NMSDataComponentType<>(nativeType, new TypeToken<Rarity>(){}, new TypeToken<MCCRarity>(){}, null));
+			return done(new NMSDataComponentType<>(nativeType, new TypeToken<Rarity>(){}, new TypeToken<Rarity>(){}, null));
 		}
 		if(nativeType.equals(DataComponents.ATTRIBUTE_MODIFIERS)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<ItemAttributeModifiers>(){}, new TypeToken<MCCItemAttributeModifiers>(){}, () -> new NMSItemAttributeModifiers(null)));
@@ -140,7 +139,7 @@ public class DataComponentTypeConverter implements MCCConverter<DataComponentTyp
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<MapDecorations>(){}, new TypeToken<MCCMapDecorations>(){}, () -> new NMSMapDecorations(null)));
 		}
 		if(nativeType.equals(DataComponents.MAP_POST_PROCESSING)) {
-			return done(new NMSDataComponentType<>(nativeType, new TypeToken<MapPostProcessing>(){}, new TypeToken<MCCMapPostProcessing>(){}, null));
+			return done(new NMSDataComponentType<>(nativeType, new TypeToken<MapPostProcessing>(){}, new TypeToken<MapPostProcessing>(){}, null));
 		}
 		if(nativeType.equals(DataComponents.POTION_CONTENTS)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<PotionContents>(){}, new TypeToken<MCCPotionContents>(){}, () -> new NMSPotionContents(null)));
@@ -176,10 +175,13 @@ public class DataComponentTypeConverter implements MCCConverter<DataComponentTyp
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<ResourceLocation>(){}, new TypeToken<Key>(){}, null));
 		}
 		if(nativeType.equals(DataComponents.BASE_COLOR)) {
-			return done(new NMSDataComponentType<>(nativeType, new TypeToken<DyeColor>(){}, new TypeToken<org.bukkit.DyeColor>(){}, null));
+			return done(new NMSDataComponentType<>(nativeType, new TypeToken<DyeColor>(){}, new TypeToken<DyeColor>(){}, null));
 		}
 		if(nativeType.equals(DataComponents.BLOCK_STATE)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<BlockItemStateProperties>(){}, new TypeToken<MCCBlockItemStateProperties>(){}, () -> new NMSBlockItemStateProperties(null)));
+		}
+		if(nativeType.equals(DataComponents.BEES)) {
+			return done(new NMSDataComponentType<>(nativeType, new TypeToken<List<BeehiveBlockEntity.Occupant>>(){}, new TypeToken<List<BeehiveBlockEntity.Occupant>>(){}, null));
 		}
 		if(nativeType.equals(DataComponents.LOCK)) {
 			return done(new NMSDataComponentType<>(nativeType, new TypeToken<LockCode>(){}, new TypeToken<MCCLockCode>(){}, () -> new NMSLockCode(null)));

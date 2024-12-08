@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import java.util.HashSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLockCode;
@@ -11,7 +10,6 @@ import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSLockCode;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.String;
-import java.util.ArrayList;
 
 public class NMSLockCode extends MCCHandle<LockCode> implements MCCLockCode  {
 
@@ -23,7 +21,7 @@ public class NMSLockCode extends MCCHandle<LockCode> implements MCCLockCode  {
 
 	public String getKey(){
 		var nms = getKeyFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<String>() {});
 	}
 
 	private String getKeyFromImpl(){
@@ -31,7 +29,7 @@ public class NMSLockCode extends MCCHandle<LockCode> implements MCCLockCode  {
 	}
 
 	public MCCLockCode withKey(String key){
-		var param0 = key;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(key, new TypeToken<String>() {});
 		return new NMSLockCode(new LockCode(param0));
 	}
 

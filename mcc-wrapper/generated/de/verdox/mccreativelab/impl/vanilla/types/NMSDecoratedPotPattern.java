@@ -2,15 +2,13 @@ package de.verdox.mccreativelab.impl.vanilla.types;
 
 import net.minecraft.resources.ResourceLocation;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import java.util.Set;
-import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSDecoratedPotPattern;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.wrapper.types.MCCDecoratedPotPattern;
+import java.util.Set;
+import com.google.common.reflect.TypeToken;
 import net.minecraft.world.level.block.entity.DecoratedPotPattern;
 import net.kyori.adventure.key.Key;
 

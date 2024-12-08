@@ -16,7 +16,7 @@ public interface MCCTrimMaterial extends MCCWrapped  {
 
 	public float getItemModelIndex();
 
-	public Map<String, MCCReference<MCCArmorMaterial>> getOverrideArmorMaterials();
+	public Map<MCCReference<MCCArmorMaterial>, String> getOverrideArmorMaterials();
 
 	public Component getDescription();
 

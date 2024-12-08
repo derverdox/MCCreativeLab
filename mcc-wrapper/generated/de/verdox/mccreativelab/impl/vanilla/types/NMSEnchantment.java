@@ -6,14 +6,12 @@ import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import net.minecraft.world.item.Item;
 import net.minecraft.core.HolderSet;
+import net.minecraft.world.item.Item;
 import net.minecraft.core.component.DataComponentMap;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.entity.MCCEquipmentSlotGroup;
 import net.kyori.adventure.text.Component;
@@ -59,7 +57,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 
 	public DataComponentMap getEffects(){
 		var nms = getEffectsFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<DataComponentMap>() {});
 	}
 
 	private DataComponentMap getEffectsFromImpl(){
@@ -95,7 +93,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 	
 		public int getWeight(){
 			var nms = getWeightFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getWeightFromImpl(){
@@ -104,7 +102,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 	
 		public int getMaxLevel(){
 			var nms = getMaxLevelFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getMaxLevelFromImpl(){
@@ -131,7 +129,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 	
 		public int getAnvilCost(){
 			var nms = getAnvilCostFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getAnvilCostFromImpl(){
@@ -159,7 +157,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 	
 		public int getBase(){
 			var nms = getBaseFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getBaseFromImpl(){
@@ -168,7 +166,7 @@ public class NMSEnchantment extends MCCHandle<Enchantment> implements de.verdox.
 	
 		public int getPerLevelAboveFirst(){
 			var nms = getPerLevelAboveFirstFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getPerLevelAboveFirstFromImpl(){

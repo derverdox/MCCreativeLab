@@ -1,5 +1,3 @@
-import io.papermc.paperweight.util.convertToPath
-
 plugins {
     id("java")
     id("io.papermc.paperweight.userdev") version "1.7.3"
@@ -7,13 +5,13 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1" apply true
 }
 
-group = "de.verdox.mccreativelab"
-description = "mcc-class-generator"
-version = "1.0"
-
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        name = "Verdox Reposilite"
+        url = uri("https://repo.verdox.de/snapshots")
+    }
 }
 
 tasks{
@@ -61,7 +59,7 @@ dependencies {
     paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-api:4.17.0")
     //implementation(project(":mcc-wrapper"))
-    implementation("de.verdox.mccreativelab:mcc-wrapper:1.0")
+    implementation("de.verdox.mccreativelab:mcc-wrapper:1.0.0-SNAPSHOT")
     implementation("com.google.guava:guava:33.3.1-jre")
     implementation("org.reflections:reflections:0.10.2")
     implementation("net.bytebuddy:byte-buddy:1.15.10")
@@ -75,8 +73,29 @@ dependencies {
 }
 
 publishing {
-    publications.create<MavenPublication>("maven").from(components["java"]);
-    repositories.maven(repositories.mavenLocal())
+    publications {
+        create<MavenPublication>("maven") {
+            pom {
+                groupId = "de.verdox.mccreativelab"
+                artifactId = "mcc-class-generator"
+                version = "1.0.0-SNAPSHOT"
+                from(components["java"])
+                licenses {
+                    license {
+                        name = "GNU GENERAL PUBLIC LICENSE Version 3"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "verdox"
+                        name = "Lukas Jonsson"
+                        email = "mail.ysp@web.de"
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.test {

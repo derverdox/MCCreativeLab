@@ -8,6 +8,8 @@ import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockSoundGroup;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockState;
 import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.entity.*;
+import de.verdox.mccreativelab.impl.vanilla.entity.types.NMSPlayer;
+import de.verdox.mccreativelab.impl.vanilla.inventory.NMSContainer;
 import de.verdox.mccreativelab.impl.vanilla.inventory.types.container.NMSPlayerInventory;
 import de.verdox.mccreativelab.impl.vanilla.inventory.types.menu.*;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
@@ -16,6 +18,7 @@ import de.verdox.mccreativelab.impl.vanilla.platform.converter.AttributeModifier
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.GeneratedConverters;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.SoundConverter;
+import de.verdox.mccreativelab.impl.vanilla.inventory.factory.NMSContainerFactory;
 import de.verdox.mccreativelab.impl.vanilla.platform.factory.NMSTypedKeyFactory;
 import de.verdox.mccreativelab.impl.vanilla.registry.*;
 import de.verdox.mccreativelab.impl.vanilla.world.NMSWorld;
@@ -27,7 +30,9 @@ import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.*;
 import de.verdox.mccreativelab.wrapper.entity.player.MCCGameMode;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.inventory.types.menu.*;
 import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
@@ -65,10 +70,12 @@ import java.util.UUID;
 public class NMSPlatform implements MCCPlatform {
     protected final NMSTypedKeyFactory typedKeyFactory;
     protected final ConversionService conversionService;
+    protected final MCCContainerFactory containerFactory;
 
     public NMSPlatform() {
         this.typedKeyFactory = new NMSTypedKeyFactory();
         this.conversionService = new ConversionServiceImpl();
+        this.containerFactory = new NMSContainerFactory();
     }
 
     @Override
@@ -98,6 +105,7 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCReferenceSet.class, NMSReferenceSet.CONVERTER);
         conversionService.registerPlatformType(MCCEitherReference.class, NMSEitherReference.CONVERTER);
         conversionService.registerPlatformType(MCCRegistry.class, NMSRegistry.CONVERTER);
+        conversionService.registerPlatformType(MCCContainer.class, NMSContainer.CONVERTER);
 
         registerMenuTypes();
         registerContainerTypes();
@@ -138,8 +146,7 @@ public class NMSPlatform implements MCCPlatform {
 
     @Override
     public @NotNull MCCContainerFactory getContainerFactory() {
-        //TODO
-        return null;
+        return containerFactory;
     }
 
     @Override
@@ -206,6 +213,7 @@ public class NMSPlatform implements MCCPlatform {
         conversionService.registerPlatformType(MCCDispenserContainerMenu.class, NMSDispenserContainerMenu.CONVERTER);
         conversionService.registerPlatformType(MCCEnchantingTableContainerMenu.class, NMSEnchantingTableContainerMenu.CONVERTER);
         conversionService.registerPlatformType(MCCFurnaceContainerMenu.class, NMSFurnaceContainerMenu.CONVERTER);
+        conversionService.registerPlatformType(MCCLoomContainerMenu.class, NMSLoomContainerMenu.CONVERTER);
         conversionService.registerPlatformType(MCCGrindstoneContainerMenu.class, NMSGrindstoneContainerMenu.CONVERTER);
         conversionService.registerPlatformType(MCCLecternContainerMenu.class, NMSLecternContainerMenu.CONVERTER);
         conversionService.registerPlatformType(MCCMerchantContainerMenu.class, NMSMerchantContainerMenu.CONVERTER);

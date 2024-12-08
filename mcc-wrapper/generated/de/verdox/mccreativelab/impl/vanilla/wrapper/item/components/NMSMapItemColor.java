@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import java.util.HashSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import net.minecraft.world.item.component.MapItemColor;
@@ -10,7 +9,6 @@ import java.util.Set;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSMapItemColor;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapItemColor;
-import java.util.ArrayList;
 
 public class NMSMapItemColor extends MCCHandle<MapItemColor> implements MCCMapItemColor  {
 
@@ -22,7 +20,7 @@ public class NMSMapItemColor extends MCCHandle<MapItemColor> implements MCCMapIt
 
 	public int getRgb(){
 		var nms = getRgbFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getRgbFromImpl(){
@@ -30,7 +28,7 @@ public class NMSMapItemColor extends MCCHandle<MapItemColor> implements MCCMapIt
 	}
 
 	public MCCMapItemColor withRgb(int rgb){
-		var param0 = rgb;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(rgb, new TypeToken<Integer>() {});
 		return new NMSMapItemColor(new MapItemColor(param0));
 	}
 

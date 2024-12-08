@@ -2,10 +2,11 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.*;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCBeaconContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCContainer> {
+public interface MCCBeaconContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCContainer> {
     //TODO: Create Wrappers for PotionEffectTypes -> get / set PrimaryBeaconEffect() //// get / set SecondaryBeaconEffect()
     /**
      * Set the item powering the beacon.

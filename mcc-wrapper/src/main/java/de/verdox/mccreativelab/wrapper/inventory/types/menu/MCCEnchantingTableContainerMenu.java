@@ -2,12 +2,13 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.*;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCEnchantingTableContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCContainer> {
+public interface MCCEnchantingTableContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCContainer> {
     /**
      * Set the item being enchanted.
      *

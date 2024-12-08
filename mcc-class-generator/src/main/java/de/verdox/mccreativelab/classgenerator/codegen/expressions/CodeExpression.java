@@ -18,6 +18,10 @@ public interface CodeExpression {
         return new ChainedExpression(this, codeLineBuilder -> codeLineBuilder.append(dynamicType));
     }
 
+    default CodeExpression with(DynamicType dynamicType, boolean insideGeneric) {
+        return new ChainedExpression(this, codeLineBuilder -> codeLineBuilder.append(dynamicType, insideGeneric));
+    }
+
     static CodeExpression create() {
         return new ChainedExpression();
     }

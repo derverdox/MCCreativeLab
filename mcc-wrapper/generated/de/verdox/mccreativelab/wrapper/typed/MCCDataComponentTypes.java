@@ -1,38 +1,39 @@
 package de.verdox.mccreativelab.wrapper.typed;
 
 import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
+import net.minecraft.world.item.DyeColor;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.item.components.MCCCustomModelData;
+import net.minecraft.world.item.component.MapPostProcessing;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapId;
 import java.lang.Integer;
 import de.verdox.mccreativelab.wrapper.item.components.MCCTool;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapItemColor;
-import de.verdox.mccreativelab.wrapper.item.components.MCCRarity;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLockCode;
 import de.verdox.mccreativelab.wrapper.item.components.MCCSeededContainerLoot;
 import net.kyori.adventure.text.Component;
 import java.lang.Boolean;
 import de.verdox.mccreativelab.wrapper.item.components.MCCFireworkExplosion;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDyedItemColor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCBlockItemStateProperties;
 import de.verdox.mccreativelab.wrapper.item.components.MCCSuspiciousStewEffects;
 import de.verdox.mccreativelab.wrapper.item.components.MCCResolvableProfile;
 import de.verdox.mccreativelab.wrapper.item.components.MCCJukeboxPlayable;
-import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentType;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.item.components.MCCArmorTrim;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemAttributeModifiers;
 import de.verdox.mccreativelab.wrapper.types.MCCInstrument;
 import de.verdox.mccreativelab.wrapper.item.components.MCCItemLore;
 import de.verdox.mccreativelab.wrapper.item.components.MCCPotionContents;
 import de.verdox.mccreativelab.wrapper.item.components.MCCLodestoneTracker;
-import de.verdox.mccreativelab.wrapper.item.components.MCCMapPostProcessing;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCUnbreakable;
-import org.bukkit.DyeColor;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapDecorations;
 import net.kyori.adventure.key.Key;
+import net.minecraft.world.item.Rarity;
 
 public class MCCDataComponentTypes  {
 
@@ -52,7 +53,7 @@ public class MCCDataComponentTypes  {
 
 	public static final MCCReference<MCCDataComponentType<MCCItemLore>> LORE  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "lore"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCItemLore>>(){}).getAsReference();
 
-	public static final MCCReference<MCCDataComponentType<MCCRarity>> RARITY  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "rarity"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCRarity>>(){}).getAsReference();
+	public static final MCCReference<MCCDataComponentType<Rarity>> RARITY  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "rarity"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<Rarity>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<MCCItemAttributeModifiers>> ATTRIBUTE_MODIFIERS  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "attribute_modifiers"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCItemAttributeModifiers>>(){}).getAsReference();
 
@@ -74,7 +75,7 @@ public class MCCDataComponentTypes  {
 
 	public static final MCCReference<MCCDataComponentType<MCCMapDecorations>> MAP_DECORATIONS  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "map_decorations"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCMapDecorations>>(){}).getAsReference();
 
-	public static final MCCReference<MCCDataComponentType<MCCMapPostProcessing>> MAP_POST_PROCESSING  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "map_post_processing"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCMapPostProcessing>>(){}).getAsReference();
+	public static final MCCReference<MCCDataComponentType<MapPostProcessing>> MAP_POST_PROCESSING  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "map_post_processing"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MapPostProcessing>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<MCCPotionContents>> POTION_CONTENTS  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "potion_contents"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCPotionContents>>(){}).getAsReference();
 
@@ -101,6 +102,8 @@ public class MCCDataComponentTypes  {
 	public static final MCCReference<MCCDataComponentType<DyeColor>> BASE_COLOR  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "base_color"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<DyeColor>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<MCCBlockItemStateProperties>> BLOCK_STATE  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "block_state"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCBlockItemStateProperties>>(){}).getAsReference();
+
+	public static final MCCReference<MCCDataComponentType<List<BeehiveBlockEntity.Occupant>>> BEES  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "bees"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<List<BeehiveBlockEntity.Occupant>>>(){}).getAsReference();
 
 	public static final MCCReference<MCCDataComponentType<MCCLockCode>> LOCK  = MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key("minecraft", "lock"), VANILLA_REGISTRY_KEY, new TypeToken<MCCDataComponentType<MCCLockCode>>(){}).getAsReference();
 

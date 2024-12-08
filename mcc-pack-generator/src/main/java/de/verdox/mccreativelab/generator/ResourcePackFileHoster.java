@@ -2,11 +2,13 @@ package de.verdox.mccreativelab.generator;
 
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.util.io.ZipUtil;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.platform.MCCResourcePack;
+import de.verdox.vserializer.SerializableField;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
+import de.verdox.vserializer.generic.SerializerBuilder;
 import de.verdox.vserializer.json.JsonSerializerContext;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -26,6 +28,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -38,20 +41,21 @@ public class ResourcePackFileHoster {
     public static final boolean WITH_HASHES = false;
     private HttpServer httpServer;
     private final Map<String, MCCResourcePack> availableResourcePacks = new HashMap<>();
+    private MCCResourcePack standardPack;
 
     private final HostingSettings hostingSettings;
     private WebServerHandler webServerHandler;
     private SshResourcePackUpload sshResourcePackUpload;
 
     public ResourcePackFileHoster(File srcDir) throws IOException {
-        File configFile = new File(srcDir + "/config.yml");
+        File configFile = new File(srcDir + "/rpHosting_settings.json");
         configFile.getParentFile().mkdirs();
 
         //TODO create new one
 
         JsonSerializerContext serializerContext = new JsonSerializerContext();
-        Serializer<HostingSettings> serializer = null;
-        if(!configFile.exists()){
+        Serializer<HostingSettings> serializer = HostingSettings.SERIALIZER;
+        if (!configFile.exists()) {
             HostingSettings defaultSettings = new HostingSettings(Mode.INTERNAL_WEBSERVER, false, true, new InternalWebServerSettings("0.0.0.0", 8080, "0.0.0.0:8080"), new SshUploadSettings("", "", "", "", ""));
             serializerContext.writeToFile(serializer.serialize(serializerContext, defaultSettings), configFile);
         }
@@ -84,6 +88,12 @@ public class ResourcePackFileHoster {
         LOGGER.info("Sending resource pack with url " + downloadURL + " to " + player.getUUID());
     }
 
+    public void sendDefaultResourcePackToPlayers(List<MCCPlayer> players) {
+        for (MCCPlayer player : players) {
+            sendResourcePackToPlayer(player, standardPack);
+        }
+    }
+
     public void createResourcePackZipFiles() throws IOException {
         deleteZipFiles();
 
@@ -98,6 +108,7 @@ public class ResourcePackFileHoster {
                 File zipFile = Path.of(resourcePackParentFolder.getPath() + ".zip").toFile();
                 if (!resourcePackName.equals("MCCreativeLab"))
                     return;
+
 
                 Path zipPath = Path.of(resourcePackParentFolder.getPath() + ".zip");
                 long start = System.currentTimeMillis();
@@ -117,6 +128,7 @@ public class ResourcePackFileHoster {
                     }
 
                     MCCResourcePack resourcePackInfo = new MCCResourcePack(resourcePackName, zipFile, createDownloadUrl(hash), hash, hashBytes, true, null);
+                    standardPack = resourcePackInfo;
                     availableResourcePacks.put(hash, resourcePackInfo);
                     if (hostingSettings.mode().equals(Mode.INTERNAL_WEBSERVER)) {
                         if (WITH_HASHES)
@@ -185,16 +197,44 @@ public class ResourcePackFileHoster {
         return digest.digest();
     }
 
-    private record HostingSettings(Mode mode, boolean useHttps, boolean requireResourcePack, InternalWebServerSettings webServerSettings,
-                                   SshUploadSettings sshUploadSettings) {}
+    private record HostingSettings(Mode mode, boolean useHttps, boolean requireResourcePack,
+                                   InternalWebServerSettings webServerSettings, SshUploadSettings sshUploadSettings) {
+        public static Serializer<HostingSettings> SERIALIZER = SerializerBuilder.create("hosting_settings", HostingSettings.class)
+            .constructor(
+                new SerializableField<>("mode", Serializer.Enum.create("mode", Mode.class), HostingSettings::mode),
+                new SerializableField<>("useHttps", Serializer.Primitive.BOOLEAN, HostingSettings::useHttps),
+                new SerializableField<>("requireResourcePack", Serializer.Primitive.BOOLEAN, HostingSettings::requireResourcePack),
+                new SerializableField<>("webServerSettings", InternalWebServerSettings.SERIALIZER, HostingSettings::webServerSettings),
+                new SerializableField<>("sshUploadSettings", SshUploadSettings.SERIALIZER, HostingSettings::sshUploadSettings),
+                HostingSettings::new
+            )
+            .build();
+    }
 
-    private record InternalWebServerSettings(String hostName, int port,
-                                             String downloadUrl) {
+
+    private record InternalWebServerSettings(String hostName, int port, String downloadUrl) {
+        public static Serializer<InternalWebServerSettings> SERIALIZER = SerializerBuilder.create("internal_web_server_settings", InternalWebServerSettings.class)
+            .constructor(
+                new SerializableField<>("hostName", Serializer.Primitive.STRING, InternalWebServerSettings::hostName),
+                new SerializableField<>("port", Serializer.Primitive.INTEGER, InternalWebServerSettings::port),
+                new SerializableField<>("downloadUrl", Serializer.Primitive.STRING, InternalWebServerSettings::downloadUrl),
+                InternalWebServerSettings::new
+            )
+            .build();
     }
 
     private record SshUploadSettings(String address, String user, String keyFilePath, String remotePath,
                                      String remoteFingerPrintEd25519) {
-
+        public static Serializer<SshUploadSettings> SERIALIZER = SerializerBuilder.create("ssh_upload_settings", SshUploadSettings.class)
+            .constructor(
+                new SerializableField<>("address", Serializer.Primitive.STRING, SshUploadSettings::address),
+                new SerializableField<>("user", Serializer.Primitive.STRING, SshUploadSettings::user),
+                new SerializableField<>("keyFilePath", Serializer.Primitive.STRING, SshUploadSettings::keyFilePath),
+                new SerializableField<>("remotePath", Serializer.Primitive.STRING, SshUploadSettings::remotePath),
+                new SerializableField<>("remoteFingerPrintEd25519", Serializer.Primitive.STRING, SshUploadSettings::remoteFingerPrintEd25519),
+                SshUploadSettings::new
+            )
+            .build();
     }
 
     private class WebServerHandler implements Handler<HttpServerRequest> {

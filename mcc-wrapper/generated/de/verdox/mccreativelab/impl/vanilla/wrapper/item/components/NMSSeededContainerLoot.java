@@ -1,19 +1,17 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.conversion.converter.MCCConverter;
-import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
-import java.util.Set;
-import com.google.common.reflect.TypeToken;
-import net.minecraft.resources.ResourceKey;
-import java.util.ArrayList;
-import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSSeededContainerLoot;
 import java.util.List;
 import net.minecraft.world.item.component.SeededContainerLoot;
 import de.verdox.mccreativelab.wrapper.item.components.MCCSeededContainerLoot;
+import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
+import java.util.Set;
 import net.minecraft.world.level.storage.loot.LootTable;
+import com.google.common.reflect.TypeToken;
+import net.minecraft.resources.ResourceKey;
 
 public class NMSSeededContainerLoot extends MCCHandle<SeededContainerLoot> implements MCCSeededContainerLoot  {
 
@@ -40,7 +38,7 @@ public class NMSSeededContainerLoot extends MCCHandle<SeededContainerLoot> imple
 
 	public long getSeed(){
 		var nms = getSeedFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Long>() {});
 	}
 
 	private long getSeedFromImpl(){
@@ -49,7 +47,7 @@ public class NMSSeededContainerLoot extends MCCHandle<SeededContainerLoot> imple
 
 	public MCCSeededContainerLoot withSeed(long seed){
 		var param0 = getLootTableFromImpl();
-		var param1 = seed;
+		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(seed, new TypeToken<Long>() {});
 		return new NMSSeededContainerLoot(new SeededContainerLoot(param0, param1));
 	}
 

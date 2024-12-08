@@ -8,8 +8,6 @@ import net.minecraft.core.HolderSet;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCTool;
-import java.util.ArrayList;
-import java.util.HashSet;
 import net.minecraft.world.item.component.Tool;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
@@ -49,7 +47,7 @@ public class NMSTool extends MCCHandle<Tool> implements MCCTool  {
 
 	public float getDefaultMiningSpeed(){
 		var nms = getDefaultMiningSpeedFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getDefaultMiningSpeedFromImpl(){
@@ -58,14 +56,14 @@ public class NMSTool extends MCCHandle<Tool> implements MCCTool  {
 
 	public MCCTool withDefaultMiningSpeed(float defaultMiningSpeed){
 		var param0 = getRulesFromImpl();
-		var param1 = defaultMiningSpeed;
+		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(defaultMiningSpeed, new TypeToken<Float>() {});
 		var param2 = getDamagePerBlockFromImpl();
 		return new NMSTool(new Tool(param0, param1, param2));
 	}
 
 	public int getDamagePerBlock(){
 		var nms = getDamagePerBlockFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getDamagePerBlockFromImpl(){
@@ -75,7 +73,7 @@ public class NMSTool extends MCCHandle<Tool> implements MCCTool  {
 	public MCCTool withDamagePerBlock(int damagePerBlock){
 		var param0 = getRulesFromImpl();
 		var param1 = getDefaultMiningSpeedFromImpl();
-		var param2 = damagePerBlock;
+		var param2 = MCCPlatform.getInstance().getConversionService().unwrap(damagePerBlock, new TypeToken<Integer>() {});
 		return new NMSTool(new Tool(param0, param1, param2));
 	}
 

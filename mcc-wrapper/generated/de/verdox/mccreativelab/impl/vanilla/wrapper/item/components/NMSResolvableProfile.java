@@ -2,7 +2,6 @@ package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCResolvableProfile;
-import com.destroystokyo.paper.profile.PlayerProfile;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import com.mojang.authlib.GameProfile;
@@ -10,8 +9,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import java.util.UUID;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSResolvableProfile;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -62,7 +59,7 @@ public class NMSResolvableProfile extends MCCHandle<ResolvableProfile> implement
 
 	public PropertyMap getProperties(){
 		var nms = getPropertiesFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<PropertyMap>() {});
 	}
 
 	private PropertyMap getPropertiesFromImpl(){
@@ -72,21 +69,21 @@ public class NMSResolvableProfile extends MCCHandle<ResolvableProfile> implement
 	public MCCResolvableProfile withProperties(PropertyMap properties){
 		var param0 = getNameFromImpl();
 		var param1 = getIdFromImpl();
-		var param2 = properties;
+		var param2 = MCCPlatform.getInstance().getConversionService().unwrap(properties, new TypeToken<PropertyMap>() {});
 		var param3 = getGameProfileFromImpl();
 		return new NMSResolvableProfile(new ResolvableProfile(param0, param1, param2, param3));
 	}
 
-	public PlayerProfile getGameProfile(){
+	public GameProfile getGameProfile(){
 		var nms = getGameProfileFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<PlayerProfile>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<GameProfile>() {});
 	}
 
 	private GameProfile getGameProfileFromImpl(){
 		return handle == null ? null : handle.gameProfile();
 	}
 
-	public MCCResolvableProfile withGameProfile(PlayerProfile gameProfile){
+	public MCCResolvableProfile withGameProfile(GameProfile gameProfile){
 		var param0 = getNameFromImpl();
 		var param1 = getIdFromImpl();
 		var param2 = getPropertiesFromImpl();

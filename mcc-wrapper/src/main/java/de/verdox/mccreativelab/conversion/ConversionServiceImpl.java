@@ -30,17 +30,39 @@ public class ConversionServiceImpl implements ConversionService {
     }
 
     @Override
+    public <F, T> Class<T> wrapClassType(Class<F> nativeType) {
+        Objects.requireNonNull(nativeType, "The provided native type cannot be null");
+        Class<T> result = wrapClassTypeOrNull(nativeType);
+        if(result == null){
+            throw new NoConverterFoundException("Could not find a converter to wrap the native type (" + nativeType.getCanonicalName() + "). Make sure that you have registered a converter for the given object type.");
+        }
+        return result;
+    }
+
+    @Override
+    public @Nullable <F, T> Class<T> wrapClassTypeOrNull(Class<F> nativeType) {
+        Objects.requireNonNull(nativeType, "The provided native type cannot be null");
+        return (Class<T>) conversionCache.getAllVariantsForNativeType(nativeType)
+            .filter(mccConverter -> mccConverter.nativeMinecraftType().isAssignableFrom(nativeType))
+            .map(mccConverter -> (MCCConverter<Object, Object>) mccConverter)
+            .map(MCCConverter::apiImplementationClass)
+            .map(objectClass -> conversionCache.getImplToApi().get(objectClass))
+            .filter(Objects::nonNull)
+            .findAny().orElse(null);
+    }
+
+    @Override
     public Object wrap(@Nullable Object nativeObject) {
         if (nativeObject == null) {
             return null;
         }
-        return conversionCache.getAllVariantsForNativeType(nativeObject)
+        return conversionCache.getAllVariantsForNativeType(nativeObject.getClass())
             .filter(mccConverter -> mccConverter.nativeMinecraftType().isAssignableFrom(nativeObject.getClass()))
             .map(mccConverter -> (MCCConverter<Object, Object>) mccConverter)
             .map(mccConverter -> mccConverter.wrap(nativeObject))
             .filter(objectConversionResult -> objectConversionResult.result().isDone())
             .map(MCCConverter.ConversionResult::value)
-            .findAny().orElseThrow(() -> new IllegalArgumentException("Could not find a converter to wrap the native type " + nativeObject + " (" + nativeObject.getClass().getCanonicalName() + "). Make sure that you have registered a converter for the given object type."));
+            .findAny().orElseThrow(() -> new NoConverterFoundException("Could not find a converter to wrap the native type " + nativeObject + " (" + nativeObject.getClass().getCanonicalName() + "). Make sure that you have registered a converter for the given object type."));
     }
 
     @Override
@@ -48,13 +70,13 @@ public class ConversionServiceImpl implements ConversionService {
         if (apiObject == null) {
             return null;
         }
-        return conversionCache.getAllVariantsForApiType(apiObject)
+        return conversionCache.getAllVariantsForApiType(apiObject.getClass())
             .filter(mccConverter -> mccConverter.apiImplementationClass().isAssignableFrom(apiObject.getClass()))
             .map(mccConverter -> (MCCConverter<Object, Object>) mccConverter)
             .map(mccConverter -> mccConverter.unwrap(apiObject))
             .filter(objectConversionResult -> objectConversionResult.result().isDone())
             .map(MCCConverter.ConversionResult::value)
-            .findAny().orElseThrow(() -> new IllegalArgumentException("Could not find a converter to wrap the api type " + apiObject + " (" + apiObject.getClass().getCanonicalName() + "). Make sure that you have registered a converter for the given object type."));
+            .findAny().orElseThrow(() -> new NoConverterFoundException("Could not find a converter to wrap the api type " + apiObject + " (" + apiObject.getClass().getCanonicalName() + "). Make sure that you have registered a converter for the given object type."));
     }
 
     @Override

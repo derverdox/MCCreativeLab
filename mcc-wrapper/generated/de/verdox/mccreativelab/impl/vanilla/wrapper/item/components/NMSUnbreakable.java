@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import java.util.HashSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.item.components.MCCUnbreakable;
@@ -10,7 +9,6 @@ import net.minecraft.world.item.component.Unbreakable;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSUnbreakable;
-import java.util.ArrayList;
 
 public class NMSUnbreakable extends MCCHandle<Unbreakable> implements MCCUnbreakable  {
 
@@ -22,7 +20,7 @@ public class NMSUnbreakable extends MCCHandle<Unbreakable> implements MCCUnbreak
 
 	public boolean getShowInTooltip(){
 		var nms = getShowInTooltipFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getShowInTooltipFromImpl(){
@@ -30,7 +28,7 @@ public class NMSUnbreakable extends MCCHandle<Unbreakable> implements MCCUnbreak
 	}
 
 	public MCCUnbreakable withShowInTooltip(boolean showInTooltip){
-		var param0 = showInTooltip;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(showInTooltip, new TypeToken<Boolean>() {});
 		return new NMSUnbreakable(new Unbreakable(param0));
 	}
 

@@ -3,11 +3,12 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 import de.verdox.mccreativelab.wrapper.annotations.MCCLogic;
 import de.verdox.mccreativelab.wrapper.inventory.*;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCResultContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCAnvilContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
+public interface MCCAnvilContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
     /**
      * Gets the item in the left input slot.
      *

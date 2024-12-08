@@ -11,7 +11,6 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.JavaDocExpression;
 import de.verdox.mccreativelab.classgenerator.codegen.expressions.SuperConstructorCall;
@@ -31,10 +30,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 
@@ -78,7 +75,7 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
     }
 
     private ClassBuilder generateWrapper(Class<?> bukkitEventClass) throws IOException {
-        if (DONE.containsKey(bukkitEventClass))
+        if (DONE.containsKey(bukkitEventClass) || bukkitEventClass.isAnnotationPresent(Deprecated.class))
             return DONE.get(bukkitEventClass);
 
         String packageFolder = bukkitEventClass.getPackageName().replace(".", "/");
@@ -89,13 +86,12 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
             LOGGER.info("Could not find class file of " + bukkitEventClass.getSimpleName());
             return null;
         } else {
-            LOGGER.info("Found class file of event " + bukkitEventClass.getSimpleName());
+            //LOGGER.info("Found class file of event " + bukkitEventClass.getSimpleName());
         }
 
         CompilationUnit cu = StaticJavaParser.parse(sourceFileOfEvent.toFile());
         Map<String, MethodDeclaration> methodDeclarations = new HashMap<>();
         cu.findAll(MethodDeclaration.class).forEach(method -> {
-            LOGGER.info(bukkitEventClass.getSimpleName() + " cached method: " + method.getNameAsString());
             methodDeclarations.put(method.getNameAsString(), method);
         });
         ConstructorDeclaration constructorDeclaration = cu.findAll(ConstructorDeclaration.class).stream().findAny().orElseThrow(RuntimeException::new);
@@ -139,7 +135,7 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
                 continue;
             }
 
-            if ((declaredField.getName().contains("cancel") || declaredField.getName().contains("Cancel")) && (declaredField.getType().equals(Boolean.class) || declaredField.getType().equals(boolean.class))) {
+/*            if ((declaredField.getName().contains("cancel") || declaredField.getName().contains("Cancel")) && (declaredField.getType().equals(Boolean.class) || declaredField.getType().equals(boolean.class))) {
                 classBuilder.implementsClasses(DynamicType.of(MCCCancellable.class));
 
                 classBuilder.withField("private", DynamicType.of(boolean.class), "cancelled", (CodeExpression) null);
@@ -158,9 +154,9 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
                         .parameter(new Parameter(DynamicType.of(boolean.class), "cancelled"))
                 );
 
-                /*classBuilder.withMethod("public", "isCancelled", DynamicType.of(boolean.class), code -> code.append("return ").append("cancelled").appendAndNewLine(";"));
-                classBuilder.withMethod("public", "setCancelled", null, code -> code.append("this.").append("cancelled = cancelled").appendAndNewLine(";"), new Parameter(DynamicType.of(boolean.class), "cancelled"));*/
-            } else {
+                *//*classBuilder.withMethod("public", "isCancelled", DynamicType.of(boolean.class), code -> code.append("return ").append("cancelled").appendAndNewLine(";"));
+                classBuilder.withMethod("public", "setCancelled", null, code -> code.append("this.").append("cancelled = cancelled").appendAndNewLine(";"), new Parameter(DynamicType.of(boolean.class), "cancelled"));*//*
+            } else {*/
                 DynamicType fieldType = swapBukkitWithMCC(DynamicType.of(declaredField.getGenericType()));
                 if (fieldType == null) {
                     LOGGER.warning("Could not generate mcc event for bukkit event " + bukkitEventClass.getCanonicalName() + " because there is no mcc type for the bukkit type " + DynamicType.of(declaredField.getGenericType()));
@@ -181,7 +177,7 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
                             .javaDoc(javaDocExpression)
                     );
                 } else {
-                    LOGGER.info("Could not generate getter for " + declaredField.getName());
+                    //LOGGER.info("Could not generate getter for " + declaredField.getName());
                 }
 
 /*                String getterName = "get" + FieldNameUtil.capitalize(declaredField.getName());
@@ -216,11 +212,11 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
                                 .javaDoc(javaDocExpression)
                         );
                     } else {
-                        LOGGER.info("Could not generate setter for " + declaredField.getName());
+                        //LOGGER.info("Could not generate setter for " + declaredField.getName());
                     }
                 }
                 constructorParametersForFinalFields.add(new Parameter(fieldType, declaredField.getName()));
-            }
+            //}
         }
 
         List<Parameter> constructorArgs = new LinkedList<>();
@@ -252,17 +248,14 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
             }
             MethodDeclaration methodDeclaration = foundMethods.get(declaredMethod.getName());
             if (methodDeclaration != null) {
-                LOGGER.warning("Checking cached method: " + declaredMethod.getName());
                 boolean containsThisStatement = containsAssignmentToThisField(methodDeclaration, field.getName());
 
                 if (containsThisStatement || declaredMethod.getName().equals("set"+FieldNameUtil.capitalize(field.getName()))) {
-                    LOGGER.info("Found match!");
+                    LOGGER.info("Found setter method for field "+field.getName()+": "+declaredMethod.getName()+" ("+containsThisStatement+")");
                     return declaredMethod;
-                } else {
-                    LOGGER.info("No match. Continue searching...");
                 }
             } else {
-                LOGGER.warning("Declared method " + declaredMethod.getName() + " was not cached");
+                //LOGGER.warning("Declared method " + declaredMethod.getName() + " was not cached");
             }
         }
         return null;
@@ -276,17 +269,14 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
             }
             MethodDeclaration methodDeclaration = foundMethods.get(declaredMethod.getName());
             if (methodDeclaration != null) {
-                LOGGER.warning("Checking cached method: " + declaredMethod.getName());
                 boolean containsReturn = containsReturnStatement(methodDeclaration, field.getName());
 
                 if (containsReturn || declaredMethod.getName().equals("get" + FieldNameUtil.capitalize(field.getName())) || declaredMethod.getName().equals("is" + FieldNameUtil.capitalize(field.getName()))) {
-                    LOGGER.info("Found match!");
+                    LOGGER.info("Found getter method for field "+field.getName()+": "+declaredMethod.getName());
                     return declaredMethod;
-                } else {
-                    LOGGER.info("No match. Continue searching...");
                 }
             } else {
-                LOGGER.warning("Declared method " + declaredMethod.getName() + " was not cached");
+                //LOGGER.warning("Declared method " + declaredMethod.getName() + " was not cached");
             }
         }
         return null;
@@ -349,6 +339,10 @@ public class EventGeneratorFromBukkitPreset extends AbstractClassGenerator {
 
 
     private static boolean containsAssignmentToThisField(MethodDeclaration method, String fieldName) {
+        if(method.getBody().map(body -> body.findAll(AssignExpr.class).stream().count() > 1).orElse(false)){
+            return false;
+        }
+
         return method.getBody()
             .map(body -> body.findAll(AssignExpr.class).stream()
                 .anyMatch(assignExpr -> {

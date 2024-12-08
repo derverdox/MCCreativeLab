@@ -1,12 +1,13 @@
 package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCResultContainer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCGrindstoneContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
+public interface MCCGrindstoneContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
     /**
      * Gets the upper input item.
      *

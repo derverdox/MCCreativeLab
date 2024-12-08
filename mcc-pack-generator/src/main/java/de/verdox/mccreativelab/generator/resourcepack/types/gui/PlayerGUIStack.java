@@ -1,9 +1,8 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;

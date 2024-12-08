@@ -10,9 +10,7 @@ import java.util.Set;
 import de.verdox.mccreativelab.wrapper.entity.MCCAttribute;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSItemAttributeModifiers;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import de.verdox.mccreativelab.wrapper.item.MCCAttributeModifier;
@@ -53,7 +51,7 @@ public class NMSItemAttributeModifiers extends MCCHandle<ItemAttributeModifiers>
 
 	public boolean getShowInTooltip(){
 		var nms = getShowInTooltipFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getShowInTooltipFromImpl(){
@@ -62,7 +60,7 @@ public class NMSItemAttributeModifiers extends MCCHandle<ItemAttributeModifiers>
 
 	public MCCItemAttributeModifiers withShowInTooltip(boolean showInTooltip){
 		var param0 = getModifiersFromImpl();
-		var param1 = showInTooltip;
+		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(showInTooltip, new TypeToken<Boolean>() {});
 		return new NMSItemAttributeModifiers(new ItemAttributeModifiers(param0, param1));
 	}
 

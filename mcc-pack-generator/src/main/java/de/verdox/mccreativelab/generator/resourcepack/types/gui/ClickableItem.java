@@ -5,6 +5,7 @@ import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ClickableItem {
@@ -36,6 +37,7 @@ public class ClickableItem {
         private MCCItemStack item = CustomResourcePack.EMPTY_ITEM.createItem();
         public boolean popGUIStack = false;
         public boolean clearGUIStackAndClose = false;
+        private Consumer<MCCItemStack> itemSetup;
 
         public Builder(MCCItemStack stack) {
             this.item = stack.copy();
@@ -53,6 +55,11 @@ public class ClickableItem {
             return this;
         }
 
+        public Builder edit(Consumer<MCCItemStack> itemSetup){
+            this.itemSetup = itemSetup;
+            return this;
+        }
+
         public Builder withItem(MCCItemStack stack) {
             this.item = stack;
             return this;
@@ -64,6 +71,7 @@ public class ClickableItem {
             copy.item = this.item.copy();
             copy.popGUIStack = this.popGUIStack;
             copy.clearGUIStackAndClose = this.clearGUIStackAndClose;
+            copy.itemSetup = this.itemSetup;
             return copy;
         }
 
@@ -89,7 +97,11 @@ public class ClickableItem {
         }
 
         MCCItemStack createStack() {
-            return this.item.copy();
+            MCCItemStack stack = this.item.copy();
+            if(this.itemSetup != null){
+                itemSetup.accept(stack);
+            }
+            return stack;
         }
 
         public ClickableItem build() {

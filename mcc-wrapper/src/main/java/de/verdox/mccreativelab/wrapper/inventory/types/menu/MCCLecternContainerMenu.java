@@ -3,10 +3,11 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCSharedContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCLecternContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCContainer> {
+public interface MCCLecternContainerMenu extends MCCSharedContainerMenu<MCCBlockContainerSource, MCCContainer> {
 
     /**
      * Gets the lectern's held book.

@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.menu;
 
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.entity.player.Input;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;

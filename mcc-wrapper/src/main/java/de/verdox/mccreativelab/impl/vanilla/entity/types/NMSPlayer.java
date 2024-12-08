@@ -1,4 +1,4 @@
-package de.verdox.mccreativelab.impl.vanilla.entity;
+package de.verdox.mccreativelab.impl.vanilla.entity.types;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
@@ -9,7 +9,7 @@ import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.exceptions.OperationNotPossibleOnNMS;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerCloseReason;
@@ -27,6 +27,7 @@ import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.inventory.MainHand;
@@ -39,7 +40,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
-    public static final MCCConverter<Player, NMSPlayer> CONVERTER = converter(NMSPlayer.class, Player.class, NMSPlayer::new, MCCHandle::getHandle);
+    public static final MCCConverter<Player, NMSPlayer> CONVERTER = MCCHandle.converter(NMSPlayer.class, Player.class, NMSPlayer::new, MCCHandle::getHandle);
 
 
     public NMSPlayer(Player handle) {
@@ -205,8 +206,22 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
     }
 
     @Override
-    public boolean openContainer(MCCContainerMenu mccContainerMenu, Component title) {
+    public boolean openContainer(MCCContainerMenu<?,?> mccContainerMenu, Component title) {
+/*        getServerPlayer().openMenu(new MenuProvider() {
+            @Override
+            public net.minecraft.network.chat.Component getDisplayName() {
+                return conversionService.unwrap(title, new TypeToken<>() {});
+            }
+
+            @Override
+            public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+
+                return null;
+            }
+        });
+ */
         //TODO: CraftMenus Klasse nachschauen.
+        return false;
     }
 
     @Override
@@ -215,7 +230,7 @@ public class NMSPlayer extends NMSLivingEntity<Player> implements MCCPlayer {
     }
 
     @Override
-    public @Nullable MCCContainerMenu getCurrentlyViewedInventory() {
+    public @Nullable MCCContainerMenu<?,?> getCurrentlyViewedInventory() {
         return null;
     }
 

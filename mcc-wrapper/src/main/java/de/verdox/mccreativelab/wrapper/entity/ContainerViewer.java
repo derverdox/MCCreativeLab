@@ -17,7 +17,7 @@ public interface ContainerViewer extends MCCWrapped {
      * @param title        the title
      * @return true if the container could be opened
      */
-    boolean openContainer(MCCContainerMenu mccContainerMenu, Component title);
+    boolean openContainer(MCCContainerMenu<?,?> mccContainerMenu, Component title);
 
     /**
      * Closes the current inventory viewed by this player
@@ -30,5 +30,5 @@ public interface ContainerViewer extends MCCWrapped {
      * Returns the container currently viewed if available
      * @return the container or null if no container is viewed
      */
-    @Nullable MCCContainerMenu getCurrentlyViewedInventory();
+    @Nullable MCCContainerMenu<?,?> getCurrentlyViewedInventory();
 }

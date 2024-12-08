@@ -3,14 +3,12 @@ package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.item.components.MCCBlockItemStateProperties;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSBlockItemStateProperties;
+import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import java.util.Map;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.lang.String;
 import net.minecraft.world.item.component.BlockItemStateProperties;
 

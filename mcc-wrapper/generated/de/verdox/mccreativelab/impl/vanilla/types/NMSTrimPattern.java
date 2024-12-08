@@ -8,8 +8,6 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import net.minecraft.world.item.Item;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSTrimPattern;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -56,7 +54,7 @@ public class NMSTrimPattern extends MCCHandle<TrimPattern> implements MCCTrimPat
 
 	public boolean getDecal(){
 		var nms = getDecalFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getDecalFromImpl(){

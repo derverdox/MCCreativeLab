@@ -12,8 +12,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import de.verdox.mccreativelab.wrapper.types.MCCGameEvent;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
@@ -31,7 +29,7 @@ public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  
 
 	public int getNotificationRadius(){
 		var nms = getNotificationRadiusFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getNotificationRadiusFromImpl(){
@@ -65,7 +63,7 @@ public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  
 	
 		public Vec3 getArg1(){
 			var nms = getArg1FromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Vec3>() {});
 		}
 	
 		private Vec3 getArg1FromImpl(){
@@ -97,7 +95,7 @@ public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  
 	
 		public GameEventListener getArg3(){
 			var nms = getArg3FromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<GameEventListener>() {});
 		}
 	
 		private GameEventListener getArg3FromImpl(){
@@ -113,7 +111,7 @@ public class NMSGameEvent extends MCCHandle<GameEvent> implements MCCGameEvent  
 	
 		public Vec3 getArg4(){
 			var nms = getArg4FromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Vec3>() {});
 		}
 	
 		private Vec3 getArg4FromImpl(){

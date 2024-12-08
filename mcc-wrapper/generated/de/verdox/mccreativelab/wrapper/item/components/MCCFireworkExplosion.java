@@ -1,20 +1,21 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import it.unimi.dsi.fastutil.ints.IntList;
+import java.util.List;
+import net.minecraft.world.item.component.FireworkExplosion;
 
 public interface MCCFireworkExplosion extends MCCItemComponent  {
 
-	public MCCFireworkExplosion.Shape getShape();
+	public FireworkExplosion.Shape getShape();
 
-	public MCCFireworkExplosion withShape(MCCFireworkExplosion.Shape shape);
+	public MCCFireworkExplosion withShape(FireworkExplosion.Shape shape);
 
-	public IntList getColors();
+	public List getColors();
 
-	public MCCFireworkExplosion withColors(IntList colors);
+	public MCCFireworkExplosion withColors(List colors);
 
-	public IntList getFadeColors();
+	public List getFadeColors();
 
-	public MCCFireworkExplosion withFadeColors(IntList fadeColors);
+	public MCCFireworkExplosion withFadeColors(List fadeColors);
 
 	public boolean getHasTrail();
 

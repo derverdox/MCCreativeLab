@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import java.util.HashSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -10,7 +9,6 @@ import java.util.Set;
 import net.minecraft.world.item.component.CustomModelData;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSCustomModelData;
-import java.util.ArrayList;
 
 public class NMSCustomModelData extends MCCHandle<CustomModelData> implements MCCCustomModelData  {
 
@@ -22,7 +20,7 @@ public class NMSCustomModelData extends MCCHandle<CustomModelData> implements MC
 
 	public int getValue(){
 		var nms = getValueFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getValueFromImpl(){
@@ -30,7 +28,7 @@ public class NMSCustomModelData extends MCCHandle<CustomModelData> implements MC
 	}
 
 	public MCCCustomModelData withValue(int value){
-		var param0 = value;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(value, new TypeToken<Integer>() {});
 		return new NMSCustomModelData(new CustomModelData(param0));
 	}
 

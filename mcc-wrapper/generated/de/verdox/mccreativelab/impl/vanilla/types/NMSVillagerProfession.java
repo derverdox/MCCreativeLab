@@ -12,8 +12,6 @@ import net.minecraft.world.item.Item;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.kyori.adventure.sound.Sound;
@@ -35,7 +33,7 @@ public class NMSVillagerProfession extends MCCHandle<VillagerProfession> impleme
 
 	public String getName(){
 		var nms = getNameFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<String>() {});
 	}
 
 	private String getNameFromImpl(){
@@ -60,18 +58,18 @@ public class NMSVillagerProfession extends MCCHandle<VillagerProfession> impleme
 		return handle == null ? null : handle.acquirableJobSite();
 	}
 
-	public ImmutableSet<MCCItemType> getRequestedItems(){
+	public Set<MCCItemType> getRequestedItems(){
 		var nms = getRequestedItemsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<ImmutableSet<MCCItemType>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Set<MCCItemType>>() {});
 	}
 
 	private ImmutableSet<Item> getRequestedItemsFromImpl(){
 		return handle == null ? ImmutableSet.of() : handle.requestedItems();
 	}
 
-	public ImmutableSet<MCCBlockType> getSecondaryPoi(){
+	public Set<MCCBlockType> getSecondaryPoi(){
 		var nms = getSecondaryPoiFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<ImmutableSet<MCCBlockType>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Set<MCCBlockType>>() {});
 	}
 
 	private ImmutableSet<Block> getSecondaryPoiFromImpl(){

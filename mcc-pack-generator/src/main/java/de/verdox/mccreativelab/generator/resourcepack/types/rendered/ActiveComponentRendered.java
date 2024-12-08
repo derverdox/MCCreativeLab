@@ -29,8 +29,7 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
 
     public ActiveComponentRendered(C componentRendered) {
         this.componentRendered = componentRendered;
-        componentRendered.getElements()
-                         .forEach((s, hudElement) -> registerElement(s, hudElement, hudElement.toRenderedElement()));
+        componentRendered.getElements().forEach((s, hudElement) -> registerElement(s, hudElement, hudElement.toRenderedElement()));
 
         this.sorted = List.copyOf(renderedElements.values()).stream().sorted(Comparator.comparingInt(rendered -> {
             if (rendered instanceof SingleHudText.RenderedSingleHudText renderedSingleHudText) {
@@ -76,11 +75,11 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
             HudElement hudElement = rendered.getHudElement();
             RenderedElementBehavior<T, HudElement.Rendered<?>> behavior = (RenderedElementBehavior<T, HudElement.Rendered<?>>) componentRendered
                 .getBehaviors().getOrDefault(hudElement, null);
-            if (behavior != null){
+            if (behavior != null) {
                 viewers.forEach(audience -> forEach.accept(behavior, rendered, audience));
             }
         }
-        if(forceUpdate)
+        if (forceUpdate)
             forceUpdate();
     }
 
@@ -89,11 +88,11 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
             HudElement hudElement = rendered.getHudElement();
             RenderedElementBehavior<T, HudElement.Rendered<?>> behavior = (RenderedElementBehavior<T, HudElement.Rendered<?>>) componentRendered
                 .getBehaviors().getOrDefault(hudElement, null);
-            if (behavior != null){
+            if (behavior != null) {
                 forEach.accept(behavior, rendered, audience);
             }
         }
-        if(forceUpdate)
+        if (forceUpdate)
             forceUpdate();
     }
 
@@ -108,7 +107,7 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
     }
 
     public final void forceUpdate() {
-        if(viewers.isEmpty())
+        if (viewers.isEmpty())
             return;
         doUpdate();
         this.needsUpdate = true;
@@ -119,12 +118,13 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
     public final C getComponentRendered() {
         return componentRendered;
     }
+
     public final Component render() {
         if (needsUpdate) {
             Component component = Component.empty();
 
             for (HudElement.Rendered<?> element : sorted) {
-                if(!element.isVisible())
+                if (!element.isVisible())
                     continue;
                 // Last Element does not need any spacing
                 component = component.append(element.render(this));
@@ -136,6 +136,7 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
         }
         return lastRendered;
     }
+
     public final <H extends HudElement.Rendered<?>> boolean editRenderedElement(String id, Class<? extends H> type, Consumer<H> execution) {
         return edit(id, renderedElements, type, h -> {
             h.setVisible(true);
@@ -161,6 +162,7 @@ public abstract class ActiveComponentRendered<T extends ActiveComponentRendered<
         }
         return defaultValue;
     }
+
     private void registerElement(String id, HudElement hudElement, HudElement.Rendered<?> renderedElement) {
         if (renderedElements.containsKey(id))
             throw new IllegalArgumentException("Id " + id + " already registered in active hud " + getComponentRendered().key());

@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCResultContainer;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
 import org.bukkit.block.banner.PatternType;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface MCCLoomContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
+public interface MCCLoomContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
 
     /**
      * Gets a list of all selectable to the player.

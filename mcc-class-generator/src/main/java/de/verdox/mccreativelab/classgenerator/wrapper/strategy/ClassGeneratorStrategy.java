@@ -23,7 +23,7 @@ public class ClassGeneratorStrategy implements WrapperGeneratorStrategy {
             foundParameters = foundFactoryMethod.getParameters();
 
         if (foundParameters != null) {
-            Arrays.stream(foundConstructor.getParameters()).forEach(parameter -> parameters.add(new ParameterOrRecord(parameter)));
+            Arrays.stream(foundParameters).forEach(parameter -> parameters.add(new ParameterOrRecord(parameter)));
         }
         return parameters;
     }

@@ -7,8 +7,6 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSMapDecorations;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import java.util.Map;
@@ -71,7 +69,7 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 	
 		public double getX(){
 			var nms = getXFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Double>() {});
 		}
 	
 		private double getXFromImpl(){
@@ -80,7 +78,7 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 	
 		public MCCMapDecorations.Entry withX(double x){
 			var param0 = getTypeFromImpl();
-			var param1 = x;
+			var param1 = MCCPlatform.getInstance().getConversionService().unwrap(x, new TypeToken<Double>() {});
 			var param2 = getZFromImpl();
 			var param3 = getRotationFromImpl();
 			return new NMSMapDecorations.NMSEntry(new MapDecorations.Entry(param0, param1, param2, param3));
@@ -88,7 +86,7 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 	
 		public double getZ(){
 			var nms = getZFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Double>() {});
 		}
 	
 		private double getZFromImpl(){
@@ -98,14 +96,14 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 		public MCCMapDecorations.Entry withZ(double z){
 			var param0 = getTypeFromImpl();
 			var param1 = getXFromImpl();
-			var param2 = z;
+			var param2 = MCCPlatform.getInstance().getConversionService().unwrap(z, new TypeToken<Double>() {});
 			var param3 = getRotationFromImpl();
 			return new NMSMapDecorations.NMSEntry(new MapDecorations.Entry(param0, param1, param2, param3));
 		}
 	
 		public float getRotation(){
 			var nms = getRotationFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 		}
 	
 		private float getRotationFromImpl(){
@@ -116,7 +114,7 @@ public class NMSMapDecorations extends MCCHandle<MapDecorations> implements MCCM
 			var param0 = getTypeFromImpl();
 			var param1 = getXFromImpl();
 			var param2 = getZFromImpl();
-			var param3 = rotation;
+			var param3 = MCCPlatform.getInstance().getConversionService().unwrap(rotation, new TypeToken<Float>() {});
 			return new NMSMapDecorations.NMSEntry(new MapDecorations.Entry(param0, param1, param2, param3));
 		}
 	

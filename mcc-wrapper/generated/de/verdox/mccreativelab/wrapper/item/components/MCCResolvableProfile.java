@@ -1,7 +1,7 @@
 package de.verdox.mccreativelab.wrapper.item.components;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.authlib.GameProfile;
 import java.util.Optional;
 import java.lang.String;
 import java.util.UUID;
@@ -20,8 +20,8 @@ public interface MCCResolvableProfile extends MCCItemComponent  {
 
 	public MCCResolvableProfile withProperties(PropertyMap properties);
 
-	public PlayerProfile getGameProfile();
+	public GameProfile getGameProfile();
 
-	public MCCResolvableProfile withGameProfile(PlayerProfile gameProfile);
+	public MCCResolvableProfile withGameProfile(GameProfile gameProfile);
 
 }

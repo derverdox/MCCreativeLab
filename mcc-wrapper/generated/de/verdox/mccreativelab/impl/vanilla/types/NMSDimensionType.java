@@ -8,8 +8,6 @@ import de.verdox.mccreativelab.wrapper.registry.MCCTag;
 import java.util.Set;
 import net.minecraft.world.level.dimension.DimensionType;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import net.minecraft.tags.TagKey;
 import java.util.OptionalLong;
 import java.util.List;
@@ -30,7 +28,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public OptionalLong getFixedTime(){
 		var nms = getFixedTimeFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<OptionalLong>() {});
 	}
 
 	private OptionalLong getFixedTimeFromImpl(){
@@ -39,7 +37,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getHasSkyLight(){
 		var nms = getHasSkyLightFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getHasSkyLightFromImpl(){
@@ -48,7 +46,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getHasCeiling(){
 		var nms = getHasCeilingFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getHasCeilingFromImpl(){
@@ -57,7 +55,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getUltraWarm(){
 		var nms = getUltraWarmFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getUltraWarmFromImpl(){
@@ -66,7 +64,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getNatural(){
 		var nms = getNaturalFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getNaturalFromImpl(){
@@ -75,7 +73,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public double getCoordinateScale(){
 		var nms = getCoordinateScaleFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Double>() {});
 	}
 
 	private double getCoordinateScaleFromImpl(){
@@ -84,7 +82,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getBedWorks(){
 		var nms = getBedWorksFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getBedWorksFromImpl(){
@@ -93,7 +91,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public boolean getRespawnAnchorWorks(){
 		var nms = getRespawnAnchorWorksFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getRespawnAnchorWorksFromImpl(){
@@ -102,7 +100,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public int getMinY(){
 		var nms = getMinYFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getMinYFromImpl(){
@@ -111,7 +109,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public int getHeight(){
 		var nms = getHeightFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getHeightFromImpl(){
@@ -120,7 +118,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public int getLogicalHeight(){
 		var nms = getLogicalHeightFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getLogicalHeightFromImpl(){
@@ -147,7 +145,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 
 	public float getAmbientLight(){
 		var nms = getAmbientLightFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getAmbientLightFromImpl(){
@@ -174,7 +172,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 	
 		public boolean getPiglinSafe(){
 			var nms = getPiglinSafeFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 		}
 	
 		private boolean getPiglinSafeFromImpl(){
@@ -183,7 +181,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 	
 		public boolean getHasRaids(){
 			var nms = getHasRaidsFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 		}
 	
 		private boolean getHasRaidsFromImpl(){
@@ -192,7 +190,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 	
 		public IntProvider getMonsterSpawnLightTest(){
 			var nms = getMonsterSpawnLightTestFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<IntProvider>() {});
 		}
 	
 		private IntProvider getMonsterSpawnLightTestFromImpl(){
@@ -201,7 +199,7 @@ public class NMSDimensionType extends MCCHandle<DimensionType> implements MCCDim
 	
 		public int getMonsterSpawnBlockLightLimit(){
 			var nms = getMonsterSpawnBlockLightLimitFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 		}
 	
 		private int getMonsterSpawnBlockLightLimitFromImpl(){

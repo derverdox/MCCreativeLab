@@ -3,17 +3,30 @@ package de.verdox.mccreativelab.classgenerator;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.classgenerator.codegen.ClassBuilder;
 import de.verdox.mccreativelab.classgenerator.codegen.type.impl.DynamicType;
+import de.verdox.mccreativelab.wrapper.platform.factory.TypedKeyFactory;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import de.verdox.mccreativelab.wrapper.registry.MCCRegistry;
+import de.verdox.mccreativelab.wrapper.registry.MCCTag;
 import de.verdox.mccreativelab.wrapper.registry.MCCTypedKey;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import net.bytebuddy.implementation.bytecode.Throw;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Blocks;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,14 +42,15 @@ public class TypedKeyCollectionBuilder extends AbstractClassGenerator {
         super(srcDir, prefix, suffix, excludedTypes, excludedPackages);
     }
 
-    public List<Result> generateForPlatformGroupingClass(Class<?> groupingClass, Class<?> typeToGroup, String minecraftRegistryKey, String newClassPackage, String groupClassName) throws IOException, IllegalAccessException {
+    public <F> List<Result> generateForPlatformGroupingClass(Class<?> groupingClass, TypeToken<F> typeToGroup, ResourceKey<? extends Registry<F>> registryKey, String newClassPackage, String groupClassName) throws IOException, IllegalAccessException {
+        Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).info("Generate collection class " + groupClassName + ".");
         List<Result> list = new LinkedList<>();
 
+        Registry<F> registry = (Registry<F>) BuiltInRegistries.REGISTRY.get(registryKey.location());
+        String minecraftRegistryKey = registryKey.location().getPath();
         ClassBuilder classBuilder = new ClassBuilder();
         classBuilder.withPackage(newClassPackage);
         classBuilder.withHeader("public", ClassBuilder.ClassHeader.CLASS, groupClassName, "");
-
-        DynamicType apiTypeOfGroupedType = null;
 
         classBuilder.withField("public static final", DynamicType.of(Key.class), "VANILLA_REGISTRY_KEY", "Key.key(\"minecraft\", \"" + minecraftRegistryKey + "\")");
 
@@ -52,78 +66,62 @@ public class TypedKeyCollectionBuilder extends AbstractClassGenerator {
             }
 
             Type fieldType = declaredField.getGenericType();
-
+            Object fieldValue = declaredField.get(null);
             if (isForbiddenType(fieldType)) {
-                //Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Could not generate collection class " + groupClassName + " because a type was found that has no wrapper yet in MCC. (" + DynamicType.of(fieldType) + ")");
+                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Type was found that has no wrapper yet in MCC. (" + DynamicType.of(fieldType, false) + ")");
                 continue;
             }
             String fieldName = declaredField.getName();
+            DynamicType resultFieldType;
+            Type nativeType;
 
-            String key;
-            DynamicType newFieldType = DynamicType.of(MCCTypedKey.class);
-            DynamicType genericOfTypedKey;
-            DynamicType nativeType;
-            if (declaredField.getType().equals(ResourceKey.class) || Holder.class.isAssignableFrom(declaredField.getType())) {
-                //TODO: Wenn es bereits ein resource key ist müssen wir seinen key auslesen
-                //TODO: Danach erstellen ganz normal
-                try {
-                    ResourceKey<?> resourceKey;
-                    if(Holder.class.isAssignableFrom(declaredField.getType())){
-                        resourceKey = ((Holder<?>)declaredField.get(null)).unwrapKey().get();
+            try {
+                if (ResourceKey.class.isAssignableFrom(declaredField.getType()) ||
+                    Holder.class.isAssignableFrom(declaredField.getType()) ||
+                    TagKey.class.isAssignableFrom(declaredField.getType())) {
+                    ParameterizedType type = (ParameterizedType) declaredField.getGenericType();
+                    nativeType = type.getActualTypeArguments()[0];
+
+                    String key;
+                    if (fieldValue instanceof ResourceKey<?> resourceKey) {
+                        key = resourceKey.location().getPath();
+                        resultFieldType = setupTypedKeyField(classBuilder, key, fieldName, nativeType);
+                    } else if (fieldValue instanceof Holder<?> holder) {
+                        key = holder.unwrapKey().get().location().getPath();
+                        resultFieldType = setupReferenceField(classBuilder, key, fieldName, nativeType);
+                    } else if (fieldValue instanceof TagKey<?> tagKey) {
+                        key = tagKey.location().getPath();
+                        resultFieldType = setupTagKeyField(classBuilder, key, fieldName, nativeType);
+                    } else {
+                        throw new IllegalStateException("Could not create field for " + fieldName + " with type " + declaredField.getGenericType());
                     }
-                    else {
-                        resourceKey = (ResourceKey<?>) declaredField.get(null);
-                    }
-                    key = resourceKey.location().getPath();
-                    nativeType = DynamicType.of(fieldType, false).getGenericTypes().get(0);
-                    genericOfTypedKey = DynamicType.of(fieldType, true).getGenericTypes().get(0);
+                } else if (typeToGroup.getRawType().isAssignableFrom(declaredField.getType())) {
+                    ResourceLocation resourceLocation = registry.getKey((F) fieldValue);
+                    String key = resourceLocation.getPath();
+                    nativeType = fieldType;
+                    resultFieldType = setupReferenceField(classBuilder, key, fieldName, fieldType);
+                } else {
+                    throw new IllegalStateException();
                 }
-                catch (Throwable e){
-                    //LOGGER.warning("Could not determine type of field "+fieldName+" of class "+groupingClass+" with type "+DynamicType.of(fieldType, false)+" ("+DynamicType.of(fieldType, true)+")");
-                    e.printStackTrace();
-                    continue;
-                }
-            }
-            else if(typeToGroup.isAssignableFrom(declaredField.getType())){
-                key = fieldName.toLowerCase(Locale.ROOT);
-                nativeType = DynamicType.of(fieldType, false);
-                genericOfTypedKey = DynamicType.of(fieldType, true);
-            }
-            else {
-                LOGGER.warning("Could not determine type of field "+fieldName+" of class "+groupingClass+" with type "+DynamicType.of(fieldType, false)+" ("+DynamicType.of(fieldType, true)+")");
+            } catch (Throwable e) {
+                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Exceptionally (" + e.getCause() + ") skipping field " + fieldName + "(" + fieldType + ")" + " of collection class " + groupClassName);
                 continue;
             }
 
             if (isForbiddenType(nativeType)) {
-                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Skipping field "+fieldName+"("+fieldType+")"+" of collection class " + groupClassName);
+                Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Skipping forbidden field " + fieldName + "(" + fieldType + ")" + " of collection class " + groupClassName);
                 continue;
             }
-            newFieldType = newFieldType.withAddedGeneric(genericOfTypedKey);
-            if (apiTypeOfGroupedType == null) {
-                apiTypeOfGroupedType = genericOfTypedKey;
-                classBuilder.withField("public static final", DynamicType.of(MCCTypedKey.class).withAddedGeneric(DynamicType.of(MCCRegistry.class).withAddedGeneric(apiTypeOfGroupedType)), "VANILLA_REGISTRY", "MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key(\"minecraft\", \"root\"), VANILLA_REGISTRY_KEY, new TypeToken<>(){});");
-            }
 
-
-            StringBuilder initValue = new StringBuilder();
-            /*            initValue.append("VANILLA_REGISTRY.get().getReference(Key.key(\"minecraft\", \"").append(key).append("\")).get();");*/
-            initValue.append("MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key(\"minecraft\", \"").append(key).append("\"), VANILLA_REGISTRY_KEY, ");
-            initValue.append("new TypeToken<").append(">(){}");
-            initValue.append(")");
-
-            classBuilder.withField("public static final", newFieldType, fieldName, initValue.toString());
             classBuilder.includeImport(DynamicType.of(Key.class));
             classBuilder.includeImport(DynamicType.of(TypeToken.class));
             classBuilder.includeImport(DynamicType.of(MCCPlatform.class));
-            classBuilder.includeImport(genericOfTypedKey);
-
-            list.add(new Result(groupingClass, declaredField.getName(), nativeType, fieldName, genericOfTypedKey));
+            list.add(new Result(groupingClass, declaredField.getName(), DynamicType.of(fieldType, false), fieldName, resultFieldType));
         }
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             Logger.getLogger(TypedKeyCollectionBuilder.class.getSimpleName()).warning("Could not generate collection class " + groupClassName + " because no fields were found.");
             return list;
-        }
-        else {
+        } else {
             classBuilder.writeClassFile(srcDir);
         }
         return list;
@@ -131,4 +129,37 @@ public class TypedKeyCollectionBuilder extends AbstractClassGenerator {
 
     public record Result(Class<?> groupingClass, String nmsFieldName, DynamicType nmsFieldType, String apiFieldName,
                          DynamicType apiFieldType) {}
+
+    private DynamicType setupTypedKeyField(ClassBuilder classBuilder, String key, String fieldName, Type nativeType) {
+        DynamicType swappedNativeType = NMSMapper.getSwap(nativeType);
+        DynamicType resultFieldType = DynamicType.of(MCCTypedKey.class).withAddedGeneric(swappedNativeType);
+
+        String initValue = "MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key(\"minecraft\", \"" + key + "\"), VANILLA_REGISTRY_KEY, new TypeToken<>(){})";
+        classBuilder.withField("public static final", resultFieldType, fieldName, initValue);
+        classBuilder.includeImport(swappedNativeType);
+
+        return resultFieldType;
+    }
+
+    private DynamicType setupReferenceField(ClassBuilder classBuilder, String key, String fieldName, Type nativeType) {
+        DynamicType swappedNativeType = DynamicType.of(nativeType);
+        DynamicType resultFieldType = DynamicType.of(MCCReference.class).withAddedGeneric(swappedNativeType);
+
+        String initValue = "MCCPlatform.getInstance().getTypedKeyFactory().getKey(Key.key(\"minecraft\", \"" + key + "\"), VANILLA_REGISTRY_KEY, new TypeToken<" + swappedNativeType.toString() + ">(){}).getAsReference()";
+        classBuilder.withField("public static final", resultFieldType, fieldName, initValue);
+        classBuilder.includeImport(swappedNativeType);
+
+        return resultFieldType;
+    }
+
+    private DynamicType setupTagKeyField(ClassBuilder classBuilder, String key, String fieldName, Type nativeType) {
+        DynamicType swappedNativeType = DynamicType.of(nativeType);
+        DynamicType resultFieldType = DynamicType.of(MCCTag.class).withAddedGeneric(swappedNativeType);
+
+        String initValue = "MCCPlatform.getInstance().getTypedKeyFactory().createTag(Key.key(\"minecraft\", \"" + key + "\"), VANILLA_REGISTRY_KEY, new TypeToken<>(){})";
+        classBuilder.withField("public static final", resultFieldType, fieldName, initValue);
+        classBuilder.includeImport(swappedNativeType);
+
+        return resultFieldType;
+    }
 }

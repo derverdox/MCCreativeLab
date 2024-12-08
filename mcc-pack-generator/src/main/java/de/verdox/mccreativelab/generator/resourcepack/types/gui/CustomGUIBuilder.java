@@ -10,11 +10,12 @@ import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.Screen
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.TextType;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.element.single.SingleHudTexture;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.RenderedElementBehavior;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuType;
 import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCSharedContainerMenu;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, ActiveGUI> {
-    private final MCCMenuType type;
+    private final MCCMenuType<? extends MCCSharedContainerMenu<?, ?>> type;
     Consumer<ActiveGUI> onOpen;
     Consumer<ActiveGUI> onClose;
     Consumer<ActiveGUI> whileOpen;
@@ -41,21 +42,22 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     private boolean usePlayerSlots;
     private final Map<GUIElement, GUIElementBehavior<?>> guiElementBehaviors = new HashMap<>();
 
-    public CustomGUIBuilder(@NotNull Key namespacedKey, @NotNull MCCMenuType type) {
+    public CustomGUIBuilder(@NotNull Key namespacedKey, @NotNull MCCMenuType<? extends MCCSharedContainerMenu<?, ?>> type) {
         super(namespacedKey);
         this.type = type;
     }
 
     public CustomGUIBuilder(@NotNull Key namespacedKey, int amountChestRows) {
         super(namespacedKey);
-        this.type = switch (amountChestRows){
+        this.type = switch (amountChestRows) {
             case 1 -> MCCMenuTypes.GENERIC_9x1;
             case 2 -> MCCMenuTypes.GENERIC_9x2;
             case 3 -> MCCMenuTypes.GENERIC_9x3;
             case 4 -> MCCMenuTypes.GENERIC_9x4;
             case 5 -> MCCMenuTypes.GENERIC_9x5;
             case 6 -> MCCMenuTypes.GENERIC_9x6;
-            default -> throw new IllegalStateException("Minecraft does not allow containers with " + amountChestRows+" rows.");
+            default ->
+                throw new IllegalStateException("Minecraft does not allow containers with " + amountChestRows + " rows.");
         };
     }
 
@@ -100,9 +102,6 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
                 }
             });
     }
-
-    //TODO: Beim erstellen von Objekten im CustomGUI muss man auswählen können ob man den Index im Spieler Inventar oder im GUI haben will
-    // TOOD: Je nachdem wird dann automatisch die usePlayerSlots Flag auf true gesetzt
 
     public CustomGUIBuilder withButton(String buttonName, int x, int y, Consumer<GUIButton.Builder> setup) {
         return withButton(buttonName, x, y, setup, null);
@@ -211,7 +210,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     }
 
     @NotNull
-    MCCMenuType getType() {
+    MCCMenuType<? extends MCCSharedContainerMenu<?, ?>> getType() {
         return type;
     }
 
@@ -279,7 +278,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     }
 
 
-    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup){
+    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
         ActiveGUI activeGUI = new ActiveGUI(this, inventory, gui -> {
             if (initialSetup != null)
                 initialSetup.accept(gui);
@@ -289,7 +288,7 @@ public class CustomGUIBuilder extends ComponentRendered<CustomGUIBuilder, Active
     }
 
 
-    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory){
+    public ActiveGUI linkToExistingInventory(MCCPlayer player, @NotNull MCCContainer inventory) {
         return linkToExistingInventory(player, inventory, null);
     }
 

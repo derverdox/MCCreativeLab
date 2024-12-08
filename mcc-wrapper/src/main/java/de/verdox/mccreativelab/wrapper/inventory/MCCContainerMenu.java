@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 /**
- * Describes a minecraft inventory
+ * Describes a minecraft menu
  */
 public interface MCCContainerMenu<T extends MCCContainerSource, C extends MCCContainer> extends Iterable<MCCItemStack>, ContainerHolder<C> {
     /**

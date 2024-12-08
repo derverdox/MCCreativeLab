@@ -2,10 +2,11 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCLocatedContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCResultContainer;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 
-public interface MCCCartographyTableContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
+public interface MCCCartographyTableContainerMenu extends MCCLocatedContainerMenu<MCCBlockContainerSource, MCCResultContainer> {
     /**
      * Check what item is in the result slot of this smithing table.
      *

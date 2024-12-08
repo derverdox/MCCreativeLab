@@ -3,15 +3,18 @@ package de.verdox.mccreativelab.platform;
 import de.verdox.mccreativelab.Singleton;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.ActiveGUI;
-import de.verdox.mccreativelab.generator.resourcepack.types.gui.FrontEndBehavior;
+import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIFrontEndBehavior;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.ActiveMenu;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.MenuBehaviour;
+import de.verdox.mccreativelab.generator.resourcepack.types.menu.PlayerKeyInput;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public interface GeneratorPlatformHelper {
     Singleton<GeneratorPlatformHelper> INSTANCE = new Singleton<>(GeneratorPlatformHelper.class);
@@ -43,14 +46,13 @@ public interface GeneratorPlatformHelper {
     }
 
     /**
-     * Returns the currently loaded resource pack of the player with the uuid {@link UUID}
+     * Returns the currently loaded resource pack of the platform
      *
-     * @param playerUUID the uuid of the player
      * @return the currently loaded resource pack if available, else null
      */
-    @Nullable CustomResourcePack getLoadedResourcePack(UUID playerUUID);
+    @Nullable CustomResourcePack getPlatformResourcePack();
 
-    @NotNull FrontEndBehavior createFrondEndBehavior(ActiveGUI activeGUI);
+    @NotNull GUIFrontEndBehavior createFrondEndBehavior(ActiveGUI activeGUI);
 
-    @NotNull MenuBehaviour createMenuBehavior(ActiveMenu activeMenu);
+    @NotNull MenuBehaviour createMenuBehavior(MCCPlayer player, ActiveMenu activeMenu, BiConsumer<PlayerKeyInput, ActiveMenu> consumer, Runnable onEnd);
 }

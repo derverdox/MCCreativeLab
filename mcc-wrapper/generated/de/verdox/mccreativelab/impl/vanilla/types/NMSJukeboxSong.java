@@ -9,8 +9,6 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.impl.vanilla.types.NMSJukeboxSong;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.kyori.adventure.sound.Sound;
 import net.minecraft.core.Holder;
@@ -45,7 +43,7 @@ public class NMSJukeboxSong extends MCCHandle<JukeboxSong> implements MCCJukebox
 
 	public float getLengthInSeconds(){
 		var nms = getLengthInSecondsFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getLengthInSecondsFromImpl(){
@@ -54,7 +52,7 @@ public class NMSJukeboxSong extends MCCHandle<JukeboxSong> implements MCCJukebox
 
 	public int getComparatorOutput(){
 		var nms = getComparatorOutputFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getComparatorOutputFromImpl(){

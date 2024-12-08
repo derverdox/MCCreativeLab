@@ -2,10 +2,11 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.impl.vanilla.entity.types.NMSLivingEntity;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
 import de.verdox.mccreativelab.wrapper.entity.MCCEffectType;
-import de.verdox.mccreativelab.wrapper.entity.MCCLivingEntity;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCLivingEntity;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.mccreativelab.wrapper.typed.MCCRegistries;
 import net.kyori.adventure.key.Key;

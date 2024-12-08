@@ -9,8 +9,6 @@ import net.minecraft.world.item.Item;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.world.item.armortrim.TrimMaterial;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ArmorMaterial;
@@ -31,7 +29,7 @@ public class NMSTrimMaterial extends MCCHandle<TrimMaterial> implements MCCTrimM
 
 	public String getAssetName(){
 		var nms = getAssetNameFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<String>() {});
 	}
 
 	private String getAssetNameFromImpl(){
@@ -49,16 +47,16 @@ public class NMSTrimMaterial extends MCCHandle<TrimMaterial> implements MCCTrimM
 
 	public float getItemModelIndex(){
 		var nms = getItemModelIndexFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getItemModelIndexFromImpl(){
 		return handle == null ? 0 : handle.itemModelIndex();
 	}
 
-	public Map<String, MCCReference<MCCArmorMaterial>> getOverrideArmorMaterials(){
+	public Map<MCCReference<MCCArmorMaterial>, String> getOverrideArmorMaterials(){
 		var nms = getOverrideArmorMaterialsFromImpl();
-		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<String, MCCReference<MCCArmorMaterial>>>() {});
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Map<MCCReference<MCCArmorMaterial>, String>>() {});
 	}
 
 	private Map<Holder<ArmorMaterial>, String> getOverrideArmorMaterialsFromImpl(){

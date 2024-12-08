@@ -74,7 +74,7 @@ public interface MCCChunk extends MCCWrapped {
 
     MCCChunkSection getChunkSectionByIndex(@NonNegative int index);
 
-    MCCChunkSection getChunkSectionByGlobalYCoordinate(@NonNegative int index);
+    MCCChunkSection getChunkSectionByGlobalYCoordinate(int blockHeight);
 
     default void checkIfLocationInChunk(MCCLocation location) {
         if (!location.world().equals(getWorld()) || location.getChunkX() != getX() || location.getChunkZ() != getZ()) {

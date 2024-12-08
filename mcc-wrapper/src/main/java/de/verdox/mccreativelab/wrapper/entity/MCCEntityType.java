@@ -10,8 +10,10 @@ import java.util.concurrent.CompletableFuture;
 
 @MCCInstantiationSource(sourceClasses = {MCCEntity.class})
 @MCCBuiltIn(syncState = MCCBuiltIn.SyncState.SYNCED, clientEntersErrorStateOnDesync = true)
-public interface MCCEntityType extends MCCKeyedWrapper {
-    default CompletableFuture<MCCEntity> summon(@NotNull MCCLocation location){
-        return location.world().summon(location, this);
+public interface MCCEntityType<T extends MCCEntity> extends MCCKeyedWrapper {
+    default CompletableFuture<T> summon(@NotNull MCCLocation location){
+        return (CompletableFuture<T>) location.world().summon(location, this);
     }
+
+    MCCEntity constructNewEntity();
 }

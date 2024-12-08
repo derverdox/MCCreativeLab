@@ -6,10 +6,14 @@ import de.verdox.mccreativelab.impl.vanilla.block.NMSBlockType;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
 import de.verdox.mccreativelab.impl.vanilla.platform.converter.ResourceLocationConverter;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.types.menu.MCCFurnaceContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import net.kyori.adventure.key.Key;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -56,9 +60,6 @@ public class ConverterTests extends TestBase {
 
     @BeforeAll
     public static void setupTestEntries() {
-
-        System.out.println(MCCPlatform.getInstance().getConversionService());
-
         testEntries.add(new TestEntry<>(MCCBlockType.class, TestBlockTypeImpl.CONVERTER, new TestBlockTypeImpl((StonecutterBlock) Blocks.STONECUTTER), (StonecutterBlock) Blocks.STONECUTTER, true));
         ItemStack stone = new ItemStack(Items.STONE);
         testEntries.add(new TestEntry<>(MCCItemStack.class, OnlyStoneItemStack.CONVERTER, new OnlyStoneItemStack(stone), stone, true));
@@ -134,5 +135,27 @@ public class ConverterTests extends TestBase {
     void testUnwrapOptionalWithoutProvidingTheNativeType(TestEntry<?, ?, ?> testEntry) {
         var wrapped = MCCPlatform.getInstance().getConversionService().unwrap(Optional.of(testEntry.implObject()));
         Assertions.assertEquals(Optional.of(testEntry.nativeObject()), wrapped, "Entry: " + testEntry);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInputs")
+    void testWrapClassType(TestEntry<?, ?, ?> testEntry) {
+
+        var wrapped = MCCPlatform.getInstance().getConversionService().wrapClassType(testEntry.nativeObject().getClass());
+        Assertions.assertEquals(testEntry.apiType, wrapped, "Entry: " + testEntry);
+    }
+
+    @Test
+    public void findConverterForSpecificWhenOnlyInterfaceConverterIsKnown() {
+        SimpleContainer simpleContainer = new SimpleContainer(3);
+        Assertions.assertDoesNotThrow(() -> {
+            MCCContainer mccContainer = MCCPlatform.getInstance().getConversionService().wrap(simpleContainer);
+        });
+    }
+
+    @Test
+    public void findConverterForSpecificWhenOnlyInterfaceConverterIsKnown2() {
+        Class<?> wrappedType = MCCPlatform.getInstance().getConversionService().wrapClassType(SmokerMenu.class);
+        Assertions.assertEquals(MCCFurnaceContainerMenu.class, wrappedType);
     }
 }

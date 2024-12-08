@@ -50,9 +50,13 @@ public interface MCCEntity extends MCCKeyedWrapper, TempDataHolder, MCCWrapped, 
      */
     void displayName(Component name);
 
-    default CompletableFuture<MCCEntity> teleport(MCCLocation location) {
-        return location.world().teleport(location, this);
-    }
+    /**
+     * Teleports an entity to another location.
+     *
+     * @param location the location
+     * @return the future that is completed when the teleportation is done
+     */
+    CompletableFuture<MCCEntity> teleport(@NotNull MCCLocation location);
 
     MCCLocation getLocation();
 

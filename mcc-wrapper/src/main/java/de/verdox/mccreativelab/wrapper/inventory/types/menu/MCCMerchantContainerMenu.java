@@ -5,12 +5,13 @@ import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.recipe.MCCMerchantRecipe;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCEntityContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCPrivateContainerMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface MCCMerchantContainerMenu extends MCCContainerMenu<MCCEntityContainerSource<MCCEntity>, MCCContainer> {
+public interface MCCMerchantContainerMenu extends MCCPrivateContainerMenu<MCCEntityContainerSource<MCCEntity>, MCCContainer> {
 
     MCCContainer getContainerOfMerchant();
 

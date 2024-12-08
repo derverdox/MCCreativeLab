@@ -86,6 +86,10 @@ public class CodeLineBuilder {
         return append(dynamicType.asCodeExpression(getClassBuilder()));
     }
 
+    public CodeLineBuilder append(DynamicType dynamicType, boolean insideGeneric) {
+        return append(dynamicType.asCodeExpression(getClassBuilder(), insideGeneric));
+    }
+
     public CodeLineBuilder appendTypeToken(DynamicType dynamicType) {
         getClassBuilder().includeImport(DynamicType.of(TypeToken.class, false));
         return append("new TypeToken<").append(dynamicType.asCodeExpression(getClassBuilder())).append(">(){}");

@@ -192,11 +192,11 @@ public interface WrapperGeneratorStrategy {
     }
 
     private static CodeExpression createApiToImplExpression(String variableToConvert, DynamicType api, DynamicType impl) {
-        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().unwrap(").with(variableToConvert).with(", new TypeToken<").with(impl).with(">() {})");
+        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().unwrap(").with(variableToConvert).with(", new TypeToken<").with(impl, true).with(">() {})");
     }
 
     private static CodeExpression createImplToApiExpression(String variableToConvert, DynamicType impl, DynamicType api) {
-        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().wrap(").with(variableToConvert).with(", new TypeToken<").with(api).with(">() {})");
+        return CodeExpression.create().with("MCCPlatform.getInstance().getConversionService().wrap(").with(variableToConvert).with(", new TypeToken<").with(api, true).with(">() {})");
     }
 
     default @Nullable java.lang.reflect.Constructor<?> findConstructorWithMostNumberOfArguments(Class<?> nmsClass) {

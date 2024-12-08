@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.inventory;
 
 import com.google.common.base.Preconditions;
+import de.verdox.mccreativelab.wrapper.MCCWrapped;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
-public interface MCCContainer extends Iterable<MCCItemStack> {
+public interface MCCContainer extends Iterable<MCCItemStack>, MCCWrapped {
     /**
      * Sets the {@link MCCItemStack} at the given container slot
      *

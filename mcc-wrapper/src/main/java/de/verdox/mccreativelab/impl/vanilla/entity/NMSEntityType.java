@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.impl.vanilla.entity;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
+import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import de.verdox.mccreativelab.wrapper.entity.MCCEntityType;
 import net.kyori.adventure.key.Key;
@@ -20,5 +21,11 @@ public class NMSEntityType extends MCCHandle<EntityType<?>> implements MCCEntity
     @Override
     public @NotNull Key key() {
         return conversionService.wrap(BuiltInRegistries.ENTITY_TYPE.getKey(handle), new TypeToken<>() {});
+    }
+
+    @Override
+    public MCCEntity constructNewEntity() {
+        //handle.createEntity(location, clazz, randomizeData);
+        return null;
     }
 }

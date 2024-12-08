@@ -11,8 +11,6 @@ import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSFoodPrope
 import java.util.Set;
 import net.minecraft.world.effect.MobEffectInstance;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +33,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 
 	public int getNutrition(){
 		var nms = getNutritionFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getNutritionFromImpl(){
@@ -43,7 +41,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 	}
 
 	public MCCFoodProperties withNutrition(int nutrition){
-		var param0 = nutrition;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(nutrition, new TypeToken<Integer>() {});
 		var param1 = getSaturationFromImpl();
 		var param2 = getCanAlwaysEatFromImpl();
 		var param3 = getEatSecondsFromImpl();
@@ -54,7 +52,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 
 	public float getSaturation(){
 		var nms = getSaturationFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getSaturationFromImpl(){
@@ -63,7 +61,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 
 	public MCCFoodProperties withSaturation(float saturation){
 		var param0 = getNutritionFromImpl();
-		var param1 = saturation;
+		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(saturation, new TypeToken<Float>() {});
 		var param2 = getCanAlwaysEatFromImpl();
 		var param3 = getEatSecondsFromImpl();
 		var param4 = getUsingConvertsToFromImpl();
@@ -73,7 +71,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 
 	public boolean getCanAlwaysEat(){
 		var nms = getCanAlwaysEatFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getCanAlwaysEatFromImpl(){
@@ -83,7 +81,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 	public MCCFoodProperties withCanAlwaysEat(boolean canAlwaysEat){
 		var param0 = getNutritionFromImpl();
 		var param1 = getSaturationFromImpl();
-		var param2 = canAlwaysEat;
+		var param2 = MCCPlatform.getInstance().getConversionService().unwrap(canAlwaysEat, new TypeToken<Boolean>() {});
 		var param3 = getEatSecondsFromImpl();
 		var param4 = getUsingConvertsToFromImpl();
 		var param5 = getEffectsFromImpl();
@@ -92,7 +90,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 
 	public float getEatSeconds(){
 		var nms = getEatSecondsFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getEatSecondsFromImpl(){
@@ -103,7 +101,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 		var param0 = getNutritionFromImpl();
 		var param1 = getSaturationFromImpl();
 		var param2 = getCanAlwaysEatFromImpl();
-		var param3 = eatSeconds;
+		var param3 = MCCPlatform.getInstance().getConversionService().unwrap(eatSeconds, new TypeToken<Float>() {});
 		var param4 = getUsingConvertsToFromImpl();
 		var param5 = getEffectsFromImpl();
 		return new NMSFoodProperties(new FoodProperties(param0, param1, param2, param3, param4, param5));
@@ -173,7 +171,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 	
 		public float getProbability(){
 			var nms = getProbabilityFromImpl();
-			return nms;
+			return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 		}
 	
 		private float getProbabilityFromImpl(){
@@ -182,7 +180,7 @@ public class NMSFoodProperties extends MCCHandle<FoodProperties> implements MCCF
 	
 		public MCCFoodProperties.PossibleEffect withProbability(float probability){
 			var param0 = getEffectFromImpl();
-			var param1 = probability;
+			var param1 = MCCPlatform.getInstance().getConversionService().unwrap(probability, new TypeToken<Float>() {});
 			return new NMSFoodProperties.NMSPossibleEffect(new FoodProperties.PossibleEffect(param0, param1));
 		}
 	

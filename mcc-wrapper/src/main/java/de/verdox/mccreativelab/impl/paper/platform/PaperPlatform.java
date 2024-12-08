@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.impl.paper.platform;
 
 import de.verdox.mccreativelab.conversion.converter.EnumConverter;
+import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperBlockHardnessSettings;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperBlockSoundSettings;
 import de.verdox.mccreativelab.impl.paper.block.settings.PaperFurnaceSettings;
@@ -16,6 +17,8 @@ import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockHardnessSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCBlockSoundSettings;
 import de.verdox.mccreativelab.wrapper.block.settings.MCCFurnaceSettings;
 import de.verdox.mccreativelab.wrapper.entity.*;
+import io.papermc.paper.adventure.PaperAdventure;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.EquipmentSlot;
@@ -40,6 +43,27 @@ public class PaperPlatform extends NMSPlatform {
         conversionService.registerPlatformType(MCCCapturedBlockState.class, new CraftBlockStateConverter());
         conversionService.registerPlatformType(MCCEquipmentSlot.class, new EnumConverter<>(EquipmentSlot.class, MCCEquipmentSlot.class));
         conversionService.registerPlatformType(MCCBlockFace.class, new EnumConverter<>(BlockFace.class, MCCBlockFace.class));
+        conversionService.registerPlatformType(Component.class, new MCCConverter<net.minecraft.network.chat.Component, Component>() {
+            @Override
+            public ConversionResult<Component> wrap(net.minecraft.network.chat.Component nativeType) {
+                return done(PaperAdventure.asAdventure(nativeType));
+            }
+
+            @Override
+            public ConversionResult<net.minecraft.network.chat.Component> unwrap(Component platformImplType) {
+                return done(PaperAdventure.asVanilla(platformImplType));
+            }
+
+            @Override
+            public Class<Component> apiImplementationClass() {
+                return Component.class;
+            }
+
+            @Override
+            public Class<net.minecraft.network.chat.Component> nativeMinecraftType() {
+                return net.minecraft.network.chat.Component.class;
+            }
+        });
     }
 
     public void enableListeners() {

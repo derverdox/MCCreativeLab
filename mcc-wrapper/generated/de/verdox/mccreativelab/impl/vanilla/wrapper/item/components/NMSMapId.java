@@ -1,6 +1,5 @@
 package de.verdox.mccreativelab.impl.vanilla.wrapper.item.components;
 
-import java.util.HashSet;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import java.util.List;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
@@ -10,7 +9,6 @@ import java.util.Set;
 import com.google.common.reflect.TypeToken;
 import de.verdox.mccreativelab.wrapper.item.components.MCCMapId;
 import net.minecraft.world.level.saveddata.maps.MapId;
-import java.util.ArrayList;
 
 public class NMSMapId extends MCCHandle<MapId> implements MCCMapId  {
 
@@ -22,7 +20,7 @@ public class NMSMapId extends MCCHandle<MapId> implements MCCMapId  {
 
 	public int getId(){
 		var nms = getIdFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getIdFromImpl(){
@@ -30,7 +28,7 @@ public class NMSMapId extends MCCHandle<MapId> implements MCCMapId  {
 	}
 
 	public MCCMapId withId(int id){
-		var param0 = id;
+		var param0 = MCCPlatform.getInstance().getConversionService().unwrap(id, new TypeToken<Integer>() {});
 		return new NMSMapId(new MapId(param0));
 	}
 

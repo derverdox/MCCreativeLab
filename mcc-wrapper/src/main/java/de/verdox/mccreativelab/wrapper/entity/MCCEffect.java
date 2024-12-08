@@ -1,6 +1,7 @@
 package de.verdox.mccreativelab.wrapper.entity;
 
 import de.verdox.mccreativelab.wrapper.annotations.MCCInstantiationSource;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCLivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

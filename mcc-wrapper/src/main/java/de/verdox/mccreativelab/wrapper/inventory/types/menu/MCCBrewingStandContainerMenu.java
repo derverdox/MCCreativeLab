@@ -3,10 +3,11 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCSharedContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCBrewingStandContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCContainer> {
+public interface MCCBrewingStandContainerMenu extends MCCSharedContainerMenu<MCCBlockContainerSource, MCCContainer> {
 
     /**
      * Get the current ingredient for brewing.

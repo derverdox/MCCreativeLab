@@ -45,7 +45,7 @@ public class ActiveGUIButton extends ActiveGUIElement<GUIButton> {
     public void onClick(GUIClickAction inventoryClickEvent, int clickedX, int clickedY) {
         if (guiElement.getOnClick() != null)
             guiElement.getOnClick().accept(inventoryClickEvent, activeGUI);
-        inventoryClickEvent.getClickerAsAudience().playSound(Sound.sound().type(MCCSounds.UI_BUTTON_CLICK.key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
+        inventoryClickEvent.getEntityClicking().playSound(Sound.sound().type(MCCSounds.UI_BUTTON_CLICK.unwrapKey().get().key()).volume(0.5f).build(), net.kyori.adventure.sound.Sound.Emitter.self());
     }
 
     private void hideOtherButtons() {

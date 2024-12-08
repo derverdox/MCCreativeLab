@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Describes a menu type
  */
-public record MCCMenuType(Key key, int containerSize) implements MCCKeyedWrapper {
+public record MCCMenuType<T extends MCCContainerMenu<?,?>>(Key key, int containerSize) implements MCCKeyedWrapper {
 
     @Override
     public @NotNull Key key() {
@@ -20,7 +20,7 @@ public record MCCMenuType(Key key, int containerSize) implements MCCKeyedWrapper
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MCCMenuType that = (MCCMenuType) o;
+        MCCMenuType<?> that = (MCCMenuType<?>) o;
         return Objects.equals(key, that.key);
     }
 

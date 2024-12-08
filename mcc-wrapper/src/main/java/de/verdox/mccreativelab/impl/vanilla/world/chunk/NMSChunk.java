@@ -79,8 +79,19 @@ public class NMSChunk extends MCCHandle<LevelChunk> implements MCCChunk {
     }
 
     @Override
-    public MCCChunkSection getChunkSectionByGlobalYCoordinate(@NonNegative int index) {
-        //TODO
-        return null;
+    public MCCChunkSection getChunkSectionByGlobalYCoordinate(int blockHeight) {
+        int maxBuildHeight = getWorld().getMaxBuildHeight();
+        int minBuildHeight = getWorld().getMinBuildHeight();
+
+        // Prüfen, ob die Y-Koordinate im gültigen Bereich liegt
+        if (blockHeight < minBuildHeight || blockHeight > maxBuildHeight) {
+            return null; // Außerhalb des Bauhöhenbereichs
+        }
+
+        // Chunk-Abschnittsindex berechnen
+        int sectionIndex = (blockHeight - minBuildHeight) >> 4; // Division durch 16 (Schichtenhöhe)
+
+        // Chunk-Abschnitt anhand des Index abrufen
+        return getChunkSectionByIndex(sectionIndex);
     }
 }

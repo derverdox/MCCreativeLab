@@ -1,13 +1,15 @@
 package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 
+import com.google.common.base.Preconditions;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.element.active.ActiveGUIElement;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.ActiveComponentRendered;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
+import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
+import de.verdox.mccreativelab.wrapper.inventory.types.menu.creator.SharedMenuCreatorInstance;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import de.verdox.mccreativelab.wrapper.platform.MCCTask;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -16,28 +18,28 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuilder> {
     private final Map<String, ActiveGUIElement<?>> activeGUIElements = new HashMap<>();
     private final Map<Integer, ActiveGUIElement<?>> guiElementsBySlot = new HashMap<>();
+    private final SharedMenuCreatorInstance<?,?> menuCreatorInstance;
+    private final MCCContainer container;
 
-    private MCCTask updateTask;
     private FrontEndRenderer frontEndRenderer;
+    private GUIFrontEndBehavior GUIFrontEndBehavior;
 
     private final AtomicBoolean isUpdating = new AtomicBoolean();
-    private final AtomicReference<MCCContainer> inventory = new AtomicReference<>();
 
     private final Map<Integer, ClickableItem> indexToClickableItemMapping = new HashMap<>();
 
     private final Set<UUID> inventoryUpdateWhitelist = new HashSet<>();
     private boolean setup;
-    private FrontEndBehavior frontEndBehavior;
 
     public ActiveGUI(CustomGUIBuilder customGUIBuilder, @Nullable Consumer<ActiveGUI> initialSetup) {
         super(customGUIBuilder);
+        frontEndRenderer = new FrontEndRenderer(this);
         customGUIBuilder.checkInstalled();
 
         customGUIBuilder.guiElements.forEach((s, guiElement) -> {
@@ -45,13 +47,41 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
             activeGUIElements.put(s, activeElement);
         });
 
-        this.frontEndBehavior = GeneratorPlatformHelper.INSTANCE.get().createFrondEndBehavior(this);
-
-        this.inventory.set(createInventory(render()));
+        this.GUIFrontEndBehavior = GeneratorPlatformHelper.INSTANCE.get().createFrondEndBehavior(this);
+        this.menuCreatorInstance = (SharedMenuCreatorInstance<?, ?>) MCCPlatform.getInstance().getContainerFactory().create(customGUIBuilder.getType());
+        this.container = menuCreatorInstance.getSharedContainer();
 
         if (initialSetup != null) {
             initialSetup.accept(this);
             forEachElementBehavior((activeGUIRenderedRenderedElementBehavior, rendered, a) -> activeGUIRenderedRenderedElementBehavior.onOpen(this, rendered, a), true);
+            forEachGUIElementBehavior((guiElementBehavior, activeGUIElement) -> guiElementBehavior.onOpen(this, activeGUIElement));
+        }
+    }
+
+    /**
+     * We are able to reopen an existing inventory with a new title without creating a new inventory object.
+     * Thus, we use this constructor to link a custom gui to an existing inventory
+     *
+     * @param customGUIBuilder The customGUIBuilder this belongs to
+     * @param inventory        The inventory that is linked to this CustomGUI
+     * @param initialSetup     The initial setup
+     */
+    public ActiveGUI(CustomGUIBuilder customGUIBuilder, MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
+        super(customGUIBuilder);
+        Preconditions.checkArgument(customGUIBuilder.getType().containerSize() != inventory.getSize(), "The provided container has not the required size of the menu type for this active gui! This gui requires containers with size: " + customGUIBuilder.getType().containerSize());
+        customGUIBuilder.checkInstalled();
+
+        customGUIBuilder.guiElements.forEach((s, guiElement) -> {
+            var activeElement = guiElement.toActiveElement(this);
+            activeGUIElements.put(s, activeElement);
+        });
+
+        this.menuCreatorInstance = MCCPlatform.getInstance().getContainerFactory().createShared(customGUIBuilder.getType(), inventory);
+        this.container = inventory;
+
+        if (initialSetup != null) {
+            initialSetup.accept(this);
+            forEachElementBehavior((activeGUIRenderedRenderedElementBehavior, rendered, audience) -> activeGUIRenderedRenderedElementBehavior.onOpen(this, rendered, audience), true);
             forEachGUIElementBehavior((guiElementBehavior, activeGUIElement) -> guiElementBehavior.onOpen(this, activeGUIElement));
         }
     }
@@ -68,35 +98,6 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         return inventoryUpdateWhitelist;
     }
 
-    /**
-     * We are able to reopen an existing inventory with a new title without creating a new inventory object.
-     * Thus, we use this constructor to link a custom gui to an existing inventory
-     *
-     * @param customGUIBuilder The customGUIBuilder this belongs to
-     * @param inventory        The inventory that is linked to this CustomGUI
-     * @param initialSetup     The initial setup
-     */
-
-    public ActiveGUI(CustomGUIBuilder customGUIBuilder, MCCContainer inventory, @Nullable Consumer<ActiveGUI> initialSetup) {
-        super(customGUIBuilder);
-        if ((!inventory.getType().equals(customGUIBuilder.getType())))
-            throw new IllegalArgumentException("Trying to link an existing inventory with type " + customGUIBuilder.getType() + " to existing inventory with type " + inventory.getType());
-        customGUIBuilder.checkInstalled();
-
-        customGUIBuilder.guiElements.forEach((s, guiElement) -> {
-            var activeElement = guiElement.toActiveElement(this);
-            activeGUIElements.put(s, activeElement);
-        });
-
-        this.inventory.set(inventory);
-
-        if (initialSetup != null) {
-            initialSetup.accept(this);
-            forEachElementBehavior((activeGUIRenderedRenderedElementBehavior, rendered, audience) -> activeGUIRenderedRenderedElementBehavior.onOpen(this, rendered, audience), true);
-            forEachGUIElementBehavior((guiElementBehavior, activeGUIElement) -> guiElementBehavior.onOpen(this, activeGUIElement));
-        }
-    }
-
     public final void addClickableItem(int index, ClickableItem clickableItem) {
         this.getVanillaInventory().setItem(index, clickableItem.getStack());
         indexToClickableItemMapping.put(index, clickableItem);
@@ -110,7 +111,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     }
 
     public void openToPlayer(MCCPlayer player) {
-        this.frontEndBehavior.openToPlayer(player);
+        this.GUIFrontEndBehavior.openToPlayer(player);
     }
 
     public final void forEachGUIElementBehavior(BiConsumer<GUIElementBehavior<ActiveGUIElement<?>>, ActiveGUIElement<?>> forEach) {
@@ -135,7 +136,7 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
     }
 
     public MCCContainer getVanillaInventory() {
-        return inventory.get();
+        return container;
     }
 
     public void placeGuiElementInSlot(int slotIndex, @Nullable ActiveGUIElement<?> activeGUIElement) {
@@ -169,22 +170,12 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
 
                 Component lastRendering = getLastRendered();
                 Component newRendering = render();
-                MCCContainer newInventory;
-                if (ActiveGUI.this.inventory.get() == null) {
-                    newInventory = createInventory(newRendering);
-
-                    if (ActiveGUI.this.inventory.get() != null)
-                        newInventory.setContents(ActiveGUI.this.inventory.get().getContent());
-
-                    ActiveGUI.this.inventory.set(newInventory);
-                }
-
                 if (newRendering.equals(lastRendering) && setup)
                     return;
 
                 CompletableFuture<Void> waitForSync = new CompletableFuture<>();
 
-                MCCPlatform.getInstance().getTaskManager().runAsync(mccTask -> {
+                MCCPlatform.getInstance().getTaskManager().runOnTickThread(mccTask -> {
                     synchronized (viewers) {
                         Iterator<Audience> iterator = viewers.iterator();
 
@@ -214,41 +205,41 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         });
     }
 
-    void addToViewers(Audience audience){
+    void addToViewers(Audience audience) {
         viewers.add(audience);
     }
 
-    private @NotNull MCCContainer createInventory(Component rendering) {
-        return MCCPlatform.getInstance().getContainerFactory().createContainer(getComponentRendered().getType(), rendering);
+    private @NotNull MCCContainerMenu<?, ?> createInventory(Component rendering, MCCPlayer viewer) {
+        return menuCreatorInstance.createMenuForPlayer(viewer, rendering);
     }
 
     private void openUpdatedInventory(MCCPlayer player, MCCItemStack itemAtCursor, Component rendering) {
         synchronized (viewers) {
-            if (!viewers.contains(player.asAudience()) && getComponentRendered().isUsePlayerSlots()) {
+            if (!viewers.contains(player) && getComponentRendered().isUsePlayerSlots()) {
                 //FakeInventory.setFakeInventoryOfPlayer(player);
             }
+
         }
 
         synchronized (inventoryUpdateWhitelist) {
             inventoryUpdateWhitelist.add(player.getUUID());
-
             try {
-                boolean couldOpen = player.openContainer(this.inventory.get(), rendering);
+                var menu = menuCreatorInstance.createMenuForPlayer(player, rendering);
                 if (itemAtCursor != null) {
-                    if (couldOpen && !itemAtCursor.getType().isEmpty() && !getComponentRendered().isUsePlayerSlots()) {
+                    if (menu != null && !itemAtCursor.getType().isEmpty() && !getComponentRendered().isUsePlayerSlots()) {
                         player.getInventory().removeItem(itemAtCursor);
                         player.getCursorProperty().set(itemAtCursor);
                     }
                 }
-                viewers.add(player.asAudience());
+                viewers.add(player);
             } finally {
                 inventoryUpdateWhitelist.remove(player.getUUID());
             }
         }
     }
 
-    public FrontEndBehavior getFrontEndBehavior() {
-        return frontEndBehavior;
+    public GUIFrontEndBehavior getFrontEndBehavior() {
+        return GUIFrontEndBehavior;
     }
 
     @Override

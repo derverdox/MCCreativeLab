@@ -3,11 +3,12 @@ package de.verdox.mccreativelab.wrapper.inventory.types.menu;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainer;
 import de.verdox.mccreativelab.wrapper.inventory.MCCContainerMenu;
 import de.verdox.mccreativelab.wrapper.inventory.source.MCCBlockContainerSource;
+import de.verdox.mccreativelab.wrapper.inventory.types.MCCSharedContainerMenu;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.bukkit.block.Furnace;
 import org.jetbrains.annotations.Nullable;
 
-public interface MCCFurnaceContainerMenu extends MCCContainerMenu<MCCBlockContainerSource, MCCContainer> {
+public interface MCCFurnaceContainerMenu extends MCCSharedContainerMenu<MCCBlockContainerSource, MCCContainer> {
     /**
      * Get the current item in the result slot.
      *

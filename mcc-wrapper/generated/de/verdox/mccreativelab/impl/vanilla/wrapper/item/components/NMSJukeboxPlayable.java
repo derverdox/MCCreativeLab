@@ -9,8 +9,6 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import de.verdox.mccreativelab.impl.vanilla.wrapper.item.components.NMSJukeboxPlayable;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.minecraft.world.item.EitherHolder;
 import de.verdox.mccreativelab.wrapper.registry.MCCEitherReference;
@@ -41,7 +39,7 @@ public class NMSJukeboxPlayable extends MCCHandle<JukeboxPlayable> implements MC
 
 	public boolean getShowInTooltip(){
 		var nms = getShowInTooltipFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Boolean>() {});
 	}
 
 	private boolean getShowInTooltipFromImpl(){
@@ -50,7 +48,7 @@ public class NMSJukeboxPlayable extends MCCHandle<JukeboxPlayable> implements MC
 
 	public MCCJukeboxPlayable withShowInTooltip(boolean showInTooltip){
 		var param0 = getSongFromImpl();
-		var param1 = showInTooltip;
+		var param1 = MCCPlatform.getInstance().getConversionService().unwrap(showInTooltip, new TypeToken<Boolean>() {});
 		return new NMSJukeboxPlayable(new JukeboxPlayable(param0, param1));
 	}
 

@@ -259,7 +259,12 @@ public class DynamicType {
             return typeVariableName;
         }
         else {
-            return getClassDescription().getTypeName();
+            String typeName = getClassDescription().getTypeName();
+            //TODO: Just a temporary solution
+            if(typeName.equals("void")){
+                return "Void";
+            }
+            return typeName;
         }
     }
 
@@ -312,7 +317,7 @@ public class DynamicType {
         return asCodeExpression(classBuilder, false);
     }
 
-    private String asCodeExpression(ClassBuilder classBuilder, boolean isGeneric) {
+    public String asCodeExpression(ClassBuilder classBuilder, boolean isGeneric) {
         if(typeVariableName != null){
             return typeVariableName;
         }
@@ -343,10 +348,12 @@ public class DynamicType {
                 typeName = "Integer";
         }
 
+
         return classBuilder.canWriteSimpleName(this) ? typeName : this.getClassDescription().getPackageName() + "." + typeName;
     }
 
     public String toString() {
+
         String typeName = getTypeName();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(typeName);

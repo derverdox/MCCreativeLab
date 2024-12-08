@@ -3,8 +3,7 @@ package de.verdox.mccreativelab.generator.resourcepack.types.lang;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
 import de.verdox.mccreativelab.util.io.StringAlign;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
-import net.kyori.adventure.audience.Audience;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 
 public interface GameTranslation {
@@ -22,7 +20,7 @@ public interface GameTranslation {
 
     default String translate(MCCPlayer player) {
         GeneratorPlatformHelper platformHelper = GeneratorPlatformHelper.INSTANCE.get();
-        CustomResourcePack customResourcePack = platformHelper.getLoadedResourcePack(player.getUUID());
+        CustomResourcePack customResourcePack = platformHelper.getPlatformResourcePack();
         if(customResourcePack == null)
             return key();
         return customResourcePack.getLanguageStorage().translate(key(), player);
@@ -30,7 +28,7 @@ public interface GameTranslation {
 
     default TextComponent translateToComponent(MCCPlayer player) {
         GeneratorPlatformHelper platformHelper = GeneratorPlatformHelper.INSTANCE.get();
-        CustomResourcePack customResourcePack = platformHelper.getLoadedResourcePack(player.getUUID());
+        CustomResourcePack customResourcePack = platformHelper.getPlatformResourcePack();
         if(customResourcePack == null)
             return Component.text(key());
         return customResourcePack.getLanguageStorage().translateToComponent(key(), player);

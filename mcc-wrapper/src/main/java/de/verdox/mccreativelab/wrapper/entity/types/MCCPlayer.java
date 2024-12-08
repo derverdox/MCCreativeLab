@@ -1,6 +1,7 @@
-package de.verdox.mccreativelab.wrapper.entity;
+package de.verdox.mccreativelab.wrapper.entity.types;
 
 import de.verdox.mccreativelab.wrapper.block.MCCBlock;
+import de.verdox.mccreativelab.wrapper.entity.ContainerViewer;
 import de.verdox.mccreativelab.wrapper.entity.player.client.MCCClientOption;
 import de.verdox.mccreativelab.wrapper.inventory.types.container.MCCPlayerInventory;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;

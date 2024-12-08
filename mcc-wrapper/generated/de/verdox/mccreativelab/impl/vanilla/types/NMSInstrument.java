@@ -8,8 +8,6 @@ import de.verdox.mccreativelab.wrapper.types.MCCInstrument;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import java.util.Set;
 import com.google.common.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import net.kyori.adventure.sound.Sound;
 import net.minecraft.core.Holder;
@@ -35,7 +33,7 @@ public class NMSInstrument extends MCCHandle<Instrument> implements MCCInstrumen
 
 	public int getUseDuration(){
 		var nms = getUseDurationFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Integer>() {});
 	}
 
 	private int getUseDurationFromImpl(){
@@ -44,7 +42,7 @@ public class NMSInstrument extends MCCHandle<Instrument> implements MCCInstrumen
 
 	public float getRange(){
 		var nms = getRangeFromImpl();
-		return nms;
+		return MCCPlatform.getInstance().getConversionService().wrap(nms, new TypeToken<Float>() {});
 	}
 
 	private float getRangeFromImpl(){
