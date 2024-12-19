@@ -5,11 +5,15 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        name = "Verdox Reposilite"
+        url = uri("https://repo.verdox.de/snapshots")
+    }
 }
 
 dependencies {
     compileOnly(project(":mcc-util"))
-    compileOnly(project(":mcc-wrapper"))
+    compileOnly("de.verdox.mccreativelab.mcc-wrapper:api:" + providers.gradleProperty("version").get())
     compileOnly("org.jetbrains:annotations:26.0.1")
     compileOnly("io.vertx:vertx-core:4.5.10")
     compileOnly("com.hierynomus:sshj:0.38.0")
@@ -34,7 +38,7 @@ publishing {
             pom {
                 groupId = "de.verdox.mccreativelab"
                 artifactId = "mcc-pack-generator"
-                version = "1.0.0-SNAPSHOT"
+                version = providers.gradleProperty("version").get()
                 from(components["java"])
                 licenses {
                     license {

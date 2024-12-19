@@ -3,12 +3,18 @@ package de.verdox.mccreativelab.generator.resourcepack.types.hud;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.ActiveComponentRendered;
 import de.verdox.mccreativelab.platform.GeneratorPlatformHelper;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import net.kyori.adventure.audience.Audience;
 
 public class ActiveHud extends ActiveComponentRendered<ActiveHud, CustomHud> {
     public ActiveHud(Audience player, CustomHud customHud){
         super(customHud);
         viewers.add(player);
+    }
+
+    @Deprecated
+    public MCCPlayer getPlayer(){
+        return (MCCPlayer) viewers.stream().findAny().orElse(null);
     }
 
     @Override

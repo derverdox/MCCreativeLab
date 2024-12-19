@@ -235,8 +235,8 @@ public abstract class GUIFrontEndBehavior {
             }
 
             // Überprüfe, ob das Item im aktuellen Slot vom gleichen Typ und stapelbar ist
-            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.get(MCCDataComponentTypes.MAX_STACK_SIZE.get())) {
-                int spaceLeft = currentSlotItem.get(MCCDataComponentTypes.MAX_STACK_SIZE.get()) - currentSlotItem.getAmount();
+            if (currentSlotItem.isSimilar(itemStack) && currentSlotItem.getAmount() < currentSlotItem.components().get(MCCDataComponentTypes.MAX_STACK_SIZE.get())) {
+                int spaceLeft = currentSlotItem.components().get(MCCDataComponentTypes.MAX_STACK_SIZE.get()) - currentSlotItem.getAmount();
                 int amountToMove = Math.min(spaceLeft, itemStack.getAmount());
 
                 currentSlotItem.setAmount(currentSlotItem.getAmount() + amountToMove);

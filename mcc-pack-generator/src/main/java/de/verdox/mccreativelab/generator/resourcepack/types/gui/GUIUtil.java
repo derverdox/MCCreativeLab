@@ -160,15 +160,15 @@ public class GUIUtil {
         }
 
         private ClickableItem createNextPage(ActiveGUI activeGUI, Collection<T> elements) {
-
+            MCCItemStack arrowItem = leftArrow.copy();
+            arrowItem.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
+                    int currentPage = getCurrentPage(activeGUI);
+                    editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
+                }).
+                edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(NEXT_PAGE.asTranslatableComponent()))));
 
             return new ClickableItem.Builder()
-                .withItem(leftArrow.copy().
-                    edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
-                        int currentPage = getCurrentPage(activeGUI);
-                        editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
-                    }).
-                    edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(NEXT_PAGE.asTranslatableComponent())))))
+                .withItem(arrowItem)
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     int currentPage = getCurrentPage(activeGUI1);
                     int maxPages = getMaxPages(activeGUI, elements);
@@ -181,13 +181,16 @@ public class GUIUtil {
         }
 
         private ClickableItem createPreviousPage(ActiveGUI activeGUI, Collection<T> elements) {
+
+            MCCItemStack arrowItem = rightArrow.copy();
+            arrowItem.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
+                    int currentPage = getCurrentPage(activeGUI);
+                    editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
+                })
+                .edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(PREVIOUS_PAGE.asTranslatableComponent()))));
+
             return new ClickableItem.Builder()
-                .withItem(rightArrow.copy()
-                    .edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> {
-                        int currentPage = getCurrentPage(activeGUI);
-                        editor.set(CURRENT_PAGE.asTranslatableComponent().append(Component.text(currentPage)));
-                    })
-                    .edit(MCCDataComponentTypes.LORE.get(), editor -> editor.with(mccItemLore -> mccItemLore.withLines(List.of(PREVIOUS_PAGE.asTranslatableComponent())))))
+                .withItem(arrowItem)
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     int currentPage = getCurrentPage(activeGUI1);
                     if (!hasPreviousPage(activeGUI, elements))
@@ -284,8 +287,11 @@ public class GUIUtil {
         }
 
         private ClickableItem createScrollLeftButton(Collection<T> elements) {
+            MCCItemStack arrow = leftArrow.copy();
+            arrow.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(LEFT.asTranslatableComponent()));
+
             return new ClickableItem.Builder()
-                .withItem(leftArrow.copy().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(LEFT.asTranslatableComponent())))
+                .withItem(arrow)
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     setSkipIndex(activeGUI1, getSkipIndex(activeGUI1) - 1);
                     renderIntoGUI(activeGUI1, elements);
@@ -294,8 +300,10 @@ public class GUIUtil {
         }
 
         private ClickableItem createScrollRightButton(Collection<T> elements) {
+            MCCItemStack arrow = rightArrow.copy();
+            arrow.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(RIGHT.asTranslatableComponent()));
             return new ClickableItem.Builder()
-                .withItem(rightArrow.copy().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(RIGHT.asTranslatableComponent())))
+                .withItem(arrow)
                 .withClick((inventoryClickEvent, activeGUI1) -> {
                     setSkipIndex(activeGUI1, getSkipIndex(activeGUI1) + 1);
                     renderIntoGUI(activeGUI1, elements);

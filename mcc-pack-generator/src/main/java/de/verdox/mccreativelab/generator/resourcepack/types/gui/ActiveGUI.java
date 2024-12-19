@@ -58,6 +58,11 @@ public class ActiveGUI extends ActiveComponentRendered<ActiveGUI, CustomGUIBuild
         }
     }
 
+    @Deprecated
+    public MCCPlayer getPlayer(){
+        return (MCCPlayer) viewers.stream().findAny().orElse(null);
+    }
+
     /**
      * We are able to reopen an existing inventory with a new title without creating a new inventory object.
      * Thus, we use this constructor to link a custom gui to an existing inventory

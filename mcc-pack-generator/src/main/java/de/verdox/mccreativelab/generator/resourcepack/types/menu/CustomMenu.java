@@ -85,14 +85,13 @@ public class CustomMenu extends ResourcePackResource {
         return this;
     }
 
-    public CustomMenu setupCustomHud(Consumer<CustomHud> customHudSetup, CustomResourcePack customResourcePack) {
+    public CustomMenu setupCustomHud(Consumer<CustomHud> customHudSetup) {
         if (isBuilt()) {
             LOGGER.warning("Can't modify a menu when it has been built");
             return this;
         }
         if (menuHud == null) {
             menuHud = new CustomHud(Key.key(getKey().namespace(), getKey().value() + "/hud"));
-            customResourcePack.register(menuHud);
         }
         customHudSetup.accept(menuHud);
         return this;
@@ -134,6 +133,7 @@ public class CustomMenu extends ResourcePackResource {
 
     @Override
     public void beforeResourceInstallation(CustomResourcePack customPack) throws IOException {
+        customPack.register(this.menuHud);
         backgroundPictures.forEach((s, itemTextureData) -> customPack.register(itemTextureData));
     }
 
