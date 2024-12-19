@@ -6,6 +6,7 @@ import de.verdox.mccreativelab.generator.resourcepack.ResourcePackMapper;
 import de.verdox.mccreativelab.generator.resourcepack.types.gui.GUIUtil;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRenderer;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRendererImpl;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.util.ComponentUtil;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCacheStrategy;
 import de.verdox.mccreativelab.util.player.inventory.PlayerInventoryCachedData;
@@ -25,8 +26,8 @@ public class ExtensionFeatures implements Listener {
         hudRenderer.start();
         ResourcePackMapper resourcePackMapper = MCCreativeLabExtension.getCustomResourcePack().getResourcePackMapper();
         MCCreativeLabExtension.registerRegistryLookupCommand("hud", resourcePackMapper.getHudsRegistry(), hudRenderer::getOrStartActiveHud);
-        MCCreativeLabExtension.registerRegistryLookupCommand("gui", resourcePackMapper.getGuiRegistry(), (player, customGUIBuilder) -> customGUIBuilder.createMenuForPlayer(BukkitAdapter.to(player)));
-        MCCreativeLabExtension.registerRegistryLookupCommand("menu", resourcePackMapper.getMenuRegistry(), (player, customMenu) -> customMenu.createMenuForPlayer(BukkitAdapter.to(player)));
+        MCCreativeLabExtension.registerRegistryLookupCommand("gui", resourcePackMapper.getGuiRegistry(), (player, customGUIBuilder) -> customGUIBuilder.createMenuForPlayer(BukkitAdapter.wrap(player)));
+        MCCreativeLabExtension.registerRegistryLookupCommand("menu", resourcePackMapper.getMenuRegistry(), (player, customMenu) -> customMenu.createMenuForPlayer(BukkitAdapter.wrap(player)));
         ComponentUtil.install();
         GUIUtil.install(MCCreativeLabExtension.getCustomResourcePack());
 

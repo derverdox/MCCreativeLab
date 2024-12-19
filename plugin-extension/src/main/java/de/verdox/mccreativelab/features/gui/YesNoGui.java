@@ -7,7 +7,7 @@ import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translation;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.RenderedElementBehavior;
 import de.verdox.mccreativelab.generator.resourcepack.types.rendered.util.ScreenPosition;
 import de.verdox.mccreativelab.util.io.StringAlign;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
 import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import net.kyori.adventure.text.Component;
@@ -36,14 +36,14 @@ public class YesNoGui extends CustomGUIBuilder {
                 renderedGroupMultiLineText.setRawText(StringAlign.formatStringToLines(question, 30, StringAlign.Alignment.CENTER));
             }));
 
-        new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
+        new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
     }
 
 
     public static class Builder {
         private String question;
-        private final ClickableItem.Builder yesButton = new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
-        private final ClickableItem.Builder noButton = new ClickableItem.Builder(MCCItems.RED_DYE.get()).edit(stack -> stack.edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(NO.key()))));
+        private final ClickableItem.Builder yesButton = new ClickableItem.Builder(MCCItems.LIME_DYE.get()).edit(stack -> stack.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(YES.key()))));
+        private final ClickableItem.Builder noButton = new ClickableItem.Builder(MCCItems.RED_DYE.get()).edit(stack -> stack.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), editor -> editor.set(Component.translatable(NO.key()))));
 
         public Builder withQuestion(String question) {
             this.question = question;

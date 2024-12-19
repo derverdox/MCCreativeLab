@@ -15,4 +15,9 @@ public record MCCCustomBlockSoundGroup(Sound hitSound, Sound stepSound, Sound br
     public float getPitch() {
         return 1;
     }
+
+    @Override
+    public boolean isVanilla() {
+        return false;
+    }
 }

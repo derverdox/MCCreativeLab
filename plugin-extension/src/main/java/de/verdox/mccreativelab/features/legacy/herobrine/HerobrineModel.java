@@ -1,13 +1,10 @@
 package de.verdox.mccreativelab.features.legacy.herobrine;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.*;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
-import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitCraftConverters;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.wrapper.typed.MCCItems;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import org.bukkit.Location;
@@ -15,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -54,7 +50,7 @@ public class HerobrineModel extends ResourcePackResource {
 
     private ArmorStand spawnModelType(ModelPart modelPart, Location location) {
         ItemTextureData itemTextureData = modelParts.get(modelPart);
-        ItemStack stack = BukkitAdapter.from(itemTextureData.createItem());
+        ItemStack stack = BukkitAdapter.unwrap(itemTextureData.createItem());
         //Location spawnLoc = location.clone().add(modelPart.getXOffset(), modelPart.getYOffset(), modelPart.getZOffset());
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         armorStand.setInvisible(true);

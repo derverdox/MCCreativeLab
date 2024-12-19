@@ -14,14 +14,18 @@ import de.verdox.mccreativelab.wrapper.world.chunk.MCCChunk;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MCCLabPlatform extends PaperPlatform {
-    public MCCLabPlatform(JavaPlugin javaPlugin) {
-        super(javaPlugin);
+    public MCCLabPlatform() {
+        super();
+    }
 
-        getConversionService().registerPlatformType(MCCBlockType.class, MCCCustomBlockType.CONVERTER);
-        getConversionService().registerPlatformType(MCCBlockState.class, MCCCustomBlockState.CONVERTER);
-        getConversionService().registerPlatformType(MCCChunk.class, MCCCustomChunk.CONVERTER);
+    @Override
+    public void init() {
+        super.init();
+        getConversionService().registerConverterForNewImplType(MCCBlockType.class, MCCCustomBlockType.CONVERTER);
+        getConversionService().registerConverterForNewImplType(MCCBlockState.class, MCCCustomBlockState.CONVERTER);
+        getConversionService().registerConverterForNewImplType(MCCChunk.class, MCCCustomChunk.CONVERTER);
 
-        getConversionService().registerPlatformType(MCCItemType.class, MCCCustomItemType.CONVERTER);
-        getConversionService().registerPlatformType(MCCItemStack.class, MCCCustomItemStack.CONVERTER);
+        getConversionService().registerConverterForNewImplType(MCCItemType.class, MCCCustomItemType.CONVERTER);
+        getConversionService().registerConverterForNewImplType(MCCItemStack.class, MCCCustomItemStack.CONVERTER);
     }
 }

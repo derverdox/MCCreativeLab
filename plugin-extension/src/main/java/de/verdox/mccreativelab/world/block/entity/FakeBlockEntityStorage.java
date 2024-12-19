@@ -5,6 +5,8 @@ import de.verdox.mccreativelab.registry.OpenRegistry;
 import de.verdox.mccreativelab.registry.Reference;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.world.block.FakeBlock;
+import de.verdox.vcore.paper.serializer.PDCSerializationContext;
+import de.verdox.vserializer.generic.SerializationContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -33,13 +35,15 @@ public class FakeBlockEntityStorage {
         Objects.requireNonNull(fakeBlockEntity);
 
         stack.editMeta(itemMeta -> {
-            NBTContainer nbtContainer = NBTContainer.of("mccreativelab", itemMeta.getPersistentDataContainer());
-            NBTContainer storedFakeBlockEntity = nbtContainer.createNBTContainer();
+            SerializationContainer container = PDCSerializationContext.INSTANCE.deserializeFromPDC(itemMeta.getPersistentDataContainer()).getAsContainer();
+
+            SerializationContainer storedFakeBlockEntity = container.getContext().createContainer();
             if (storeInventoryContents)
-                fakeBlockEntity.saveNBTDataWithInventory(storedFakeBlockEntity);
+                fakeBlockEntity.saveNBTDataWithInventory(storedFakeBlockEntity, PDCSerializationContext.INSTANCE);
             else
-                fakeBlockEntity.saveNBTData(storedFakeBlockEntity);
-            nbtContainer.set("fakeBlockEntity", storedFakeBlockEntity);
+                fakeBlockEntity.save(storedFakeBlockEntity, PDCSerializationContext.INSTANCE);
+
+            container.set("fakeBlockEntity", storedFakeBlockEntity);
         });
         return stack;
     }
@@ -47,12 +51,12 @@ public class FakeBlockEntityStorage {
     public static void getFakeBlockEntityDataFromItemStack(FakeBlockEntity fakeBlockEntity, ItemStack stack) {
         if (!stack.hasItemMeta())
             return;
-        NBTContainer nbtContainer = NBTContainer.of("mccreativelab", stack.getItemMeta().getPersistentDataContainer());
+        SerializationContainer container = PDCSerializationContext.INSTANCE.deserializeFromPDC(stack.getItemMeta().getPersistentDataContainer()).getAsContainer();
 
-        if (!nbtContainer.has("fakeBlockEntity"))
+        if (!container.contains("fakeBlockEntity"))
             return;
-        NBTContainer storedFakeBlockEntity = nbtContainer.getNBTContainer("fakeBlockEntity");
-        fakeBlockEntity.loadNBTData(storedFakeBlockEntity);
+        SerializationContainer storedFakeBlockEntity = container.get("fakeBlockEntity").getAsContainer();
+        fakeBlockEntity.load(storedFakeBlockEntity, PDCSerializationContext.INSTANCE);
     }
 
     /*    public static FakeBlockEntity extractFakeBlockEntityFromItem(@NotNull ItemStack stack){

@@ -65,17 +65,12 @@ public class MCCCustomBlockType extends MCCHandle<FakeBlock> implements MCCBlock
     }
 
     @Override
-    public boolean isRandomlyTicking() {
-        return getHandle().getDefaultBlockState().getProperties().isRandomlyTicking();
-    }
-
-    @Override
-    public boolean requiresCorrectToolForDrops() {
-        return getHandle().getDefaultBlockState().getProperties().isRequiresCorrectToolForDrops();
-    }
-
-    @Override
     public @NotNull Key key() {
         return getHandle().key();
+    }
+
+    @Override
+    public boolean isVanilla() {
+        return false;
     }
 }

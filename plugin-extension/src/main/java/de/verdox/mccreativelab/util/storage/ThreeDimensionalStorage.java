@@ -3,6 +3,8 @@ package de.verdox.mccreativelab.util.storage;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.util.nbt.NBTPersistent;
 import de.verdox.mccreativelab.util.storage.palette.IdMap;
+import de.verdox.vserializer.generic.SerializationContainer;
+import de.verdox.vserializer.generic.SerializationContext;
 import it.unimi.dsi.fastutil.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,16 +26,17 @@ public abstract class ThreeDimensionalStorage<K extends Number, T> implements NB
     }
 
     @Override
-    public void saveNBTData(NBTContainer storage) {
-        List<NBTContainer> savedData = new ArrayList<>();
+    public void save(SerializationContainer storage, SerializationContext context) {
+        List<SerializationContainer> savedData = new ArrayList<>();
         getDataToIndizesMappingInternal().forEach((dataID, indizes) -> {
-            NBTContainer nbtContainer = storage.createNBTContainer();
+            SerializationContainer nbtContainer = context.createContainer();
             nbtContainer.set("id", dataID);
             List<Integer> data = indizes.stream().map(Number::intValue).toList();
 
             int[] dataArray = new int[data.size()];
-            for (int i = 0; i < data.size(); i++)
+            for (int i = 0; i < data.size(); i++) {
                 dataArray[i] = data.get(i);
+            }
 
             nbtContainer.set("indizes", dataArray);
             savedData.add(nbtContainer);
@@ -42,16 +45,18 @@ public abstract class ThreeDimensionalStorage<K extends Number, T> implements NB
     }
 
     @Override
-    public void loadNBTData(NBTContainer storage) {
-        if(!storage.has("storage"))
+    public void load(SerializationContainer storage, SerializationContext context) {
+        if(!storage.contains("storage")) {
             return;
-        List<NBTContainer> savedData = storage.getNBTContainerList("storage");
-        for (NBTContainer nbtContainer : savedData) {
-            if(!nbtContainer.has("indizes") || !nbtContainer.has("id"))
+        }
+        List<SerializationContainer> savedData = storage.getContainerList("storage");
+        for (SerializationContainer nbtContainer : savedData) {
+            if(!nbtContainer.contains("indizes") || !nbtContainer.contains("id")) {
                 continue;
+            }
 
-            int dataID = nbtContainer.getInt("id");
-            int[] indizes = nbtContainer.getIntArray("indizes");
+            int dataID = nbtContainer.get("id").getAsInt();
+            int[] indizes = nbtContainer.get("indizes").getAsArray().getAsIntArray();
 
             for (int index : indizes) {
                 int[] parameter = getIndexingStrategy().extractParameters(index);

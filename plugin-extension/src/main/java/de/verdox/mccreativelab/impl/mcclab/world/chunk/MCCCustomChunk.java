@@ -2,6 +2,7 @@ package de.verdox.mccreativelab.impl.mcclab.world.chunk;
 
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.world.chunk.NMSChunk;
+import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
 import de.verdox.mccreativelab.wrapper.block.MCCBlockType;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;

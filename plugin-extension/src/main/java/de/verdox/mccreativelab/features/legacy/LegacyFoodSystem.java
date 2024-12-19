@@ -2,17 +2,16 @@ package de.verdox.mccreativelab.features.legacy;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.generator.Asset;
 import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackResource;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -72,6 +71,10 @@ public class LegacyFoodSystem extends LegacyFeature {
         return this;
     }
 
+    public LegacyFoodSystem setHealAmountWhenEaten(MCCReference<MCCItemType> mccItemType, double healAmount) {
+        return setHealAmountWhenEaten(mccItemType.get(), healAmount);
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Bukkit.getScheduler()
@@ -105,7 +108,7 @@ public class LegacyFoodSystem extends LegacyFeature {
 
     @EventHandler
     public void itemConsumeEvent(PlayerItemConsumeEvent e) {
-        MCCItemType mccItemType = BukkitAdapter.to(e.getItem()).getType();
+        MCCItemType mccItemType = BukkitAdapter.wrap(e.getItem(), new TypeToken<MCCItemStack>() {}).getType();
         double healAmount = healAmounts.getOrDefault(mccItemType, 0d);
         double maxHealth = e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         double newHealth = Math.min(maxHealth, e.getPlayer().getHealth() + healAmount);

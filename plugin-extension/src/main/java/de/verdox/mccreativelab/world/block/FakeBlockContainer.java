@@ -7,6 +7,8 @@ import de.verdox.mccreativelab.util.PaletteUtil;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.util.nbt.NBTPersistent;
 import de.verdox.mccreativelab.util.storage.palette.NBTPalettedContainer;
+import de.verdox.vserializer.generic.SerializationContainer;
+import de.verdox.vserializer.generic.SerializationContext;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 
@@ -134,15 +136,16 @@ public class FakeBlockContainer implements NBTPersistent {
     }
 
     @Override
-    public void saveNBTData(NBTContainer storage) {
-        NBTContainer serializedPalette = storage.createNBTContainer();
-        fakeBlockPalettedContainer.saveNBTData(serializedPalette);
+    public void save(SerializationContainer storage, SerializationContext serializationContext) {
+        SerializationContainer serializedPalette = serializationContext.createContainer();
+        fakeBlockPalettedContainer.save(serializedPalette, serializationContext);
         storage.set("serializedPalette", serializedPalette);
     }
 
     @Override
-    public void loadNBTData(NBTContainer storage) {
-        if (storage.has("serializedPalette"))
-            this.fakeBlockPalettedContainer.loadNBTData(storage.getNBTContainer("serializedPalette"));
+    public void load(SerializationContainer storage, SerializationContext serializationContext) {
+        if (storage.contains("serializedPalette")) {
+            this.fakeBlockPalettedContainer.load(storage.get("serializedPalette").getAsContainer(), serializationContext);
+        }
     }
 }

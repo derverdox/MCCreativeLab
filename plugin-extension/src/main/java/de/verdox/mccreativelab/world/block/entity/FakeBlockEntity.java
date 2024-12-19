@@ -1,7 +1,12 @@
 package de.verdox.mccreativelab.world.block.entity;
 
+import de.verdox.mccreativelab.serialization.Serializers;
 import de.verdox.mccreativelab.util.nbt.NBTContainer;
 import de.verdox.mccreativelab.util.nbt.NBTPersistent;
+import de.verdox.vserializer.generic.SerializationContainer;
+import de.verdox.vserializer.generic.SerializationContext;
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.Serializer;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -23,7 +28,8 @@ public abstract class FakeBlockEntity implements NBTPersistent, Keyed {
         this.location = location.getBlock().getLocation().clone();
     }
 
-    public void onRemove(){}
+    public void onRemove() {
+    }
 
     void setMarkerEntity(@NotNull Marker markerEntity) {
         Objects.requireNonNull(markerEntity);
@@ -62,13 +68,13 @@ public abstract class FakeBlockEntity implements NBTPersistent, Keyed {
 
     }
 
-    protected void saveNBT(NBTContainer storage) {
+    protected void saveNBT(SerializationContainer storage, SerializationContext serializationContext) {
     }
 
-    protected void loadNBT(NBTContainer storage) {
+    protected void loadNBT(SerializationContainer storage, SerializationContext serializationContext) {
     }
 
-    public void onUnload(){
+    public void onUnload() {
 
     }
 
@@ -88,28 +94,32 @@ public abstract class FakeBlockEntity implements NBTPersistent, Keyed {
     boolean serializeInventory = false;
 
     @Override
-    public final void saveNBTData(NBTContainer storage) {
+    public void save(SerializationContainer storage, SerializationContext serializationContext) {
         storage.set("id", fakeBlockEntityType.getKey().asString());
         if (getContainerOfEntity() != null) {
             ItemStack[] items = getContainerOfEntity().getStorageContents();
-            storage.set("inventory", items);
+            SerializationElement serializedItems = Serializer.Array.create(Serializers.ItemStackSerializer.INSTANCE, ItemStack[]::new).serialize(serializationContext, items);
+            storage.set("inventory", serializedItems);
         }
     }
 
-    public void saveNBTDataWithInventory(NBTContainer storage){
-        saveNBT(storage);
+    public void saveNBTDataWithInventory(SerializationContainer storage, SerializationContext serializationContext) {
+        saveNBT(storage, serializationContext);
         storage.set("id", fakeBlockEntityType.getKey().asString());
         if (getContainerOfEntity() != null) {
             ItemStack[] items = getContainerOfEntity().getStorageContents();
-            storage.set("inventory", items);
+            SerializationElement serializedItems = Serializer.Array.create(Serializers.ItemStackSerializer.INSTANCE, ItemStack[]::new).serialize(serializationContext, items);
+            storage.set("inventory", serializedItems);
         }
     }
 
     @Override
-    public final void loadNBTData(NBTContainer storage) {
-        loadNBT(storage);
-        if (getContainerOfEntity() != null && storage.has("inventory"))
-            getContainerOfEntity().setStorageContents(storage.getItemArray("inventory"));
+    public void load(SerializationContainer storage, SerializationContext serializationContext) {
+        loadNBT(storage, serializationContext);
+        if (getContainerOfEntity() != null && storage.contains("inventory")) {
+            ItemStack[] items = Serializer.Array.create(Serializers.ItemStackSerializer.INSTANCE, ItemStack[]::new).deserialize(storage.get("inventory"));
+            getContainerOfEntity().setStorageContents(items);
+        }
     }
 
     public final FakeBlockEntityType<?> getType() {

@@ -1,11 +1,34 @@
 plugins {
     java
     id("io.papermc.paperweight.userdev") version "1.7.3"
+    id("xyz.jpenilla.run-paper") version "2.3.1" apply false // Adds runServer and runMojangMappedServer tasks for testing
 }
 
-description = "plugin-extension"
-group = "de.verdox.mccreativelab"
-version = "1.0"
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            pom {
+                groupId = "de.verdox.mccreativelab"
+                artifactId = "mcc-plugin-extension"
+                version = providers.gradleProperty("version").get()
+                from(components["java"])
+                licenses {
+                    license {
+                        name = "GNU GENERAL PUBLIC LICENSE Version 3"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "verdox"
+                        name = "Lukas Jonsson"
+                        email = "mail.ysp@web.de"
+                    }
+                }
+            }
+        }
+    }
+}
 
 allprojects {
     apply(plugin = "java")
@@ -17,13 +40,17 @@ allprojects {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
     dependencies {
+        paperweight.devBundle("de.verdox.mccreativelab", providers.gradleProperty("version").get())
         //compileOnly(project(":mccreativelab-api"))
         implementation(project(":mcc-util"))
-        implementation(project(":mcc-wrapper"))
         implementation(project(":mcc-pack-generator"))
-        implementation("de.verdox.vcore:Paper:1.0")
 
-        paperweight.devBundle("de.verdox.mccreativelab", "1.21.1-R0.1-SNAPSHOT")
+        compileOnly("de.verdox:vserializer:1.0.5-SNAPSHOT")
+
+        compileOnly("de.verdox.mccreativelab.mcc-wrapper:api:" + providers.gradleProperty("version").get())
+        implementation("de.verdox.mccreativelab.mcc-wrapper:vanilla:" + providers.gradleProperty("version").get())
+        implementation("de.verdox.mccreativelab.mcc-wrapper:paper:" + providers.gradleProperty("version").get())
+        implementation("de.verdox.vcore:paper:1.0.0-SNAPSHOT")
 
         compileOnly("com.hierynomus:sshj:0.38.0")
         compileOnly("io.vertx:vertx-core:4.5.3")
@@ -45,6 +72,10 @@ allprojects {
         }
         maven {
             url = uri("https://www.jitpack.io")
+        }
+        maven {
+            name = "Verdox Reposilite"
+            url = uri("https://repo.verdox.de/snapshots")
         }
     }
 
@@ -81,15 +112,12 @@ allprojects {
             into(file("../run/plugins"))
         }
 
+        /*        runServer {
+                    dependsOn(copyTask)
+                }*/
+
         build {
             finalizedBy(copyTask)
-        }
-    }
-
-    configure<PublishingExtension> {
-        publications.create<MavenPublication>("maven") {
-            from(components["java"])
-            //artifact(tasks["shadowJar"])
         }
     }
 

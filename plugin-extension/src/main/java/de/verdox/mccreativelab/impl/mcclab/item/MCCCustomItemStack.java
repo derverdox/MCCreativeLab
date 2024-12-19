@@ -1,7 +1,10 @@
 package de.verdox.mccreativelab.impl.mcclab.item;
 
+import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.impl.vanilla.item.NMSItemStack;
+import de.verdox.mccreativelab.registry.Reference;
+import de.verdox.mccreativelab.world.item.FakeItem;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +18,12 @@ public class MCCCustomItemStack extends NMSItemStack {
 
     @Override
     public MCCItemType getType() {
-        //TODO: MCC Custom Logic
-        return super.getType();
+        Reference<? extends FakeItem> found = MCCreativeLabExtension.getFakeItemRegistry().getFakeItem(handle.getBukkitStack());
+        if(found != null){
+            return new MCCCustomItemType(found.unwrapValue());
+        }
+        else {
+            return super.getType();
+        }
     }
 }

@@ -3,12 +3,15 @@ package de.verdox.mccreativelab;
 import de.verdox.mccreativelab.behaviour.RepairItemBehaviour;
 import de.verdox.mccreativelab.event.MCCreativeLabReloadEvent;
 import de.verdox.mccreativelab.features.legacy.LegacyFeatures;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
+import de.verdox.mccreativelab.impl.vanilla.platform.NMSPlatform;
 import de.verdox.mccreativelab.world.block.FakeBlockRegistry;
 import de.verdox.mccreativelab.world.block.FakeBlockStorage;
 import de.verdox.mccreativelab.world.block.FakeBlockWorldHook;
 import de.verdox.mccreativelab.world.block.replaced.ReplacedBlocks;
 import de.verdox.mccreativelab.world.item.FakeItemRegistry;
 import de.verdox.mccreativelab.world.sound.ReplacedSoundGroups;
+import de.verdox.mccreativelab.wrapper.inventory.MCCMenuTypes;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -63,15 +66,15 @@ public class ServerSoftwareExclusives implements Listener {
         RepairItemBehaviour.REPAIR_ITEM_BEHAVIOUR.setBehaviour(new RepairItemBehaviour() {
             @Override
             public boolean canCombine(@NotNull ItemStack first, @NotNull ItemStack second) {
-                MCCItemStack stack1 = BukkitAdapter.to(first);
-                MCCItemStack stack2 = BukkitAdapter.to(second);
+                MCCItemStack stack1 = BukkitAdapter.wrap(first);
+                MCCItemStack stack2 = BukkitAdapter.wrap(second);
                 return stack1.getType().isSame(stack2);
             }
 
             @Override
             public @NotNull ItemStack assemble(@NotNull ItemStack first, @NotNull ItemStack second) {
-                MCCItemStack stack1 = BukkitAdapter.to(first);
-                return BukkitAdapter.from(stack1.getType().createItem());
+                MCCItemStack stack1 = BukkitAdapter.wrap(first);
+                return BukkitAdapter.unwrap(stack1.getType().createItem());
             }
         });
     }

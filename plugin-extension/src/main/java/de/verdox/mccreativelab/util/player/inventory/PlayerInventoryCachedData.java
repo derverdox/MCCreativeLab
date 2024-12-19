@@ -1,17 +1,13 @@
 package de.verdox.mccreativelab.util.player.inventory;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
-import de.verdox.mccreativelab.conversion.ConversionService;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.HashMap;
@@ -64,8 +60,8 @@ public class PlayerInventoryCachedData {
                 .getMetadata("cached_inventory_data")
                 .get(0).value();
             ;
-            playerInventoryCachedData.removeFromCache(e.getSlot(), BukkitAdapter.to(e.getOldItemStack()));
-            playerInventoryCachedData.cacheItemInSlot(e.getSlot(), BukkitAdapter.to(e.getNewItemStack()));
+            playerInventoryCachedData.removeFromCache(e.getSlot(), BukkitAdapter.wrap(e.getOldItemStack()));
+            playerInventoryCachedData.cacheItemInSlot(e.getSlot(), BukkitAdapter.wrap(e.getNewItemStack()));
         }
     }
 

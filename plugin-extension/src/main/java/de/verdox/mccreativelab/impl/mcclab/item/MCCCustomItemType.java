@@ -4,6 +4,7 @@ import de.verdox.mccreativelab.conversion.converter.MCCConverter;
 import de.verdox.mccreativelab.world.item.FakeItem;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
+import de.verdox.mccreativelab.wrapper.item.components.MCCDataComponentMap;
 import de.verdox.mccreativelab.wrapper.platform.MCCHandle;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,13 @@ public class MCCCustomItemType extends MCCHandle<FakeItem> implements MCCItemTyp
 
     @Override
     public @NotNull MCCItemStack createItem() {
-        return handle.createItem();
+        return handle.createItemStack();
+    }
+
+    @Override
+    public MCCDataComponentMap getItemStandardComponentMap() {
+        //TODO implement
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
@@ -28,5 +35,10 @@ public class MCCCustomItemType extends MCCHandle<FakeItem> implements MCCItemTyp
     @Override
     public @NotNull Key key() {
         return handle.key();
+    }
+
+    @Override
+    public boolean isVanilla() {
+        return false;
     }
 }

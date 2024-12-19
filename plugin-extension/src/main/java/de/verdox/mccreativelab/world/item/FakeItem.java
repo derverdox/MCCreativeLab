@@ -1,7 +1,5 @@
 package de.verdox.mccreativelab.world.item;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
 import de.verdox.mccreativelab.behaviour.BehaviourResult;
 import de.verdox.mccreativelab.behaviour.ItemBehaviour;
@@ -10,25 +8,25 @@ import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translatable;
 import de.verdox.mccreativelab.impl.mcclab.item.MCCCustomItemType;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.recipe.CustomItemData;
 import de.verdox.mccreativelab.world.block.FakeBlock;
-import de.verdox.mccreativelab.world.item.data.ItemDataContainer;
+import de.verdox.mccreativelab.wrapper.annotations.MCCRequireVanillaElement;
+import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
+import de.verdox.mccreativelab.wrapper.entity.MCCEffect;
+import de.verdox.mccreativelab.wrapper.entity.MCCEntity;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
+import de.verdox.mccreativelab.wrapper.item.components.MCCFoodProperties;
+import de.verdox.mccreativelab.wrapper.registry.MCCReference;
+import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
 import it.unimi.dsi.fastutil.Pair;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Keyed;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.FoodComponent;
-import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,16 +36,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FakeItem implements Keyed, ItemBehaviour {
-    private NamespacedKey key;
-    private Material material;
+    private Key key;
+    private MCCItemType overwrittenVanillaItemType;
     private int customModelData;
     private FakeItemProperties fakeItemProperties;
-    private Consumer<ItemMeta> metaConsumer;
+    private Consumer<MCCItemStack> componentSetup;
     private Translatable nameTranslation;
     private Function<Translatable, Component> nameFormat;
 
-    public Material getMaterial() {
-        return material;
+    public MCCItemType getOverwrittenVanillaItemType() {
+        return overwrittenVanillaItemType;
     }
 
     public int getCustomModelData() {
@@ -62,78 +60,59 @@ public class FakeItem implements Keyed, ItemBehaviour {
         return nameTranslation;
     }
 
-    public Consumer<ItemMeta> getMetaConsumer() {
-        return metaConsumer;
+    public Consumer<MCCItemStack> getComponentSetup() {
+        return componentSetup;
     }
 
     public void setFakeItemProperties(FakeItemProperties fakeItemProperties) {
         this.fakeItemProperties = fakeItemProperties;
     }
 
-    void setNameTranslatable(Translatable nameTranslation) {
-        this.nameTranslation = nameTranslation;
-    }
-
-    void setMaterial(Material material) {
-        this.material = material;
-    }
-
-    void setCustomModelData(int customModelData) {
-        this.customModelData = customModelData;
-    }
-
-    void setMetaConsumer(Consumer<ItemMeta> metaConsumer) {
-        this.metaConsumer = metaConsumer;
-    }
-
-    void setNameFormat(Function<Translatable, Component> nameFormat) {
-        this.nameFormat = nameFormat;
-    }
-
-    void setKey(NamespacedKey key) {
-        this.key = key;
-    }
-
-    public boolean isItem(ItemStack stack) {
-        return CustomItemData.fromItemStack(stack).isSame(createItemStack());
-    }
-
-
-    public @NotNull MCCItemStack createItem() {
-        return BukkitAdapter.to(createItemStack());
+    public boolean isItem(MCCItemStack stack) {
+        return stack.components().get(MCCDataComponentTypes.CUSTOM_MODEL_DATA.get()).getValue() == customModelData;
     }
 
     public @NotNull MCCItemType asItemType() {
         return new MCCCustomItemType(this);
     }
 
-    public final ItemStack createItemStack() {
-        ItemStack stack = new ItemStack(material);
-        stack.editMeta((meta) -> {
-            if (metaConsumer != null)
-                metaConsumer.accept(meta);
+    public final MCCItemStack createItemStack() {
+        MCCItemStack mccItemStack = overwrittenVanillaItemType.createItem();
 
-            meta.setMaxStackSize(getMaxStackSize());
-            if (meta instanceof Damageable damageable && getMaxDamage() > 0)
-                damageable.setMaxDamage(getMaxDamage());
-            meta.setFireResistant(isFireResistant());
-            meta.setCustomModelData(customModelData);
+        mccItemStack.components().edit(MCCDataComponentTypes.MAX_STACK_SIZE.get(), component -> component.set(getMaxStackSize()));
+        mccItemStack.components().edit(MCCDataComponentTypes.MAX_DAMAGE.get(), component -> component.set(getMaxDamage()));
+        mccItemStack.components().edit(MCCDataComponentTypes.CUSTOM_MODEL_DATA.get(), component -> component.create().withValue(customModelData));
+        mccItemStack.components().edit(MCCDataComponentTypes.ITEM_NAME.get(), component -> component.set(nameFormat != null ? nameFormat.apply(this.nameTranslation) : nameTranslation.asTranslatableComponent()));
 
-            if (nameFormat != null)
-                meta.itemName(nameFormat.apply(this.nameTranslation));
-            else
-                meta.itemName(nameTranslation.asTranslatableComponent());
-            if (this.fakeItemProperties.foodProperties != null)
-                this.fakeItemProperties.foodProperties.apply(meta.getFood());
-        });
-        ItemDataContainer.from(stack);
-        //stack.setItemBehaviour(this);
-        return stack;
+        if (this.fakeItemProperties.foodProperties != null) {
+            mccItemStack.components().edit(MCCDataComponentTypes.FOOD.get(), component -> {
+                MCCFoodProperties foodProperties = component.create()
+                    .withCanAlwaysEat(fakeItemProperties.foodProperties.canAlwaysEat)
+                    .withNutrition(fakeItemProperties.foodProperties.nutrition)
+                    .withSaturation(fakeItemProperties.foodProperties.saturationModifier)
+                    .withEatSeconds(fakeItemProperties.foodProperties.seconds);
+
+                List<MCCFoodProperties.PossibleEffect> possibleEffects = new LinkedList<>();
+                for (Pair<MCCEffect, Float> effectFloatPair : fakeItemProperties.foodProperties.effects) {
+                    MCCEffect effect = effectFloatPair.key();
+                    float chance = effectFloatPair.right();
+                    MCCFoodProperties.PossibleEffect possibleEffect =
+                        foodProperties.createPossibleEffect()
+                            .withProbability(chance)
+                            .withEffect(effect);
+                    possibleEffects.add(possibleEffect);
+                }
+                foodProperties.withEffects(possibleEffects);
+            });
+        }
+        // TODO:
+        //ItemDataContainer.from(stack);
+        ItemStack bukkitStack = BukkitAdapter.unwrap(mccItemStack);
+        bukkitStack.setItemBehaviour(this);
+        return mccItemStack;
     }
 
-    public float getDestroySpeed(ItemStack stack, Block block, @Nullable FakeBlock.FakeBlockState fakeBlockState) {
-        if (fakeBlockState == null)
-            return block.getDestroySpeed(stack, true);
+    public float getDestroySpeed(MCCEntity breaker, MCCItemStack tool, MCCBlockState brokenBlock) {
         return 1.0f;
     }
 
@@ -179,15 +158,15 @@ public class FakeItem implements Keyed, ItemBehaviour {
     }
 
     @Override
-    public @NotNull NamespacedKey getKey() {
+    public @NotNull Key key() {
         return key;
     }
 
     public static class Builder<T extends FakeItem> {
-        private final Material vanillaMaterial;
-        private final NamespacedKey namespacedKey;
+        private final MCCItemType vanillaMaterial;
+        private final Key namespacedKey;
         private final Supplier<T> itemBuilder;
-        private Consumer<ItemMeta> itemMetaBuilder = itemMeta -> {
+        private Consumer<MCCItemStack> componentSetup = itemMeta -> {
         };
         private FakeItemProperties fakeItemProperties = new FakeItemProperties();
         private Asset<CustomResourcePack> texture;
@@ -200,18 +179,28 @@ public class FakeItem implements Keyed, ItemBehaviour {
         @Nullable
         private Function<Translatable, Component> nameFormat;
 
-        public Builder(NamespacedKey namespacedKey, Material vanillaMaterial, Supplier<T> itemBuilder) {
+        public Builder(Key namespacedKey, @MCCRequireVanillaElement MCCItemType vanillaMaterial, Supplier<T> itemBuilder) {
+            vanillaMaterial.requireVanilla();
             this.itemBuilder = itemBuilder;
             Objects.requireNonNull(vanillaMaterial);
             Objects.requireNonNull(namespacedKey);
             this.vanillaMaterial = vanillaMaterial;
             this.namespacedKey = namespacedKey;
-            this.translationKey = "custom_item.description_id." + new NamespacedKey(namespacedKey.namespace(), namespacedKey.getKey()).asString();
+            this.translationKey = "custom_item.description_id." + Key.key(namespacedKey.namespace(), namespacedKey.value()).asString();
             this.standardNameTranslation = new Translatable(translationKey);
         }
 
-        public Builder<T> withItemMeta(Consumer<ItemMeta> itemMetaBuilder) {
-            this.itemMetaBuilder = itemMetaBuilder;
+        public Builder(Key namespacedKey, @MCCRequireVanillaElement MCCReference<MCCItemType> vanillaMaterial, Supplier<T> itemBuilder) {
+            this(namespacedKey, vanillaMaterial.get(), itemBuilder);
+        }
+
+        @Deprecated
+        public Builder(Key namespacedKey, @MCCRequireVanillaElement Material vanillaMaterial, Supplier<T> itemBuilder) {
+            this(namespacedKey, BukkitAdapter.wrap(vanillaMaterial, MCCItemType.class), itemBuilder);
+        }
+
+        public Builder<T> withComponentSetup(Consumer<MCCItemStack> itemMetaBuilder) {
+            this.componentSetup = itemMetaBuilder;
             return this;
         }
 
@@ -252,13 +241,13 @@ public class FakeItem implements Keyed, ItemBehaviour {
             if (this.itemTextureData != null) {
                 itemTextureData = this.itemTextureData;
             } else {
-                MCCItemType itemType = BukkitAdapter.toItemType(vanillaMaterial);
-                itemTextureData = new ItemTextureData(new NamespacedKey(namespacedKey.namespace(), "item/" + namespacedKey.value()), itemType, texture, modelType, texture == null && modelType == null);
+                MCCItemType itemType = BukkitAdapter.wrap(vanillaMaterial);
+                itemTextureData = new ItemTextureData(Key.key(namespacedKey.namespace(), "item/" + namespacedKey.value()), itemType, texture, modelType, texture == null && modelType == null);
             }
             int customModelData = itemTextureData.getCustomModelData();
             T value = itemBuilder.get();
 
-            value.setMaterial(vanillaMaterial);
+            value.setOverwrittenVanillaItemType(vanillaMaterial);
             value.setCustomModelData(customModelData);
             value.setKey(namespacedKey);
 
@@ -266,7 +255,8 @@ public class FakeItem implements Keyed, ItemBehaviour {
                 value.setNameTranslatable(standardNameTranslation);
             if (this.fakeItemProperties != null && value.getFakeItemProperties() == null)
                 value.setFakeItemProperties(fakeItemProperties);
-            if (this.itemMetaBuilder != null && value.getMetaConsumer() == null) value.setMetaConsumer(itemMetaBuilder);
+            if (this.componentSetup != null && value.getComponentSetup() == null)
+                value.setComponentSetup(componentSetup);
             if (this.nameFormat != null) value.setNameFormat(this.nameFormat);
 
             Objects.requireNonNull(namespacedKey);
@@ -276,7 +266,7 @@ public class FakeItem implements Keyed, ItemBehaviour {
             if (standardNameTranslation != null)
                 MCCreativeLabExtension.getCustomResourcePack().addTranslation(standardNameTranslation);
 
-            ItemBehaviour.ITEM_BEHAVIOUR.setBehaviour(new CustomItemData(vanillaMaterial, customModelData), value);
+            ItemBehaviour.ITEM_BEHAVIOUR.setBehaviour(new CustomItemData(BukkitAdapter.unwrap(vanillaMaterial), customModelData), value);
             return value;
         }
     }
@@ -384,9 +374,9 @@ public class FakeItem implements Keyed, ItemBehaviour {
         private final float saturationModifier;
         private final boolean canAlwaysEat;
         private final float seconds;
-        private final List<Pair<PotionEffect, Float>> effects;
+        private final List<Pair<MCCEffect, Float>> effects;
 
-        FoodProperties(int nutrition, float saturationModifier, boolean canAlwaysEat, float seconds, List<Pair<PotionEffect, Float>> effects) {
+        FoodProperties(int nutrition, float saturationModifier, boolean canAlwaysEat, float seconds, List<Pair<MCCEffect, Float>> effects) {
             this.nutrition = nutrition;
             this.saturationModifier = saturationModifier;
             this.canAlwaysEat = canAlwaysEat;
@@ -406,23 +396,15 @@ public class FakeItem implements Keyed, ItemBehaviour {
             return canAlwaysEat;
         }
 
-        public List<Pair<PotionEffect, Float>> getEffects() {
+        public List<Pair<MCCEffect, Float>> getEffects() {
             return effects;
-        }
-
-        public void apply(FoodComponent foodComponent) {
-            foodComponent.setCanAlwaysEat(canAlwaysEat);
-            foodComponent.setEatSeconds(seconds);
-            foodComponent.setNutrition(nutrition);
-            foodComponent.setSaturation(saturationModifier);
-            effects.forEach(potionEffectFloatPair -> foodComponent.addEffect(potionEffectFloatPair.key(), potionEffectFloatPair.right()));
         }
 
         public static class Builder {
             private int nutrition;
             private float saturationModifier;
             private boolean canAlwaysEat;
-            private final List<Pair<PotionEffect, Float>> effects = new LinkedList<>();
+            private final List<Pair<MCCEffect, Float>> effects = new LinkedList<>();
             private float seconds;
 
             public Builder nutrition(int hunger) {
@@ -440,7 +422,7 @@ public class FakeItem implements Keyed, ItemBehaviour {
                 return this;
             }
 
-            public Builder effect(PotionEffect effect, float chance) {
+            public Builder effect(MCCEffect effect, float chance) {
                 this.effects.add(Pair.of(effect, chance));
                 return this;
             }
@@ -454,5 +436,29 @@ public class FakeItem implements Keyed, ItemBehaviour {
                 return new FoodProperties(this.nutrition, this.saturationModifier, this.canAlwaysEat, seconds, this.effects);
             }
         }
+    }
+
+    protected void setNameTranslatable(Translatable nameTranslation) {
+        this.nameTranslation = nameTranslation;
+    }
+
+    protected void setOverwrittenVanillaItemType(MCCItemType overwrittenVanillaItemType) {
+        this.overwrittenVanillaItemType = overwrittenVanillaItemType;
+    }
+
+    protected void setCustomModelData(int customModelData) {
+        this.customModelData = customModelData;
+    }
+
+    protected void setComponentSetup(Consumer<MCCItemStack> componentSetup) {
+        this.componentSetup = componentSetup;
+    }
+
+    protected void setNameFormat(Function<Translatable, Component> nameFormat) {
+        this.nameFormat = nameFormat;
+    }
+
+    protected void setKey(Key key) {
+        this.key = key;
     }
 }

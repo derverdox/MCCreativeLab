@@ -1,7 +1,6 @@
 package de.verdox.mccreativelab.world.block.display;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.world.block.FakeBlock;
 import de.verdox.mccreativelab.world.block.display.strategy.DummyBlockVisualStrategy;
 import de.verdox.mccreativelab.generator.Asset;
@@ -11,8 +10,6 @@ import de.verdox.mccreativelab.generator.resourcepack.AssetBasedResourcePackReso
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.ResourcePackAssetTypes;
 import de.verdox.mccreativelab.generator.resourcepack.types.ItemTextureData;
-import de.verdox.mccreativelab.wrapper.block.MCCBlockState;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
 import de.verdox.vserializer.util.gson.JsonObjectBuilder;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
@@ -54,7 +51,7 @@ public class ReusedBlockStateDisplay extends FakeBlockDisplay {
         });
         ItemTextureData itemTextureData = new ItemTextureData(getKeyOfFullDisplay(key()), getModelMaterial(), drawNewModelID(), null, modifiedModelType);
         customPack.register(itemTextureData);
-        customPack.register(new AlternateBlockStateModel(BukkitAdapter.to(hitBox.getBlockData()), getKeyOfFullDisplay(key())));
+        customPack.register(new AlternateBlockStateModel(BukkitAdapter.wrap(hitBox.getBlockData()), getKeyOfFullDisplay(key())));
     }
 
     private NamespacedKey getKeyOfFullDisplay(Key key) {

@@ -5,6 +5,8 @@ import de.verdox.mccreativelab.util.nbt.NBTPersistent;
 import de.verdox.mccreativelab.util.storage.HashedThreeDimensionalStorage;
 import de.verdox.mccreativelab.util.storage.NBTThreeDimensionalStorageSerializer;
 import de.verdox.mccreativelab.util.storage.ThreeDimensionalStorage;
+import de.verdox.vserializer.generic.SerializationContainer;
+import de.verdox.vserializer.generic.SerializationContext;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -54,16 +56,16 @@ public class NBTPalettedContainer<T> implements NBTPersistent {
     }
 
     @Override
-    public void saveNBTData(NBTContainer storage) {
-        NBTContainer threeDimensionalStorageNBT = storage.createNBTContainer();
-        this.storage.saveNBTData(threeDimensionalStorageNBT);
+    public void save(SerializationContainer storage, SerializationContext context) {
+        SerializationContainer threeDimensionalStorageNBT = context.createContainer();
+        this.storage.save(threeDimensionalStorageNBT, context);
         storage.set("serializedThreeDimensionalStorage", threeDimensionalStorageNBT);
     }
 
     @Override
-    public void loadNBTData(NBTContainer storage) {
-        if(!storage.has("serializedThreeDimensionalStorage"))
+    public void load(SerializationContainer storage, SerializationContext context) {
+        if(!storage.contains("serializedThreeDimensionalStorage"))
             return;
-        this.storage.loadNBTData(Objects.requireNonNull(storage.getNBTContainer("serializedThreeDimensionalStorage")));
+        this.storage.load(Objects.requireNonNull(storage.get("serializedThreeDimensionalStorage").getAsContainer()), context);
     }
 }

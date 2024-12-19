@@ -1,24 +1,19 @@
 package de.verdox.mccreativelab.world.item;
 
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
-import de.verdox.mccreativelab.generator.datapack.wrapper.elements.RecipeResult;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.registry.Reference;
 import de.verdox.mccreativelab.wrapper.item.MCCItemType;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ComplexRecipe;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Iterator;
 
 public class FakeItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -89,9 +84,9 @@ public class FakeItemListener implements Listener {
             if(matrix == null)
                 continue;
             if(repairedType == null)
-                repairedType = BukkitAdapter.toItemType(matrix.getType());
+                repairedType = BukkitAdapter.wrap(matrix.getType());
             else {
-                if(!repairedType.isSame(BukkitAdapter.to(matrix)))
+                if(!repairedType.isSame(BukkitAdapter.wrap(matrix)))
                     break;
 
             }

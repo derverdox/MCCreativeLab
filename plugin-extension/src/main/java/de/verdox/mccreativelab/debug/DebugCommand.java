@@ -1,30 +1,20 @@
 package de.verdox.mccreativelab.debug;
 
-import com.google.common.reflect.TypeToken;
-import de.verdox.mccreativelab.BukkitAdapter;
 import de.verdox.mccreativelab.MCCUtil;
-import de.verdox.mccreativelab.MCCreativeLab;
 import de.verdox.mccreativelab.MCCreativeLabExtension;
-import de.verdox.mccreativelab.container.CustomInventory;
 import de.verdox.mccreativelab.debug.vanilla.VillagerAI;
 import de.verdox.mccreativelab.generator.resourcepack.types.hud.renderer.HudRendererImpl;
 import de.verdox.mccreativelab.generator.resourcepack.types.menu.ActiveMenu;
+import de.verdox.mccreativelab.impl.paper.platform.converter.BukkitAdapter;
 import de.verdox.mccreativelab.world.item.data.ItemDataContainer;
-import de.verdox.mccreativelab.wrapper.entity.MCCPlayer;
-import de.verdox.mccreativelab.wrapper.platform.MCCPlatform;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import de.verdox.mccreativelab.wrapper.entity.types.MCCPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
-import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class DebugCommand extends Command {
 
@@ -68,7 +58,7 @@ public class DebugCommand extends Command {
                     ActiveMenu.closeActiveMenu(player);
                 }
                 else {
-                    MCCPlayer mccPlayer = BukkitAdapter.to(player);
+                    MCCPlayer mccPlayer = BukkitAdapter.wrap(player);
                     Debug.DEBUG_MENU.createMenuForPlayer(mccPlayer);
                 }
             } else if (argument1.equals("itemload") && sender instanceof Player player) {
