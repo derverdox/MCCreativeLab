@@ -14,11 +14,11 @@ repositories {
 dependencies {
     compileOnly(project(":mcc-util"))
     compileOnly("de.verdox.mccreativelab.mcc-wrapper:api:" + providers.gradleProperty("version").get())
+    compileOnly("de.verdox:vserializer:+")
     compileOnly("org.jetbrains:annotations:26.0.1")
     compileOnly("io.vertx:vertx-core:4.5.10")
     compileOnly("com.hierynomus:sshj:0.38.0")
     compileOnly("org.tukaani:xz:1.9")
-    compileOnly("de.verdox.vserializer:vserializer:+")
     compileOnly("commons-io:commons-io:2.17.0")
     compileOnly("com.google.code.gson:gson:2.11.0")
     compileOnly("net.kyori:adventure-api:4.17.0")

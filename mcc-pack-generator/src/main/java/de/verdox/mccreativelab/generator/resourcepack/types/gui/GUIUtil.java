@@ -3,6 +3,7 @@ package de.verdox.mccreativelab.generator.resourcepack.types.gui;
 import de.verdox.mccreativelab.generator.resourcepack.CustomResourcePack;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.LanguageInfo;
 import de.verdox.mccreativelab.generator.resourcepack.types.lang.Translatable;
+import de.verdox.mccreativelab.wrapper.MCCKeyedWrapper;
 import de.verdox.mccreativelab.wrapper.item.MCCItemStack;
 import de.verdox.mccreativelab.wrapper.typed.MCCDataComponentTypes;
 import net.kyori.adventure.text.Component;
